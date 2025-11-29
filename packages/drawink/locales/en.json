@@ -121,7 +121,7 @@
     "toggleTheme": "Toggle light/dark theme",
     "theme": "Theme",
     "personalLib": "Personal Library",
-    "excalidrawLib": "Drawink Library",
+    "drawinkLib": "Drawink Library",
     "decreaseFontSize": "Decrease font size",
     "increaseFontSize": "Increase font size",
     "unbindText": "Unbind text",
@@ -402,9 +402,9 @@
     "link_title": "Shareable link",
     "link_details": "Export as a read-only link.",
     "link_button": "Export to Link",
-    "excalidrawplus_description": "Save the scene to your Drawink+ workspace.",
-    "excalidrawplus_button": "Export",
-    "excalidrawplus_exportError": "Couldn't export to Drawink+ at this moment..."
+    "drawinkplus_description": "Save the scene to your Drawink+ workspace.",
+    "drawinkplus_button": "Export",
+    "drawinkplus_exportError": "Couldn't export to Drawink+ at this moment..."
   },
   "helpDialog": {
     "blog": "Read our blog",
@@ -588,7 +588,7 @@
         "button": "Save to disk",
         "description": "Export the scene data to a file from which you can import later."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Export to Drawink+",
         "description": "Save the scene to your Drawink+ workspace."

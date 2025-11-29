@@ -37,7 +37,7 @@ export const Button = ({
         onSelect();
       })}
       type={type}
-      className={clsx("excalidraw-button", className, { selected })}
+      className={clsx("drawink-button", className, { selected })}
       {...rest}
     >
       {children}

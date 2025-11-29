@@ -1,5 +1,5 @@
 "use client";
-import * as excalidrawLib from "@drawink/drawink";
+import * as drawinkLib from "@drawink/drawink";
 import { Drawink } from "@drawink/drawink";
 
 import "@drawink/drawink/index.css";
@@ -12,7 +12,7 @@ const DrawinkWrapper: React.FC = () => {
       <App
         appTitle={"Drawink with Nextjs Example"}
         useCustom={(api: any, args?: any[]) => { }}
-        excalidrawLib={excalidrawLib}
+        drawinkLib={drawinkLib}
       >
         <Drawink />
       </App>

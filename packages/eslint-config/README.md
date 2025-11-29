@@ -1,6 +1,6 @@
 # @drawink/eslint-config
 
-Excalidraw's [ESLint](https://eslint.org/docs/developer-guide/shareable-configs) config.
+Drawink's [ESLint](https://eslint.org/docs/developer-guide/shareable-configs) config.
 
 ## Usage for CRA
 

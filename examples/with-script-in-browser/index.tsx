@@ -3,27 +3,27 @@ import { createRoot } from "react-dom/client";
 
 import "@drawink/drawink/index.css";
 
-import type * as TExcalidraw from "@drawink/drawink";
+import type * as TDrawink from "@drawink/drawink";
 
 import App from "./components/ExampleApp";
 
 declare global {
   interface Window {
-    ExcalidrawLib: typeof TExcalidraw;
+    DrawinkLib: typeof TDrawink;
   }
 }
 
 const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
-const { Excalidraw } = window.ExcalidrawLib;
+const { Drawink } = window.DrawinkLib;
 root.render(
   <StrictMode>
     <App
-      appTitle={"Excalidraw Example"}
-      useCustom={(api: any, args?: any[]) => {}}
-      excalidrawLib={window.ExcalidrawLib}
+      appTitle={"Drawink Example"}
+      useCustom={(api: any, args?: any[]) => { }}
+      drawinkLib={window.DrawinkLib}
     >
-      <Excalidraw />
+      <Drawink />
     </App>
   </StrictMode>,
 );

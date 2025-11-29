@@ -6,7 +6,6 @@
       "command": "yarn install"
     }
   ],
-
   // These tasks can be run from CodeSandbox. Running one will open a log in the app.
   "tasks": {
     "build": {
@@ -25,7 +24,7 @@
       "runAtStart": false
     },
     "start": {
-      "name": "Start Excalidraw",
+      "name": "Start Drawink",
       "command": "yarn start",
       "runAtStart": true,
       "preview": {
@@ -41,7 +40,9 @@
       "name": "Install Dependencies",
       "command": "yarn install",
       "restartOn": {
-        "files": ["yarn.lock"],
+        "files": [
+          "yarn.lock"
+        ],
         "branch": false,
         "resume": false
       }

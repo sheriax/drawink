@@ -121,7 +121,7 @@
     "toggleTheme": "තේමාව ටොගල් කරන්න",
     "theme": "",
     "personalLib": "පුද්ගලික පුස්තකාලය",
-    "excalidrawLib": "Drawink පුස්තකාලය",
+    "drawinkLib": "Drawink පුස්තකාලය",
     "decreaseFontSize": "අකුරු ප්‍රමාණය අඩු කරන්න",
     "increaseFontSize": "අකුරු ප්‍රමාණය වැඩි කරන්න",
     "unbindText": "පෙළ විසන්ධි කරන්න",
@@ -401,9 +401,9 @@
     "link_title": "සබැඳි මාතෘකාව",
     "link_details": "සබැඳි විස්තර",
     "link_button": "සබැඳි බොත්තම",
-    "excalidrawplus_description": "DrawinkPlus විස්තර",
-    "excalidrawplus_button": "DrawinkPlus බොත්තම",
-    "excalidrawplus_exportError": "DrawinkPlus නිර්යාත දෝෂය"
+    "drawinkplus_description": "DrawinkPlus විස්තර",
+    "drawinkplus_button": "DrawinkPlus බොත්තම",
+    "drawinkplus_exportError": "DrawinkPlus නිර්යාත දෝෂය"
   },
   "helpDialog": {
     "blog": "බ්ලොග්",
@@ -587,7 +587,7 @@
         "button": "තැටියට සුරැකීම බොත්තම",
         "description": "තැටියට සුරැකීම විස්තර"
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "DrawinkPlus ආවරණය",
         "button": "DrawinkPlus බොත්තම",
         "description": "DrawinkPlus විස්තර"

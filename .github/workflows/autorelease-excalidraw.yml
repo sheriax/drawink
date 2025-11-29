@@ -1,11 +1,11 @@
-name: Auto release excalidraw next
+name: Auto release drawink next
 on:
   push:
     branches:
       - release
 
 jobs:
-  Auto-release-excalidraw-next:
+  Auto-release-drawink-next:
     runs-on: ubuntu-latest
 
     steps:

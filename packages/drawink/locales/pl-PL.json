@@ -121,7 +121,7 @@
     "toggleTheme": "Przełącz motyw jasny / ciemny",
     "theme": "Motyw",
     "personalLib": "Biblioteka prywatna",
-    "excalidrawLib": "Biblioteka Drawink",
+    "drawinkLib": "Biblioteka Drawink",
     "decreaseFontSize": "Zmniejsz rozmiar czcionki",
     "increaseFontSize": "Zwiększ rozmiar czcionki",
     "unbindText": "Odłącz tekst od kontenera",
@@ -401,9 +401,9 @@
     "link_title": "Link do udostępnienia",
     "link_details": "Eksportuj jako link tylko do odczytu.",
     "link_button": "Wygeneruj link",
-    "excalidrawplus_description": "Zapisz scenę do swojego obszaru roboczego Drawink+.",
-    "excalidrawplus_button": "Eksportuj",
-    "excalidrawplus_exportError": "W tej chwili nie można wyeksportować do Drawink+..."
+    "drawinkplus_description": "Zapisz scenę do swojego obszaru roboczego Drawink+.",
+    "drawinkplus_button": "Eksportuj",
+    "drawinkplus_exportError": "W tej chwili nie można wyeksportować do Drawink+..."
   },
   "helpDialog": {
     "blog": "Przeczytaj na naszym blogu",
@@ -587,7 +587,7 @@
         "button": "Zapisz na dysku",
         "description": "Eksportuj zawartość sceny jako plik z możliwością importowania."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Eksportuj do Drawink+",
         "description": "Zapisz scenę do swojego obszaru roboczego Drawink+."

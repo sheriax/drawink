@@ -220,7 +220,7 @@ const StatsDragInput = <
         ref={labelRef}
         onPointerDown={(event) => {
           if (inputRef.current && editable) {
-            document.body.classList.add("excalidraw-cursor-resize");
+            document.body.classList.add("drawink-cursor-resize");
 
             let startValue = Number(inputRef.current.value);
             if (isNaN(startValue)) {
@@ -317,7 +317,7 @@ const StatsDragInput = <
               originalElements = null;
               originalElementsMap = null;
 
-              document.body.classList.remove("excalidraw-cursor-resize");
+              document.body.classList.remove("drawink-cursor-resize");
 
               window.removeEventListener(EVENT.POINTER_UP, onPointerUp, false);
             };

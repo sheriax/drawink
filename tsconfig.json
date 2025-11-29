@@ -60,7 +60,7 @@
   },
   "include": [
     "packages",
-    "excalidraw-app"
+    "drawink-app"
   ],
   "exclude": [
     "examples",

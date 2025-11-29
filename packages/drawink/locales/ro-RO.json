@@ -121,7 +121,7 @@
     "toggleTheme": "Comutare temă luminoasă/întunecată",
     "theme": "Temă",
     "personalLib": "Biblioteca personală",
-    "excalidrawLib": "Biblioteca Drawink",
+    "drawinkLib": "Biblioteca Drawink",
     "decreaseFontSize": "Micșorează dimensiunea fontului",
     "increaseFontSize": "Mărește dimensiunea fontului",
     "unbindText": "Deconectare text",
@@ -401,9 +401,9 @@
     "link_title": "URL partajabil",
     "link_details": "Exportă ca URL doar în citire.",
     "link_button": "Exportare în URL",
-    "excalidrawplus_description": "Salvează scena în spațiul de lucru Drawink+.",
-    "excalidrawplus_button": "Exportare",
-    "excalidrawplus_exportError": "Drawink+ nu a putut fi exportat în acest moment..."
+    "drawinkplus_description": "Salvează scena în spațiul de lucru Drawink+.",
+    "drawinkplus_button": "Exportare",
+    "drawinkplus_exportError": "Drawink+ nu a putut fi exportat în acest moment..."
   },
   "helpDialog": {
     "blog": "Citește blogul nostru",
@@ -587,7 +587,7 @@
         "button": "Salvare pe disc",
         "description": "Exportă datele scenei pe un fișier din care poți importa mai târziu."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Exportare în Drawink+",
         "description": "Salvează scena în spațiul de lucru Drawink+."

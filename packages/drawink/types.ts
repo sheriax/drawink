@@ -549,7 +549,7 @@ export interface DrawinkProps {
   initialData?:
   | (() => MaybePromise<DrawinkInitialDataState | null>)
   | MaybePromise<DrawinkInitialDataState | null>;
-  excalidrawAPI?: (api: DrawinkImperativeAPI) => void;
+  drawinkAPI?: (api: DrawinkImperativeAPI) => void;
   isCollaborating?: boolean;
   onPointerUpdate?: (payload: {
     pointer: { x: number; y: number; tool: "pointer" | "laser" };
@@ -749,7 +749,7 @@ export type AppClassProperties = {
   plugins: App["plugins"];
   getEditorUIOffsets: App["getEditorUIOffsets"];
   visibleElements: App["visibleElements"];
-  excalidrawContainerValue: App["excalidrawContainerValue"];
+  drawinkContainerValue: App["drawinkContainerValue"];
 
   onPointerUpEmitter: App["onPointerUpEmitter"];
   updateEditorAtom: App["updateEditorAtom"];

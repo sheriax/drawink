@@ -49,8 +49,8 @@ export const serializeAsJSON = (
   type: "local" | "database",
 ): string => {
   const data: ExportedDataState = {
-    type: EXPORT_DATA_TYPES.excalidraw,
-    version: VERSIONS.excalidraw,
+    type: EXPORT_DATA_TYPES.drawink,
+    version: VERSIONS.drawink,
     source: getExportSource(),
     elements,
     appState:
@@ -76,12 +76,12 @@ export const saveAsJSON = async (
 ) => {
   const serialized = serializeAsJSON(elements, appState, files, "local");
   const blob = new Blob([serialized], {
-    type: MIME_TYPES.excalidraw,
+    type: MIME_TYPES.drawink,
   });
 
   const fileHandle = await fileSave(blob, {
     name,
-    extension: "excalidraw",
+    extension: "drawink",
     description: "Drawink file",
     fileHandle: isImageFileHandle(appState.fileHandle)
       ? null
@@ -97,8 +97,8 @@ export const loadFromJSON = async (
   const file = await fileOpen({
     description: "Drawink files",
     // ToDo: Be over-permissive until https://bugs.webkit.org/show_bug.cgi?id=34442
-    // gets resolved. Else, iOS users cannot open `.excalidraw` files.
-    // extensions: ["json", "excalidraw", "png", "svg"],
+    // gets resolved. Else, iOS users cannot open `.drawink` files.
+    // extensions: ["json", "drawink", "png", "svg"],
   });
   return loadFromBlob(file, localAppState, localElements, file.handle);
 };
@@ -109,7 +109,7 @@ export const isValidDrawinkData = (data?: {
   appState?: any;
 }): data is ImportedDataState => {
   return (
-    data?.type === EXPORT_DATA_TYPES.excalidraw &&
+    data?.type === EXPORT_DATA_TYPES.drawink &&
     (!data.elements ||
       (Array.isArray(data.elements) &&
         (!data.appState || typeof data.appState === "object")))
@@ -120,15 +120,15 @@ export const isValidLibrary = (json: any): json is ImportedLibraryData => {
   return (
     typeof json === "object" &&
     json &&
-    json.type === EXPORT_DATA_TYPES.excalidrawLibrary &&
+    json.type === EXPORT_DATA_TYPES.drawinkLibrary &&
     (json.version === 1 || json.version === 2)
   );
 };
 
 export const serializeLibraryAsJSON = (libraryItems: LibraryItems) => {
   const data: ExportedLibraryData = {
-    type: EXPORT_DATA_TYPES.excalidrawLibrary,
-    version: VERSIONS.excalidrawLibrary,
+    type: EXPORT_DATA_TYPES.drawinkLibrary,
+    version: VERSIONS.drawinkLibrary,
     source: getExportSource(),
     libraryItems,
   };
@@ -139,11 +139,11 @@ export const saveLibraryAsJSON = async (libraryItems: LibraryItems) => {
   const serialized = serializeLibraryAsJSON(libraryItems);
   await fileSave(
     new Blob([serialized], {
-      type: MIME_TYPES.excalidrawlib,
+      type: MIME_TYPES.drawinklib,
     }),
     {
       name: "library",
-      extension: "excalidrawlib",
+      extension: "drawinklib",
       description: "Drawink library file",
     },
   );

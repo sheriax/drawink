@@ -154,14 +154,14 @@ describe("Test Transform", () => {
         strokeStyle: "dotted",
       },
     ];
-    const excalidrawElements = convertToDrawinkElements(
+    const drawinkElements = convertToDrawinkElements(
       elements as DrawinkElementSkeleton[],
       opts,
     );
 
-    expect(excalidrawElements.length).toBe(4);
+    expect(drawinkElements.length).toBe(4);
 
-    excalidrawElements.forEach((ele) => {
+    drawinkElements.forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),
@@ -237,14 +237,14 @@ describe("Test Transform", () => {
         },
       },
     ];
-    const excalidrawElements = convertToDrawinkElements(
+    const drawinkElements = convertToDrawinkElements(
       elements as DrawinkElementSkeleton[],
       opts,
     );
 
-    expect(excalidrawElements.length).toBe(12);
+    expect(drawinkElements.length).toBe(12);
 
-    excalidrawElements.forEach((ele) => {
+    drawinkElements.forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),
@@ -295,14 +295,14 @@ describe("Test Transform", () => {
         },
       },
     ];
-    const excalidrawElements = convertToDrawinkElements(
+    const drawinkElements = convertToDrawinkElements(
       elements as DrawinkElementSkeleton[],
       opts,
     );
 
-    expect(excalidrawElements.length).toBe(8);
+    expect(drawinkElements.length).toBe(8);
 
-    excalidrawElements.forEach((ele) => {
+    drawinkElements.forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),
@@ -344,13 +344,13 @@ describe("Test Transform", () => {
           name: "My frame",
         },
       ];
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elementsSkeleton,
         opts,
       );
-      expect(excalidrawElements.length).toBe(4);
+      expect(drawinkElements.length).toBe(4);
 
-      excalidrawElements.forEach((ele) => {
+      drawinkElements.forEach((ele) => {
         expect(ele).toMatchObject({
           seed: expect.any(Number),
           versionNonce: expect.any(Number),
@@ -370,11 +370,11 @@ describe("Test Transform", () => {
           height: 100,
         },
       ];
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elementsSkeleton,
         opts,
       );
-      const frame = excalidrawElements.find((ele) => ele.type === "frame")!;
+      const frame = drawinkElements.find((ele) => ele.type === "frame")!;
       expect(frame.width).toBe(800);
       expect(frame.height).toBe(100);
     });
@@ -390,11 +390,11 @@ describe("Test Transform", () => {
           y: 300,
         },
       ];
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elementsSkeleton,
         opts,
       );
-      const frame = excalidrawElements.find((ele) => ele.type === "frame")!;
+      const frame = drawinkElements.find((ele) => ele.type === "frame")!;
       expect(frame.x).toBe(100);
       expect(frame.y).toBe(300);
     });
@@ -418,13 +418,13 @@ describe("Test Transform", () => {
           },
         },
       ];
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
 
-      expect(excalidrawElements.length).toBe(4);
-      const [arrow, text, rectangle, ellipse] = excalidrawElements;
+      expect(drawinkElements.length).toBe(4);
+      const [arrow, text, rectangle, ellipse] = drawinkElements;
       expect(arrow).toMatchObject({
         type: "arrow",
         x: 255.5,
@@ -470,7 +470,7 @@ describe("Test Transform", () => {
         ],
       });
 
-      excalidrawElements.forEach((ele) => {
+      drawinkElements.forEach((ele) => {
         expect(ele).toMatchSnapshot({
           seed: expect.any(Number),
           versionNonce: expect.any(Number),
@@ -499,13 +499,13 @@ describe("Test Transform", () => {
         },
       ];
 
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
 
-      expect(excalidrawElements.length).toBe(4);
-      const [arrow, text1, text2, text3] = excalidrawElements;
+      expect(drawinkElements.length).toBe(4);
+      const [arrow, text1, text2, text3] = drawinkElements;
 
       expect(arrow).toMatchObject({
         type: "arrow",
@@ -552,7 +552,7 @@ describe("Test Transform", () => {
         ],
       });
 
-      excalidrawElements.forEach((ele) => {
+      drawinkElements.forEach((ele) => {
         expect(ele).toMatchSnapshot({
           seed: expect.any(Number),
           versionNonce: expect.any(Number),
@@ -612,14 +612,14 @@ describe("Test Transform", () => {
         },
       ];
 
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
 
-      expect(excalidrawElements.length).toBe(5);
+      expect(drawinkElements.length).toBe(5);
 
-      excalidrawElements.forEach((ele) => {
+      drawinkElements.forEach((ele) => {
         expect(ele).toMatchSnapshot({
           seed: expect.any(Number),
           versionNonce: expect.any(Number),
@@ -661,14 +661,14 @@ describe("Test Transform", () => {
         },
       ];
 
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
 
-      expect(excalidrawElements.length).toBe(4);
+      expect(drawinkElements.length).toBe(4);
 
-      excalidrawElements.forEach((ele) => {
+      drawinkElements.forEach((ele) => {
         expect(ele).toMatchSnapshot({
           seed: expect.any(Number),
           versionNonce: expect.any(Number),
@@ -715,13 +715,13 @@ describe("Test Transform", () => {
         },
       ];
 
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
 
-      expect(excalidrawElements.length).toBe(4);
-      const [, , arrow, text] = excalidrawElements;
+      expect(drawinkElements.length).toBe(4);
+      const [, , arrow, text] = drawinkElements;
       expect(arrow).toMatchObject({
         type: "arrow",
         x: 255.5,
@@ -766,12 +766,12 @@ describe("Test Transform", () => {
           backgroundColor: "#bac8ff",
         },
       ];
-      const excalidrawElements = convertToDrawinkElements(
+      const drawinkElements = convertToDrawinkElements(
         elements as DrawinkElementSkeleton[],
         opts,
       );
-      expect(excalidrawElements.length).toBe(2);
-      const [arrow, rect] = excalidrawElements;
+      expect(drawinkElements.length).toBe(2);
+      const [arrow, rect] = drawinkElements;
       expect((arrow as DrawinkArrowElement).endBinding).toStrictEqual({
         elementId: "rect-1",
         fixedPoint: [-2.05, 0.5001],
@@ -809,13 +809,13 @@ describe("Test Transform", () => {
         height: 200,
       },
     ];
-    const excalidrawElements = convertToDrawinkElements(
+    const drawinkElements = convertToDrawinkElements(
       elements as DrawinkElementSkeleton[],
       opts,
     );
 
-    expect(excalidrawElements.length).toBe(1);
-    expect(excalidrawElements[0]).toMatchSnapshot({
+    expect(drawinkElements.length).toBe(1);
+    expect(drawinkElements[0]).toMatchSnapshot({
       seed: expect.any(Number),
       versionNonce: expect.any(Number),
     });
@@ -954,9 +954,9 @@ describe("Test Transform", () => {
       },
     ];
 
-    const excalidrawElements = convertToDrawinkElements(elements, opts);
-    expect(excalidrawElements.length).toBe(12);
-    excalidrawElements.forEach((ele) => {
+    const drawinkElements = convertToDrawinkElements(elements, opts);
+    expect(drawinkElements.length).toBe(12);
+    drawinkElements.forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),

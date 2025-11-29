@@ -1,6 +1,6 @@
-# mermaid-to-excalidraw
+# mermaid-to-drawink
 
-Convert mermaid diagrams to excalidraw
+Convert mermaid diagrams to drawink
 
 ## Set up
 
@@ -25,13 +25,13 @@ yarn build
 ## Get started
 
 ```ts
-parseMermaidToExcalidraw(diagramDefinition: string, config?: MermaidConfig)
+parseMermaidToDrawink(diagramDefinition: string, config?: MermaidConfig)
 ```
 
 The `diagramDefinition` is the mermaid diagram definition.
 and `config` is the mermaid config. You can use the `config` param when you want to pass some custom config to mermaid.
 
-Currently `mermaid-to-excalidraw` only supports the :point_down: config params
+Currently `mermaid-to-drawink` only supports the :point_down: config params
 
 ```ts
 {
@@ -70,10 +70,10 @@ Currently `mermaid-to-excalidraw` only supports the :point_down: config params
 Example code:
 
 ```ts
-import { parseMermaidToExcalidraw } from "@drawink/mermaid-to-excalidraw";
+import { parseMermaidToDrawink } from "@drawink/mermaid-to-drawink";
 
 try {
-  const { elements, files } = await parseMermaidToExcalidraw(
+  const { elements, files } = await parseMermaidToDrawink(
     diagramDefinition,
     {
       themeVariables: {
@@ -81,7 +81,7 @@ try {
       },
     }
   );
-  // Render elements and files on Excalidraw
+  // Render elements and files on Drawink
 } catch (e) {
   // Parse error, displaying error message to users
 }
@@ -89,12 +89,12 @@ try {
 
 ## Playground
 
-Try out [here](https://mermaid-to-excalidraw.vercel.app).
+Try out [here](https://mermaid-to-drawink.vercel.app).
 
 ## API
 
-Head over to the [docs](https://docs.excalidraw.com/docs/@drawink/mermaid-to-excalidraw/api).
+Head over to the [docs](https://docs.drawink.com/docs/@drawink/mermaid-to-drawink/api).
 
 ## Support new Diagram type
 
-Head over to the [docs](https://docs.excalidraw.com/docs/@drawink/mermaid-to-excalidraw/codebase/new-diagram-type).
+Head over to the [docs](https://docs.drawink.com/docs/@drawink/mermaid-to-drawink/codebase/new-diagram-type).

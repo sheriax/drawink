@@ -121,7 +121,7 @@
     "toggleTheme": "ライト/ダークテーマに変更",
     "theme": "テーマ",
     "personalLib": "個人ライブラリ",
-    "excalidrawLib": "Drawinkライブラリ",
+    "drawinkLib": "Drawinkライブラリ",
     "decreaseFontSize": "フォントサイズを縮小",
     "increaseFontSize": "フォントサイズを拡大",
     "unbindText": "テキストのバインド解除",
@@ -401,9 +401,9 @@
     "link_title": "共有可能なリンク",
     "link_details": "読み取り専用リンクとしてエクスポート",
     "link_button": "リンクとしてエクスポート",
-    "excalidrawplus_description": "Drawink+ ワークスペースにシーンを保存します。",
-    "excalidrawplus_button": "エクスポート",
-    "excalidrawplus_exportError": "Drawink+ にエクスポートできませんでした..."
+    "drawinkplus_description": "Drawink+ ワークスペースにシーンを保存します。",
+    "drawinkplus_button": "エクスポート",
+    "drawinkplus_exportError": "Drawink+ にエクスポートできませんでした..."
   },
   "helpDialog": {
     "blog": "公式ブログを読む",
@@ -587,7 +587,7 @@
         "button": "ディスクに保存",
         "description": "シーンデータを後でインポートできるファイルにエクスポートします。"
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Drawink+にエクスポート",
         "description": "Drawink+ ワークスペースにシーンを保存します。"

@@ -664,13 +664,13 @@ function CommandPaletteInner({
     if (uiAppState.openDialog?.name === "commandPalette") {
       event.stopPropagation();
       event.preventDefault();
-      document.body.classList.add("excalidraw-animations-disabled");
+      document.body.classList.add("drawink-animations-disabled");
       closeCommandPalette(() => {
         command.perform({ actionManager, event });
         setLastUsed(command);
 
         requestAnimationFrame(() => {
-          document.body.classList.remove("excalidraw-animations-disabled");
+          document.body.classList.remove("drawink-animations-disabled");
         });
       });
     }

@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Jeke kitapxana",
-    "excalidrawLib": "Drawink kitapxanası",
+    "drawinkLib": "Drawink kitapxanası",
     "decreaseFontSize": "Shrift ólshemin kishireytiw",
     "increaseFontSize": "Shrift ólshemin úlkeytiw",
     "unbindText": "",
@@ -401,9 +401,9 @@
     "link_title": "",
     "link_details": "",
     "link_button": "Siltemege eksportlaw",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "Eksportlaw",
-    "excalidrawplus_exportError": ""
+    "drawinkplus_description": "",
+    "drawinkplus_button": "Eksportlaw",
+    "drawinkplus_exportError": ""
   },
   "helpDialog": {
     "blog": "Biziń blogtı oqıń",
@@ -587,7 +587,7 @@
         "button": "Diskke saqlaw",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

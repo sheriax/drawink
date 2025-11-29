@@ -121,7 +121,7 @@
     "toggleTheme": "החלפת מצב מואר/חשוך",
     "theme": "ערכת עיצוב",
     "personalLib": "ספריה פרטית",
-    "excalidrawLib": "הספרייה של Drawink",
+    "drawinkLib": "הספרייה של Drawink",
     "decreaseFontSize": "הקטנת הכתב",
     "increaseFontSize": "הגדלת הכתב",
     "unbindText": "ביטול קיבוע הטקסט",
@@ -401,9 +401,9 @@
     "link_title": "קבל קישור לשיתוף",
     "link_details": "ייצוא כקישור לקריאה בלבד.",
     "link_button": "ייצוא לקישור",
-    "excalidrawplus_description": "שמור את הקנבאס לסביבת העבודה שלך ב- +Drawink.",
-    "excalidrawplus_button": "ייצוא",
-    "excalidrawplus_exportError": "לא הצלחתי לייצא ל- +Drawink כרגע..."
+    "drawinkplus_description": "שמור את הקנבאס לסביבת העבודה שלך ב- +Drawink.",
+    "drawinkplus_button": "ייצוא",
+    "drawinkplus_exportError": "לא הצלחתי לייצא ל- +Drawink כרגע..."
   },
   "helpDialog": {
     "blog": "קרא את הבלוג שלנו",
@@ -587,7 +587,7 @@
         "button": "שמירה לכונן",
         "description": "ייצוא נתוני הסצנה לקובץ אותו אפשר לייבא בהמשך."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+‎",
         "button": "ייצוא ל־Drawink+‎",
         "description": "שמירת הסצנה לסביבת העבודה שלך ב־+Drawink."

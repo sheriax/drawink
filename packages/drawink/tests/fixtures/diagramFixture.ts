@@ -7,9 +7,9 @@ import {
 } from "./elementFixture";
 
 export const diagramFixture = {
-  type: "excalidraw",
-  version: VERSIONS.excalidraw,
-  source: "https://excalidraw.com",
+  type: "drawink",
+  version: VERSIONS.drawink,
+  source: "https://drawink.com",
   elements: [diamondFixture, ellipseFixture, rectangleFixture],
   appState: {
     viewBackgroundColor: "#ffffff",

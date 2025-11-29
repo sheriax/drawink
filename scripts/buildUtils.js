@@ -16,7 +16,7 @@ const getConfig = (outdir) => ({
   alias: {
     "@drawink/common": path.resolve(__dirname, "../packages/common/src"),
     "@drawink/element": path.resolve(__dirname, "../packages/element/src"),
-    "@drawink/excalidraw": path.resolve(__dirname, "../packages/excalidraw"),
+    "@drawink/drawink": path.resolve(__dirname, "../packages/drawink"),
     "@drawink/math": path.resolve(__dirname, "../packages/math/src"),
     "@drawink/utils": path.resolve(__dirname, "../packages/utils/src"),
   },

@@ -1,6 +1,6 @@
 # LiveCollaborationTrigger
 
-If you implement live collaboration support and want to expose the same UI button as on [excalidraw.com](https://excalidraw.com), you can render the `<LiveCollaborationTrigger/>` component using the [renderTopRightUI](/docs/@excalidraw/excalidraw/api/props#rendertoprightui) prop.
+If you implement live collaboration support and want to expose the same UI button as on [drawink.com](https://drawink.com), you can render the `<LiveCollaborationTrigger/>` component using the [renderTopRightUI](/docs/@drawink/drawink/api/props#rendertoprightui) prop.
 
 You'll need to supply `onSelect()` to handle opening of your collaboration dialog, but the button will display `appState.collaborators` count provided you have supplied it.
 
@@ -11,7 +11,7 @@ You'll need to supply `onSelect()` to handle opening of your collaboration dialo
 
 ```tsx live
 function App() {
-  const [excalidrawAPI, setExcalidrawAPI] = useState(null);
+  const [drawinkAPI, setDrawinkAPI] = useState(null);
   const [isCollaborating, setIsCollaborating] = useState(false);
   return (
     <div style={{ height: "500px" }}>
@@ -33,9 +33,9 @@ function App() {
                 username: "Pika",
                 avatarUrl: "../../../../img/pika.jpeg",
               });
-              excalidrawAPI.updateScene({ collaborators });
+              drawinkAPI.updateScene({ collaborators });
             } else {
-              excalidrawAPI.updateScene({
+              drawinkAPI.updateScene({
                 collaborators: new Map(),
               });
             }
@@ -44,8 +44,8 @@ function App() {
         />
         Show Collaborators
       </label>
-      <Excalidraw
-        ref={(api) => setExcalidrawAPI(api)}
+      <Drawink
+        ref={(api) => setDrawinkAPI(api)}
         renderTopRightUI={() => (
           <LiveCollaborationTrigger
             isCollaborating={isCollaborating}
@@ -55,7 +55,7 @@ function App() {
             }}
           />
         )}
-      ></Excalidraw>
+      ></Drawink>
     </div>
   );
 }

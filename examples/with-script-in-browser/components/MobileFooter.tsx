@@ -1,26 +1,26 @@
 import React from "react";
 
-import type * as TExcalidraw from "@drawink/drawink";
-import type { ExcalidrawImperativeAPI } from "@drawink/drawink/types";
+import type * as TDrawink from "@drawink/drawink";
+import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
 
 import CustomFooter from "./CustomFooter";
 
 const MobileFooter = ({
-  excalidrawAPI,
-  excalidrawLib,
+  drawinkAPI,
+  drawinkLib,
 }: {
-  excalidrawAPI: ExcalidrawImperativeAPI;
-  excalidrawLib: typeof TExcalidraw;
+  drawinkAPI: DrawinkImperativeAPI;
+  drawinkLib: typeof TDrawink;
 }) => {
-  const { useEditorInterface, Footer } = excalidrawLib;
+  const { useEditorInterface, Footer } = drawinkLib;
 
   const editorInterface = useEditorInterface();
   if (editorInterface.formFactor === "phone") {
     return (
       <Footer>
         <CustomFooter
-          excalidrawAPI={excalidrawAPI}
-          excalidrawLib={excalidrawLib}
+          drawinkAPI={drawinkAPI}
+          drawinkLib={drawinkLib}
         />
       </Footer>
     );

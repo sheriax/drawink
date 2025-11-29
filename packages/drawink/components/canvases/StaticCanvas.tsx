@@ -53,7 +53,7 @@ const StaticCanvas = (props: StaticCanvasProps) => {
       isComponentMounted.current = true;
 
       wrapper.replaceChildren(canvas);
-      canvas.classList.add("excalidraw__canvas", "static");
+      canvas.classList.add("drawink__canvas", "static");
     }
 
     renderStaticScene(

@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Personleg bibliotek",
-    "excalidrawLib": "Drawink-bibliotek",
+    "drawinkLib": "Drawink-bibliotek",
     "decreaseFontSize": "Gjer skriftstorleik mindre",
     "increaseFontSize": "Gjer skriftstorleik større",
     "unbindText": "Avbind tekst",
@@ -401,9 +401,9 @@
     "link_title": "Deleleg lenke",
     "link_details": "Eksporter som skrivebeskytta lenke.",
     "link_button": "Eksporter til lenke",
-    "excalidrawplus_description": "Lagre scena til Drawink+-arbeidsområdet ditt.",
-    "excalidrawplus_button": "Eksporter",
-    "excalidrawplus_exportError": "Kunne ikkje eksportere til Drawink+ akkurat no..."
+    "drawinkplus_description": "Lagre scena til Drawink+-arbeidsområdet ditt.",
+    "drawinkplus_button": "Eksporter",
+    "drawinkplus_exportError": "Kunne ikkje eksportere til Drawink+ akkurat no..."
   },
   "helpDialog": {
     "blog": "Les bloggen vår",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

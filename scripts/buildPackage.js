@@ -3,7 +3,7 @@ const path = require("path");
 const { build } = require("esbuild");
 const { sassPlugin } = require("esbuild-sass-plugin");
 
-const { parseEnvVariables } = require("../packages/excalidraw/env.cjs");
+const { parseEnvVariables } = require("../packages/drawink/env.cjs");
 
 const ENV_VARS = {
   development: {

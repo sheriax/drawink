@@ -121,7 +121,7 @@
     "toggleTheme": "تبديل الوضع الفاتح/الداكن",
     "theme": "السمة",
     "personalLib": "المكتبة الشخصية",
-    "excalidrawLib": "مكتبتنا",
+    "drawinkLib": "مكتبتنا",
     "decreaseFontSize": "تصغير حجم الخط",
     "increaseFontSize": "تكبير حجم الخط",
     "unbindText": "فك ربط النص",
@@ -401,9 +401,9 @@
     "link_title": "رابط قابل للمشاركة",
     "link_details": "تصدير الملف للمشاهدة فقط.",
     "link_button": "تصدير كرابط",
-    "excalidrawplus_description": "حفظ المشهد إلى مساحة العمل +Drawink الخاصة بك.",
-    "excalidrawplus_button": "تصدير",
-    "excalidrawplus_exportError": "تعذر التص несп في الوقت الحالي إلى +Drawink..."
+    "drawinkplus_description": "حفظ المشهد إلى مساحة العمل +Drawink الخاصة بك.",
+    "drawinkplus_button": "تصدير",
+    "drawinkplus_exportError": "تعذر التص несп في الوقت الحالي إلى +Drawink..."
   },
   "helpDialog": {
     "blog": "اقرأ مدونتنا",
@@ -587,7 +587,7 @@
         "button": "حفظ الملف على الجهاز",
         "description": "تصدير بيانات المشهد إلى ملف يمكنك الاستيراد منه لاحقًا."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "تصدير إلى Drawink+",
         "description": "حفظ المشهد إلى مساحة العمل +Drawink الخاصة بك."

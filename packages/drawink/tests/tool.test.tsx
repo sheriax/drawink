@@ -12,29 +12,29 @@ import type { DrawinkImperativeAPI } from "../types";
 describe("setActiveTool()", () => {
   const h = window.h;
 
-  let excalidrawAPI: DrawinkImperativeAPI;
+  let drawinkAPI: DrawinkImperativeAPI;
 
   const mouse = new Pointer("mouse");
 
   beforeEach(async () => {
-    const excalidrawAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
+    const drawinkAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
     await render(
       <Drawink
-        excalidrawAPI={(api) => excalidrawAPIPromise.resolve(api as any)}
+        drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)}
       />,
     );
-    excalidrawAPI = await excalidrawAPIPromise;
+    drawinkAPI = await drawinkAPIPromise;
   });
 
   it("should expose setActiveTool on package API", () => {
-    expect(excalidrawAPI.setActiveTool).toBeDefined();
-    expect(excalidrawAPI.setActiveTool).toBe(h.app.setActiveTool);
+    expect(drawinkAPI.setActiveTool).toBeDefined();
+    expect(drawinkAPI.setActiveTool).toBe(h.app.setActiveTool);
   });
 
   it("should set the active tool type", async () => {
     expect(h.state.activeTool.type).toBe("selection");
     act(() => {
-      excalidrawAPI.setActiveTool({ type: "rectangle" });
+      drawinkAPI.setActiveTool({ type: "rectangle" });
     });
     expect(h.state.activeTool.type).toBe("rectangle");
 
@@ -47,7 +47,7 @@ describe("setActiveTool()", () => {
   it("should support tool locking", async () => {
     expect(h.state.activeTool.type).toBe("selection");
     act(() => {
-      excalidrawAPI.setActiveTool({ type: "rectangle", locked: true });
+      drawinkAPI.setActiveTool({ type: "rectangle", locked: true });
     });
     expect(h.state.activeTool.type).toBe("rectangle");
 
@@ -60,7 +60,7 @@ describe("setActiveTool()", () => {
   it("should set custom tool", async () => {
     expect(h.state.activeTool.type).toBe("selection");
     act(() => {
-      excalidrawAPI.setActiveTool({ type: "custom", customType: "comment" });
+      drawinkAPI.setActiveTool({ type: "custom", customType: "comment" });
     });
     expect(h.state.activeTool.type).toBe("custom");
     expect(h.state.activeTool.customType).toBe("comment");

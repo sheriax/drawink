@@ -427,7 +427,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
       <a
         aria-label="GitHub"
         class="dropdown-menu-item dropdown-menu-item-base"
-        href="https://github.com/excalidraw/excalidraw"
+        href="https://github.com/drawink/drawink"
         rel="noopener"
         target="_blank"
         title="GitHub"
@@ -465,7 +465,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
       <a
         aria-label="X"
         class="dropdown-menu-item dropdown-menu-item-base"
-        href="https://x.com/excalidraw"
+        href="https://x.com/drawink"
         rel="noopener"
         target="_blank"
         title="X"

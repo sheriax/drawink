@@ -23,7 +23,7 @@ export const AppWelcomeScreen: React.FC<{
     //           style={{ pointerEvents: POINTER_EVENTS.inheritFromUI }}
     //           href={`${
     //             import.meta.env.VITE_APP_PLUS_APP
-    //           }?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenSignedInUser`}
+    //           }?utm_source=drawink&utm_medium=app&utm_content=welcomeScreenSignedInUser`}
     //           key={idx}
     //         >
     //           Drawink+
@@ -61,7 +61,7 @@ export const AppWelcomeScreen: React.FC<{
             <WelcomeScreen.Center.MenuItemLink
               href={`${
                 import.meta.env.VITE_APP_PLUS_LP
-              }/plus?utm_source=excalidraw&utm_medium=app&utm_content=welcomeScreenGuest`}
+              }/plus?utm_source=drawink&utm_medium=app&utm_content=welcomeScreenGuest`}
               shortcut={null}
               icon={loginIcon}
             >

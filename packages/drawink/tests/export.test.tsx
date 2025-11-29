@@ -211,7 +211,7 @@ describe("export", () => {
 
     // expect 1 <image> element (deduped)
     expect(svgText.match(/<image/g)?.length).toBe(1);
-    // expect 4 <use> elements (one for each excalidraw image element)
+    // expect 4 <use> elements (one for each drawink image element)
     expect(svgText.match(/<use/g)?.length).toBe(4);
 
     // in case of regressions, save the SVG to a file and visually compare to:

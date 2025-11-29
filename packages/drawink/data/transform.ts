@@ -482,18 +482,18 @@ const bindLinearElementToElement = (
 };
 
 class ElementStore {
-  excalidrawElements = new Map<string, DrawinkElement>();
+  drawinkElements = new Map<string, DrawinkElement>();
 
   add = (ele?: DrawinkElement) => {
     if (!ele) {
       return;
     }
 
-    this.excalidrawElements.set(ele.id, ele);
+    this.drawinkElements.set(ele.id, ele);
   };
 
   getElements = () => {
-    return syncInvalidIndices(Array.from(this.excalidrawElements.values()));
+    return syncInvalidIndices(Array.from(this.drawinkElements.values()));
   };
 
   getElementsMap = () => {
@@ -503,7 +503,7 @@ class ElementStore {
   };
 
   getElement = (id: string) => {
-    return this.excalidrawElements.get(id);
+    return this.drawinkElements.get(id);
   };
 }
 
@@ -521,7 +521,7 @@ export const convertToDrawinkElements = (
 
   // Create individual elements
   for (const element of elements) {
-    let excalidrawElement: DrawinkElement;
+    let drawinkElement: DrawinkElement;
     const originalId = element.id;
     if (opts?.regenerateIds !== false) {
       Object.assign(element, { id: randomId() });
@@ -539,7 +539,7 @@ export const convertToDrawinkElements = (
           element?.label?.text && element.height === undefined
             ? 0
             : element?.height || DEFAULT_DIMENSION;
-        excalidrawElement = newElement({
+        drawinkElement = newElement({
           ...element,
           width,
           height,
@@ -550,7 +550,7 @@ export const convertToDrawinkElements = (
       case "line": {
         const width = element.width || DEFAULT_LINEAR_ELEMENT_PROPS.width;
         const height = element.height || DEFAULT_LINEAR_ELEMENT_PROPS.height;
-        excalidrawElement = newLinearElement({
+        drawinkElement = newLinearElement({
           width,
           height,
           points: [pointFrom(0, 0), pointFrom(width, height)],
@@ -562,7 +562,7 @@ export const convertToDrawinkElements = (
       case "arrow": {
         const width = element.width || DEFAULT_LINEAR_ELEMENT_PROPS.width;
         const height = element.height || DEFAULT_LINEAR_ELEMENT_PROPS.height;
-        excalidrawElement = newArrowElement({
+        drawinkElement = newArrowElement({
           width,
           height,
           endArrowhead: "arrow",
@@ -572,8 +572,8 @@ export const convertToDrawinkElements = (
         });
 
         Object.assign(
-          excalidrawElement,
-          getSizeFromPoints(excalidrawElement.points),
+          drawinkElement,
+          getSizeFromPoints(drawinkElement.points),
         );
         break;
       }
@@ -589,7 +589,7 @@ export const convertToDrawinkElements = (
           lineHeight,
         );
 
-        excalidrawElement = newTextElement({
+        drawinkElement = newTextElement({
           width: metrics.width,
           height: metrics.height,
           fontFamily,
@@ -599,7 +599,7 @@ export const convertToDrawinkElements = (
         break;
       }
       case "image": {
-        excalidrawElement = newImageElement({
+        drawinkElement = newImageElement({
           width: element?.width || DEFAULT_DIMENSION,
           height: element?.height || DEFAULT_DIMENSION,
           ...element,
@@ -608,7 +608,7 @@ export const convertToDrawinkElements = (
         break;
       }
       case "frame": {
-        excalidrawElement = newFrameElement({
+        drawinkElement = newFrameElement({
           x: 0,
           y: 0,
           ...element,
@@ -616,7 +616,7 @@ export const convertToDrawinkElements = (
         break;
       }
       case "magicframe": {
-        excalidrawElement = newMagicFrameElement({
+        drawinkElement = newMagicFrameElement({
           x: 0,
           y: 0,
           ...element,
@@ -626,12 +626,12 @@ export const convertToDrawinkElements = (
       case "freedraw":
       case "iframe":
       case "embeddable": {
-        excalidrawElement = element;
+        drawinkElement = element;
         break;
       }
 
       default: {
-        excalidrawElement = element;
+        drawinkElement = element;
         assertNever(
           element,
           `Unhandled element type "${(element as any).type}"`,
@@ -639,14 +639,14 @@ export const convertToDrawinkElements = (
         );
       }
     }
-    const existingElement = elementStore.getElement(excalidrawElement.id);
+    const existingElement = elementStore.getElement(drawinkElement.id);
     if (existingElement) {
-      console.error(`Duplicate id found for ${excalidrawElement.id}`);
+      console.error(`Duplicate id found for ${drawinkElement.id}`);
     } else {
-      elementStore.add(excalidrawElement);
-      elementsWithIds.set(excalidrawElement.id, element);
+      elementStore.add(drawinkElement);
+      elementsWithIds.set(drawinkElement.id, element);
       if (originalId) {
-        oldToNewElementIdMap.set(originalId, excalidrawElement.id);
+        oldToNewElementIdMap.set(originalId, drawinkElement.id);
       }
     }
   }
@@ -657,7 +657,7 @@ export const convertToDrawinkElements = (
 
   // Add labels and arrow bindings
   for (const [id, element] of elementsWithIds) {
-    const excalidrawElement = elementStore.getElement(id)!;
+    const drawinkElement = elementStore.getElement(id)!;
 
     switch (element.type) {
       case "rectangle":
@@ -666,7 +666,7 @@ export const convertToDrawinkElements = (
       case "arrow": {
         if (element.label?.text) {
           let [container, text] = bindTextToContainer(
-            excalidrawElement,
+            drawinkElement,
             element?.label,
             scene,
           );
@@ -717,7 +717,7 @@ export const convertToDrawinkElements = (
               }
               const { linearElement, startBoundElement, endBoundElement } =
                 bindLinearElementToElement(
-                  excalidrawElement as DrawinkArrowElement,
+                  drawinkElement as DrawinkArrowElement,
                   start,
                   end,
                   elementStore,
@@ -736,7 +736,7 @@ export const convertToDrawinkElements = (
     }
   }
 
-  // Once all the excalidraw elements are created, we can add frames since we
+  // Once all the drawink elements are created, we can add frames since we
   // need to calculate coordinates and dimensions of frame which is possible after all
   // frame children are processed.
   for (const [id, element] of elementsWithIds) {

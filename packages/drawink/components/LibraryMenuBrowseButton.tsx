@@ -19,9 +19,9 @@ const LibraryMenuBrowseButton = ({
     <a
       className="library-menu-browse-button"
       href={`${import.meta.env.VITE_APP_LIBRARY_URL}?target=${window.name || "_blank"
-        }&referrer=${referrer}&useHash=true&token=${id}&theme=${theme}&version=${VERSIONS.excalidrawLibrary
+        }&referrer=${referrer}&useHash=true&token=${id}&theme=${theme}&version=${VERSIONS.drawinkLibrary
         }`}
-      target="_excalidraw_libraries"
+      target="_drawink_libraries"
     >
       {t("labels.libraries")}
     </a>

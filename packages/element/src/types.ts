@@ -384,7 +384,7 @@ export type FileId = string & { _brand: "FileId" };
 export type DrawinkElementType = DrawinkElement["type"];
 
 /**
- * Map of excalidraw elements.
+ * Map of drawink elements.
  * Unspecified whether deleted or non-deleted.
  * Can be a subset of Scene elements.
  */
@@ -401,7 +401,7 @@ export type NonDeletedElementsMap = Map<
   MakeBrand<"NonDeletedElementsMap">;
 
 /**
- * Map of all excalidraw Scene elements, including deleted.
+ * Map of all drawink Scene elements, including deleted.
  * Not a subset. Use this type when you need access to current Scene elements.
  */
 export type SceneElementsMap = Map<

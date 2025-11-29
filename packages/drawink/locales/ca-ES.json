@@ -121,7 +121,7 @@
     "toggleTheme": "Alternar tema clar i fosc",
     "theme": "Tema",
     "personalLib": "Biblioteca personal",
-    "excalidrawLib": "Biblioteca d'Drawink",
+    "drawinkLib": "Biblioteca d'Drawink",
     "decreaseFontSize": "Redueix la mida de la lletra",
     "increaseFontSize": "Augmenta la mida de la lletra",
     "unbindText": "Desvincular el text",
@@ -401,9 +401,9 @@
     "link_title": "Enllaç per a compartir",
     "link_details": "Exporta com a un enllaç de només lectura.",
     "link_button": "Exporta a un enllaç",
-    "excalidrawplus_description": "Desa l'escena en el vostre espai de treball Drawink+.",
-    "excalidrawplus_button": "Exporta",
-    "excalidrawplus_exportError": "No és possible exportar a Drawink+ ara mateix..."
+    "drawinkplus_description": "Desa l'escena en el vostre espai de treball Drawink+.",
+    "drawinkplus_button": "Exporta",
+    "drawinkplus_exportError": "No és possible exportar a Drawink+ ara mateix..."
   },
   "helpDialog": {
     "blog": "Llegiu el nostre blog",
@@ -587,7 +587,7 @@
         "button": "Deseu al disc",
         "description": "Exporta les dades de l'escena a un fitxer des del qual podràs importar-les més tard."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Exporta a Drawink+",
         "description": "Desa l'escena al teu espai de treball d'Drawink+."

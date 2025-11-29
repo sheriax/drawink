@@ -260,7 +260,7 @@ export const Hyperlink = ({
     >
       {isEditing ? (
         <input
-          className={clsx("excalidraw-hyperlinkContainer-input")}
+          className={clsx("drawink-hyperlinkContainer-input")}
           placeholder={t("labels.link.hint")}
           ref={inputRef}
           value={inputVal}
@@ -407,7 +407,7 @@ const renderTooltip = (
 
   const tooltipDiv = getTooltipDiv();
 
-  tooltipDiv.classList.add("excalidraw-tooltip--visible");
+  tooltipDiv.classList.add("drawink-tooltip--visible");
   tooltipDiv.style.maxWidth = "20rem";
   tooltipDiv.textContent = isElementLink(element.link)
     ? t("labels.link.goToElement")
@@ -446,7 +446,7 @@ export const hideHyperlinkToolip = () => {
   }
   if (IS_HYPERLINK_TOOLTIP_VISIBLE) {
     IS_HYPERLINK_TOOLTIP_VISIBLE = false;
-    getTooltipDiv().classList.remove("excalidraw-tooltip--visible");
+    getTooltipDiv().classList.remove("drawink-tooltip--visible");
   }
 };
 

@@ -121,7 +121,7 @@
     "toggleTheme": "Chuyển đổi giao diện sáng/tối",
     "theme": "Chủ đề",
     "personalLib": "Thư viện cá nhân",
-    "excalidrawLib": "Thư viện Drawink",
+    "drawinkLib": "Thư viện Drawink",
     "decreaseFontSize": "Giảm cỡ chữ",
     "increaseFontSize": "Tăng cỡ chữ",
     "unbindText": "Bỏ liên kết văn bản",
@@ -401,9 +401,9 @@
     "link_title": "Liên kết có thể chia sẻ",
     "link_details": "Tạo liên kết chỉ xem",
     "link_button": "Tạo liên kết",
-    "excalidrawplus_description": "Lưu bản vẽ vào không gian làm việc Drawink+ của bạn.",
-    "excalidrawplus_button": "Xuất",
-    "excalidrawplus_exportError": "Hiện tại không thể xuất sang Drawink+..."
+    "drawinkplus_description": "Lưu bản vẽ vào không gian làm việc Drawink+ của bạn.",
+    "drawinkplus_button": "Xuất",
+    "drawinkplus_exportError": "Hiện tại không thể xuất sang Drawink+..."
   },
   "helpDialog": {
     "blog": "Đọc blog của chúng tôi",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

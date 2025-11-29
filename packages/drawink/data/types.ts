@@ -51,7 +51,7 @@ export interface ImportedDataState {
 
 export interface ExportedLibraryData {
   type: string;
-  version: typeof VERSIONS.excalidrawLibrary;
+  version: typeof VERSIONS.drawinkLibrary;
   source: string;
   libraryItems: LibraryItems;
 }

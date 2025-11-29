@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Biblioteca Persoal",
-    "excalidrawLib": "Biblioteca Drawink",
+    "drawinkLib": "Biblioteca Drawink",
     "decreaseFontSize": "Diminuír tamaño da fonte",
     "increaseFontSize": "Aumentar o tamaño da fonte",
     "unbindText": "Desvincular texto",
@@ -401,9 +401,9 @@
     "link_title": "Ligazón para compartir",
     "link_details": "Exportar como unha ligazón de só lectura.",
     "link_button": "Exportar a unha ligazón",
-    "excalidrawplus_description": "Garde a escena no seu espazo de traballo en Drawink+.",
-    "excalidrawplus_button": "Exportar",
-    "excalidrawplus_exportError": "Non se puido exportar a Drawink+ neste momento..."
+    "drawinkplus_description": "Garde a escena no seu espazo de traballo en Drawink+.",
+    "drawinkplus_button": "Exportar",
+    "drawinkplus_exportError": "Non se puido exportar a Drawink+ neste momento..."
   },
   "helpDialog": {
     "blog": "Le o noso blog",
@@ -587,7 +587,7 @@
         "button": "Gardar no disco",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Exportar a Drawink+",
         "description": ""

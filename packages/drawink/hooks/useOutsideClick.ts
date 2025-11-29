@@ -55,7 +55,7 @@ export function useOutsideClick<T extends HTMLElement>(
         // when radix popup is in "modal" mode, it disables pointer events on
         // the `body` element, so the target element is going to be the `html`
         // (note: this won't work if we selectively re-enable pointer events on
-        // specific elements as we do with navbar or excalidraw UI elements)
+        // specific elements as we do with navbar or drawink UI elements)
         (_event.target === document.documentElement &&
           document.body.style.pointerEvents === "none");
 

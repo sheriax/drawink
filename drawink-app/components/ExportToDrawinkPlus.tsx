@@ -81,9 +81,8 @@ export const exportToDrawinkPlus = async (
   }
 
   window.open(
-    `${
-      import.meta.env.VITE_APP_PLUS_APP
-    }/import?excalidraw=${id},${encryptionKey}`,
+    `${import.meta.env.VITE_APP_PLUS_APP
+    }/import?drawink=${id},${encryptionKey}`,
   );
 };
 
@@ -109,13 +108,13 @@ export const ExportToDrawinkPlus: React.FC<{
       </div>
       <h2>Drawink+</h2>
       <div className="Card-details">
-        {t("exportDialog.excalidrawplus_description")}
+        {t("exportDialog.drawinkplus_description")}
       </div>
       <ToolButton
         className="Card-button"
         type="button"
-        title={t("exportDialog.excalidrawplus_button")}
-        aria-label={t("exportDialog.excalidrawplus_button")}
+        title={t("exportDialog.drawinkplus_button")}
+        aria-label={t("exportDialog.drawinkplus_button")}
         showAriaLabel={true}
         onClick={async () => {
           try {
@@ -125,7 +124,7 @@ export const ExportToDrawinkPlus: React.FC<{
           } catch (error: any) {
             console.error(error);
             if (error.name !== "AbortError") {
-              onError(new Error(t("exportDialog.excalidrawplus_exportError")));
+              onError(new Error(t("exportDialog.drawinkplus_exportError")));
             }
           }
         }}

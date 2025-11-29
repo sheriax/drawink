@@ -159,7 +159,7 @@ const ColorPickerPopupContent = ({
         if (appState.editingTextElement) {
           setTimeout(() => {
             const textEditor = document.querySelector(
-              ".excalidraw-wysiwyg",
+              ".drawink-wysiwyg",
             ) as HTMLTextAreaElement;
             if (textEditor) {
               textEditor.focus();

@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "Asentel",
     "personalLib": "Tamkarḍit tudmawant",
-    "excalidrawLib": "Tamkarḍit n Drawink",
+    "drawinkLib": "Tamkarḍit n Drawink",
     "decreaseFontSize": "Senqes tiddi n tsefsit",
     "increaseFontSize": "Sali tiddi n tsefsit",
     "unbindText": "Serreḥ iweḍris",
@@ -401,9 +401,9 @@
     "link_title": "Aseɣwen n beṭṭu",
     "link_details": "Sifeḍ am useɣwen n tɣuri kan.",
     "link_button": "Sifeḍ deg useɣwen",
-    "excalidrawplus_description": "Sekles asayes-inek•inem di tallunt n umahil Drawink+.",
-    "excalidrawplus_button": "Sifeḍ",
-    "excalidrawplus_exportError": "Ulamek asifeḍ ɣer Drawink+ akka tura..."
+    "drawinkplus_description": "Sekles asayes-inek•inem di tallunt n umahil Drawink+.",
+    "drawinkplus_button": "Sifeḍ",
+    "drawinkplus_exportError": "Ulamek asifeḍ ɣer Drawink+ akka tura..."
   },
   "helpDialog": {
     "blog": "Ɣeṛ ablug-nneɣ",
@@ -587,7 +587,7 @@
         "button": "Sekles ar uḍebsi",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "",
         "description": ""

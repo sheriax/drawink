@@ -214,7 +214,7 @@ export default function LibraryMenuItems({
         itemIds: selectedItems.includes(id) ? selectedItems : [id],
       };
       event.dataTransfer.setData(
-        MIME_TYPES.excalidrawlibIds,
+        MIME_TYPES.drawinklibIds,
         JSON.stringify(data),
       );
     },
@@ -308,7 +308,7 @@ export default function LibraryMenuItems({
           className="library-menu-items-container__header"
           style={{ marginTop: "0.75rem" }}
         >
-          {t("labels.excalidrawLib")}
+          {t("labels.drawinkLib")}
         </div>
       )}
       {publishedItems.length > 0 && (

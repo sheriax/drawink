@@ -13,7 +13,7 @@ export type EditorInterface = Readonly<{
 }>;
 
 // storage key
-const DESKTOP_UI_MODE_STORAGE_KEY = "excalidraw.desktopUIMode";
+const DESKTOP_UI_MODE_STORAGE_KEY = "drawink.desktopUIMode";
 
 // breakpoints
 // mobile: up to 699px

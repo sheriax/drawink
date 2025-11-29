@@ -14,14 +14,14 @@ export const useCreatePortalContainer = (opts?: {
   const editorInterface = useEditorInterface();
   const { theme } = useUIAppState();
 
-  const { container: excalidrawContainer } = useDrawinkContainer();
+  const { container: drawinkContainer } = useDrawinkContainer();
 
   useLayoutEffect(() => {
     if (div) {
       div.className = "";
-      div.classList.add("excalidraw", ...(opts?.className?.split(/\s+/) || []));
+      div.classList.add("drawink", ...(opts?.className?.split(/\s+/) || []));
       div.classList.toggle(
-        "excalidraw--mobile",
+        "drawink--mobile",
         editorInterface.formFactor === "phone",
       );
       div.classList.toggle("theme--dark", theme === THEME.DARK);
@@ -30,7 +30,7 @@ export const useCreatePortalContainer = (opts?: {
 
   useLayoutEffect(() => {
     const container = opts?.parentSelector
-      ? excalidrawContainer?.querySelector(opts.parentSelector)
+      ? drawinkContainer?.querySelector(opts.parentSelector)
       : document.body;
 
     if (!container) {
@@ -46,7 +46,7 @@ export const useCreatePortalContainer = (opts?: {
     return () => {
       container.removeChild(div);
     };
-  }, [excalidrawContainer, opts?.parentSelector]);
+  }, [drawinkContainer, opts?.parentSelector]);
 
   return div;
 };

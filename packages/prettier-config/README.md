@@ -1,6 +1,6 @@
 # @drawink/prettier-config
 
-Excalidraw's [Prettier](https://prettier.io) config.
+Drawink's [Prettier](https://prettier.io) config.
 
 ## Usage
 

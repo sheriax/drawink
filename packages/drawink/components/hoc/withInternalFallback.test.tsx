@@ -4,7 +4,7 @@ import { Drawink, MainMenu } from "../../index";
 import { render, queryAllByTestId } from "../../tests/test-utils";
 
 describe("Test internal component fallback rendering", () => {
-  it("should render only one menu per excalidraw instance (custom menu first scenario)", async () => {
+  it("should render only one menu per drawink instance (custom menu first scenario)", async () => {
     const { container } = await render(
       <div>
         <Drawink>
@@ -17,7 +17,7 @@ describe("Test internal component fallback rendering", () => {
     expect(queryAllByTestId(container, "main-menu-trigger")?.length).toBe(2);
 
     const excalContainers = container.querySelectorAll<HTMLDivElement>(
-      ".excalidraw-container",
+      ".drawink-container",
     );
 
     expect(
@@ -28,7 +28,7 @@ describe("Test internal component fallback rendering", () => {
     ).toBe(1);
   });
 
-  it("should render only one menu per excalidraw instance (default menu first scenario)", async () => {
+  it("should render only one menu per drawink instance (default menu first scenario)", async () => {
     const { container } = await render(
       <div>
         <Drawink />
@@ -41,7 +41,7 @@ describe("Test internal component fallback rendering", () => {
     expect(queryAllByTestId(container, "main-menu-trigger")?.length).toBe(2);
 
     const excalContainers = container.querySelectorAll<HTMLDivElement>(
-      ".excalidraw-container",
+      ".drawink-container",
     );
 
     expect(
@@ -52,7 +52,7 @@ describe("Test internal component fallback rendering", () => {
     ).toBe(1);
   });
 
-  it("should render only one menu per excalidraw instance (two custom menus scenario)", async () => {
+  it("should render only one menu per drawink instance (two custom menus scenario)", async () => {
     const { container } = await render(
       <div>
         <Drawink>
@@ -67,7 +67,7 @@ describe("Test internal component fallback rendering", () => {
     expect(queryAllByTestId(container, "main-menu-trigger")?.length).toBe(2);
 
     const excalContainers = container.querySelectorAll<HTMLDivElement>(
-      ".excalidraw-container",
+      ".drawink-container",
     );
 
     expect(
@@ -78,7 +78,7 @@ describe("Test internal component fallback rendering", () => {
     ).toBe(1);
   });
 
-  it("should render only one menu per excalidraw instance (two default menus scenario)", async () => {
+  it("should render only one menu per drawink instance (two default menus scenario)", async () => {
     const { container } = await render(
       <div>
         <Drawink />
@@ -89,7 +89,7 @@ describe("Test internal component fallback rendering", () => {
     expect(queryAllByTestId(container, "main-menu-trigger")?.length).toBe(2);
 
     const excalContainers = container.querySelectorAll<HTMLDivElement>(
-      ".excalidraw-container",
+      ".drawink-container",
     );
 
     expect(

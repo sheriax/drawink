@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "Teema",
     "personalLib": "Oma kirjasto",
-    "excalidrawLib": "Drawink kirjasto",
+    "drawinkLib": "Drawink kirjasto",
     "decreaseFontSize": "Pienennä kirjasinkokoa",
     "increaseFontSize": "Kasvata kirjasinkokoa",
     "unbindText": "Irroita teksti",
@@ -401,9 +401,9 @@
     "link_title": "Jaettava linkki",
     "link_details": "Vie vain luku -linkkinä.",
     "link_button": "Vie linkkinä",
-    "excalidrawplus_description": "Tallenna teos Drawink+ tilaan.",
-    "excalidrawplus_button": "Vie",
-    "excalidrawplus_exportError": "Ei voitu viedä Drawink+-palveluun tällä hetkellä..."
+    "drawinkplus_description": "Tallenna teos Drawink+ tilaan.",
+    "drawinkplus_button": "Vie",
+    "drawinkplus_exportError": "Ei voitu viedä Drawink+-palveluun tällä hetkellä..."
   },
   "helpDialog": {
     "blog": "Lue blogiamme",
@@ -587,7 +587,7 @@
         "button": "Tallenna levylle",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Vie Drawink+:aan",
         "description": ""

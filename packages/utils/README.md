@@ -16,7 +16,7 @@ yarn add @drawink/utils
 
 ### `serializeAsJSON`
 
-See [`serializeAsJSON`](https://github.com/excalidraw/excalidraw/blob/master/src/packages/excalidraw/README.md#serializeAsJSON) for API and description.
+See [`serializeAsJSON`](https://github.com/drawink/drawink/blob/master/src/packages/drawink/README.md#serializeAsJSON) for API and description.
 
 ### `exportToBlob` (async)
 
@@ -37,9 +37,9 @@ import { exportToSvg, exportToBlob } from "@drawink/utils";
 To use it in a browser directly:
 
 ```html
-<script src="https://unpkg.com/@drawink/utils@0.1.0/dist/excalidraw-utils.min.js"></script>
+<script src="https://unpkg.com/@drawink/utils@0.1.0/dist/drawink-utils.min.js"></script>
 <script>
-  // DrawinkUtils is a global variable defined by excalidraw.min.js
+  // DrawinkUtils is a global variable defined by drawink.min.js
   const { exportToSvg, exportToBlob } = DrawinkUtils;
 </script>
 ```
@@ -47,10 +47,10 @@ To use it in a browser directly:
 Here's the `exportToBlob` and `exportToSvg` functions in action:
 
 ```js
-const excalidrawDiagram = {
-  type: "excalidraw",
+const drawinkDiagram = {
+  type: "drawink",
   version: 2,
-  source: "https://excalidraw.com",
+  source: "https://drawink.com",
   elements: [
     {
       id: "vWrqOAfkind2qcm7LDAGZ",
@@ -83,13 +83,13 @@ const excalidrawDiagram = {
 };
 
 // Export the Drawink diagram as SVG string
-const svg = exportToSvg(excalidrawDiagram);
+const svg = exportToSvg(drawinkDiagram);
 console.log(svg.outerHTML);
 
 // Export the Drawink diagram as PNG Blob URL
 (async () => {
   const blob = await exportToBlob({
-    ...excalidrawDiagram,
+    ...drawinkDiagram,
     mimeType: "image/png",
   });
 

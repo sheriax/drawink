@@ -38,7 +38,7 @@ describe("Test <App/>", () => {
     await render(<Drawink />);
     expect(
       queryByTestId(
-        document.querySelector(".excalidraw-modal-container")!,
+        document.querySelector(".drawink-modal-container")!,
         "brave-measure-text-error",
       ),
     ).toMatchSnapshot();

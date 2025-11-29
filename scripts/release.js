@@ -6,7 +6,7 @@ const { execSync } = require("child_process");
 const updateChangelog = require("./updateChangelog");
 
 // skipping utils for now, as it has independent release process
-const PACKAGES = ["common", "math", "element", "excalidraw"];
+const PACKAGES = ["common", "math", "element", "drawink"];
 const PACKAGES_DIR = path.resolve(__dirname, "../packages");
 
 /**
@@ -68,18 +68,18 @@ const getArguments = () => {
   }
 
   if (!version) {
-    // set the next version based on the excalidraw package version + commit hash
-    const excalidrawPackageVersion = require(getPackageJsonPath(
-      "excalidraw",
+    // set the next version based on the drawink package version + commit hash
+    const drawinkPackageVersion = require(getPackageJsonPath(
+      "drawink",
     )).version;
 
     const hash = getShortCommitHash();
 
-    if (!excalidrawPackageVersion.includes(hash)) {
-      version = `${excalidrawPackageVersion}-${hash}`;
+    if (!drawinkPackageVersion.includes(hash)) {
+      version = `${drawinkPackageVersion}-${hash}`;
     } else {
       // ensuring idempotency
-      version = excalidrawPackageVersion;
+      version = drawinkPackageVersion;
     }
   }
 
@@ -151,7 +151,7 @@ const askToCommit = (tag, nextVersion) => {
         if (answer.toLowerCase() === "y") {
           execSync(`git add -u`);
           execSync(
-            `git commit -m "chore: release @drawink/excalidraw@${nextVersion} 🎉"`,
+            `git commit -m "chore: release @drawink/drawink@${nextVersion} 🎉"`,
           );
         } else {
           console.warn(

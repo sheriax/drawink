@@ -4,14 +4,14 @@ import "./Tooltip.scss";
 
 export const getTooltipDiv = () => {
   const existingDiv = document.querySelector<HTMLDivElement>(
-    ".excalidraw-tooltip",
+    ".drawink-tooltip",
   );
   if (existingDiv) {
     return existingDiv;
   }
   const div = document.createElement("div");
   document.body.appendChild(div);
-  div.classList.add("excalidraw-tooltip");
+  div.classList.add("drawink-tooltip");
   return div;
 };
 
@@ -65,7 +65,7 @@ const updateTooltip = (
   label: string,
   long: boolean,
 ) => {
-  tooltip.classList.add("excalidraw-tooltip--visible");
+  tooltip.classList.add("drawink-tooltip--visible");
   tooltip.style.minWidth = long ? "50ch" : "10ch";
   tooltip.style.maxWidth = long ? "50ch" : "15ch";
 
@@ -92,7 +92,7 @@ export const Tooltip = ({
 }: TooltipProps) => {
   useEffect(() => {
     return () =>
-      getTooltipDiv().classList.remove("excalidraw-tooltip--visible");
+      getTooltipDiv().classList.remove("drawink-tooltip--visible");
   }, []);
   if (disabled) {
     return null;
@@ -109,7 +109,7 @@ export const Tooltip = ({
         )
       }
       onPointerLeave={() =>
-        getTooltipDiv().classList.remove("excalidraw-tooltip--visible")
+        getTooltipDiv().classList.remove("drawink-tooltip--visible")
       }
       style={style}
     >

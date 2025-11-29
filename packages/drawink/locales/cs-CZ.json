@@ -121,7 +121,7 @@
     "toggleTheme": "Přepnout světlý/tmavý motiv",
     "theme": "Motiv",
     "personalLib": "Osobní knihovna",
-    "excalidrawLib": "Exkalidraw knihovna",
+    "drawinkLib": "Exkalidraw knihovna",
     "decreaseFontSize": "Zmenšit písmo",
     "increaseFontSize": "Zvětšit písmo",
     "unbindText": "Zrušit vazbu textu",
@@ -401,9 +401,9 @@
     "link_title": "Odkaz pro sdílení",
     "link_details": "Exportovat jako odkaz pouze pro čtení.",
     "link_button": "Exportovat do odkazu",
-    "excalidrawplus_description": "Uložit scénu do vašeho pracovního prostoru Drawink+.",
-    "excalidrawplus_button": "Exportovat",
-    "excalidrawplus_exportError": "Export do Drawink+ se v tuto chvíli nezdařil..."
+    "drawinkplus_description": "Uložit scénu do vašeho pracovního prostoru Drawink+.",
+    "drawinkplus_button": "Exportovat",
+    "drawinkplus_exportError": "Export do Drawink+ se v tuto chvíli nezdařil..."
   },
   "helpDialog": {
     "blog": "Přečtěte si náš blog",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

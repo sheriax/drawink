@@ -35,7 +35,7 @@ import { newArrowElement } from "../src";
 import {
   getTextEditor,
   TEXT_EDITOR_SELECTOR,
-} from "../../excalidraw/tests/queries/dom";
+} from "../../drawink/tests/queries/dom";
 
 import type {
   DrawinkElement,

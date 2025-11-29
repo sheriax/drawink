@@ -121,7 +121,7 @@
     "toggleTheme": "Переключить светлую/тёмную тему",
     "theme": "Тема",
     "personalLib": "Личная библиотека",
-    "excalidrawLib": "Библиотека Drawink",
+    "drawinkLib": "Библиотека Drawink",
     "decreaseFontSize": "Уменьшить шрифт",
     "increaseFontSize": "Увеличить шрифт",
     "unbindText": "Отвязать текст",
@@ -401,9 +401,9 @@
     "link_title": "Поделитесь ссылкой",
     "link_details": "Экспорт ссылки только для чтения.",
     "link_button": "Экспорт в ссылку",
-    "excalidrawplus_description": "Сохраните сцену в ваше рабочее пространство Drawink+.",
-    "excalidrawplus_button": "Экспорт",
-    "excalidrawplus_exportError": "Не удалось экспортировать в Drawink+ на данный момент..."
+    "drawinkplus_description": "Сохраните сцену в ваше рабочее пространство Drawink+.",
+    "drawinkplus_button": "Экспорт",
+    "drawinkplus_exportError": "Не удалось экспортировать в Drawink+ на данный момент..."
   },
   "helpDialog": {
     "blog": "Прочитайте наш блог",
@@ -587,7 +587,7 @@
         "button": "Сохранить на диск",
         "description": "Экспортировать данные сцены в файл, из которого можно импортировать позже."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Экспорт в Drawink+",
         "description": "Сохраните сцену в ваше рабочее пространство Drawink+."

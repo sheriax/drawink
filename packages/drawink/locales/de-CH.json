@@ -121,7 +121,7 @@
     "toggleTheme": "Helles/dunkles Design umschalten",
     "theme": "Design",
     "personalLib": "Persönliche Bibliothek",
-    "excalidrawLib": "Drawink Bibliothek",
+    "drawinkLib": "Drawink Bibliothek",
     "decreaseFontSize": "Schriftgröße verringern",
     "increaseFontSize": "Schriftgröße erhöhen",
     "unbindText": "Text lösen",
@@ -401,9 +401,9 @@
     "link_title": "Teilbarer Link",
     "link_details": "Als schreibgeschützten Link exportieren.",
     "link_button": "Als Link exportieren",
-    "excalidrawplus_description": "Speichere die Szene in deinem Drawink+ Arbeitsbereich.",
-    "excalidrawplus_button": "Exportieren",
-    "excalidrawplus_exportError": "Konnte nicht nach Drawink+ exportieren..."
+    "drawinkplus_description": "Speichere die Szene in deinem Drawink+ Arbeitsbereich.",
+    "drawinkplus_button": "Exportieren",
+    "drawinkplus_exportError": "Konnte nicht nach Drawink+ exportieren..."
   },
   "helpDialog": {
     "blog": "Lies unseren Blog",
@@ -587,7 +587,7 @@
         "button": "Auf Festplatte speichern",
         "description": "Exportiere die Zeichnungsdaten in eine Datei, von der Du später importieren kannst."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Export nach Drawink+",
         "description": "Speichere die Szene in deinem Drawink+-Arbeitsbereich."

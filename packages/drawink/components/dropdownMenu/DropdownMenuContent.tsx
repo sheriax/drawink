@@ -79,7 +79,7 @@ const MenuContent = ({
         data-testid="dropdown-menu"
       >
         {/* the zIndex ensures this menu has higher stacking order,
-    see https://github.com/excalidraw/excalidraw/pull/1445 */}
+    see https://github.com/drawink/drawink/pull/1445 */}
         {editorInterface.formFactor === "phone" ? (
           <Stack.Col className="dropdown-menu-container">{children}</Stack.Col>
         ) : (

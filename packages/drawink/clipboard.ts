@@ -42,7 +42,7 @@ import type { Spreadsheet } from "./charts";
 import type { BinaryFiles } from "./types";
 
 type ElementsClipboard = {
-  type: typeof EXPORT_DATA_TYPES.excalidrawClipboard;
+  type: typeof EXPORT_DATA_TYPES.drawinkClipboard;
   elements: readonly NonDeletedDrawinkElement[];
   files: BinaryFiles | undefined;
 };
@@ -82,9 +82,9 @@ const clipboardContainsElements = (
 ): contents is { elements: DrawinkElement[]; files?: BinaryFiles } => {
   if (
     [
-      EXPORT_DATA_TYPES.excalidraw,
-      EXPORT_DATA_TYPES.excalidrawClipboard,
-      EXPORT_DATA_TYPES.excalidrawClipboardWithAPI,
+      EXPORT_DATA_TYPES.drawink,
+      EXPORT_DATA_TYPES.drawinkClipboard,
+      EXPORT_DATA_TYPES.drawinkClipboardWithAPI,
     ].includes(contents?.type) &&
     Array.isArray(contents.elements)
   ) {
@@ -178,7 +178,7 @@ export const serializeAsClipboardJSON = ({
 
   // select bound text elements when copying
   const contents: ElementsClipboard = {
-    type: EXPORT_DATA_TYPES.excalidrawClipboard,
+    type: EXPORT_DATA_TYPES.drawinkClipboard,
     elements: elements.map((element) => {
       if (
         getContainingFrame(element, elementsMap) &&
@@ -541,7 +541,7 @@ export const parseClipboard = async (
   try {
     const systemClipboardData = JSON.parse(parsedEventData.value);
     const programmaticAPI =
-      systemClipboardData.type === EXPORT_DATA_TYPES.excalidrawClipboardWithAPI;
+      systemClipboardData.type === EXPORT_DATA_TYPES.drawinkClipboardWithAPI;
     if (clipboardContainsElements(systemClipboardData)) {
       return {
         elements: systemClipboardData.elements,

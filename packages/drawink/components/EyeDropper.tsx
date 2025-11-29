@@ -46,8 +46,8 @@ export const EyeDropper: React.FC<{
   colorPickerType: EyeDropperProperties["colorPickerType"];
 }> = ({ onCancel, onChange, onSelect, colorPickerType }) => {
   const eyeDropperContainer = useCreatePortalContainer({
-    className: "excalidraw-eye-dropper-backdrop",
-    parentSelector: ".excalidraw-eye-dropper-container",
+    className: "drawink-eye-dropper-backdrop",
+    parentSelector: ".drawink-eye-dropper-container",
   });
   const appState = useUIAppState();
   const elements = useDrawinkElements();
@@ -63,7 +63,7 @@ export const EyeDropper: React.FC<{
     selectedElements,
   });
 
-  const { container: excalidrawContainer } = useDrawinkContainer();
+  const { container: drawinkContainer } = useDrawinkContainer();
 
   useEffect(() => {
     const colorPreviewDiv = ref.current;
@@ -143,7 +143,7 @@ export const EyeDropper: React.FC<{
 
       // since we're not preventing default on pointerdown, the focus would
       // goes back to `body` so we want to refocus the editor container instead
-      excalidrawContainer?.focus();
+      drawinkContainer?.focus();
 
       event.stopImmediatePropagation();
       event.preventDefault();
@@ -202,7 +202,7 @@ export const EyeDropper: React.FC<{
     app.canvas,
     eyeDropperContainer,
     colorPickerType,
-    excalidrawContainer,
+    drawinkContainer,
     appState.offsetLeft,
     appState.offsetTop,
   ]);
@@ -217,7 +217,7 @@ export const EyeDropper: React.FC<{
     (event) => {
       if (
         event.target.closest(
-          ".excalidraw-eye-dropper-trigger, .excalidraw-eye-dropper-backdrop",
+          ".drawink-eye-dropper-trigger, .drawink-eye-dropper-backdrop",
         )
       ) {
         return true;

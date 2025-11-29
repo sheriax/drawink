@@ -121,7 +121,7 @@
     "toggleTheme": "Gaia argia/iluna aktibatu",
     "theme": "Itxura",
     "personalLib": "Liburutegi pertsonala",
-    "excalidrawLib": "Drawink liburutegia",
+    "drawinkLib": "Drawink liburutegia",
     "decreaseFontSize": "Txikitu letra tamaina",
     "increaseFontSize": "Handitu letra tamaina",
     "unbindText": "Askatu testua",
@@ -401,9 +401,9 @@
     "link_title": "Partekatzeko esteka",
     "link_details": "Esportatu irakurtzeko soilik moduko esteka.",
     "link_button": "Esportatu esteka",
-    "excalidrawplus_description": "Gorde eszena zure Drawink+ laneko areara.",
-    "excalidrawplus_button": "Esportatu",
-    "excalidrawplus_exportError": "Une honetan ezin izan da esportatu Drawink+era..."
+    "drawinkplus_description": "Gorde eszena zure Drawink+ laneko areara.",
+    "drawinkplus_button": "Esportatu",
+    "drawinkplus_exportError": "Une honetan ezin izan da esportatu Drawink+era..."
   },
   "helpDialog": {
     "blog": "Irakurri gure bloga",
@@ -587,7 +587,7 @@
         "button": "Gorde diskoan",
         "description": "Esportatu eszenaren datuak geroago inportatu ahal izango duzun fitxategi batan."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Esportatu Drawink+ra",
         "description": "Gorde eszena zure Drawink+ laneko areara."

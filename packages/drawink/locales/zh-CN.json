@@ -121,7 +121,7 @@
     "toggleTheme": "切换浅色/深色主题",
     "theme": "主题",
     "personalLib": "个人素材库",
-    "excalidrawLib": "Drawink 素材库",
+    "drawinkLib": "Drawink 素材库",
     "decreaseFontSize": "缩小字体大小",
     "increaseFontSize": "放大字体大小",
     "unbindText": "取消文本绑定",
@@ -401,9 +401,9 @@
     "link_title": "分享链接",
     "link_details": "导出为只读链接。",
     "link_button": "导出链接",
-    "excalidrawplus_description": "将画布保存到您的 Drawink+ 工作区。",
-    "excalidrawplus_button": "导出",
-    "excalidrawplus_exportError": "暂时无法导出到 Drawink+ ..."
+    "drawinkplus_description": "将画布保存到您的 Drawink+ 工作区。",
+    "drawinkplus_button": "导出",
+    "drawinkplus_exportError": "暂时无法导出到 Drawink+ ..."
   },
   "helpDialog": {
     "blog": "浏览我们的博客",
@@ -587,7 +587,7 @@
         "button": "保存到本地",
         "description": "将画布数据导出为文件，以便以后导入。"
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "导出到 Drawink+",
         "description": "将画布保存到您的 Drawink+ 工作区。"

@@ -1,6 +1,6 @@
 # MainMenu
 
-By default Excalidraw will render the `MainMenu` with default options. If you want to customise the `MainMenu`, you can pass the `MainMenu` component with the list options.
+By default Drawink will render the `MainMenu` with default options. If you want to customise the `MainMenu`, you can pass the `MainMenu` component with the list options.
 
 **Usage**
 
@@ -8,7 +8,7 @@ By default Excalidraw will render the `MainMenu` with default options. If you wa
 function App() {
   return (
     <div style={{ height: "300px" }}>
-      <Excalidraw>
+      <Drawink>
         <MainMenu>
           <MainMenu.Item onSelect={() => window.alert("Item1")}>
             Item1
@@ -17,7 +17,7 @@ function App() {
             Item 2
           </MainMenu.Item>
         </MainMenu>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
@@ -53,16 +53,16 @@ To render an item as a link, its recommended to use `MainMenu.ItemLink`.
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <MainMenu>
           <MainMenu.ItemLink href="https://google.com">
             Google
           </MainMenu.ItemLink>
-          <MainMenu.ItemLink href="https://excalidraw.com">
-            Excalidraw
+          <MainMenu.ItemLink href="https://drawink.com">
+            Drawink
           </MainMenu.ItemLink>
         </MainMenu>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
@@ -87,7 +87,7 @@ To render a custom item, you can use `MainMenu.ItemCustom`.
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <MainMenu>
           <MainMenu.ItemCustom>
             <button
@@ -98,7 +98,7 @@ function App() {
             </button>
           </MainMenu.ItemCustom>
         </MainMenu>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
@@ -110,13 +110,13 @@ function App() {
 
 ### MainMenu.DefaultItems
 
-For the items which are shown in the menu in [excalidraw.com](https://excalidraw.com), you can use `MainMenu.DefaultItems`
+For the items which are shown in the menu in [drawink.com](https://drawink.com), you can use `MainMenu.DefaultItems`
 
 ```jsx live
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <MainMenu>
           <MainMenu.DefaultItems.Socials />
           <MainMenu.DefaultItems.Export />
@@ -127,13 +127,13 @@ function App() {
             Item 2
           </MainMenu.Item>
         </MainMenu>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
 ```
 
-Here is a [complete list](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/components/main-menu/DefaultItems.tsx) of the default items.
+Here is a [complete list](https://github.com/drawink/drawink/blob/master/packages/drawink/components/main-menu/DefaultItems.tsx) of the default items.
 
 ### MainMenu.Group
 
@@ -143,9 +143,9 @@ To Group item in the main menu, you can use `MainMenu.Group`
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <MainMenu>
-          <MainMenu.Group title="Excalidraw items">
+          <MainMenu.Group title="Drawink items">
             <MainMenu.DefaultItems.Socials />
             <MainMenu.DefaultItems.Export />
           </MainMenu.Group>
@@ -158,7 +158,7 @@ function App() {
             </MainMenu.Item>
           </MainMenu.Group>
         </MainMenu>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }

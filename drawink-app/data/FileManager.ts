@@ -248,15 +248,15 @@ export const encodeFilesForUpload = async ({
 };
 
 export const updateStaleImageStatuses = (params: {
-  excalidrawAPI: DrawinkImperativeAPI;
+  drawinkAPI: DrawinkImperativeAPI;
   erroredFiles: Map<FileId, true>;
   elements: readonly DrawinkElement[];
 }) => {
   if (!params.erroredFiles.size) {
     return;
   }
-  params.excalidrawAPI.updateScene({
-    elements: params.excalidrawAPI
+  params.drawinkAPI.updateScene({
+    elements: params.drawinkAPI
       .getSceneElementsIncludingDeleted()
       .map((element) => {
         if (

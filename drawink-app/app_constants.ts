@@ -37,18 +37,18 @@ export const FIREBASE_STORAGE_PREFIXES = {
 export const ROOM_ID_BYTES = 10;
 
 export const STORAGE_KEYS = {
-  LOCAL_STORAGE_ELEMENTS: "excalidraw",
-  LOCAL_STORAGE_APP_STATE: "excalidraw-state",
-  LOCAL_STORAGE_COLLAB: "excalidraw-collab",
-  LOCAL_STORAGE_THEME: "excalidraw-theme",
-  LOCAL_STORAGE_DEBUG: "excalidraw-debug",
+  LOCAL_STORAGE_ELEMENTS: "drawink",
+  LOCAL_STORAGE_APP_STATE: "drawink-state",
+  LOCAL_STORAGE_COLLAB: "drawink-collab",
+  LOCAL_STORAGE_THEME: "drawink-theme",
+  LOCAL_STORAGE_DEBUG: "drawink-debug",
   VERSION_DATA_STATE: "version-dataState",
   VERSION_FILES: "version-files",
 
-  IDB_LIBRARY: "excalidraw-library",
+  IDB_LIBRARY: "drawink-library",
 
   // do not use apart from migrations
-  __LEGACY_LOCAL_STORAGE_LIBRARY: "excalidraw-library",
+  __LEGACY_LOCAL_STORAGE_LIBRARY: "drawink-library",
 } as const;
 
 export const COOKIES = {

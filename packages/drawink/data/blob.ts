@@ -86,7 +86,7 @@ export const getMimeType = (blob: Blob | string): string => {
     }
     name = blob.name || "";
   }
-  if (/\.(excalidraw|json)$/.test(name)) {
+  if (/\.(drawink|json)$/.test(name)) {
     return MIME_TYPES.json;
   } else if (/\.png$/.test(name)) {
     return MIME_TYPES.png;
@@ -94,8 +94,8 @@ export const getMimeType = (blob: Blob | string): string => {
     return MIME_TYPES.jpg;
   } else if (/\.svg$/.test(name)) {
     return MIME_TYPES.svg;
-  } else if (/\.excalidrawlib$/.test(name)) {
-    return MIME_TYPES.excalidrawlib;
+  } else if (/\.drawinklib$/.test(name)) {
+    return MIME_TYPES.drawinklib;
   }
   return "";
 };
@@ -105,7 +105,7 @@ export const getFileHandleType = (handle: FileSystemHandle | null) => {
     return null;
   }
 
-  return handle.name.match(/\.(json|excalidraw|png|svg)$/)?.[1] || null;
+  return handle.name.match(/\.(json|drawink|png|svg)$/)?.[1] || null;
 };
 
 export const isImageFileHandleType = (
@@ -154,7 +154,7 @@ export const loadSceneOrLibraryFromBlob = async (
     }
     if (isValidDrawinkData(data)) {
       return {
-        type: MIME_TYPES.excalidraw,
+        type: MIME_TYPES.drawink,
         data: restore(
           {
             elements: data.elements || [],
@@ -179,7 +179,7 @@ export const loadSceneOrLibraryFromBlob = async (
       };
     } else if (isValidLibrary(data)) {
       return {
-        type: MIME_TYPES.excalidrawlib,
+        type: MIME_TYPES.drawinklib,
         data,
       };
     }
@@ -206,7 +206,7 @@ export const loadFromBlob = async (
     localElements,
     fileHandle,
   );
-  if (ret.type !== MIME_TYPES.excalidraw) {
+  if (ret.type !== MIME_TYPES.drawink) {
     throw new Error("Error: invalid file");
   }
   return ret.data;
@@ -461,17 +461,17 @@ const normalizedFileSymbol = Symbol("fileNormalized");
 
 /** attempts to detect correct mimeType if none is set, or if an image
  * has an incorrect extension.
- * Note: doesn't handle missing .excalidraw/.excalidrawlib extension  */
+ * Note: doesn't handle missing .drawink/.drawinklib extension  */
 export const normalizeFile = async (file: File) => {
   // to prevent double normalization (perf optim)
   if ((file as any)[normalizedFileSymbol]) {
     return file;
   }
 
-  if (file?.name?.endsWith(".excalidrawlib")) {
-    file = createFile(file, MIME_TYPES.excalidrawlib, file.name);
-  } else if (file?.name?.endsWith(".excalidraw")) {
-    file = createFile(file, MIME_TYPES.excalidraw, file.name);
+  if (file?.name?.endsWith(".drawinklib")) {
+    file = createFile(file, MIME_TYPES.drawinklib, file.name);
+  } else if (file?.name?.endsWith(".drawink")) {
+    file = createFile(file, MIME_TYPES.drawink, file.name);
   } else if (!file.type || file.type?.startsWith("image/")) {
     // when the file is an image, make sure the extension corresponds to the
     // actual mimeType (this is an edge case, but happens - especially

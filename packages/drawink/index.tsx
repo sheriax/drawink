@@ -25,7 +25,7 @@ const DrawinkBase = (props: DrawinkProps) => {
     onChange,
     onIncrement,
     initialData,
-    excalidrawAPI,
+    drawinkAPI,
     isCollaborating = false,
     onPointerUpdate,
     renderTopLeftUI,
@@ -118,7 +118,7 @@ const DrawinkBase = (props: DrawinkProps) => {
           onChange={onChange}
           onIncrement={onIncrement}
           initialData={initialData}
-          excalidrawAPI={excalidrawAPI}
+          drawinkAPI={drawinkAPI}
           isCollaborating={isCollaborating}
           onPointerUpdate={onPointerUpdate}
           renderTopLeftUI={renderTopLeftUI}

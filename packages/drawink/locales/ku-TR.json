@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "کتێبخانەی کەسی",
-    "excalidrawLib": "کتێبخانەی Drawink",
+    "drawinkLib": "کتێبخانەی Drawink",
     "decreaseFontSize": "کەمکردنەوەی قەبارەی فۆنت",
     "increaseFontSize": "زایدکردنی قەبارەی فۆنت",
     "unbindText": "دەقەکە جیابکەرەوە",
@@ -401,9 +401,9 @@
     "link_title": "بەستەری هاوبەشیپێکردن",
     "link_details": "ناردن وەک بەستەری تەنها-خوێندنەوە.",
     "link_button": "هەناردەکردن بۆ بەستەر",
-    "excalidrawplus_description": "دیمەنەکە لە شوێنی کارکردنی Drawink+ هەڵبگرە.",
-    "excalidrawplus_button": "هەناردەکردن",
-    "excalidrawplus_exportError": "لەم ساتەدا نەتوانرا هەناردە بکرێت بۆ Excalidrow+..."
+    "drawinkplus_description": "دیمەنەکە لە شوێنی کارکردنی Drawink+ هەڵبگرە.",
+    "drawinkplus_button": "هەناردەکردن",
+    "drawinkplus_exportError": "لەم ساتەدا نەتوانرا هەناردە بکرێت بۆ Excalidrow+..."
   },
   "helpDialog": {
     "blog": "بلۆگەکەمان بخوێنەوە",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

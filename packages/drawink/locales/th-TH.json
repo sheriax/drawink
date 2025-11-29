@@ -121,7 +121,7 @@
     "toggleTheme": "สลับธีมสว่าง/มืด",
     "theme": "ธีม",
     "personalLib": "คลังของฉัน",
-    "excalidrawLib": "คลังของ Drawink",
+    "drawinkLib": "คลังของ Drawink",
     "decreaseFontSize": "ลดขนาดตัวอักษร",
     "increaseFontSize": "เพิ่มขนาดตัวอักษร",
     "unbindText": "ยกเลิกการผูกติด",
@@ -401,9 +401,9 @@
     "link_title": "ลิงก์ที่สามารถแชร์ได้",
     "link_details": "",
     "link_button": "ส่งออกไปยังไฟล์",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "ส่งออก",
-    "excalidrawplus_exportError": "ไม่สามารถส่งออกไปที่ Drawink+ ได้ในขณะนี้"
+    "drawinkplus_description": "",
+    "drawinkplus_button": "ส่งออก",
+    "drawinkplus_exportError": "ไม่สามารถส่งออกไปที่ Drawink+ ได้ในขณะนี้"
   },
   "helpDialog": {
     "blog": "อ่านบล็อกของพวกเรา",
@@ -587,7 +587,7 @@
         "button": "บันทึกไปยังดิสก์",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "นำออกไปยัง Drawink+",
         "description": ""

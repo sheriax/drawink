@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "",
-    "excalidrawLib": "",
+    "drawinkLib": "",
     "decreaseFontSize": "",
     "increaseFontSize": "",
     "unbindText": "",
@@ -401,9 +401,9 @@
     "link_title": "Ортақ сілтеме",
     "link_details": "Тек оқуға арналған сілтеме ретінде экспорттау.",
     "link_button": "Сілтемеге экспорттау",
-    "excalidrawplus_description": "Сахнаны өзіңіздің Drawink+ жұмыс кеңістігінде сақтаңыз.",
-    "excalidrawplus_button": "Экспорт",
-    "excalidrawplus_exportError": "Қазіргі уақытта Drawink+ үшін экспорттау мүмкін емес..."
+    "drawinkplus_description": "Сахнаны өзіңіздің Drawink+ жұмыс кеңістігінде сақтаңыз.",
+    "drawinkplus_button": "Экспорт",
+    "drawinkplus_exportError": "Қазіргі уақытта Drawink+ үшін экспорттау мүмкін емес..."
   },
   "helpDialog": {
     "blog": "Біздің блогты оқу",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

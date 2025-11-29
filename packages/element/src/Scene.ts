@@ -243,7 +243,7 @@ export class Scene {
    * A utility method to help with updating all scene elements, with the added
    * performance optimization of not renewing the array if no change is made.
    *
-   * Maps all current excalidraw elements, invoking the callback for each
+   * Maps all current drawink elements, invoking the callback for each
    * element. The callback should either return a new mapped element, or the
    * original element if no changes are made. If no changes are made to any
    * element, this results in a no-op. Otherwise, the newly mapped elements

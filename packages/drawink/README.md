@@ -7,18 +7,18 @@
 Use `npm` or `yarn` to install the package.
 
 ```bash
-npm install react react-dom @drawink/excalidraw
+npm install react react-dom @drawink/drawink
 # or
-yarn add react react-dom @drawink/excalidraw
+yarn add react react-dom @drawink/drawink
 ```
 
-> **Note**: If you don't want to wait for the next stable release and try out the unreleased changes, use `@drawink/excalidraw@next`.
+> **Note**: If you don't want to wait for the next stable release and try out the unreleased changes, use `@drawink/drawink@next`.
 
 #### Self-hosting fonts
 
-By default, Drawink will try to download all the used fonts from the [CDN](https://esm.run/@drawink/excalidraw/dist/prod).
+By default, Drawink will try to download all the used fonts from the [CDN](https://esm.run/@drawink/drawink/dist/prod).
 
-For self-hosting purposes, you'll have to copy the content of the folder `node_modules/@drawink/excalidraw/dist/prod/fonts` to the path where your assets should be served from (i.e. `public/` directory in your project). In that case, you should also set `window.EXCALIDRAW_ASSET_PATH` to the very same path, i.e. `/` in case it's in the root:
+For self-hosting purposes, you'll have to copy the content of the folder `node_modules/@drawink/drawink/dist/prod/fonts` to the path where your assets should be served from (i.e. `public/` directory in your project). In that case, you should also set `window.EXCALIDRAW_ASSET_PATH` to the very same path, i.e. `/` in case it's in the root:
 
 ```js
 <script>window.EXCALIDRAW_ASSET_PATH = "/";</script>
@@ -30,16 +30,16 @@ Drawink takes _100%_ of `width` and `height` of the containing block so make sur
 
 ## Demo
 
-Go to [CodeSandbox](https://codesandbox.io/p/sandbox/github/excalidraw/excalidraw/tree/master/examples/with-script-in-browser) example.
+Go to [CodeSandbox](https://codesandbox.io/p/sandbox/github/drawink/drawink/tree/master/examples/with-script-in-browser) example.
 
 ## Integration
 
-Head over to the [docs](https://docs.excalidraw.com/docs/@drawink/excalidraw/integration).
+Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/integration).
 
 ## API
 
-Head over to the [docs](https://docs.excalidraw.com/docs/@drawink/excalidraw/api).
+Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/api).
 
 ## Contributing
 
-Head over to the [docs](https://docs.excalidraw.com/docs/@drawink/excalidraw/contributing).
+Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/contributing).

@@ -1,17 +1,17 @@
 # Installation
 
-`@excalidraw/mermaid-to-excalidraw` is published to npm. This library is used in [excalidraw](https://excalidraw.com) to transform mermaid syntax to Excalidraw diagrams.
+`@drawink/mermaid-to-drawink` is published to npm. This library is used in [drawink](https://drawink.com) to transform mermaid syntax to Drawink diagrams.
 
 Using `npm`
 
 ```bash
-npm install @excalidraw/mermaid-to-excalidraw
+npm install @drawink/mermaid-to-drawink
 ```
 
 Using `yarn`
 
 ```bash
-yarn add @excalidraw/mermaid-to-excalidraw
+yarn add @drawink/mermaid-to-drawink
 ```
 
 ## Usage
@@ -19,18 +19,18 @@ yarn add @excalidraw/mermaid-to-excalidraw
 Once the library is installed, its ready to use.
 
 ```js
-import { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
-import { convertToExcalidrawElements}  from "@excalidraw/excalidraw"
+import { parseMermaidToDrawink } from "@drawink/mermaid-to-drawink";
+import { convertToDrawinkElements}  from "@drawink/drawink"
 
 try {
   const { elements, files } = await parseMermaid(diagramDefinition, {
     fontSize: DEFAULT_FONT_SIZE,
   });
   // currently the elements returned from the parser are in a "skeleton" format
-  // which we need to convert to fully qualified excalidraw elements first
-  const excalidrawElements = convertToExcalidrawElements(elements);
+  // which we need to convert to fully qualified drawink elements first
+  const drawinkElements = convertToDrawinkElements(elements);
 
-  // Render elements and files on Excalidraw
+  // Render elements and files on Drawink
 } catch (e) {
   // Error handling
 }
@@ -38,5 +38,5 @@ try {
 
 ## Playground
 
- Try it out [here](https://mermaid-to-excalidraw.vercel.app)
+ Try it out [here](https://mermaid-to-drawink.vercel.app)
 

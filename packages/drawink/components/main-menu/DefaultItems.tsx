@@ -368,7 +368,7 @@ export const Socials = (props?: { disabled?: boolean }) => {
     <>
       <DropdownMenuItemLink
         icon={GithubIcon}
-        href="https://github.com/excalidraw/excalidraw"
+        href="https://github.com/drawink/drawink"
         aria-label="GitHub"
         disabled={props?.disabled}
       >
@@ -376,7 +376,7 @@ export const Socials = (props?: { disabled?: boolean }) => {
       </DropdownMenuItemLink>
       <DropdownMenuItemLink
         icon={XBrandIcon}
-        href="https://x.com/excalidraw"
+        href="https://x.com/drawink"
         aria-label="X"
         disabled={props?.disabled}
       >

@@ -34,7 +34,7 @@ export const actionToggleSearchMenu = register({
       appState.openSidebar.tab === CANVAS_SEARCH_TAB
     ) {
       const searchInput =
-        app.excalidrawContainerValue.container?.querySelector<HTMLInputElement>(
+        app.drawinkContainerValue.container?.querySelector<HTMLInputElement>(
           `.${CLASSES.SEARCH_MENU_INPUT_WRAPPER} input`,
         );
 

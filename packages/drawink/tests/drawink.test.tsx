@@ -15,7 +15,7 @@ describe("<Drawink/>", () => {
   afterEach(() => {
     const menu = document.querySelector(".dropdown-menu");
     if (menu) {
-      toggleMenu(document.querySelector(".excalidraw")!);
+      toggleMenu(document.querySelector(".drawink")!);
     }
   });
 
@@ -338,7 +338,7 @@ describe("<Drawink/>", () => {
       const { container } = await render(<Drawink />);
 
       expect(
-        container.querySelector(".excalidraw") === document.activeElement,
+        container.querySelector(".drawink") === document.activeElement,
       ).toBe(false);
     });
 
@@ -346,7 +346,7 @@ describe("<Drawink/>", () => {
       const { container } = await render(<Drawink autoFocus={true} />);
 
       expect(
-        container.querySelector(".excalidraw") === document.activeElement,
+        container.querySelector(".drawink") === document.activeElement,
       ).toBe(true);
     });
   });

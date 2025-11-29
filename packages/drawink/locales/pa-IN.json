@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "ਨਿੱਜੀ ਲਾਇਬ੍ਰੇਰੀ",
-    "excalidrawLib": "ਐਕਸਕਲੀਡਰਾਅ ਲਾਇਬ੍ਰੇਰੀ",
+    "drawinkLib": "ਐਕਸਕਲੀਡਰਾਅ ਲਾਇਬ੍ਰੇਰੀ",
     "decreaseFontSize": "ਫੌਂਟ ਦਾ ਅਕਾਰ ਘਟਾਓ",
     "increaseFontSize": "ਫੌਂਟ ਦਾ ਅਕਾਰ ਵਧਾਓ",
     "unbindText": "ਪਾਠ ਨੂੰ ਵੱਖ ਕਰੋ",
@@ -401,9 +401,9 @@
     "link_title": "ਸਾਂਝੀ ਕਰਨ ਵਾਲੀ ਲਿੰਕ",
     "link_details": "ਸਿਰਫ ਦੇਖੇ-ਜਾਣ ਵਾਲੀ ਲਿੰਕ ਵਜੋਂ ਨਿਰਯਾਤ ਕਰੋ।",
     "link_button": "ਲਿੰਕ ਵਿੱਚ ਨਿਰਯਾਤ ਕਰੋ",
-    "excalidrawplus_description": "ਆਪਣੇ ਦ੍ਰਿਸ਼ ਦੇ ਡਾਟੇ ਨੂੰ Drawink+ ਵਰਕਸਪੇਸ ਵਿੱਚ ਸਾਂਭੋ।",
-    "excalidrawplus_button": "ਨਿਰਯਾਤ ਕਰੋ",
-    "excalidrawplus_exportError": "ਇਸ ਸਮੇਂ Drawink+ ਵਿੱਚ ਨਿਰਯਾਤ ਨਹੀਂ ਕਰ ਸਕੇ..."
+    "drawinkplus_description": "ਆਪਣੇ ਦ੍ਰਿਸ਼ ਦੇ ਡਾਟੇ ਨੂੰ Drawink+ ਵਰਕਸਪੇਸ ਵਿੱਚ ਸਾਂਭੋ।",
+    "drawinkplus_button": "ਨਿਰਯਾਤ ਕਰੋ",
+    "drawinkplus_exportError": "ਇਸ ਸਮੇਂ Drawink+ ਵਿੱਚ ਨਿਰਯਾਤ ਨਹੀਂ ਕਰ ਸਕੇ..."
   },
   "helpDialog": {
     "blog": "ਸਾਡਾ ਬਲੌਗ ਪੜ੍ਹੋ",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

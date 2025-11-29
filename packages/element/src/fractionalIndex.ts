@@ -24,7 +24,7 @@ export class InvalidFractionalIndexError extends Error {
  * 1) Array (or array-like ordered data structure) should be used as a cache of elements order, hiding the internal fractional indices implementation.
  * - it's undesirable to perform reorder for each related operation, therefore it's necessary to cache the order defined by fractional indices into an ordered data structure
  * - it's easy enough to define the order of the elements from the outside (boundaries), without worrying about the underlying structure of fractional indices (especially for the host apps)
- * - it's necessary to always keep the array support for backwards compatibility (restore) - old scenes, old libraries, supporting multiple excalidraw versions etc.
+ * - it's necessary to always keep the array support for backwards compatibility (restore) - old scenes, old libraries, supporting multiple drawink versions etc.
  * - it's necessary to always keep the fractional indices in sync with the array order
  * - elements with invalid indices should be detected and synced, without altering the already valid indices
  *

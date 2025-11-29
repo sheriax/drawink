@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Personīgā bibliotēka",
-    "excalidrawLib": "Drawink bibliotēka",
+    "drawinkLib": "Drawink bibliotēka",
     "decreaseFontSize": "Samazināt fonta izmēru",
     "increaseFontSize": "Palielināt fonta izmēru",
     "unbindText": "Atdalīt tekstu",
@@ -401,9 +401,9 @@
     "link_title": "Kopīgošanas saite",
     "link_details": "Eksportēt kā tikai lasāmu saiti.",
     "link_button": "Eksportēt kā saiti",
-    "excalidrawplus_description": "Saglabāt ainu savā Drawink+ darbvietā.",
-    "excalidrawplus_button": "Eksportēt",
-    "excalidrawplus_exportError": "Pašreiz nevarēja eksportēt uz Drawink+..."
+    "drawinkplus_description": "Saglabāt ainu savā Drawink+ darbvietā.",
+    "drawinkplus_button": "Eksportēt",
+    "drawinkplus_exportError": "Pašreiz nevarēja eksportēt uz Drawink+..."
   },
   "helpDialog": {
     "blog": "Lasīt mūsu blogu",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

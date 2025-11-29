@@ -1,6 +1,6 @@
 @import "../../packages/drawink/css/variables.module.scss";
 
-.excalidraw {
+.drawink {
   .ShareDialog {
     display: flex;
     flex-direction: column;
@@ -32,6 +32,7 @@
         from {
           opacity: 0;
         }
+
         to {
           opacity: 1;
         }
@@ -61,7 +62,7 @@
       background: var(--color-success);
       color: var(--color-success-text);
 
-      & > svg {
+      &>svg {
         width: 0.875rem;
         height: 0.875rem;
       }
@@ -152,7 +153,7 @@
           margin: 0;
         }
 
-        & p + p {
+        & p+p {
           margin-top: 1em;
         }
       }

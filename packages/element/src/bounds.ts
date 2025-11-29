@@ -518,7 +518,7 @@ const getSegmentsOnEllipse = (
 /**
  * Scene -> Scene coords, but in x1,x2,y1,y2 format.
  *
- * Rectangle here means any rectangular frame, not an excalidraw element.
+ * Rectangle here means any rectangular frame, not an drawink element.
  */
 export const getRectangleBoxAbsoluteCoords = (boxSceneCoords: RectangleBox) => {
   return [

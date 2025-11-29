@@ -121,7 +121,7 @@
     "toggleTheme": "Vis/skjul lys/mørkt tema",
     "theme": "Tema",
     "personalLib": "Personlig bibliotek",
-    "excalidrawLib": "Drawink-bibliotek",
+    "drawinkLib": "Drawink-bibliotek",
     "decreaseFontSize": "Reduser skriftstørrelse",
     "increaseFontSize": "Øk skriftstørrelse",
     "unbindText": "Avbind tekst",
@@ -401,9 +401,9 @@
     "link_title": "Delbar lenke",
     "link_details": "Eksporter som en skrivebeskyttet lenke.",
     "link_button": "Eksporter til lenke",
-    "excalidrawplus_description": "Lagre scenen til ditt Drawink+ arbeidsområde.",
-    "excalidrawplus_button": "Eksporter",
-    "excalidrawplus_exportError": "Kunne ikke eksportere til Drawink+ for øyeblikket..."
+    "drawinkplus_description": "Lagre scenen til ditt Drawink+ arbeidsområde.",
+    "drawinkplus_button": "Eksporter",
+    "drawinkplus_exportError": "Kunne ikke eksportere til Drawink+ for øyeblikket..."
   },
   "helpDialog": {
     "blog": "Les bloggen vår",
@@ -587,7 +587,7 @@
         "button": "Lagre til disk",
         "description": "Eksporter scene-dataene til en fil som du kan importere fra senere."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Eksporter til Drawink+",
         "description": "Lagre scenen til ditt Drawink+-arbeidsområde."

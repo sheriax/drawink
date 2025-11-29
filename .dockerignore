@@ -4,7 +4,7 @@
 !.eslintrc.json
 !.npmrc
 !.prettierrc
-!excalidraw-app/
+!drawink-app/
 !package.json
 !public/
 !packages/
@@ -13,7 +13,7 @@
 !yarn.lock
 
 # keep (sub)sub directories at the end to exclude from explicit included
-# e.g. ./packages/excalidraw/{dist,node_modules}
+# e.g. ./packages/drawink/{dist,node_modules}
 **/build
 **/dist
 **/node_modules

@@ -121,7 +121,7 @@
     "toggleTheme": "Alternar tema claro/escuro",
     "theme": "Tema",
     "personalLib": "Biblioteca Pessoal",
-    "excalidrawLib": "Biblioteca do Drawink",
+    "drawinkLib": "Biblioteca do Drawink",
     "decreaseFontSize": "Diminuir o tamanho da fonte",
     "increaseFontSize": "Aumentar o tamanho da fonte",
     "unbindText": "Desvincular texto",
@@ -163,7 +163,7 @@
     "zoomToFitViewport": "Zoom para caber na tela",
     "zoomToFitSelection": "Ampliar para ajustar a seleção",
     "zoomToFit": "Ampliar para encaixar todos os elementos",
-    "installPWA": "Instalar excalidraw localmente (PWA)",
+    "installPWA": "Instalar drawink localmente (PWA)",
     "autoResize": "Habilitar redimensionamento automático de texto",
     "imageCropping": "Recorte de imagem",
     "unCroppedDimension": "Dimensão sem recortes",
@@ -401,9 +401,9 @@
     "link_title": "Link compartilhável",
     "link_details": "Exportar como link de somente leitura.",
     "link_button": "Exportar link",
-    "excalidrawplus_description": "Salvar a cena na sua área de trabalho Drawink+.",
-    "excalidrawplus_button": "Exportar",
-    "excalidrawplus_exportError": "Não é possível exportar para o Drawink+ neste momento..."
+    "drawinkplus_description": "Salvar a cena na sua área de trabalho Drawink+.",
+    "drawinkplus_button": "Exportar",
+    "drawinkplus_exportError": "Não é possível exportar para o Drawink+ neste momento..."
   },
   "helpDialog": {
     "blog": "Leia o nosso blog",
@@ -587,7 +587,7 @@
         "button": "Salvar no computador",
         "description": "Exportar os dados da cena para um arquivo que você poderá importar mais tarde."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Exportar para Drawink+",
         "description": "Salvar a cena na sua área de trabalho Drawink+."

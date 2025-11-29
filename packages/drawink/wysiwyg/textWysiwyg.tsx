@@ -90,7 +90,7 @@ export const textWysiwyg = ({
   getViewportCoords,
   element,
   canvas,
-  excalidrawContainer,
+  drawinkContainer,
   app,
   autoSelect = true,
 }: {
@@ -106,7 +106,7 @@ export const textWysiwyg = ({
   getViewportCoords: (x: number, y: number) => [number, number];
   element: DrawinkTextElement;
   canvas: HTMLCanvasElement;
-  excalidrawContainer: HTMLDivElement | null;
+  drawinkContainer: HTMLDivElement | null;
   app: App;
   autoSelect?: boolean;
 }): SubmitHandler => {
@@ -283,7 +283,7 @@ export const textWysiwyg = ({
   editable.dataset.type = "wysiwyg";
   // prevent line wrapping on Safari
   editable.wrap = "off";
-  editable.classList.add("excalidraw-wysiwyg");
+  editable.classList.add("drawink-wysiwyg");
 
   let whiteSpace = "pre";
   let wordBreak = "normal";
@@ -738,8 +738,8 @@ export const textWysiwyg = ({
     window.addEventListener("pointerdown", onPointerDown, { capture: true });
   });
   window.addEventListener("beforeunload", handleSubmit);
-  excalidrawContainer
-    ?.querySelector(".excalidraw-textEditorContainer")!
+  drawinkContainer
+    ?.querySelector(".drawink-textEditorContainer")!
     .appendChild(editable);
 
   return handleSubmit;

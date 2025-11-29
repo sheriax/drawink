@@ -20,12 +20,12 @@
       name="description"
       content="Drawink is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them."
     />
-    <meta name="image" content="https://excalidraw.com/og-image-3.png" />
+    <meta name="image" content="https://drawink.com/og-image-3.png" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:site_name" content="Drawink" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://excalidraw.com" />
+    <meta property="og:url" content="https://drawink.com" />
     <meta
       property="og:title"
       content="Drawink — Collaborative whiteboarding made easy"
@@ -35,12 +35,12 @@
       property="og:description"
       content="Drawink is a virtual collaborative whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them."
     />
-    <meta property="og:image" content="https://excalidraw.com/og-image-3.png" />
+    <meta property="og:image" content="https://drawink.com/og-image-3.png" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:site" content="@excalidraw" />
-    <meta property="twitter:url" content="https://excalidraw.com" />
+    <meta property="twitter:site" content="@drawink" />
+    <meta property="twitter:url" content="https://drawink.com" />
     <meta
       property="twitter:title"
       content="Drawink — Collaborative whiteboarding made easy"
@@ -51,10 +51,10 @@
     />
     <meta
       property="twitter:image"
-      content="https://excalidraw.com/og-image-3.png"
+      content="https://drawink.com/og-image-3.png"
     />
 
-    <link rel="canonical" href="https://excalidraw.com" />
+    <link rel="canonical" href="https://drawink.com" />
 
     <!------------------------------------------------------------------------->
     <!--   to minimize white flash on load when user has dark mode enabled   -->
@@ -69,7 +69,7 @@
         }
 
         function getTheme() {
-          const theme = window.localStorage.getItem("excalidraw-theme");
+          const theme = window.localStorage.getItem("drawink-theme");
 
           if (theme && theme === "system") {
             return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -113,7 +113,7 @@
         // if its present redirect
         document.cookie.includes("excplus-autoredirect=true")
       ) {
-        window.location.href = "https://app.excalidraw.com";
+        window.location.href = "https://app.drawink.com";
       }
     </script>
 
@@ -123,7 +123,7 @@
     <!-- Register Assistant as the UI font, before the scene inits -->
     <link
       rel="stylesheet"
-      href="../packages/excalidraw/fonts/fonts.css"
+      href="../packages/drawink/fonts/fonts.css"
       type="text/css"
     />
 
@@ -159,7 +159,7 @@
     <% } %>
     <script>
       // setting this so that libraries installation reuses this window tab.
-      window.name = "_excalidraw";
+      window.name = "_drawink";
     </script>
 
     <!-- FIXME: remove this when we update CRA (fix SW caching) -->

@@ -121,7 +121,7 @@
     "toggleTheme": "تغییر وضعیت پوسته روشن/تیره",
     "theme": "پوسته",
     "personalLib": "کتابخانه شخصی",
-    "excalidrawLib": "کتابخانه Drawink",
+    "drawinkLib": "کتابخانه Drawink",
     "decreaseFontSize": "کاهش اندازه فونت",
     "increaseFontSize": "افزایش دادن اندازه فونت",
     "unbindText": "بازکردن نوشته",
@@ -312,7 +312,7 @@
     "laser": "اشاره گر لیزری",
     "hand": "دست (ابزار پانینگ)",
     "extraTools": "ابزارهای بیشتر",
-    "mermaidToDrawink": "مرمید به excalidraw",
+    "mermaidToDrawink": "مرمید به drawink",
     "convertElementType": ""
   },
   "element": {
@@ -401,9 +401,9 @@
     "link_title": "لینک قابل اشتراک‌گذاری",
     "link_details": "خروجی به عنوان یک پیوند فقط خواندنی.",
     "link_button": "خروجی در فایل",
-    "excalidrawplus_description": "صحنه را در فضای کاری Drawink+ خود ذخیره کنید.",
-    "excalidrawplus_button": "خروجی گرفتن",
-    "excalidrawplus_exportError": "در حال حاضر نمی‌توان به Drawink+ صادر کرد..."
+    "drawinkplus_description": "صحنه را در فضای کاری Drawink+ خود ذخیره کنید.",
+    "drawinkplus_button": "خروجی گرفتن",
+    "drawinkplus_exportError": "در حال حاضر نمی‌توان به Drawink+ صادر کرد..."
   },
   "helpDialog": {
     "blog": "بلاگ ما را بخوانید",
@@ -587,7 +587,7 @@
         "button": "ذخیره در دیسک",
         "description": "خروجی از داده های صحنه را به عنوان فایل که بعدا می توانید بیافزایید."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "خروجی به Drawink+",
         "description": "ذخیره صفحه در میز کار Drawink+."
@@ -607,7 +607,7 @@
     }
   },
   "mermaid": {
-    "title": "مرمید به excalidraw",
+    "title": "مرمید به drawink",
     "button": "درج",
     "description": "فعلا فقط <flowchartLink> فلوچارت </flowchartLink> ، <sequenceLink> توالی </sequenceLink> و <classLink> کلاس </classLink> نمودارها پشتیبانی می شوند. انواع دیگر به صورت تصویر در Drawink ارائه خواهند شد.",
     "syntax": "مرمید syntax",

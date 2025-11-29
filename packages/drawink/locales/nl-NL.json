@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Persoonlijke bibliotheek",
-    "excalidrawLib": "Drawink bibliotheek",
+    "drawinkLib": "Drawink bibliotheek",
     "decreaseFontSize": "Letters verkleinen",
     "increaseFontSize": "Letters vergroten",
     "unbindText": "Ontkoppel tekst",
@@ -401,9 +401,9 @@
     "link_title": "Deelbare link",
     "link_details": "Exporteren als een alleen-lezen link.",
     "link_button": "Exporteer naar link",
-    "excalidrawplus_description": "Sla de scène op in je Drawink+ werkruimte.",
-    "excalidrawplus_button": "Exporteer",
-    "excalidrawplus_exportError": "Kan op dit moment niet exporteren naar Drawink+..."
+    "drawinkplus_description": "Sla de scène op in je Drawink+ werkruimte.",
+    "drawinkplus_button": "Exporteer",
+    "drawinkplus_exportError": "Kan op dit moment niet exporteren naar Drawink+..."
   },
   "helpDialog": {
     "blog": "Lees onze blog",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

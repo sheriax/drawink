@@ -161,9 +161,9 @@ export const LibraryDropdownMenuButton: React.FC<{
           libraryItems: fileOpen({
             description: "Drawink library files",
             // ToDo: Be over-permissive until https://bugs.webkit.org/show_bug.cgi?id=34442
-            // gets resolved. Else, iOS users cannot open `.excalidraw` files.
+            // gets resolved. Else, iOS users cannot open `.drawink` files.
             /*
-              extensions: [".json", ".excalidrawlib"],
+              extensions: [".json", ".drawinklib"],
               */
           }),
           merge: true,

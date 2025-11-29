@@ -111,7 +111,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       Sitemap({
-        hostname: "https://excalidraw.com",
+        hostname: "https://drawink.com",
         outDir: "build",
         changefreq: "monthly",
         // its static in public folder
@@ -229,7 +229,7 @@ export default defineConfig(({ mode }) => {
             },
           ],
           start_url: "/",
-          id: "excalidraw",
+          id: "drawink",
           display: "standalone",
           theme_color: "#121212",
           background_color: "#ffffff",
@@ -237,7 +237,7 @@ export default defineConfig(({ mode }) => {
             {
               action: "/",
               accept: {
-                "application/vnd.excalidraw+json": [".excalidraw"],
+                "application/vnd.drawink+json": [".drawink"],
               },
             },
           ],
@@ -250,9 +250,9 @@ export default defineConfig(({ mode }) => {
                 {
                   name: "file",
                   accept: [
-                    "application/vnd.excalidraw+json",
+                    "application/vnd.drawink+json",
                     "application/json",
-                    ".excalidraw",
+                    ".drawink",
                   ],
                 },
               ],

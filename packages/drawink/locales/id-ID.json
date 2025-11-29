@@ -121,7 +121,7 @@
     "toggleTheme": "Toggle tema terang/gelap",
     "theme": "Tema",
     "personalLib": "Pustaka Pribadi",
-    "excalidrawLib": "Pustaka Drawink",
+    "drawinkLib": "Pustaka Drawink",
     "decreaseFontSize": "Kecilkan ukuran font",
     "increaseFontSize": "Besarkan ukuran font",
     "unbindText": "Lepas teks",
@@ -401,9 +401,9 @@
     "link_title": "Tautan",
     "link_details": "Ekspor sebagai tautan yang hanya dibaca.",
     "link_button": "Ekspor ke tautan",
-    "excalidrawplus_description": "Simpan pemandangan ke ruang kerja Drawink+ Anda.",
-    "excalidrawplus_button": "Ekspor",
-    "excalidrawplus_exportError": "Tidak dapat ekspor ke Drawink+ saat ini..."
+    "drawinkplus_description": "Simpan pemandangan ke ruang kerja Drawink+ Anda.",
+    "drawinkplus_button": "Ekspor",
+    "drawinkplus_exportError": "Tidak dapat ekspor ke Drawink+ saat ini..."
   },
   "helpDialog": {
     "blog": "Baca blog kami",
@@ -587,7 +587,7 @@
         "button": "Simpan ke disk",
         "description": "Ekspor data pemandangan ke file yang dapat Anda dapat impor nanti."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Ekspor ke Drawink+",
         "description": "Simpan pemandangan ke ruang kerja Drawink+ Anda."

@@ -13,25 +13,25 @@ import type { DrawinkImperativeAPI } from "../../types";
 describe("event callbacks", () => {
   const h = window.h;
 
-  let excalidrawAPI: DrawinkImperativeAPI;
+  let drawinkAPI: DrawinkImperativeAPI;
 
   const mouse = new Pointer("mouse");
 
   beforeEach(async () => {
-    const excalidrawAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
+    const drawinkAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
     await render(
       <Drawink
-        excalidrawAPI={(api) => excalidrawAPIPromise.resolve(api as any)}
+        drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)}
       />,
     );
-    excalidrawAPI = await excalidrawAPIPromise;
+    drawinkAPI = await drawinkAPIPromise;
   });
 
   it("should trigger onChange on render", async () => {
     const onChange = vi.fn();
 
     const origBackgroundColor = h.state.viewBackgroundColor;
-    excalidrawAPI.onChange(onChange);
+    drawinkAPI.onChange(onChange);
     API.updateScene({
       appState: { viewBackgroundColor: "red" },
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
@@ -55,8 +55,8 @@ describe("event callbacks", () => {
     const onPointerDown = vi.fn();
     const onPointerUp = vi.fn();
 
-    excalidrawAPI.onPointerDown(onPointerDown);
-    excalidrawAPI.onPointerUp(onPointerUp);
+    drawinkAPI.onPointerDown(onPointerDown);
+    drawinkAPI.onPointerUp(onPointerUp);
 
     mouse.downAt(100);
     expect(onPointerDown).toHaveBeenCalledTimes(1);

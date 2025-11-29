@@ -13,7 +13,7 @@ export const ErrorDialog = ({
   onClose?: () => void;
 }) => {
   const [modalIsShown, setModalIsShown] = useState(!!children);
-  const { container: excalidrawContainer } = useDrawinkContainer();
+  const { container: drawinkContainer } = useDrawinkContainer();
 
   const handleClose = React.useCallback(() => {
     setModalIsShown(false);
@@ -22,8 +22,8 @@ export const ErrorDialog = ({
       onClose();
     }
     // TODO: Fix the A11y issues so this is never needed since we should always focus on last active element
-    excalidrawContainer?.focus();
-  }, [onClose, excalidrawContainer]);
+    drawinkContainer?.focus();
+  }, [onClose, drawinkContainer]);
 
   return (
     <>

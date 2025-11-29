@@ -124,7 +124,7 @@ type PointMoveOtherUpdates = {
 
 export class LinearElementEditor {
   public readonly elementId: DrawinkElement["id"] & {
-    _brand: "excalidrawLinearElementId";
+    _brand: "drawinkLinearElementId";
   };
   /** indices */
   public readonly selectedPointsIndices: readonly number[] | null;
@@ -165,7 +165,7 @@ export class LinearElementEditor {
     isEditing: boolean = false,
   ) {
     this.elementId = element.id as string & {
-      _brand: "excalidrawLinearElementId";
+      _brand: "drawinkLinearElementId";
     };
     if (!pointsEqual(element.points[0], pointFrom(0, 0))) {
       console.error("Linear element is not normalized", Error().stack);

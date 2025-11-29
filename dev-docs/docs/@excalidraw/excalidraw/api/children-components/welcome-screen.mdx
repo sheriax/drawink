@@ -1,6 +1,6 @@
 # WelcomeScreen
 
-When the canvas is empty, Excalidraw can show a welcome _splash_ screen with a logo, a few quick action items, and hints explaining what some of the UI buttons do. Once the user picks a tool, or has created an element on the canvas, the welcome screen will disappear.
+When the canvas is empty, Drawink can show a welcome _splash_ screen with a logo, a few quick action items, and hints explaining what some of the UI buttons do. Once the user picks a tool, or has created an element on the canvas, the welcome screen will disappear.
 
 You can enable this behavior by rendering a `WelcomeScreen` component like this:
 
@@ -8,9 +8,9 @@ You can enable this behavior by rendering a `WelcomeScreen` component like this:
 function App() {
   return (
     <div style={{ height: "46rem" }}>
-      <Excalidraw>
+      <Drawink>
         <WelcomeScreen />
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
@@ -31,7 +31,7 @@ The welcome screen consists of two main groups of subcomponents:
 
 <img
   src={require("@site/static/img/welcome-screen-overview.png").default}
-  alt="Excalidraw logo: Sketch hand-drawn like diagrams."
+  alt="Drawink logo: Sketch hand-drawn like diagrams."
 />
 
 ### Center
@@ -42,7 +42,7 @@ The welcome screen consists of two main groups of subcomponents:
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <WelcomeScreen>
           <WelcomeScreen.Center>
             <WelcomeScreen.Center.Logo />
@@ -50,14 +50,14 @@ function App() {
               Welcome Screen Heading!
             </WelcomeScreen.Center.Heading>
             <WelcomeScreen.Center.Menu>
-              <WelcomeScreen.Center.MenuItemLink href="https://github.com/excalidraw/excalidraw">
-                Excalidraw GitHub
+              <WelcomeScreen.Center.MenuItemLink href="https://github.com/drawink/drawink">
+                Drawink GitHub
               </WelcomeScreen.Center.MenuItemLink>
               <WelcomeScreen.Center.MenuItemHelp />
             </WelcomeScreen.Center.Menu>
           </WelcomeScreen.Center>
         </WelcomeScreen>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }
@@ -65,7 +65,7 @@ function App() {
 
 #### Logo
 
-Use the `<WelcomeScreen.Center.Logo/>` to render a logo. By default it renders the Excalidraw logo and name. Supply `children` to customize.
+Use the `<WelcomeScreen.Center.Logo/>` to render a logo. By default it renders the Drawink logo and name. Supply `children` to customize.
 
 #### Heading
 
@@ -81,7 +81,7 @@ The default menu items are:
 
 - `<WelcomeScreen.Center.MenuItemLoadScene/>` - open the load file dialog.
 
-- `<WelcomeScreen.Center.MenuItemLiveCollaborationTrigger/>` - intended to open the live collaboration dialog. Works similarly to [`<LiveCollaborationTrigger>`](/docs/@excalidraw/excalidraw/api/children-components/live-collaboration-trigger) and you must supply `onSelect()` handler to integrate with your collaboration implementation.
+- `<WelcomeScreen.Center.MenuItemLiveCollaborationTrigger/>` - intended to open the live collaboration dialog. Works similarly to [`<LiveCollaborationTrigger>`](/docs/@drawink/drawink/api/children-components/live-collaboration-trigger) and you must supply `onSelect()` handler to integrate with your collaboration implementation.
 
 #### MenuItem
 
@@ -113,7 +113,7 @@ These `<WelcomeScreen.Hints.*>` subcomponents render the UI hints. Text of each 
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw>
+      <Drawink>
         <WelcomeScreen>
           <WelcomeScreen.Hints.ToolbarHint>
             <p> ToolBar Hints </p>
@@ -121,7 +121,7 @@ function App() {
           <WelcomeScreen.Hints.MenuHint />
           <WelcomeScreen.Hints.HelpHint />
         </WelcomeScreen>
-      </Excalidraw>
+      </Drawink>
     </div>
   );
 }

@@ -66,7 +66,7 @@ describe("Sidebar", () => {
       });
     });
 
-    it("should toggle sidebar using excalidrawAPI.toggleSidebar()", async () => {
+    it("should toggle sidebar using drawinkAPI.toggleSidebar()", async () => {
       const { container } = await render(
         <Drawink>
           <Sidebar name="customSidebar">

@@ -121,7 +121,7 @@
     "toggleTheme": "Перемикати світлу/темну теми",
     "theme": "Тема",
     "personalLib": "Персональна бібліотека",
-    "excalidrawLib": "Бібліотека Drawink",
+    "drawinkLib": "Бібліотека Drawink",
     "decreaseFontSize": "Зменшити розмір шрифту",
     "increaseFontSize": "Збільшити розмір шрифту",
     "unbindText": "Відв'язати текст",
@@ -401,9 +401,9 @@
     "link_title": "Доступ за посиланням",
     "link_details": "Експортувати як посилання тільки для читання.",
     "link_button": "Експортувати у посилання",
-    "excalidrawplus_description": "Збережіть сцену у вашому обліковому записі Drawink+.",
-    "excalidrawplus_button": "Експортувати",
-    "excalidrawplus_exportError": "Не вдалося експортувати у Drawink+..."
+    "drawinkplus_description": "Збережіть сцену у вашому обліковому записі Drawink+.",
+    "drawinkplus_button": "Експортувати",
+    "drawinkplus_exportError": "Не вдалося експортувати у Drawink+..."
   },
   "helpDialog": {
     "blog": "Наш блог",
@@ -587,7 +587,7 @@
         "button": "Зберегти на диск",
         "description": "Експорт даних сцени в файл, з якого можна імпортувати пізніше."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Експортувати до Drawink+",
         "description": "Зберегти сцену до робочого простору Drawink+."

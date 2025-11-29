@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "Asmeninė biblioteka",
-    "excalidrawLib": "Exaclidraw biblioteka",
+    "drawinkLib": "Exaclidraw biblioteka",
     "decreaseFontSize": "",
     "increaseFontSize": "",
     "unbindText": "",
@@ -401,9 +401,9 @@
     "link_title": "Nuoroda dalinimuisi",
     "link_details": "",
     "link_button": "",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "Eksportuoti",
-    "excalidrawplus_exportError": ""
+    "drawinkplus_description": "",
+    "drawinkplus_button": "Eksportuoti",
+    "drawinkplus_exportError": ""
   },
   "helpDialog": {
     "blog": "",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

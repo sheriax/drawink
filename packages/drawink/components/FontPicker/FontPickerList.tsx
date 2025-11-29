@@ -201,7 +201,7 @@ export const FontPickerList = React.memo(
         let savedSelection: { start: number; end: number } | null = null;
         if (app.state.editingTextElement) {
           const textEditor = document.querySelector(
-            ".excalidraw-wysiwyg",
+            ".drawink-wysiwyg",
           ) as HTMLTextAreaElement;
           if (textEditor) {
             savedSelection = {
@@ -217,7 +217,7 @@ export const FontPickerList = React.memo(
         if (app.state.editingTextElement && savedSelection) {
           setTimeout(() => {
             const textEditor = document.querySelector(
-              ".excalidraw-wysiwyg",
+              ".drawink-wysiwyg",
             ) as HTMLTextAreaElement;
             if (textEditor && savedSelection) {
               textEditor.focus();
@@ -332,7 +332,7 @@ export const FontPickerList = React.memo(
           if (app.state.editingTextElement) {
             setTimeout(() => {
               const textEditor = document.querySelector(
-                ".excalidraw-wysiwyg",
+                ".drawink-wysiwyg",
               ) as HTMLTextAreaElement;
               if (textEditor) {
                 textEditor.focus();

@@ -110,7 +110,7 @@ export const ColorInput = ({
           />
           <div
             ref={eyeDropperTriggerRef}
-            className={clsx("excalidraw-eye-dropper-trigger", {
+            className={clsx("drawink-eye-dropper-trigger", {
               selected: eyeDropperState,
             })}
             onClick={() =>

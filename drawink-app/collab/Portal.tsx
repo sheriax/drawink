@@ -104,12 +104,12 @@ class Portal {
   queueFileUpload = throttle(async () => {
     try {
       await this.collab.fileManager.saveFiles({
-        elements: this.collab.excalidrawAPI.getSceneElementsIncludingDeleted(),
-        files: this.collab.excalidrawAPI.getFiles(),
+        elements: this.collab.drawinkAPI.getSceneElementsIncludingDeleted(),
+        files: this.collab.drawinkAPI.getFiles(),
       });
     } catch (error: any) {
       if (error.name !== "AbortError") {
-        this.collab.excalidrawAPI.updateScene({
+        this.collab.drawinkAPI.updateScene({
           appState: {
             errorMessage: error.message,
           },
@@ -118,7 +118,7 @@ class Portal {
     }
 
     let isChanged = false;
-    const newElements = this.collab.excalidrawAPI
+    const newElements = this.collab.drawinkAPI
       .getSceneElementsIncludingDeleted()
       .map((element) => {
         if (this.collab.fileManager.shouldUpdateImageElementStatus(element)) {
@@ -132,7 +132,7 @@ class Portal {
       });
 
     if (isChanged) {
-      this.collab.excalidrawAPI.updateScene({
+      this.collab.drawinkAPI.updateScene({
         elements: newElements,
         captureUpdate: CaptureUpdateAction.NEVER,
       });
@@ -211,7 +211,7 @@ class Portal {
           pointer: payload.pointer,
           button: payload.button || "up",
           selectedElementIds:
-            this.collab.excalidrawAPI.getAppState().selectedElementIds,
+            this.collab.drawinkAPI.getAppState().selectedElementIds,
           username: this.collab.state.username,
         },
       };

@@ -595,7 +595,7 @@ class App extends React.Component<AppProps, AppState> {
     editorInterfaceContextInitialValue,
   );
 
-  private excalidrawContainerRef = React.createRef<HTMLDivElement>();
+  private drawinkContainerRef = React.createRef<HTMLDivElement>();
 
   public scene: Scene;
   public fonts: Fonts;
@@ -607,7 +607,7 @@ class App extends React.Component<AppProps, AppState> {
   public id: string;
   private store: Store;
   private history: History;
-  public excalidrawContainerValue: {
+  public drawinkContainerValue: {
     container: HTMLDivElement | null;
     id: string;
   };
@@ -688,7 +688,7 @@ class App extends React.Component<AppProps, AppState> {
     super(props);
     const defaultAppState = getDefaultAppState();
     const {
-      excalidrawAPI,
+      drawinkAPI,
       viewModeEnabled = false,
       zenModeEnabled = false,
       gridModeEnabled = false,
@@ -731,7 +731,7 @@ class App extends React.Component<AppProps, AppState> {
     this.store = new Store(this);
     this.history = new History(this.store);
 
-    if (excalidrawAPI) {
+    if (drawinkAPI) {
       const api: DrawinkImperativeAPI = {
         updateScene: this.updateScene,
         applyDeltas: this.applyDeltas,
@@ -769,15 +769,15 @@ class App extends React.Component<AppProps, AppState> {
         onScrollChange: (cb) => this.onScrollChangeEmitter.on(cb),
         onUserFollow: (cb) => this.onUserFollowEmitter.on(cb),
       } as const;
-      if (typeof excalidrawAPI === "function") {
-        excalidrawAPI(api);
+      if (typeof drawinkAPI === "function") {
+        drawinkAPI(api);
       } else {
-        console.error("excalidrawAPI should be a function!");
+        console.error("drawinkAPI should be a function!");
       }
     }
 
-    this.excalidrawContainerValue = {
-      container: this.excalidrawContainerRef.current,
+    this.drawinkContainerValue = {
+      container: this.drawinkContainerRef.current,
       id: this.id,
     };
 
@@ -820,7 +820,7 @@ class App extends React.Component<AppProps, AppState> {
         if (data.method === "paused") {
           let source: Window | null = null;
           const iframes = document.body.querySelectorAll(
-            "iframe.excalidraw__embeddable",
+            "iframe.drawink__embeddable",
           );
           if (!iframes) {
             break;
@@ -1534,7 +1534,7 @@ class App extends React.Component<AppProps, AppState> {
           return (
             <div
               key={el.id}
-              className={clsx("excalidraw__embeddable-container", {
+              className={clsx("drawink__embeddable-container", {
                 "is-hovered": isHovered,
               })}
               style={{
@@ -1559,13 +1559,13 @@ class App extends React.Component<AppProps, AppState> {
               }}
             >
               <div
-                //this is a hack that addresses isse with embedded excalidraw.com embeddable
-                //https://github.com/excalidraw/excalidraw/pull/6691#issuecomment-1607383938
+                //this is a hack that addresses isse with embedded drawink.com embeddable
+                //https://github.com/drawink/drawink/pull/6691#issuecomment-1607383938
                 /*ref={(ref) => {
-                  if (!this.excalidrawContainerRef.current) {
+                  if (!this.drawinkContainerRef.current) {
                     return;
                   }
-                  const container = this.excalidrawContainerRef.current;
+                  const container = this.drawinkContainerRef.current;
                   const sh = container.scrollHeight;
                   const ch = container.clientHeight;
                   if (sh !== ch) {
@@ -1895,11 +1895,11 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <div
         translate="no"
-        className={clsx("excalidraw excalidraw-container notranslate", {
-          "excalidraw--view-mode":
+        className={clsx("drawink drawink-container notranslate", {
+          "drawink--view-mode":
             this.state.viewModeEnabled ||
             this.state.openDialog?.name === "elementLinkSelector",
-          "excalidraw--mobile": this.editorInterface.formFactor === "phone",
+          "drawink--mobile": this.editorInterface.formFactor === "phone",
         })}
         style={{
           ["--ui-pointerEvents" as any]: shouldBlockPointerEvents
@@ -1907,7 +1907,7 @@ class App extends React.Component<AppProps, AppState> {
             : POINTER_EVENTS.enabled,
           ["--right-sidebar-width" as any]: "302px",
         }}
-        ref={this.excalidrawContainerRef}
+        ref={this.drawinkContainerRef}
         onDrop={this.handleAppOnDrop}
         tabIndex={0}
         onKeyDown={
@@ -1919,7 +1919,7 @@ class App extends React.Component<AppProps, AppState> {
         <AppContext.Provider value={this}>
           <AppPropsContext.Provider value={this.props}>
             <DrawinkContainerContext.Provider
-              value={this.excalidrawContainerValue}
+              value={this.drawinkContainerValue}
             >
               <EditorInterfaceContext.Provider value={this.editorInterface}>
                 <DrawinkSetAppStateContext.Provider value={this.setAppState}>
@@ -2135,7 +2135,7 @@ class App extends React.Component<AppProps, AppState> {
                         )}
                         <InteractiveCanvas
                           app={this}
-                          containerRef={this.excalidrawContainerRef}
+                          containerRef={this.drawinkContainerRef}
                           canvas={this.interactiveCanvas}
                           elementsMap={elementsMap}
                           visibleElements={visibleElements}
@@ -2195,7 +2195,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   public focusContainer: AppClassProperties["focusContainer"] = () => {
-    this.excalidrawContainerRef.current?.focus();
+    this.drawinkContainerRef.current?.focus();
   };
 
   public getSceneElementsIncludingDeleted = () => {
@@ -2772,7 +2772,7 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   public refreshEditorInterface = () => {
-    const container = this.excalidrawContainerRef.current;
+    const container = this.drawinkContainerRef.current;
     if (!container) {
       return;
     }
@@ -2844,8 +2844,8 @@ class App extends React.Component<AppProps, AppState> {
 
   public async componentDidMount() {
     this.unmounted = false;
-    this.excalidrawContainerValue.container =
-      this.excalidrawContainerRef.current;
+    this.drawinkContainerValue.container =
+      this.drawinkContainerRef.current;
 
     if (isTestEnv() || isDevEnv()) {
       const setState = this.setState.bind(this);
@@ -2897,16 +2897,16 @@ class App extends React.Component<AppProps, AppState> {
     this.scene.onUpdate(this.triggerRender);
     this.addEventListeners();
 
-    if (this.props.autoFocus && this.excalidrawContainerRef.current) {
+    if (this.props.autoFocus && this.drawinkContainerRef.current) {
       this.focusContainer();
     }
 
-    if (supportsResizeObserver && this.excalidrawContainerRef.current) {
+    if (supportsResizeObserver && this.drawinkContainerRef.current) {
       this.resizeObserver = new ResizeObserver(() => {
         this.refreshEditorInterface();
         this.updateDOMRect();
       });
-      this.resizeObserver?.observe(this.excalidrawContainerRef.current);
+      this.resizeObserver?.observe(this.drawinkContainerRef.current);
     }
 
     const searchParams = new URLSearchParams(window.location.search.slice(1));
@@ -2995,7 +2995,7 @@ class App extends React.Component<AppProps, AppState> {
 
     this.onRemoveEventListenersEmitter.once(
       addEventListener(
-        this.excalidrawContainerRef.current,
+        this.drawinkContainerRef.current,
         EVENT.WHEEL,
         this.handleWheel,
         { passive: false },
@@ -3077,19 +3077,19 @@ class App extends React.Component<AppProps, AppState> {
       addEventListener(window, EVENT.UNLOAD, this.onUnload, false),
       addEventListener(window, EVENT.BLUR, this.onBlur, false),
       addEventListener(
-        this.excalidrawContainerRef.current,
+        this.drawinkContainerRef.current,
         EVENT.WHEEL,
         this.handleWheel,
         { passive: false },
       ),
       addEventListener(
-        this.excalidrawContainerRef.current,
+        this.drawinkContainerRef.current,
         EVENT.DRAG_OVER,
         this.disableEvent,
         false,
       ),
       addEventListener(
-        this.excalidrawContainerRef.current,
+        this.drawinkContainerRef.current,
         EVENT.DROP,
         this.disableEvent,
         false,
@@ -3099,7 +3099,7 @@ class App extends React.Component<AppProps, AppState> {
     if (this.props.detectScroll) {
       this.onRemoveEventListenersEmitter.once(
         addEventListener(
-          getNearestScrollableContainer(this.excalidrawContainerRef.current!),
+          getNearestScrollableContainer(this.drawinkContainerRef.current!),
           EVENT.SCROLL,
           this.onScroll,
           { passive: false },
@@ -3217,7 +3217,7 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({ theme: this.props.theme });
     }
 
-    this.excalidrawContainerRef.current?.classList.toggle(
+    this.drawinkContainerRef.current?.classList.toggle(
       "theme--dark",
       this.state.theme === THEME.DARK,
     );
@@ -3287,7 +3287,7 @@ class App extends React.Component<AppProps, AppState> {
   // Copy/paste
 
   private onCut = withBatchedUpdates((event: ClipboardEvent) => {
-    const isDrawinkActive = this.excalidrawContainerRef.current?.contains(
+    const isDrawinkActive = this.drawinkContainerRef.current?.contains(
       document.activeElement,
     );
     if (!isDrawinkActive || isWritableElement(event.target)) {
@@ -3299,7 +3299,7 @@ class App extends React.Component<AppProps, AppState> {
   });
 
   private onCopy = withBatchedUpdates((event: ClipboardEvent) => {
-    const isDrawinkActive = this.excalidrawContainerRef.current?.contains(
+    const isDrawinkActive = this.drawinkContainerRef.current?.contains(
       document.activeElement,
     );
     if (!isDrawinkActive || isWritableElement(event.target)) {
@@ -3556,7 +3556,7 @@ class App extends React.Component<AppProps, AppState> {
       // #686
       const target = document.activeElement;
       const isDrawinkActive =
-        this.excalidrawContainerRef.current?.contains(target);
+        this.drawinkContainerRef.current?.contains(target);
       if (event && !isDrawinkActive) {
         return;
       }
@@ -4398,13 +4398,13 @@ class App extends React.Component<AppProps, AppState> {
 
   public getEditorUIOffsets = (): Offsets => {
     const toolbarBottom =
-      this.excalidrawContainerRef?.current
+      this.drawinkContainerRef?.current
         ?.querySelector(".App-toolbar")
         ?.getBoundingClientRect()?.bottom ?? 0;
-    const sidebarRect = this.excalidrawContainerRef?.current
+    const sidebarRect = this.drawinkContainerRef?.current
       ?.querySelector(".sidebar")
       ?.getBoundingClientRect();
-    const propertiesPanelRect = this.excalidrawContainerRef?.current
+    const propertiesPanelRect = this.drawinkContainerRef?.current
       ?.querySelector(".App-menu__left")
       ?.getBoundingClientRect();
 
@@ -4491,7 +4491,7 @@ class App extends React.Component<AppProps, AppState> {
           this.updateEditorAtom(convertElementTypePopupAtom, null);
         } else if (
           event.key === KEYS.TAB &&
-          (document.activeElement === this.excalidrawContainerRef?.current ||
+          (document.activeElement === this.drawinkContainerRef?.current ||
             document.activeElement?.classList.contains(
               CLASSES.CONVERT_ELEMENT_TYPE_POPUP,
             ))
@@ -5451,7 +5451,7 @@ class App extends React.Component<AppProps, AppState> {
         this.focusContainer();
       }),
       element,
-      excalidrawContainer: this.excalidrawContainerRef.current,
+      drawinkContainer: this.drawinkContainerRef.current,
       app: this,
       // when text is selected, it's hard (at least on iOS) to re-position the
       // caret (i.e. deselect). There's not much use for always selecting
@@ -6347,7 +6347,7 @@ class App extends React.Component<AppProps, AppState> {
       ) {
         // Since we are reading from previous state which is not possible with
         // automatic batching in React 18 hence using flush sync to synchronously
-        // update the state. Check https://github.com/excalidraw/excalidraw/pull/5508 for more details.
+        // update the state. Check https://github.com/drawink/drawink/pull/5508 for more details.
         flushSync(() => {
           this.setState({
             selectedLinearElement: editingLinearElement,
@@ -7495,7 +7495,7 @@ class App extends React.Component<AppProps, AppState> {
 
     // preventing defualt while text editing messes with cursor/focus
     if (!this.state.editingTextElement) {
-      // necessary to prevent browser from scrolling the page if excalidraw
+      // necessary to prevent browser from scrolling the page if drawink
       // not full-page #4489
       //
       // as such, the above is broken when panning canvas while in wysiwyg
@@ -8838,7 +8838,7 @@ class App extends React.Component<AppProps, AppState> {
     pointerDownState: PointerDownState,
   ): (event: KeyboardEvent) => void {
     return withBatchedUpdates((event: KeyboardEvent) => {
-      // Prevents focus from escaping excalidraw tab
+      // Prevents focus from escaping drawink tab
       event.key === KEYS.ALT && event.preventDefault();
       if (this.maybeHandleResize(pointerDownState, event)) {
         return;
@@ -8991,7 +8991,7 @@ class App extends React.Component<AppProps, AppState> {
 
           // Since we are reading from previous state which is not possible with
           // automatic batching in React 18 hence using flush sync to synchronously
-          // update the state. Check https://github.com/excalidraw/excalidraw/pull/5508 for more details.
+          // update the state. Check https://github.com/drawink/drawink/pull/5508 for more details.
 
           flushSync(() => {
             if (this.state.selectedLinearElement) {
@@ -11223,26 +11223,26 @@ class App extends React.Component<AppProps, AppState> {
     if (imageFiles.length > 0 && this.isToolSupported("image")) {
       return this.insertImages(imageFiles, sceneX, sceneY);
     }
-    const excalidrawLibrary_ids = dataTransferList.getData(
-      MIME_TYPES.excalidrawlibIds,
+    const drawinkLibrary_ids = dataTransferList.getData(
+      MIME_TYPES.drawinklibIds,
     );
-    const excalidrawLibrary_data = dataTransferList.getData(
-      MIME_TYPES.excalidrawlib,
+    const drawinkLibrary_data = dataTransferList.getData(
+      MIME_TYPES.drawinklib,
     );
-    if (excalidrawLibrary_ids || excalidrawLibrary_data) {
+    if (drawinkLibrary_ids || drawinkLibrary_data) {
       try {
         let libraryItems: LibraryItems | null = null;
-        if (excalidrawLibrary_ids) {
+        if (drawinkLibrary_ids) {
           const { itemIds } = JSON.parse(
-            excalidrawLibrary_ids,
+            drawinkLibrary_ids,
           ) as DrawinkLibraryIds;
           const allLibraryItems = await this.library.getLatestLibrary();
           libraryItems = allLibraryItems.filter((item) =>
             itemIds.includes(item.id),
           );
           // legacy library dataTransfer format
-        } else if (excalidrawLibrary_data) {
-          libraryItems = parseLibraryJSON(excalidrawLibrary_data);
+        } else if (drawinkLibrary_data) {
+          libraryItems = parseLibraryJSON(drawinkLibrary_data);
         }
         if (libraryItems?.length) {
           libraryItems = libraryItems.map((item) => ({
@@ -11270,7 +11270,7 @@ class App extends React.Component<AppProps, AppState> {
     if (fileItems.length > 0) {
       const { file, fileHandle } = fileItems[0];
       if (file) {
-        // Attempt to parse an excalidraw/excalidrawlib file
+        // Attempt to parse an drawink/drawinklib file
         await this.loadFileToCanvas(file, fileHandle);
       }
     }
@@ -11338,7 +11338,7 @@ class App extends React.Component<AppProps, AppState> {
         return;
       }
 
-      if (ret.type === MIME_TYPES.excalidraw) {
+      if (ret.type === MIME_TYPES.drawink) {
         // restore the fractional indices by mutating elements
         syncInvalidIndices(elements.concat(ret.data.elements));
 
@@ -11360,7 +11360,7 @@ class App extends React.Component<AppProps, AppState> {
           replaceFiles: true,
           captureUpdate: CaptureUpdateAction.IMMEDIATELY,
         });
-      } else if (ret.type === MIME_TYPES.excalidrawlib) {
+      } else if (ret.type === MIME_TYPES.drawinklib) {
         await this.library
           .updateLibrary({
             libraryItems: file,
@@ -11409,7 +11409,7 @@ class App extends React.Component<AppProps, AppState> {
 
     const type = element || isHittingCommonBoundBox ? "element" : "canvas";
 
-    const container = this.excalidrawContainerRef.current!;
+    const container = this.drawinkContainerRef.current!;
     const { top: offsetTop, left: offsetLeft } =
       container.getBoundingClientRect();
     const left = event.clientX - offsetLeft;
@@ -12029,14 +12029,14 @@ class App extends React.Component<AppProps, AppState> {
   }, 300);
 
   private updateDOMRect = (cb?: () => void) => {
-    if (this.excalidrawContainerRef?.current) {
-      const excalidrawContainer = this.excalidrawContainerRef.current;
+    if (this.drawinkContainerRef?.current) {
+      const drawinkContainer = this.drawinkContainerRef.current;
       const {
         width,
         height,
         left: offsetLeft,
         top: offsetTop,
-      } = excalidrawContainer.getBoundingClientRect();
+      } = drawinkContainer.getBoundingClientRect();
       const {
         width: currentWidth,
         height: currentHeight,
@@ -12075,9 +12075,9 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   private getCanvasOffsets(): Pick<AppState, "offsetTop" | "offsetLeft"> {
-    if (this.excalidrawContainerRef?.current) {
-      const excalidrawContainer = this.excalidrawContainerRef.current;
-      const { left, top } = excalidrawContainer.getBoundingClientRect();
+    if (this.drawinkContainerRef?.current) {
+      const drawinkContainer = this.drawinkContainerRef.current;
+      const { left, top } = drawinkContainer.getBoundingClientRect();
       return {
         offsetLeft: left,
         offsetTop: top,

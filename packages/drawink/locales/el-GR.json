@@ -121,7 +121,7 @@
     "toggleTheme": "Εναλλαγή φωτεινού/σκοτεινού θέματος",
     "theme": "Θέμα",
     "personalLib": "Προσωπική Βιβλιοθήκη",
-    "excalidrawLib": "Βιβλιοθήκη Drawink",
+    "drawinkLib": "Βιβλιοθήκη Drawink",
     "decreaseFontSize": "Μείωση μεγέθους γραμματοσειράς",
     "increaseFontSize": "Αύξηση μεγέθους γραμματοσειράς",
     "unbindText": "Αποσύνδεση κειμένου",
@@ -401,9 +401,9 @@
     "link_title": "Κοινόχρηστος σύνδεσμος",
     "link_details": "Εξαγωγή ως σύνδεσμο μόνο για ανάγνωση.",
     "link_button": "Εξαγωγή σε Σύνδεση",
-    "excalidrawplus_description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink+.",
-    "excalidrawplus_button": "Εξαγωγή",
-    "excalidrawplus_exportError": "Δεν ήταν δυνατή η εξαγωγή στο Drawink+ αυτή τη στιγμή..."
+    "drawinkplus_description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink+.",
+    "drawinkplus_button": "Εξαγωγή",
+    "drawinkplus_exportError": "Δεν ήταν δυνατή η εξαγωγή στο Drawink+ αυτή τη στιγμή..."
   },
   "helpDialog": {
     "blog": "Διαβάστε το Blog μας",
@@ -587,7 +587,7 @@
         "button": "Αποθήκευση στο δίσκο",
         "description": "Εξαγωγή δεδομένων σκηνής σε ένα αρχείο από το οποίο μπορείτε να εισάγετε αργότερα."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Εξαγωγή σε Drawink+",
         "description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink+."

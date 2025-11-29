@@ -52,9 +52,9 @@ import type {
  * boundaries
  **/
 const ALLOWED_LIBRARY_URLS = [
-  "excalidraw.com",
+  "drawink.com",
   // when installing from github PRs
-  "raw.githubusercontent.com/excalidraw/excalidraw-libraries",
+  "raw.githubusercontent.com/drawink/drawink-libraries",
 ];
 
 type LibraryUpdate = {
@@ -128,7 +128,7 @@ const isUniqueItem = (
       return false;
     }
 
-    // detect z-index difference by checking the excalidraw elements
+    // detect z-index difference by checking the drawink elements
     // are in order
     return libraryItem.elements.every((libItemDrawinkItem, idx) => {
       return (
@@ -245,7 +245,7 @@ class Library {
     }
   };
 
-  /** call on excalidraw instance unmount */
+  /** call on drawink instance unmount */
   destroy = () => {
     this.updateQueue = [];
     this.currLibraryItems = [];
@@ -676,10 +676,10 @@ const persistLibraryUpdate = async (
 
 export const useHandleLibrary = (
   opts: {
-    excalidrawAPI: DrawinkImperativeAPI | null;
+    drawinkAPI: DrawinkImperativeAPI | null;
     /**
      * Return `true` if the library install url should be allowed.
-     * If not supplied, only the excalidraw.com base domain is allowed.
+     * If not supplied, only the drawink.com base domain is allowed.
      */
     validateLibraryUrl?: (libraryUrl: string) => boolean;
   } & (
@@ -700,7 +700,7 @@ export const useHandleLibrary = (
       }
     ),
 ) => {
-  const { excalidrawAPI } = opts;
+  const { drawinkAPI } = opts;
 
   const optsRef = useRef(opts);
   optsRef.current = opts;
@@ -708,11 +708,11 @@ export const useHandleLibrary = (
   const isLibraryLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (!excalidrawAPI) {
+    if (!drawinkAPI) {
       return;
     }
 
-    // reset on editor remount (excalidrawAPI changed)
+    // reset on editor remount (drawinkAPI changed)
     isLibraryLoadedRef.current = false;
 
     const importLibraryFromURL = async ({
@@ -738,7 +738,7 @@ export const useHandleLibrary = (
         }
       });
 
-      const shouldPrompt = idToken !== excalidrawAPI.id;
+      const shouldPrompt = idToken !== drawinkAPI.id;
 
       // wait for the tab to be focused before continuing in case we'll prompt
       // for confirmation
@@ -751,7 +751,7 @@ export const useHandleLibrary = (
         : null);
 
       try {
-        await excalidrawAPI.updateLibrary({
+        await drawinkAPI.updateLibrary({
           libraryItems: libraryPromise,
           prompt: shouldPrompt,
           merge: true,
@@ -759,7 +759,7 @@ export const useHandleLibrary = (
           openLibraryMenu: true,
         });
       } catch (error: any) {
-        excalidrawAPI.updateScene({
+        drawinkAPI.updateScene({
           appState: {
             errorMessage: error.message,
           },
@@ -813,7 +813,7 @@ export const useHandleLibrary = (
 
       Promise.resolve(optsRef.current.getInitialLibraryItems())
         .then((libraryItems) => {
-          excalidrawAPI.updateLibrary({
+          drawinkAPI.updateLibrary({
             libraryItems,
             // merge with current library items because we may have already
             // populated it (e.g. by installing 3rd party library which can
@@ -901,7 +901,7 @@ export const useHandleLibrary = (
       }
 
       // load initial (or migrated) library
-      excalidrawAPI
+      drawinkAPI
         .updateLibrary({
           libraryItems: initDataPromise.then((libraryItems) => {
             const _libraryItems = libraryItems || [];
@@ -924,12 +924,12 @@ export const useHandleLibrary = (
       window.removeEventListener(EVENT.HASHCHANGE, onHashChange);
     };
   }, [
-    // important this useEffect only depends on excalidrawAPI so it only reruns
-    // on editor remounts (the excalidrawAPI changes)
-    excalidrawAPI,
+    // important this useEffect only depends on drawinkAPI so it only reruns
+    // on editor remounts (the drawinkAPI changes)
+    drawinkAPI,
   ]);
 
-  // This effect is run without excalidrawAPI dependency so that host apps
+  // This effect is run without drawinkAPI dependency so that host apps
   // can run this hook outside of an active editor instance and the library
   // update queue/loop survives editor remounts
   //
@@ -968,8 +968,8 @@ export const useHandleLibrary = (
             );
 
             // currently we only show error if an editor is loaded
-            if (isLoaded && optsRef.current.excalidrawAPI) {
-              optsRef.current.excalidrawAPI.updateScene({
+            if (isLoaded && optsRef.current.drawinkAPI) {
+              optsRef.current.drawinkAPI.updateScene({
                 appState: {
                   errorMessage: t("errors.saveLibraryError"),
                 },

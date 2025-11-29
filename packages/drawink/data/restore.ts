@@ -293,7 +293,7 @@ export const restoreElement = (
 
   switch (element.type) {
     case "text":
-      // temp fix: cleanup legacy obsidian-excalidraw attribute else it'll
+      // temp fix: cleanup legacy obsidian-drawink attribute else it'll
       // conflict when porting between the apps
       delete (element as any).rawText;
 

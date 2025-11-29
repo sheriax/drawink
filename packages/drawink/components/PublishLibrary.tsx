@@ -279,8 +279,8 @@ const PublishLibrary = ({
     const previewImage = await generatePreviewImage(clonedLibItems);
 
     const libContent: ExportedLibraryData = {
-      type: EXPORT_DATA_TYPES.excalidrawLibrary,
-      version: VERSIONS.excalidrawLibrary,
+      type: EXPORT_DATA_TYPES.drawinkLibrary,
+      version: VERSIONS.drawinkLibrary,
       source: getExportSource(),
       libraryItems: clonedLibItems,
     };
@@ -288,7 +288,7 @@ const PublishLibrary = ({
     const lib = new Blob([content], { type: "application/json" });
 
     const formData = new FormData();
-    formData.append("excalidrawLib", lib);
+    formData.append("drawinkLib", lib);
     formData.append("previewImage", previewImage);
     formData.append("previewImageType", previewImage.type);
     formData.append("title", libraryData.name);
@@ -387,7 +387,7 @@ const PublishLibrary = ({
               i18nKey="publishDialog.noteDescription"
               link={(el) => (
                 <a
-                  href="https://libraries.excalidraw.com"
+                  href="https://libraries.drawink.com"
                   target="_blank"
                   rel="noopener"
                 >
@@ -401,7 +401,7 @@ const PublishLibrary = ({
               i18nKey="publishDialog.noteGuidelines"
               link={(el) => (
                 <a
-                  href="https://github.com/excalidraw/excalidraw-libraries#guidelines"
+                  href="https://github.com/drawink/drawink-libraries#guidelines"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -506,7 +506,7 @@ const PublishLibrary = ({
                 i18nKey="publishDialog.noteLicense"
                 link={(el) => (
                   <a
-                    href="https://github.com/excalidraw/excalidraw-libraries/blob/main/LICENSE"
+                    href="https://github.com/drawink/drawink-libraries/blob/main/LICENSE"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

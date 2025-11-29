@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "បណ្ណាល័យផ្ទាល់ខ្លួន",
-    "excalidrawLib": "បណ្ណាល័យ Drawink",
+    "drawinkLib": "បណ្ណាល័យ Drawink",
     "decreaseFontSize": "បន្ថយទំហំពុម្ពអក្សរ",
     "increaseFontSize": "បង្កើនទំហំពុម្ពអក្សរ",
     "unbindText": "ស្រាយអត្ថបទ",
@@ -401,9 +401,9 @@
     "link_title": "តំណដែលអាចចែករំលែកបាន",
     "link_details": "នាំចេញជាតំណបានតែមើលឬអាន។",
     "link_button": "នាំចេញជាតំណ",
-    "excalidrawplus_description": "រក្សាទុកស៊ីនទៅកន្លែងធ្វើការ Drawink+ របស់អ្នក។",
-    "excalidrawplus_button": "នាំចេញ",
-    "excalidrawplus_exportError": "មិនអាចនាំចេញទៅ Drawink+ បានទេនៅពេលនេះ..."
+    "drawinkplus_description": "រក្សាទុកស៊ីនទៅកន្លែងធ្វើការ Drawink+ របស់អ្នក។",
+    "drawinkplus_button": "នាំចេញ",
+    "drawinkplus_exportError": "មិនអាចនាំចេញទៅ Drawink+ បានទេនៅពេលនេះ..."
   },
   "helpDialog": {
     "blog": "អានប្លក់របស់យើង",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

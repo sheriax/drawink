@@ -1,6 +1,6 @@
 @import "../packages/drawink/css/variables.module.scss";
 
-.excalidraw {
+.drawink {
   --color-primary-contrast-offset: #625ee0; // to offset Chubb illusion
 
   &.theme--dark {
@@ -35,9 +35,11 @@
         background-color: #ecfdf5;
         color: #064e3c;
       }
+
       &.highlighted {
         color: var(--color-promo);
         font-weight: 700;
+
         .dropdown-menu-item__icon g {
           stroke-width: 2;
         }
@@ -80,7 +82,7 @@
   }
 }
 
-.excalidraw-app.is-collaborating {
+.drawink-app.is-collaborating {
   [data-testid="clear-canvas-button"] {
     display: none;
   }

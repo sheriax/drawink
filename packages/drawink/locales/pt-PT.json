@@ -121,7 +121,7 @@
     "toggleTheme": "Alternar tema claro/escuro",
     "theme": "Tema",
     "personalLib": "Biblioteca pessoal",
-    "excalidrawLib": "Biblioteca do Drawink",
+    "drawinkLib": "Biblioteca do Drawink",
     "decreaseFontSize": "Reduzir o tamanho do tipo de letra",
     "increaseFontSize": "Aumentar o tamanho do tipo de letra",
     "unbindText": "Desligar texto",
@@ -401,9 +401,9 @@
     "link_title": "Hiperligação partilhável",
     "link_details": "Exportar como uma hiperligação de apenas leitura.",
     "link_button": "Exportar para hiperligação",
-    "excalidrawplus_description": "Guardar a cena no seu espaço de trabalho do Drawink+.",
-    "excalidrawplus_button": "Exportar",
-    "excalidrawplus_exportError": "Não foi possível exportar para o Drawink+ neste momento..."
+    "drawinkplus_description": "Guardar a cena no seu espaço de trabalho do Drawink+.",
+    "drawinkplus_button": "Exportar",
+    "drawinkplus_exportError": "Não foi possível exportar para o Drawink+ neste momento..."
   },
   "helpDialog": {
     "blog": "Leia o nosso blogue",
@@ -587,7 +587,7 @@
         "button": "Guardar no disco",
         "description": "Exportar os dados da cena para um ficheiro do qual poderá importar mais tarde."
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Exportar para Drawink+",
         "description": "Guardar a cena no seu espaço de trabalho do Drawink+."

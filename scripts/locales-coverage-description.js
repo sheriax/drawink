@@ -165,7 +165,7 @@ const languages = {
 };
 
 const percentages = fs.readFileSync(
-  `${__dirname}/../packages/excalidraw/locales/percentages.json`,
+  `${__dirname}/../packages/drawink/locales/percentages.json`,
 );
 const rowData = JSON.parse(percentages);
 
@@ -190,7 +190,7 @@ const printRow = (id, locale, coverage) => {
     result += `[${boldIf(
       language,
       isOver,
-    )}](https://crowdin.com/translate/excalidraw/10/${crowdinMap[locale]}) | `;
+    )}](https://crowdin.com/translate/drawink/10/${crowdinMap[locale]}) | `;
   } else {
     result += `${boldIf(language, isOver)} | `;
   }
@@ -199,7 +199,7 @@ const printRow = (id, locale, coverage) => {
 };
 
 console.info(
-  `Each language must be at least **${THRESSHOLD}%** translated in order to appear on Excalidraw. Join us on [Crowdin](https://crowdin.com/project/excalidraw) and help us translate your own language. **Can't find yours yet?** Open an [issue](https://github.com/excalidraw/excalidraw/issues/new) and we'll add it to the list.`,
+  `Each language must be at least **${THRESSHOLD}%** translated in order to appear on Drawink. Join us on [Crowdin](https://crowdin.com/project/drawink) and help us translate your own language. **Can't find yours yet?** Open an [issue](https://github.com/drawink/drawink/issues/new) and we'll add it to the list.`,
 );
 console.info("\n\r");
 console.info(printHeader());

@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "",
     "personalLib": "ব্যক্তিগত লাইব্রেরি",
-    "excalidrawLib": "এক্সক্যালিড্র লাইব্রেরি",
+    "drawinkLib": "এক্সক্যালিড্র লাইব্রেরি",
     "decreaseFontSize": "লেখনীর মাত্রা কমান",
     "increaseFontSize": "লেখনীর মাত্রা বাড়ান",
     "unbindText": "লেখার জোড় খুলুন",
@@ -401,9 +401,9 @@
     "link_title": "",
     "link_details": "",
     "link_button": "",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "নিবদ্ধ",
-    "excalidrawplus_exportError": ""
+    "drawinkplus_description": "",
+    "drawinkplus_button": "নিবদ্ধ",
+    "drawinkplus_exportError": ""
   },
   "helpDialog": {
     "blog": "",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

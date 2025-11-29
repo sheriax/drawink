@@ -74,7 +74,7 @@ export const PropertiesPopover = React.forwardRef<
             // prevents focusing the trigger
             e.preventDefault();
 
-            // return focus to excalidraw container unless
+            // return focus to drawink container unless
             // user focuses an interactive element, such as a button, or
             // enters the text editor by clicking on canvas with the text tool
             if (container && !isInteractive(document.activeElement)) {

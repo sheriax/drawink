@@ -41,7 +41,7 @@ describe("appState", () => {
         file: new Blob(
           [
             JSON.stringify({
-              type: EXPORT_DATA_TYPES.excalidraw,
+              type: EXPORT_DATA_TYPES.drawink,
               appState: {
                 viewBackgroundColor: "#000",
               },

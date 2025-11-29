@@ -34,7 +34,7 @@
   <a href="https://discord.gg/UexuTaE">
     <img alt="Chat on Discord" src="https://img.shields.io/discord/723672430744174682?color=738ad6&label=Chat%20on%20Discord&logo=discord&logoColor=ffffff&widge=false"/>
   </a>
-  <a href="https://deepwiki.com/excalidraw/excalidraw">
+  <a href="https://deepwiki.com/drawink/drawink">
     <img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" />
   </a>
   <a href="https://twitter.com/drawink">
@@ -44,8 +44,8 @@
 
 <div align="center">
   <figure>
-    <a href="https://excalidraw.com" target="_blank" rel="noopener">
-      <img src="https://excalidraw.nyc3.cdn.digitaloceanspaces.com/github%2Fproduct_showcase.png" alt="Product showcase" />
+    <a href="https://drawink.com" target="_blank" rel="noopener">
+      <img src="https://drawink.nyc3.cdn.digitaloceanspaces.com/github%2Fproduct_showcase.png" alt="Product showcase" />
     </a>
     <figcaption>
       <p align="center">
@@ -113,7 +113,7 @@ Check out our [documentation](https://docs.drawink.com/docs/@drawink/drawink/ins
 
 ## Who's integrating Drawink
 
-[Google Cloud](https://googlecloudcheatsheet.withgoogle.com/architecture) • [Meta](https://meta.com/) • [CodeSandbox](https://codesandbox.io/) • [Obsidian Excalidraw](https://github.com/zsviczian/obsidian-excalidraw-plugin) • [Replit](https://replit.com/) • [Slite](https://slite.com/) • [Notion](https://notion.so/) • [HackerRank](https://www.hackerrank.com/) • and many others
+[Google Cloud](https://googlecloudcheatsheet.withgoogle.com/architecture) • [Meta](https://meta.com/) • [CodeSandbox](https://codesandbox.io/) • [Obsidian Drawink](https://github.com/zsviczian/obsidian-drawink-plugin) • [Replit](https://replit.com/) • [Slite](https://slite.com/) • [Notion](https://notion.so/) • [HackerRank](https://www.hackerrank.com/) • and many others
 
 ## Sponsors & support
 
@@ -121,9 +121,9 @@ If you like the project, you can become a sponsor at [Open Collective](https://o
 
 ## Thank you for supporting Drawink
 
-[<img src="https://opencollective.com/excalidraw/tiers/sponsors/0/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/0/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/1/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/1/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/2/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/2/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/3/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/3/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/4/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/4/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/5/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/5/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/6/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/6/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/7/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/7/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/8/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/8/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/9/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/9/website) [<img src="https://opencollective.com/excalidraw/tiers/sponsors/10/avatar.svg?avatarHeight=120"/>](https://opencollective.com/excalidraw/tiers/sponsors/10/website)
+[<img src="https://opencollective.com/drawink/tiers/sponsors/0/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/0/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/1/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/1/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/2/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/2/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/3/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/3/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/4/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/4/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/5/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/5/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/6/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/6/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/7/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/7/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/8/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/8/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/9/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/9/website) [<img src="https://opencollective.com/drawink/tiers/sponsors/10/avatar.svg?avatarHeight=120"/>](https://opencollective.com/drawink/tiers/sponsors/10/website)
 
-<a href="https://opencollective.com/excalidraw#category-CONTRIBUTE" target="_blank"><img src="https://opencollective.com/excalidraw/tiers/backers.svg?avatarHeight=32"/></a>
+<a href="https://opencollective.com/drawink#category-CONTRIBUTE" target="_blank"><img src="https://opencollective.com/drawink/tiers/backers.svg?avatarHeight=32"/></a>
 
 Last but not least, we're thankful to these companies for offering their services for free:
 

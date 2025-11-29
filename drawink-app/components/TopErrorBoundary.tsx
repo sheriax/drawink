@@ -66,7 +66,7 @@ export class TopErrorBoundary extends React.Component<
     }
 
     window.open(
-      `https://github.com/excalidraw/excalidraw/issues/new?body=${body}`,
+      `https://github.com/drawink/drawink/issues/new?body=${body}`,
       "_blank",
       "noopener noreferrer",
     );
@@ -74,7 +74,7 @@ export class TopErrorBoundary extends React.Component<
 
   private errorSplash() {
     return (
-      <div className="ErrorSplash excalidraw">
+      <div className="ErrorSplash drawink">
         <div className="ErrorSplash-messageContainer">
           <div className="ErrorSplash-paragraph bigger align-center">
             <Trans

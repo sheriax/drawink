@@ -32,9 +32,8 @@ export const AppSidebar = () => {
           <div
             className="app-sidebar-promo-image"
             style={{
-              ["--image-source" as any]: `url(/oss_promo_comments_${
-                theme === THEME.DARK ? "dark" : "light"
-              }.jpg)`,
+              ["--image-source" as any]: `url(/oss_promo_comments_${theme === THEME.DARK ? "dark" : "light"
+                }.jpg)`,
               opacity: 0.7,
             }}
           />
@@ -44,7 +43,7 @@ export const AppSidebar = () => {
           {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP
-            }/plus?utm_source=excalidraw&utm_medium=app&utm_content=comments_promo#excalidraw-redirect`}
+            }/plus?utm_source=drawink&utm_medium=app&utm_content=comments_promo#drawink-redirect`}
           >
             Sign up now
           </LinkButton> */}
@@ -55,9 +54,8 @@ export const AppSidebar = () => {
           <div
             className="app-sidebar-promo-image"
             style={{
-              ["--image-source" as any]: `url(/oss_promo_presentations_${
-                theme === THEME.DARK ? "dark" : "light"
-              }.svg)`,
+              ["--image-source" as any]: `url(/oss_promo_presentations_${theme === THEME.DARK ? "dark" : "light"
+                }.svg)`,
               backgroundSize: "60%",
               opacity: 0.4,
             }}
@@ -68,7 +66,7 @@ export const AppSidebar = () => {
           {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP
-            }/plus?utm_source=excalidraw&utm_medium=app&utm_content=presentations_promo#excalidraw-redirect`}
+            }/plus?utm_source=drawink&utm_medium=app&utm_content=presentations_promo#drawink-redirect`}
           >
             Sign up now
           </LinkButton> */}

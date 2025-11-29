@@ -1,4 +1,4 @@
-.excalidraw {
+.drawink {
   .app-sidebar-promo-container {
     padding: 0.75rem;
     display: flex;
@@ -16,11 +16,9 @@
     background-position: center;
     background-repeat: no-repeat;
 
-    background-image: radial-gradient(
-        circle,
+    background-image: radial-gradient(circle,
         transparent 60%,
-        var(--sidebar-bg-color) 100%
-      ),
+        var(--sidebar-bg-color) 100%),
       var(--image-source);
 
     display: flex;

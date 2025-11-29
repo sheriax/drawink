@@ -121,7 +121,7 @@
     "toggleTheme": "",
     "theme": "Téma",
     "personalLib": "Személyes könyvtár",
-    "excalidrawLib": "Drawink könyvtár",
+    "drawinkLib": "Drawink könyvtár",
     "decreaseFontSize": "Betűméret csökkentése",
     "increaseFontSize": "Betűméret növelése",
     "unbindText": "Szövegkötés feloldása",
@@ -401,9 +401,9 @@
     "link_title": "Megosztható hivatkozás",
     "link_details": "Exportálás csak olvasható hivatkozásként.",
     "link_button": "Exportálás hivatkozásba",
-    "excalidrawplus_description": "Mentse el a jelenetet az Drawink+ munkaterületére.",
-    "excalidrawplus_button": "Exportálás",
-    "excalidrawplus_exportError": "Jelenleg nem lehet exportálni az Drawink+-ba..."
+    "drawinkplus_description": "Mentse el a jelenetet az Drawink+ munkaterületére.",
+    "drawinkplus_button": "Exportálás",
+    "drawinkplus_exportError": "Jelenleg nem lehet exportálni az Drawink+-ba..."
   },
   "helpDialog": {
     "blog": "Olvasd a blogunkat",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

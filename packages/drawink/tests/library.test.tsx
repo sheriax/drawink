@@ -22,14 +22,14 @@ import type { LibraryItem, LibraryItems } from "../types";
 const { h } = window;
 
 const libraryJSONPromise = API.readFile(
-  "./fixtures/fixture_library.excalidrawlib",
+  "./fixtures/fixture_library.drawinklib",
   "utf8",
 );
 
 const mockLibraryFilePromise = new Promise<Blob>(async (resolve, reject) => {
   try {
     resolve(
-      new Blob([await libraryJSONPromise], { type: MIME_TYPES.excalidrawlib }),
+      new Blob([await libraryJSONPromise], { type: MIME_TYPES.drawinklib }),
     );
   } catch (error) {
     reject(error);
@@ -102,7 +102,7 @@ describe("library items inserting", () => {
         value: JSON.stringify({
           itemIds: [libraryItems[0].id],
         }),
-        type: MIME_TYPES.excalidrawlibIds,
+        type: MIME_TYPES.drawinklibIds,
       },
     ]);
 
@@ -151,8 +151,8 @@ describe("library", () => {
     await API.drop([
       {
         kind: "file",
-        type: MIME_TYPES.excalidrawlib,
-        file: await API.loadFile("./fixtures/fixture_library.excalidrawlib"),
+        type: MIME_TYPES.drawinklib,
+        file: await API.loadFile("./fixtures/fixture_library.drawinklib"),
       },
     ]);
     await waitFor(async () => {
@@ -175,7 +175,7 @@ describe("library", () => {
       {
         kind: "string",
         value: serializeLibraryAsJSON(libraryItems),
-        type: MIME_TYPES.excalidrawlib,
+        type: MIME_TYPES.drawinklib,
       },
     ]);
     await waitFor(() => {
@@ -203,7 +203,7 @@ describe("library", () => {
       {
         kind: "string",
         value: serializeLibraryAsJSON([item1, item1]),
-        type: MIME_TYPES.excalidrawlib,
+        type: MIME_TYPES.drawinklib,
       },
     ]);
 
@@ -228,7 +228,7 @@ describe("library", () => {
       {
         kind: "string",
         value: serializeLibraryAsJSON(libraryItems),
-        type: MIME_TYPES.excalidrawlib,
+        type: MIME_TYPES.drawinklib,
       },
     ]);
     await waitFor(() => {

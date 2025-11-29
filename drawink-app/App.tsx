@@ -209,7 +209,7 @@ const shareableLinkConfirmDialog = {
 
 const initializeScene = async (opts: {
   collabAPI: CollabAPI | null;
-  excalidrawAPI: DrawinkImperativeAPI;
+  drawinkAPI: DrawinkImperativeAPI;
 }): Promise<
   { scene: DrawinkInitialDataState | null } & (
     | { isExternalScene: true; id: string; key: string }
@@ -252,7 +252,7 @@ const initializeScene = async (opts: {
         window.history.replaceState({}, APP_NAME, window.location.origin);
       }
     } else {
-      // https://github.com/excalidraw/excalidraw/issues/1919
+      // https://github.com/drawink/drawink/issues/1919
       if (document.hidden) {
         return new Promise((resolve, reject) => {
           window.addEventListener(
@@ -294,7 +294,7 @@ const initializeScene = async (opts: {
   }
 
   if (roomLinkData && opts.collabAPI) {
-    const { excalidrawAPI } = opts;
+    const { drawinkAPI } = opts;
 
     const scene = await opts.collabAPI.startCollaboration(roomLinkData);
 
@@ -310,7 +310,7 @@ const initializeScene = async (opts: {
               ...scene?.appState,
               theme: localDataState?.appState?.theme || scene?.appState?.theme,
             },
-            excalidrawAPI.getAppState(),
+            drawinkAPI.getAppState(),
           ),
           // necessary if we're invoking from a hashchange handler which doesn't
           // go through App.initializeScene() that resets this flag
@@ -318,8 +318,8 @@ const initializeScene = async (opts: {
         },
         elements: reconcileElements(
           scene?.elements || [],
-          excalidrawAPI.getSceneElementsIncludingDeleted() as RemoteDrawinkElement[],
-          excalidrawAPI.getAppState(),
+          drawinkAPI.getSceneElementsIncludingDeleted() as RemoteDrawinkElement[],
+          drawinkAPI.getAppState(),
         ),
       },
       isExternalScene: true,
@@ -370,7 +370,7 @@ const DrawinkWrapper = () => {
     }, VERSION_TIMEOUT);
   }, []);
 
-  const [excalidrawAPI, excalidrawRefCallback] =
+  const [drawinkAPI, drawinkRefCallback] =
     useCallbackRefState<DrawinkImperativeAPI>();
 
   const [, setShareDialogState] = useAtom(shareDialogStateAtom);
@@ -381,7 +381,7 @@ const DrawinkWrapper = () => {
   const collabError = useAtomValue(collabErrorIndicatorAtom);
 
   useHandleLibrary({
-    excalidrawAPI,
+    drawinkAPI,
     adapter: LibraryIndexedDBAdapter,
     // TODO maybe remove this in several months (shipped: 24-03-11)
     migrationAdapter: LibraryLocalStorageMigrationAdapter,
@@ -402,10 +402,10 @@ const DrawinkWrapper = () => {
       }
       forceRefresh((prev) => !prev);
     }
-  }, [excalidrawAPI]);
+  }, [drawinkAPI]);
 
   useEffect(() => {
-    if (!excalidrawAPI || (!isCollabDisabled && !collabAPI)) {
+    if (!drawinkAPI || (!isCollabDisabled && !collabAPI)) {
       return;
     }
 
@@ -424,11 +424,11 @@ const DrawinkWrapper = () => {
               forceFetchFiles: true,
             })
             .then(({ loadedFiles, erroredFiles }) => {
-              excalidrawAPI.addFiles(loadedFiles);
+              drawinkAPI.addFiles(loadedFiles);
               updateStaleImageStatuses({
-                excalidrawAPI,
+                drawinkAPI,
                 erroredFiles,
-                elements: excalidrawAPI.getSceneElementsIncludingDeleted(),
+                elements: drawinkAPI.getSceneElementsIncludingDeleted(),
               });
             });
         }
@@ -447,11 +447,11 @@ const DrawinkWrapper = () => {
             data.key,
             fileIds,
           ).then(({ loadedFiles, erroredFiles }) => {
-            excalidrawAPI.addFiles(loadedFiles);
+            drawinkAPI.addFiles(loadedFiles);
             updateStaleImageStatuses({
-              excalidrawAPI,
+              drawinkAPI,
               erroredFiles,
-              elements: excalidrawAPI.getSceneElementsIncludingDeleted(),
+              elements: drawinkAPI.getSceneElementsIncludingDeleted(),
             });
           });
         } else if (isInitialLoad) {
@@ -460,12 +460,12 @@ const DrawinkWrapper = () => {
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
-                  excalidrawAPI.addFiles(loadedFiles);
+                  drawinkAPI.addFiles(loadedFiles);
                 }
                 updateStaleImageStatuses({
-                  excalidrawAPI,
+                  drawinkAPI,
                   erroredFiles,
-                  elements: excalidrawAPI.getSceneElementsIncludingDeleted(),
+                  elements: drawinkAPI.getSceneElementsIncludingDeleted(),
                 });
               });
           }
@@ -476,7 +476,7 @@ const DrawinkWrapper = () => {
       }
     };
 
-    initializeScene({ collabAPI, excalidrawAPI }).then(async (data) => {
+    initializeScene({ collabAPI, drawinkAPI }).then(async (data) => {
       loadImages(data, /* isInitialLoad */ true);
       initialStatePromiseRef.current.promise.resolve(data.scene);
     });
@@ -491,12 +491,12 @@ const DrawinkWrapper = () => {
         ) {
           collabAPI.stopCollaboration(false);
         }
-        excalidrawAPI.updateScene({ appState: { isLoading: true } });
+        drawinkAPI.updateScene({ appState: { isLoading: true } });
 
-        initializeScene({ collabAPI, excalidrawAPI }).then((data) => {
+        initializeScene({ collabAPI, drawinkAPI }).then((data) => {
           loadImages(data);
           if (data.scene) {
-            excalidrawAPI.updateScene({
+            drawinkAPI.updateScene({
               ...data.scene,
               ...restore(data.scene, null, null, { repairBindings: true }),
               captureUpdate: CaptureUpdateAction.IMMEDIATELY,
@@ -519,13 +519,13 @@ const DrawinkWrapper = () => {
           const localDataState = importFromLocalStorage();
           const username = importUsernameFromLocalStorage();
           setLangCode(getPreferredLanguage());
-          excalidrawAPI.updateScene({
+          drawinkAPI.updateScene({
             ...localDataState,
             captureUpdate: CaptureUpdateAction.NEVER,
           });
           LibraryIndexedDBAdapter.load().then((data) => {
             if (data) {
-              excalidrawAPI.updateLibrary({
+              drawinkAPI.updateLibrary({
                 libraryItems: data.libraryItems,
               });
             }
@@ -534,8 +534,8 @@ const DrawinkWrapper = () => {
         }
 
         if (isBrowserStorageStateNewer(STORAGE_KEYS.VERSION_FILES)) {
-          const elements = excalidrawAPI.getSceneElementsIncludingDeleted();
-          const currFiles = excalidrawAPI.getFiles();
+          const elements = drawinkAPI.getSceneElementsIncludingDeleted();
+          const currFiles = drawinkAPI.getFiles();
           const fileIds =
             elements?.reduce((acc, element) => {
               if (
@@ -552,12 +552,12 @@ const DrawinkWrapper = () => {
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
-                  excalidrawAPI.addFiles(loadedFiles);
+                  drawinkAPI.addFiles(loadedFiles);
                 }
                 updateStaleImageStatuses({
-                  excalidrawAPI,
+                  drawinkAPI,
                   erroredFiles,
-                  elements: excalidrawAPI.getSceneElementsIncludingDeleted(),
+                  elements: drawinkAPI.getSceneElementsIncludingDeleted(),
                 });
               });
           }
@@ -597,16 +597,16 @@ const DrawinkWrapper = () => {
         false,
       );
     };
-  }, [isCollabDisabled, collabAPI, excalidrawAPI, setLangCode]);
+  }, [isCollabDisabled, collabAPI, drawinkAPI, setLangCode]);
 
   useEffect(() => {
     const unloadHandler = (event: BeforeUnloadEvent) => {
       LocalData.flushSave();
 
       if (
-        excalidrawAPI &&
+        drawinkAPI &&
         LocalData.fileStorage.shouldPreventUnload(
-          excalidrawAPI.getSceneElements(),
+          drawinkAPI.getSceneElements(),
         )
       ) {
         if (import.meta.env.VITE_APP_DISABLE_PREVENT_UNLOAD !== "true") {
@@ -622,7 +622,7 @@ const DrawinkWrapper = () => {
     return () => {
       window.removeEventListener(EVENT.BEFORE_UNLOAD, unloadHandler);
     };
-  }, [excalidrawAPI]);
+  }, [drawinkAPI]);
 
   const onChange = (
     elements: readonly OrderedDrawinkElement[],
@@ -637,10 +637,10 @@ const DrawinkWrapper = () => {
     // not to evaludate the nested expression every time
     if (!LocalData.isSavePaused()) {
       LocalData.save(elements, appState, files, () => {
-        if (excalidrawAPI) {
+        if (drawinkAPI) {
           let didChange = false;
 
-          const elements = excalidrawAPI
+          const elements = drawinkAPI
             .getSceneElementsIncludingDeleted()
             .map((element) => {
               if (
@@ -656,7 +656,7 @@ const DrawinkWrapper = () => {
             });
 
           if (didChange) {
-            excalidrawAPI.updateScene({
+            drawinkAPI.updateScene({
               elements,
               captureUpdate: CaptureUpdateAction.NEVER,
             });
@@ -666,7 +666,7 @@ const DrawinkWrapper = () => {
     }
 
     // Render the debug scene if the debug canvas is available
-    if (debugCanvasRef.current && excalidrawAPI) {
+    if (debugCanvasRef.current && drawinkAPI) {
       debugRenderer(
         debugCanvasRef.current,
         appState,
@@ -726,7 +726,7 @@ const DrawinkWrapper = () => {
   ) => {
     return (
       <CustomStats
-        setToast={(message) => excalidrawAPI!.setToast({ message })}
+        setToast={(message) => drawinkAPI!.setToast({ message })}
         appState={appState}
         elements={elements}
       />
@@ -770,7 +770,7 @@ const DrawinkWrapper = () => {
     perform: () => {
       window.open(
         `${import.meta.env.VITE_APP_PLUS_LP
-        }/plus?utm_source=excalidraw&utm_medium=app&utm_content=command_palette`,
+        }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
     },
@@ -781,7 +781,7 @@ const DrawinkWrapper = () => {
     predicate: true,
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
     keywords: [
-      "excalidraw",
+      "drawink",
       "plus",
       "cloud",
       "server",
@@ -792,7 +792,7 @@ const DrawinkWrapper = () => {
     perform: () => {
       window.open(
         `${import.meta.env.VITE_APP_PLUS_APP
-        }?utm_source=excalidraw&utm_medium=app&utm_content=command_palette`,
+        }?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
     },
@@ -806,7 +806,7 @@ const DrawinkWrapper = () => {
       })}
     >
       <Drawink
-        excalidrawAPI={excalidrawRefCallback}
+        drawinkAPI={drawinkRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}
         isCollaborating={isCollaborating}
@@ -816,23 +816,23 @@ const DrawinkWrapper = () => {
             toggleTheme: true,
             export: {
               onExportToBackend,
-              renderCustomUI: excalidrawAPI
+              renderCustomUI: drawinkAPI
                 ? (elements, appState, files) => {
                   return (
                     <ExportToDrawinkPlus
                       elements={elements}
                       appState={appState}
                       files={files}
-                      name={excalidrawAPI.getName()}
+                      name={drawinkAPI.getName()}
                       onError={(error) => {
-                        excalidrawAPI?.updateScene({
+                        drawinkAPI?.updateScene({
                           appState: {
                             errorMessage: error.message,
                           },
                         });
                       }}
                       onSuccess={() => {
-                        excalidrawAPI.updateScene({
+                        drawinkAPI.updateScene({
                           appState: { openDialog: null },
                         });
                       }}
@@ -851,8 +851,8 @@ const DrawinkWrapper = () => {
         theme={editorTheme}
         renderTopRightUI={(isMobile) => {
           return (
-            <div className="excalidraw-ui-top-right">
-              {excalidrawAPI?.getEditorInterface().formFactor === "desktop" && (
+            <div className="drawink-ui-top-right">
+              {drawinkAPI?.getEditorInterface().formFactor === "desktop" && (
                 <DrawinkPlusPromoBanner
                   isSignedIn={isDrawinkPlusSignedUser}
                 />
@@ -863,7 +863,7 @@ const DrawinkWrapper = () => {
                 data-testid="share-button"
                 className="share-button"
                 onSelect={() =>
-                  excalidrawAPI?.updateScene({
+                  drawinkAPI?.updateScene({
                     appState: { openDialog: { name: "jsonExport" } },
                   })
                 }
@@ -877,7 +877,7 @@ const DrawinkWrapper = () => {
         onLinkOpen={(element, event) => {
           if (element.link && isElementLink(element.link)) {
             event.preventDefault();
-            excalidrawAPI?.scrollToContent(element.link, { animate: true });
+            drawinkAPI?.scrollToContent(element.link, { animate: true });
           }
         }}
       >
@@ -896,25 +896,25 @@ const DrawinkWrapper = () => {
         <OverwriteConfirmDialog>
           <OverwriteConfirmDialog.Actions.ExportToImage />
           <OverwriteConfirmDialog.Actions.SaveToDisk />
-          {excalidrawAPI && (
+          {drawinkAPI && (
             <OverwriteConfirmDialog.Action
-              title={t("overwriteConfirm.action.excalidrawPlus.title")}
-              actionLabel={t("overwriteConfirm.action.excalidrawPlus.button")}
+              title={t("overwriteConfirm.action.drawinkPlus.title")}
+              actionLabel={t("overwriteConfirm.action.drawinkPlus.button")}
               onClick={() => {
                 exportToDrawinkPlus(
-                  excalidrawAPI.getSceneElements(),
-                  excalidrawAPI.getAppState(),
-                  excalidrawAPI.getFiles(),
-                  excalidrawAPI.getName(),
+                  drawinkAPI.getSceneElements(),
+                  drawinkAPI.getAppState(),
+                  drawinkAPI.getFiles(),
+                  drawinkAPI.getName(),
                 );
               }}
             >
-              {t("overwriteConfirm.action.excalidrawPlus.description")}
+              {t("overwriteConfirm.action.drawinkPlus.description")}
             </OverwriteConfirmDialog.Action>
           )}
         </OverwriteConfirmDialog>
-        <AppFooter onChange={() => excalidrawAPI?.refresh()} />
-        {excalidrawAPI && <AIComponents excalidrawAPI={excalidrawAPI} />}
+        <AppFooter onChange={() => drawinkAPI?.refresh()} />
+        {drawinkAPI && <AIComponents drawinkAPI={drawinkAPI} />}
 
         <TTDDialogTrigger />
         {isCollaborating && isOffline && (
@@ -934,19 +934,19 @@ const DrawinkWrapper = () => {
             setErrorMessage={setErrorMessage}
           />
         )}
-        {excalidrawAPI && !isCollabDisabled && (
-          <Collab excalidrawAPI={excalidrawAPI} />
+        {drawinkAPI && !isCollabDisabled && (
+          <Collab drawinkAPI={drawinkAPI} />
         )}
 
         <ShareDialog
           collabAPI={collabAPI}
           onExportToBackend={async () => {
-            if (excalidrawAPI) {
+            if (drawinkAPI) {
               try {
                 await onExportToBackend(
-                  excalidrawAPI.getSceneElements(),
-                  excalidrawAPI.getAppState(),
-                  excalidrawAPI.getFiles(),
+                  drawinkAPI.getSceneElements(),
+                  drawinkAPI.getAppState(),
+                  drawinkAPI.getFiles(),
                 );
               } catch (error: any) {
                 setErrorMessage(error.message);
@@ -1042,7 +1042,7 @@ const DrawinkWrapper = () => {
               ],
               perform: () => {
                 window.open(
-                  "https://github.com/excalidraw/excalidraw",
+                  "https://github.com/drawink/drawink",
                   "_blank",
                   "noopener noreferrer",
                 );
@@ -1056,7 +1056,7 @@ const DrawinkWrapper = () => {
               keywords: ["twitter", "contact", "social", "community"],
               perform: () => {
                 window.open(
-                  "https://x.com/excalidraw",
+                  "https://x.com/drawink",
                   "_blank",
                   "noopener noreferrer",
                 );
@@ -1111,18 +1111,18 @@ const DrawinkWrapper = () => {
               : [DrawinkPlusCommand, DrawinkPlusAppCommand]),
 
             {
-              label: t("overwriteConfirm.action.excalidrawPlus.button"),
+              label: t("overwriteConfirm.action.drawinkPlus.button"),
               category: DEFAULT_CATEGORIES.export,
               icon: exportToPlus,
               predicate: true,
               keywords: ["plus", "export", "save", "backup"],
               perform: () => {
-                if (excalidrawAPI) {
+                if (drawinkAPI) {
                   exportToDrawinkPlus(
-                    excalidrawAPI.getSceneElements(),
-                    excalidrawAPI.getAppState(),
-                    excalidrawAPI.getFiles(),
-                    excalidrawAPI.getName(),
+                    drawinkAPI.getSceneElements(),
+                    drawinkAPI.getAppState(),
+                    drawinkAPI.getFiles(),
+                    drawinkAPI.getName(),
                   );
                 }
               },
@@ -1152,9 +1152,9 @@ const DrawinkWrapper = () => {
             },
           ]}
         />
-        {isVisualDebuggerEnabled() && excalidrawAPI && (
+        {isVisualDebuggerEnabled() && drawinkAPI && (
           <DebugCanvas
-            appState={excalidrawAPI.getAppState()}
+            appState={drawinkAPI.getAppState()}
             scale={window.devicePixelRatio}
             ref={debugCanvasRef}
           />
@@ -1166,7 +1166,7 @@ const DrawinkWrapper = () => {
 
 const DrawinkApp = () => {
   const isCloudExportWindow =
-    window.location.pathname === "/excalidraw-plus-export";
+    window.location.pathname === "/drawink-plus-export";
   if (isCloudExportWindow) {
     return <DrawinkPlusIframeExport />;
   }

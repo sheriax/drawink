@@ -121,7 +121,7 @@
     "toggleTheme": "Превключване на светла/тъмна тема",
     "theme": "Тема",
     "personalLib": "Лична Библиотека",
-    "excalidrawLib": "Drawink Библиотека",
+    "drawinkLib": "Drawink Библиотека",
     "decreaseFontSize": "Намали размера на шрифта",
     "increaseFontSize": "Увеличи размера на шрифта",
     "unbindText": "",
@@ -401,9 +401,9 @@
     "link_title": "Връзка за споделяне",
     "link_details": "",
     "link_button": "",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "Експорт",
-    "excalidrawplus_exportError": ""
+    "drawinkplus_description": "",
+    "drawinkplus_button": "Експорт",
+    "drawinkplus_exportError": ""
   },
   "helpDialog": {
     "blog": "Прочетете нашия блог",
@@ -587,7 +587,7 @@
         "button": "Запази към диск",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "Drawink+",
         "button": "Експортирай към Drawink+",
         "description": "Запази сцената към Drawink+ работното място."

@@ -241,7 +241,7 @@ describe("Paste bound text container", () => {
 
   it("should fix ellipse bounding box", async () => {
     const data = JSON.stringify({
-      type: "excalidraw/clipboard",
+      type: "drawink/clipboard",
       elements: [container, textElement],
     });
     pasteWithCtrlCmdShiftV(data);
@@ -257,7 +257,7 @@ describe("Paste bound text container", () => {
 
   it("should fix diamond bounding box", async () => {
     const data = JSON.stringify({
-      type: "excalidraw/clipboard",
+      type: "drawink/clipboard",
       elements: [
         {
           ...container,

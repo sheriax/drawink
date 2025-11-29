@@ -121,7 +121,7 @@
     "toggleTheme": "Gecə/Güzdüz rejiminə dəyiş",
     "theme": "Fon",
     "personalLib": "Şəxsi kitabxana",
-    "excalidrawLib": "Drawink kitabxanası",
+    "drawinkLib": "Drawink kitabxanası",
     "decreaseFontSize": "Şrift ölçüsünü azalt",
     "increaseFontSize": "Şrift ölçüsünü artır",
     "unbindText": "Mətni çıxar",
@@ -401,9 +401,9 @@
     "link_title": "",
     "link_details": "",
     "link_button": "",
-    "excalidrawplus_description": "",
-    "excalidrawplus_button": "",
-    "excalidrawplus_exportError": ""
+    "drawinkplus_description": "",
+    "drawinkplus_button": "",
+    "drawinkplus_exportError": ""
   },
   "helpDialog": {
     "blog": "",
@@ -587,7 +587,7 @@
         "button": "",
         "description": ""
       },
-      "excalidrawPlus": {
+      "drawinkPlus": {
         "title": "",
         "button": "",
         "description": ""

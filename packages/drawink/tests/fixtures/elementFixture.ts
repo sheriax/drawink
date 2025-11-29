@@ -51,7 +51,7 @@ export const diamondFixture: DrawinkElement = {
 export const rectangleWithLinkFixture: DrawinkElement = {
   ...elementBase,
   type: "rectangle",
-  link: "excalidraw.com",
+  link: "drawink.com",
 };
 
 export const textFixture: DrawinkElement = {
