@@ -1,7 +1,7 @@
 import React from "react";
 import { vi } from "vitest";
 
-import { resolvablePromise } from "@excalidraw/common";
+import { resolvablePromise } from "@drawink/common";
 
 import { Drawink, CaptureUpdateAction } from "../../index";
 import { API } from "../helpers/api";

@@ -1,8 +1,8 @@
 import React from "react";
 
-import { isDarwin, isFirefox, isWindows } from "@excalidraw/common";
+import { isDarwin, isFirefox, isWindows } from "@drawink/common";
 
-import { KEYS } from "@excalidraw/common";
+import { KEYS } from "@drawink/common";
 
 import { getShortcutFromShortcutName } from "../actions/shortcuts";
 import { probablySupportsClipboardBlob } from "../clipboard";
@@ -277,9 +277,9 @@ export const HelpDialog = ({ onClose }: { onClose?: () => void }) => {
                 isFirefox
                   ? [getShortcutFromShortcutName("commandPalette")]
                   : [
-                      getShortcutFromShortcutName("commandPalette"),
-                      getShortcutFromShortcutName("commandPalette", 1),
-                    ]
+                    getShortcutFromShortcutName("commandPalette"),
+                    getShortcutFromShortcutName("commandPalette", 1),
+                  ]
               }
             />
           </ShortcutIsland>
@@ -421,9 +421,9 @@ export const HelpDialog = ({ onClose }: { onClose?: () => void }) => {
               shortcuts={
                 isWindows
                   ? [
-                      getShortcutKey("CtrlOrCmd+Y"),
-                      getShortcutKey("CtrlOrCmd+Shift+Z"),
-                    ]
+                    getShortcutKey("CtrlOrCmd+Y"),
+                    getShortcutKey("CtrlOrCmd+Shift+Z"),
+                  ]
                   : [getShortcutKey("CtrlOrCmd+Shift+Z")]
               }
             />

@@ -20,11 +20,11 @@ import {
   pointFrom,
   type Radians,
   type ElementsSegmentsMap,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { getElementLineSegments } from "@excalidraw/element";
+import { getElementLineSegments } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { Drawink } from "../index";
 
@@ -355,11 +355,11 @@ describe("Basic lasso selection tests", () => {
       },
     ].map(
       (e) =>
-        ({
-          ...e,
-          angle: e.angle as Radians,
-          index: null,
-        } as DrawinkElement),
+      ({
+        ...e,
+        angle: e.angle as Radians,
+        index: null,
+      } as DrawinkElement),
     );
 
     act(() => {

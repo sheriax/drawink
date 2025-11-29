@@ -2,9 +2,9 @@ import {
   canCreateLinkFromElements,
   defaultGetElementLinkFromSelection,
   getLinkIdAndTypeFromSelection,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
 import { copyTextToSystemClipboard } from "../clipboard";
 import { copyIcon, elementLinkIcon } from "../components/icons";
@@ -33,9 +33,9 @@ export const actionCopyElementLink = register({
             app.props.generateLinkForSelection
               ? app.props.generateLinkForSelection(idAndType.id, idAndType.type)
               : defaultGetElementLinkFromSelection(
-                  idAndType.id,
-                  idAndType.type,
-                ),
+                idAndType.id,
+                idAndType.type,
+              ),
           );
 
           return {

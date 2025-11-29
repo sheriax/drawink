@@ -1,4 +1,4 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";

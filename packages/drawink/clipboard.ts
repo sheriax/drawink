@@ -6,24 +6,24 @@ import {
   isMemberOf,
   isPromiseLike,
   EVENT,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { mutateElement } from "@excalidraw/element";
-import { deepCopyElement } from "@excalidraw/element";
+import { mutateElement } from "@drawink/element";
+import { deepCopyElement } from "@drawink/element";
 import {
   isFrameLikeElement,
   isInitializedImageElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { getContainingFrame } from "@excalidraw/element";
+import { getContainingFrame } from "@drawink/element";
 
-import type { ValueOf } from "@excalidraw/common/utility-types";
+import type { ValueOf } from "@drawink/common/utility-types";
 
-import type { IMAGE_MIME_TYPES, STRING_MIME_TYPES } from "@excalidraw/common";
+import type { IMAGE_MIME_TYPES, STRING_MIME_TYPES } from "@drawink/common";
 import type {
   DrawinkElement,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { DrawinkError } from "./errors";
 import {
@@ -377,20 +377,20 @@ const parseClipboardEventTextData = async (
 
 type AllowedParsedDataTransferItem =
   | {
-      type: ValueOf<typeof IMAGE_MIME_TYPES>;
-      kind: "file";
-      file: File;
-      fileHandle: FileSystemHandle | null;
-    }
+    type: ValueOf<typeof IMAGE_MIME_TYPES>;
+    kind: "file";
+    file: File;
+    fileHandle: FileSystemHandle | null;
+  }
   | { type: ValueOf<typeof STRING_MIME_TYPES>; kind: "string"; value: string };
 
 type ParsedDataTransferItem =
   | {
-      type: string;
-      kind: "file";
-      file: File;
-      fileHandle: FileSystemHandle | null;
-    }
+    type: string;
+    kind: "file";
+    file: File;
+    fileHandle: FileSystemHandle | null;
+  }
   | { type: string; kind: "string"; value: string };
 
 type ParsedDataTransferItemType<
@@ -552,7 +552,7 @@ export const parseClipboard = async (
         programmaticAPI,
       };
     }
-  } catch {}
+  } catch { }
 
   return { text: parsedEventData.value };
 };

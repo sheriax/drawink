@@ -1,7 +1,7 @@
 import React from "react";
 import { vi } from "vitest";
 
-import { DEFAULT_SIDEBAR } from "@excalidraw/common";
+import { DEFAULT_SIDEBAR } from "@drawink/common";
 
 import { Drawink, Sidebar } from "../../index";
 import {
@@ -283,7 +283,7 @@ describe("Sidebar", () => {
           <Sidebar
             name="customSidebar"
             className="test-sidebar"
-            onDock={() => {}}
+            onDock={() => { }}
             docked
           >
             <Sidebar.Header />
@@ -301,7 +301,7 @@ describe("Sidebar", () => {
 
     it("shouldn't be user-dockable when only `onDock` supplied w/o `docked`", async () => {
       // we expect warnings in this test and don't want to pollute stdout
-      const mock = jest.spyOn(console, "warn").mockImplementation(() => {});
+      const mock = jest.spyOn(console, "warn").mockImplementation(() => { });
 
       await render(
         <Drawink
@@ -310,7 +310,7 @@ describe("Sidebar", () => {
           <Sidebar
             name="customSidebar"
             className="test-sidebar"
-            onDock={() => {}}
+            onDock={() => { }}
           >
             <Sidebar.Header />
           </Sidebar>

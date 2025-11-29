@@ -1,4 +1,4 @@
-import { LOCAL_FONT_PROTOCOL } from "@excalidraw/common";
+import { LOCAL_FONT_PROTOCOL } from "@drawink/common";
 
 import { type DrawinkFontFaceDescriptor } from "../Fonts";
 

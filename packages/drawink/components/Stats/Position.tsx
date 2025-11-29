@@ -1,14 +1,14 @@
-import { clamp, pointFrom, pointRotateRads, round } from "@excalidraw/math";
+import { clamp, pointFrom, pointRotateRads, round } from "@drawink/math";
 
 import {
   getFlipAdjustedCropPosition,
   getUncroppedWidthAndHeight,
-} from "@excalidraw/element";
-import { isImageElement } from "@excalidraw/element";
+} from "@drawink/element";
+import { isImageElement } from "@drawink/element";
 
-import type { ElementsMap, DrawinkElement } from "@excalidraw/element/types";
+import type { ElementsMap, DrawinkElement } from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import StatsDragInput from "./DragInput";
 import { getStepSizedValue, moveElement, STEP_SIZE } from "./utils";
@@ -144,19 +144,19 @@ const handlePositionChange: DragInputCallbackType<"x" | "y"> = ({
   const newTopLeftX =
     property === "x"
       ? Math.round(
-          shouldChangeByStepSize
-            ? getStepSizedValue(origElement.x + changeInTopX, STEP_SIZE)
-            : topLeftX + changeInTopX,
-        )
+        shouldChangeByStepSize
+          ? getStepSizedValue(origElement.x + changeInTopX, STEP_SIZE)
+          : topLeftX + changeInTopX,
+      )
       : topLeftX;
 
   const newTopLeftY =
     property === "y"
       ? Math.round(
-          shouldChangeByStepSize
-            ? getStepSizedValue(origElement.y + changeInTopY, STEP_SIZE)
-            : topLeftY + changeInTopY,
-        )
+        shouldChangeByStepSize
+          ? getStepSizedValue(origElement.y + changeInTopY, STEP_SIZE)
+          : topLeftY + changeInTopY,
+      )
       : topLeftY;
 
   moveElement(

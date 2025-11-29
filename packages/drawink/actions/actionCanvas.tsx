@@ -1,4 +1,4 @@
-import { clamp, roundToStep } from "@excalidraw/math";
+import { clamp, roundToStep } from "@drawink/math";
 
 import {
   DEFAULT_CANVAS_BACKGROUND_PICKS,
@@ -10,15 +10,15 @@ import {
   updateActiveTool,
   CODES,
   KEYS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { getNonDeletedElements } from "@excalidraw/element";
-import { newElementWith } from "@excalidraw/element";
-import { getCommonBounds, type SceneBounds } from "@excalidraw/element";
+import { getNonDeletedElements } from "@drawink/element";
+import { newElementWith } from "@drawink/element";
+import { getCommonBounds, type SceneBounds } from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import {
   getDefaultAppState,
@@ -122,9 +122,9 @@ export const actionClearCanvas = register({
         activeTool:
           appState.activeTool.type === "image"
             ? {
-                ...appState.activeTool,
-                type: app.state.preferredSelectionTool.type,
-              }
+              ...appState.activeTool,
+              type: app.state.preferredSelectionTool.type,
+            }
             : appState.activeTool,
       },
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,

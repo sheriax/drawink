@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DEFAULT_SIDEBAR } from "@excalidraw/common";
+import { DEFAULT_SIDEBAR } from "@drawink/common";
 
 import { DefaultSidebar } from "../index";
 import {
@@ -43,7 +43,7 @@ describe("DefaultSidebar", () => {
 
   it("when `docked={undefined}` & `onDock`, should allow docking", async () => {
     await assertDrawinkWithSidebar(
-      <DefaultSidebar onDock={() => {}} />,
+      <DefaultSidebar onDock={() => { }} />,
       DEFAULT_SIDEBAR.name,
       async () => {
         expect(h.state.defaultSidebarDockedPreference).toBe(false);
@@ -67,7 +67,7 @@ describe("DefaultSidebar", () => {
 
   it("when `docked={true}` & `onDock`, should allow docking", async () => {
     await assertDrawinkWithSidebar(
-      <DefaultSidebar onDock={() => {}} />,
+      <DefaultSidebar onDock={() => { }} />,
       DEFAULT_SIDEBAR.name,
       async () => {
         expect(h.state.defaultSidebarDockedPreference).toBe(false);

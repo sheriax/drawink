@@ -1,11 +1,11 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
 import {
   FONT_FAMILY,
   ORIG_ID,
   ROUNDNESS,
   isPrimitive,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { Drawink, mutateElement } from "@drawink/drawink";
 
@@ -22,7 +22,7 @@ import {
   render,
 } from "@drawink/drawink/tests/test-utils";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import { duplicateElement, duplicateElements } from "../src/duplicate";
 

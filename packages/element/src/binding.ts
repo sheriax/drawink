@@ -4,7 +4,7 @@ import {
   getFeatureFlag,
   invariant,
   isTransparent,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   PRECISION,
@@ -19,13 +19,13 @@ import {
   vectorNormalize,
   vectorScale,
   type GlobalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type { LineSegment, LocalPoint, Radians } from "@excalidraw/math";
+import type { LineSegment, LocalPoint, Radians } from "@drawink/math";
 
 import type { AppState } from "@drawink/drawink/types";
 
-import type { MapEntry, Mutable } from "@excalidraw/common/utility-types";
+import type { MapEntry, Mutable } from "@drawink/common/utility-types";
 
 import {
   doBoundsIntersect,
@@ -86,22 +86,22 @@ import type {
 export type BindingStrategy =
   // Create a new binding with this mode
   | {
-      mode: BindMode;
-      element: NonDeleted<DrawinkBindableElement>;
-      focusPoint: GlobalPoint;
-    }
+    mode: BindMode;
+    element: NonDeleted<DrawinkBindableElement>;
+    focusPoint: GlobalPoint;
+  }
   // Break the binding
   | {
-      mode: null;
-      element?: undefined;
-      focusPoint?: undefined;
-    }
+    mode: null;
+    element?: undefined;
+    focusPoint?: undefined;
+  }
   // Keep the existing binding
   | {
-      mode: undefined;
-      element?: undefined;
-      focusPoint?: undefined;
-    };
+    mode: undefined;
+    element?: undefined;
+    focusPoint?: undefined;
+  };
 
 /**
  * gaps exclude element strokeWidth
@@ -253,17 +253,17 @@ const bindingStrategyForElbowArrowEndpointDragging = (
 
   const current = hit
     ? {
-        element: hit,
-        mode: "orbit" as const,
-        focusPoint: LinearElementEditor.getPointAtIndexGlobalCoordinates(
-          arrow,
-          pointIdx,
-          elementsMap,
-        ),
-      }
+      element: hit,
+      mode: "orbit" as const,
+      focusPoint: LinearElementEditor.getPointAtIndexGlobalCoordinates(
+        arrow,
+        pointIdx,
+        elementsMap,
+      ),
+    }
     : {
-        mode: null,
-      };
+      mode: null,
+    };
   const other = { mode: undefined };
 
   return pointIdx === 0
@@ -328,10 +328,10 @@ const bindingStrategyForNewSimpleArrowEndpointDragging = (
         start: isMultiPoint
           ? { mode: undefined }
           : {
-              mode: "inside",
-              element: hit,
-              focusPoint: origin ?? center,
-            },
+            mode: "inside",
+            element: hit,
+            focusPoint: origin ?? center,
+          },
         end: isMultiPoint
           ? { mode: "orbit", element: hit, focusPoint: point }
           : { mode: "inside", element: hit, focusPoint: point },
@@ -354,10 +354,10 @@ const bindingStrategyForNewSimpleArrowEndpointDragging = (
           start: isMultiPoint
             ? { mode: undefined }
             : {
-                mode: otherElement.id !== hit.id ? "orbit" : "inside",
-                element: otherElement,
-                focusPoint: origin ?? pointFrom<GlobalPoint>(arrow.x, arrow.y),
-              },
+              mode: otherElement.id !== hit.id ? "orbit" : "inside",
+              element: otherElement,
+              focusPoint: origin ?? pointFrom<GlobalPoint>(arrow.x, arrow.y),
+            },
           end: {
             mode: "orbit",
             element: hit,
@@ -446,8 +446,8 @@ const bindingStrategyForSimpleArrowEndpointDragging_complex = (
   const hit = getHoveredElementForBinding(point, elements, elementsMap);
   const isOverlapping = oppositeBinding
     ? getAllHoveredElementAtPoint(point, elements, elementsMap).some(
-        (el) => el.id === oppositeBinding.elementId,
-      )
+      (el) => el.id === oppositeBinding.elementId,
+    )
     : false;
   const oppositeElement = oppositeBinding
     ? (elementsMap.get(oppositeBinding.elementId) as DrawinkBindableElement)
@@ -466,13 +466,13 @@ const bindingStrategyForSimpleArrowEndpointDragging_complex = (
   if (globalBindMode === "inside" || globalBindMode === "skip") {
     current = hit
       ? {
-          element:
-            !isOverlapping || !oppositeElement || otherIsTransparent
-              ? hit
-              : oppositeElement,
-          focusPoint: point,
-          mode: "inside",
-        }
+        element:
+          !isOverlapping || !oppositeElement || otherIsTransparent
+            ? hit
+            : oppositeElement,
+        focusPoint: point,
+        mode: "inside",
+      }
       : { mode: null };
     other =
       finalize && hit && hit.id === oppositeBinding?.elementId
@@ -654,8 +654,7 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
   )?.point;
   invariant(
     localPoint,
-    `Local point must be defined for ${
-      startDragged ? "start" : "end"
+    `Local point must be defined for ${startDragged ? "start" : "end"
     } dragging`,
   );
   const globalPoint = LinearElementEditor.getPointGlobalCoordinates(
@@ -672,8 +671,8 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
   const pointInElement = hit && isPointInElement(globalPoint, hit, elementsMap);
   const otherBindableElement = otherBinding
     ? (elementsMap.get(
-        otherBinding.elementId,
-      ) as NonDeleted<DrawinkBindableElement>)
+      otherBinding.elementId,
+    ) as NonDeleted<DrawinkBindableElement>)
     : undefined;
   const otherFocusPoint =
     otherBinding &&
@@ -703,8 +702,8 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
           ? globalPoint
           : // NOTE: Can only affect the start point because new arrows always drag the end point
           opts?.newArrow
-          ? appState.selectedLinearElement!.initialState.origin!
-          : LinearElementEditor.getPointAtIndexGlobalCoordinates(
+            ? appState.selectedLinearElement!.initialState.origin!
+            : LinearElementEditor.getPointAtIndexGlobalCoordinates(
               arrow,
               0,
               elementsMap,
@@ -716,10 +715,10 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
         focusPoint: endDragged
           ? globalPoint
           : LinearElementEditor.getPointAtIndexGlobalCoordinates(
-              arrow,
-              -1,
-              elementsMap,
-            ), // endFixedPoint
+            arrow,
+            -1,
+            elementsMap,
+          ), // endFixedPoint
       },
     };
   }
@@ -730,19 +729,19 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
       start: startDragged
         ? hit
           ? {
-              mode: "inside",
-              element: hit,
-              focusPoint: globalPoint,
-            }
+            mode: "inside",
+            element: hit,
+            focusPoint: globalPoint,
+          }
           : { mode: null }
         : start,
       end: endDragged
         ? hit
           ? {
-              mode: "inside",
-              element: hit,
-              focusPoint: globalPoint,
-            }
+            mode: "inside",
+            element: hit,
+            focusPoint: globalPoint,
+          }
           : { mode: null }
         : end,
     };
@@ -752,33 +751,33 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
   const current: BindingStrategy = hit
     ? pointInElement
       ? {
-          mode: "inside",
-          element: hit,
-          focusPoint: globalPoint,
-        }
+        mode: "inside",
+        element: hit,
+        focusPoint: globalPoint,
+      }
       : {
-          mode: "orbit",
-          element: hit,
-          focusPoint:
-            projectFixedPointOntoDiagonal(
-              arrow,
-              globalPoint,
-              hit,
-              startDragged ? "start" : "end",
-              elementsMap,
-            ) || globalPoint,
-        }
+        mode: "orbit",
+        element: hit,
+        focusPoint:
+          projectFixedPointOntoDiagonal(
+            arrow,
+            globalPoint,
+            hit,
+            startDragged ? "start" : "end",
+            elementsMap,
+          ) || globalPoint,
+      }
     : { mode: null };
 
   const other: BindingStrategy =
     otherBindableElement &&
-    !otherFocusPointIsInElement &&
-    appState.selectedLinearElement?.initialState.altFocusPoint
+      !otherFocusPointIsInElement &&
+      appState.selectedLinearElement?.initialState.altFocusPoint
       ? {
-          mode: "orbit",
-          element: otherBindableElement,
-          focusPoint: appState.selectedLinearElement.initialState.altFocusPoint,
-        }
+        mode: "orbit",
+        element: otherBindableElement,
+        focusPoint: appState.selectedLinearElement.initialState.altFocusPoint,
+      }
       : { mode: undefined };
 
   return {
@@ -1057,7 +1056,7 @@ export const updateBoundElements = (
       : null;
     const endBindingElement = element.endBinding
       ? // PERF: If the arrow is bound to the same element on both ends.
-        startBindingElement?.id === element.endBinding.elementId
+      startBindingElement?.id === element.endBinding.elementId
         ? startBindingElement
         : elementsMap.get(element.endBinding.elementId)
       : null;
@@ -1077,9 +1076,9 @@ export const updateBoundElements = (
           (bindingProp === "startBinding" || bindingProp === "endBinding") &&
           (changedElement.id === element[bindingProp]?.elementId ||
             changedElement.id ===
-              element[
-                bindingProp === "startBinding" ? "endBinding" : "startBinding"
-              ]?.elementId)
+            element[
+              bindingProp === "startBinding" ? "endBinding" : "startBinding"
+            ]?.elementId)
         ) {
           const point = updateBoundPoint(
             element,
@@ -1216,20 +1215,20 @@ export const bindPointToSnapToElementOutline = (
   const edgePoint =
     isRectanguloidElement(bindableElement) && elbowed
       ? avoidRectangularCorner(
-          arrowElement,
-          bindableElement,
-          elementsMap,
-          point,
-        )
+        arrowElement,
+        bindableElement,
+        elementsMap,
+        point,
+      )
       : point;
   const adjacentPoint =
     customIntersector && !elbowed
       ? customIntersector[1]
       : LinearElementEditor.getPointAtIndexGlobalCoordinates(
-          arrowElement,
-          startOrEnd === "start" ? 1 : -2,
-          elementsMap,
-        );
+        arrowElement,
+        startOrEnd === "start" ? 1 : -2,
+        elementsMap,
+      );
   const bindingGap = getBindingGap(bindableElement, arrowElement);
   const aabb = aabbForElement(bindableElement, elementsMap);
   const bindableCenter = getCenterForBounds(aabb);
@@ -1296,8 +1295,8 @@ export const bindPointToSnapToElementOutline = (
       const halfVector = vectorScale(
         vectorNormalize(vectorFromPoint(edgePoint, adjacentPoint)),
         pointDistance(edgePoint, adjacentPoint) +
-          Math.max(bindableElement.width, bindableElement.height) +
-          bindingGap * 2,
+        Math.max(bindableElement.width, bindableElement.height) +
+        bindingGap * 2,
       );
       intersector =
         customIntersector ??
@@ -1311,15 +1310,15 @@ export const bindPointToSnapToElementOutline = (
       pointDistance(edgePoint, adjacentPoint) < 1
         ? edgePoint
         : intersectElementWithLineSegment(
-            bindableElement,
-            elementsMap,
-            intersector,
-            bindingGap,
-          ).sort(
-            (g, h) =>
-              pointDistanceSq(g, adjacentPoint) -
-              pointDistanceSq(h, adjacentPoint),
-          )[0];
+          bindableElement,
+          elementsMap,
+          intersector,
+          bindingGap,
+        ).sort(
+          (g, h) =>
+            pointDistanceSq(g, adjacentPoint) -
+            pointDistanceSq(h, adjacentPoint),
+        )[0];
   }
 
   if (
@@ -1575,8 +1574,8 @@ export const updateBoundPoint = (
   const isLargerThanOther =
     otherBindableElement &&
     compareElementArea(bindableElement, otherBindableElement) <
-      // if both shapes the same size, pretend the other is larger
-      (startOrEnd === "endBinding" ? 1 : 0);
+    // if both shapes the same size, pretend the other is larger
+    (startOrEnd === "endBinding" ? 1 : 0);
   const isOverlapping = otherBounds && doBoundsIntersect(bounds, otherBounds);
 
   // GOAL: If the arrow becomes too short, we want to jump the arrow endpoints
@@ -1641,9 +1640,9 @@ export const updateBoundPoint = (
     const adjacentPoint = pointRotateRads(
       pointFrom<GlobalPoint>(
         arrow.x +
-          arrow.points[pointIndex === 0 ? 1 : arrow.points.length - 2][0],
+        arrow.points[pointIndex === 0 ? 1 : arrow.points.length - 2][0],
         arrow.y +
-          arrow.points[pointIndex === 0 ? 1 : arrow.points.length - 2][1],
+        arrow.points[pointIndex === 0 ? 1 : arrow.points.length - 2][1],
       ),
       center,
       arrow.angle as Radians,
@@ -1652,8 +1651,8 @@ export const updateBoundPoint = (
     const halfVector = vectorScale(
       vectorNormalize(vectorFromPoint(edgePoint, adjacentPoint)),
       pointDistance(edgePoint, adjacentPoint) +
-        Math.max(bindableElement.width, bindableElement.height) +
-        bindingGap * 2,
+      Math.max(bindableElement.width, bindableElement.height) +
+      bindingGap * 2,
     );
     _customIntersector = lineSegment(
       pointFromVector(halfVector, adjacentPoint),
@@ -1666,35 +1665,35 @@ export const updateBoundPoint = (
       ? isNested
         ? global
         : bindPointToSnapToElementOutline(
-            {
-              ...arrow,
-              points: [
-                pointIndex === 0
-                  ? LinearElementEditor.createPointAt(
-                      arrow,
-                      elementsMap,
-                      global[0],
-                      global[1],
-                      null,
-                    )
-                  : arrow.points[0],
-                ...arrow.points.slice(1, -1),
-                pointIndex === arrow.points.length - 1
-                  ? LinearElementEditor.createPointAt(
-                      arrow,
-                      elementsMap,
-                      global[0],
-                      global[1],
-                      null,
-                    )
-                  : arrow.points[arrow.points.length - 1],
-              ],
-            },
-            bindableElement,
-            pointIndex === 0 ? "start" : "end",
-            elementsMap,
-            _customIntersector,
-          )
+          {
+            ...arrow,
+            points: [
+              pointIndex === 0
+                ? LinearElementEditor.createPointAt(
+                  arrow,
+                  elementsMap,
+                  global[0],
+                  global[1],
+                  null,
+                )
+                : arrow.points[0],
+              ...arrow.points.slice(1, -1),
+              pointIndex === arrow.points.length - 1
+                ? LinearElementEditor.createPointAt(
+                  arrow,
+                  elementsMap,
+                  global[0],
+                  global[1],
+                  null,
+                )
+                : arrow.points[arrow.points.length - 1],
+            ],
+          },
+          bindableElement,
+          pointIndex === 0 ? "start" : "end",
+          elementsMap,
+          _customIntersector,
+        )
       : global;
 
   return LinearElementEditor.createPointAt(
@@ -1737,9 +1736,9 @@ export const calculateFixedPointForElbowArrowBinding = (
   return {
     fixedPoint: normalizeFixedPoint([
       (nonRotatedSnappedGlobalPoint[0] - hoveredElement.x) /
-        hoveredElement.width,
+      hoveredElement.width,
       (nonRotatedSnappedGlobalPoint[1] - hoveredElement.y) /
-        hoveredElement.height,
+      hoveredElement.height,
     ]),
   };
 };
@@ -1754,10 +1753,10 @@ export const calculateFixedPointForNonElbowArrowBinding = (
   const edgePoint = focusPoint
     ? focusPoint
     : LinearElementEditor.getPointAtIndexGlobalCoordinates(
-        linearElement,
-        startOrEnd === "start" ? 0 : -1,
-        elementsMap,
-      );
+      linearElement,
+      startOrEnd === "start" ? 0 : -1,
+      elementsMap,
+    );
 
   // Convert the global point to element-local coordinates
   const elementCenter = pointFrom(
@@ -1821,9 +1820,9 @@ export const fixDuplicatedBindingsAfterDuplication = (
       Object.assign(duplicateElement, {
         endBinding: newEndBindingId
           ? {
-              ...duplicateElement.endBinding,
-              elementId: newEndBindingId,
-            }
+            ...duplicateElement.endBinding,
+            elementId: newEndBindingId,
+          }
           : null,
       });
     }
@@ -1834,9 +1833,9 @@ export const fixDuplicatedBindingsAfterDuplication = (
       Object.assign(duplicateElement, {
         startBinding: newEndBindingId
           ? {
-              ...duplicateElement.startBinding,
-              elementId: newEndBindingId,
-            }
+            ...duplicateElement.startBinding,
+            elementId: newEndBindingId,
+          }
           : null,
       });
     }
@@ -1887,9 +1886,9 @@ const newBoundElements = (
   nextBoundElements.push(
     ...elementsToAdd.map(
       (x) =>
-        ({ id: x.id, type: x.type } as
-          | DrawinkArrowElement
-          | DrawinkTextElement),
+      ({ id: x.id, type: x.type } as
+        | DrawinkArrowElement
+        | DrawinkTextElement),
     ),
   );
 
@@ -2238,25 +2237,25 @@ export const getGlobalFixedPoints = (
   const startPoint =
     startElement && arrow.startBinding
       ? getGlobalFixedPointForBindableElement(
-          arrow.startBinding.fixedPoint,
-          startElement as DrawinkBindableElement,
-          elementsMap,
-        )
+        arrow.startBinding.fixedPoint,
+        startElement as DrawinkBindableElement,
+        elementsMap,
+      )
       : pointFrom<GlobalPoint>(
-          arrow.x + arrow.points[0][0],
-          arrow.y + arrow.points[0][1],
-        );
+        arrow.x + arrow.points[0][0],
+        arrow.y + arrow.points[0][1],
+      );
   const endPoint =
     endElement && arrow.endBinding
       ? getGlobalFixedPointForBindableElement(
-          arrow.endBinding.fixedPoint,
-          endElement as DrawinkBindableElement,
-          elementsMap,
-        )
+        arrow.endBinding.fixedPoint,
+        endElement as DrawinkBindableElement,
+        elementsMap,
+      )
       : pointFrom<GlobalPoint>(
-          arrow.x + arrow.points[arrow.points.length - 1][0],
-          arrow.y + arrow.points[arrow.points.length - 1][1],
-        );
+        arrow.x + arrow.points[arrow.points.length - 1][0],
+        arrow.y + arrow.points[arrow.points.length - 1][1],
+      );
 
   return [startPoint, endPoint];
 };

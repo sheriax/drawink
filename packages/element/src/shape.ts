@@ -7,27 +7,27 @@ import {
   getEllipseShape,
   getFreedrawShape,
   getPolygonShape,
-} from "@excalidraw/utils/shape";
+} from "@drawink/utils/shape";
 
 import {
   pointFrom,
   pointDistance,
   type LocalPoint,
   pointRotateRads,
-} from "@excalidraw/math";
+} from "@drawink/math";
 import {
   ROUGHNESS,
   isTransparent,
   assertNever,
   COLOR_PALETTE,
   LINE_POLYGON_POINT_MERGE_DISTANCE,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { RoughGenerator } from "roughjs/bin/generator";
 
-import type { GlobalPoint } from "@excalidraw/math";
+import type { GlobalPoint } from "@drawink/math";
 
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
 import type {
   AppState,
@@ -187,8 +187,8 @@ export const generateRoughOptions = (
       element.strokeStyle === "dashed"
         ? getDashArrayDashed(element.strokeWidth)
         : element.strokeStyle === "dotted"
-        ? getDashArrayDotted(element.strokeWidth)
-        : undefined,
+          ? getDashArrayDotted(element.strokeWidth)
+          : undefined,
     // for non-solid strokes, disable multiStroke because it tends to make
     // dashes/dots overlay each other
     disableMultiStroke: element.strokeStyle !== "solid",
@@ -410,9 +410,9 @@ const getArrowheadShapes = (
         generator.line(x4, y4, x2, y2, options),
         ...(arrowhead === "crowfoot_one_or_many"
           ? generateCrowfootOne(
-              getArrowheadPoints(element, shape, position, "crowfoot_one"),
-              options,
-            )
+            getArrowheadPoints(element, shape, position, "crowfoot_one"),
+            options,
+          )
           : []),
       ];
     }
@@ -628,10 +628,8 @@ const generateElementShape = (
         const h = element.height;
         const r = getCornerRadius(Math.min(w, h), element);
         shape = generator.path(
-          `M ${r} 0 L ${w - r} 0 Q ${w} 0, ${w} ${r} L ${w} ${
-            h - r
-          } Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${
-            h - r
+          `M ${r} 0 L ${w - r} 0 Q ${w} 0, ${w} ${r} L ${w} ${h - r
+          } Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${h - r
           } L 0 ${r} Q 0 0, ${r} 0`,
           generateRoughOptions(
             modifyIframeLikeForRoughOptions(
@@ -674,23 +672,18 @@ const generateElementShape = (
         );
 
         shape = generator.path(
-          `M ${topX + verticalRadius} ${topY + horizontalRadius} L ${
-            rightX - verticalRadius
+          `M ${topX + verticalRadius} ${topY + horizontalRadius} L ${rightX - verticalRadius
           } ${rightY - horizontalRadius}
-            C ${rightX} ${rightY}, ${rightX} ${rightY}, ${
-            rightX - verticalRadius
+            C ${rightX} ${rightY}, ${rightX} ${rightY}, ${rightX - verticalRadius
           } ${rightY + horizontalRadius}
             L ${bottomX + verticalRadius} ${bottomY - horizontalRadius}
-            C ${bottomX} ${bottomY}, ${bottomX} ${bottomY}, ${
-            bottomX - verticalRadius
+            C ${bottomX} ${bottomY}, ${bottomX} ${bottomY}, ${bottomX - verticalRadius
           } ${bottomY - horizontalRadius}
             L ${leftX + verticalRadius} ${leftY + horizontalRadius}
-            C ${leftX} ${leftY}, ${leftX} ${leftY}, ${leftX + verticalRadius} ${
-            leftY - horizontalRadius
+            C ${leftX} ${leftY}, ${leftX} ${leftY}, ${leftX + verticalRadius} ${leftY - horizontalRadius
           }
             L ${topX - verticalRadius} ${topY + horizontalRadius}
-            C ${topX} ${topY}, ${topX} ${topY}, ${topX + verticalRadius} ${
-            topY + horizontalRadius
+            C ${topX} ${topY}, ${topX} ${topY}, ${topX + verticalRadius} ${topY + horizontalRadius
           }`,
           generateRoughOptions(element, true),
         );
@@ -894,8 +887,7 @@ const generateElbowArrowShape = (
   for (let i = 0; i < subpoints.length; i += 3) {
     d.push(`L ${subpoints[i][0]} ${subpoints[i][1]}`);
     d.push(
-      `Q ${subpoints[i + 1][0]} ${subpoints[i + 1][1]}, ${
-        subpoints[i + 2][0]
+      `Q ${subpoints[i + 1][0]} ${subpoints[i + 1][1]}, ${subpoints[i + 2][0]
       } ${subpoints[i + 2][1]}`,
     );
   }
@@ -932,18 +924,18 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
 
       return shouldTestInside(element)
         ? getClosedCurveShape<Point>(
-            element,
-            roughShape,
-            pointFrom<Point>(element.x, element.y),
-            element.angle,
-            pointFrom(cx, cy),
-          )
+          element,
+          roughShape,
+          pointFrom<Point>(element.x, element.y),
+          element.angle,
+          pointFrom(cx, cy),
+        )
         : getCurveShape<Point>(
-            roughShape,
-            pointFrom<Point>(element.x, element.y),
-            element.angle,
-            pointFrom(cx, cy),
-          );
+          roughShape,
+          pointFrom<Point>(element.x, element.y),
+          element.angle,
+          pointFrom(cx, cy),
+        );
     }
 
     case "ellipse":

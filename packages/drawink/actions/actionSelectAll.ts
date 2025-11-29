@@ -1,14 +1,14 @@
-import { getNonDeletedElements } from "@excalidraw/element";
-import { LinearElementEditor } from "@excalidraw/element";
-import { isLinearElement, isTextElement } from "@excalidraw/element";
+import { getNonDeletedElements } from "@drawink/element";
+import { LinearElementEditor } from "@drawink/element";
+import { isLinearElement, isTextElement } from "@drawink/element";
 
-import { arrayToMap, KEYS } from "@excalidraw/common";
+import { arrayToMap, KEYS } from "@drawink/common";
 
-import { selectGroupsForSelectedElements } from "@excalidraw/element";
+import { selectGroupsForSelectedElements } from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { selectAllIcon } from "../components/icons";
 
@@ -52,7 +52,7 @@ export const actionSelectAll = register({
         selectedLinearElement:
           // single linear element selected
           Object.keys(selectedElementIds).length === 1 &&
-          isLinearElement(elements[0])
+            isLinearElement(elements[0])
             ? new LinearElementEditor(elements[0], arrayToMap(elements))
             : null,
       },

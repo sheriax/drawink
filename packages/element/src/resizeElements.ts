@@ -5,20 +5,20 @@ import {
   pointRotateRads,
   type Radians,
   type LocalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
 import {
   MIN_FONT_SIZE,
   SHIFT_LOCKING_ANGLE,
   rescalePoints,
   getFontString,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { GlobalPoint } from "@excalidraw/math";
+import type { GlobalPoint } from "@drawink/math";
 
 import type { PointerDownState } from "@drawink/drawink/types";
 
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
 import {
   getArrowLocalFixedPoints,
@@ -273,13 +273,13 @@ export const rescalePointsInElement = (
 ) =>
   isLinearElement(element) || isFreeDrawElement(element)
     ? {
-        points: rescalePoints(
-          0,
-          width,
-          rescalePoints(1, height, element.points, normalizePoints),
-          normalizePoints,
-        ),
-      }
+      points: rescalePoints(
+        0,
+        width,
+        rescalePoints(1, height, element.points, normalizePoints),
+        normalizePoints,
+      ),
+    }
     : {};
 
 export const measureFontSizeFromWidth = (
@@ -439,14 +439,14 @@ const rotateMultipleElements = (
 
       const updates = isElbowArrow(element)
         ? {
-            // Needed to re-route the arrow
-            points: getArrowLocalFixedPoints(element, elementsMap),
-          }
+          // Needed to re-route the arrow
+          points: getArrowLocalFixedPoints(element, elementsMap),
+        }
         : {
-            x: element.x + (rotatedCX - cx),
-            y: element.y + (rotatedCY - cy),
-            angle: normalizeRadians((centerAngle + origAngle) as Radians),
-          };
+          x: element.x + (rotatedCX - cx),
+          y: element.y + (rotatedCY - cy),
+          angle: normalizeRadians((centerAngle + origAngle) as Radians),
+        };
 
       scene.mutateElement(element, updates);
 

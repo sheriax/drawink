@@ -1,4 +1,4 @@
-import { ENCRYPTION_KEY_BITS } from "@excalidraw/common";
+import { ENCRYPTION_KEY_BITS } from "@drawink/common";
 
 import { blobToArrayBuffer } from "./blob";
 
@@ -58,10 +58,10 @@ export const encryptData = async (
     typeof data === "string"
       ? new TextEncoder().encode(data)
       : data instanceof Uint8Array
-      ? data
-      : data instanceof Blob
-      ? await blobToArrayBuffer(data)
-      : data;
+        ? data
+        : data instanceof Blob
+          ? await blobToArrayBuffer(data)
+          : data;
 
   // We use symmetric encryption. AES-GCM is the recommended algorithm and
   // includes checks that the ciphertext has not been modified by an attacker.

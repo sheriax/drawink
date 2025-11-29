@@ -2,7 +2,7 @@
 // DrawinkImageElement & related helpers
 // -----------------------------------------------------------------------------
 
-import { MIME_TYPES, SVG_NS } from "@excalidraw/common";
+import { MIME_TYPES, SVG_NS } from "@drawink/common";
 
 import type {
   AppClassProperties,

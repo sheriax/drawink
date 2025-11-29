@@ -1,6 +1,6 @@
 import { queries, buildQueries } from "@testing-library/react";
 
-import { TOOL_TYPE } from "@excalidraw/common";
+import { TOOL_TYPE } from "@drawink/common";
 
 import type { ToolType } from "@drawink/drawink/types";
 

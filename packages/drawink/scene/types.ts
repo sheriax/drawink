@@ -1,12 +1,12 @@
-import type { UserIdleState, EditorInterface } from "@excalidraw/common";
+import type { UserIdleState, EditorInterface } from "@drawink/common";
 import type {
   DrawinkElement,
   NonDeletedElementsMap,
   NonDeletedDrawinkElement,
   NonDeletedSceneElementsMap,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
-import type { MakeBrand } from "@excalidraw/common/utility-types";
+import type { MakeBrand } from "@drawink/common/utility-types";
 
 import type {
   AppClassProperties,

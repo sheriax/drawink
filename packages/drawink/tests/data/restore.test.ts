@@ -1,12 +1,12 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 import { vi } from "vitest";
 
-import { DEFAULT_SIDEBAR, FONT_FAMILY, ROUNDNESS } from "@excalidraw/common";
+import { DEFAULT_SIDEBAR, FONT_FAMILY, ROUNDNESS } from "@drawink/common";
 
-import { newElementWith } from "@excalidraw/element";
-import * as sizeHelpers from "@excalidraw/element";
+import { newElementWith } from "@drawink/element";
+import * as sizeHelpers from "@drawink/element";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import type {
   DrawinkArrowElement,
@@ -14,7 +14,7 @@ import type {
   DrawinkFreeDrawElement,
   DrawinkLinearElement,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type { NormalizedZoomValue } from "@drawink/drawink/types";
 
 import { API } from "../helpers/api";

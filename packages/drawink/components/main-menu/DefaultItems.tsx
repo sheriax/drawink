@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
-import { THEME } from "@excalidraw/common";
+import { THEME } from "@drawink/common";
 
-import type { Theme } from "@excalidraw/element/types";
+import type { Theme } from "@drawink/element/types";
 
 import {
   actionClearCanvas,
@@ -227,16 +227,16 @@ ClearCanvas.displayName = "ClearCanvas";
 export const ToggleTheme = (
   props:
     | {
-        allowSystemTheme: true;
-        theme: Theme | "system";
-        onSelect: (theme: Theme | "system") => void;
-        disabled?: boolean;
-      }
+      allowSystemTheme: true;
+      theme: Theme | "system";
+      onSelect: (theme: Theme | "system") => void;
+      disabled?: boolean;
+    }
     | {
-        allowSystemTheme?: false;
-        onSelect?: (theme: Theme) => void;
-        disabled?: boolean;
-      },
+      allowSystemTheme?: false;
+      onSelect?: (theme: Theme) => void;
+      disabled?: boolean;
+    },
 ) => {
   const { t } = useI18n();
   const appState = useUIAppState();

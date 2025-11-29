@@ -1,15 +1,15 @@
 import {
   getBoundTextElement,
   redrawTextBoundingBox,
-} from "@excalidraw/element";
-import { hasBoundTextElement, isTextElement } from "@excalidraw/element";
+} from "@drawink/element";
+import { hasBoundTextElement, isTextElement } from "@drawink/element";
 
 import type {
   DrawinkElement,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import { fontSizeIcon } from "../icons";
 
@@ -39,50 +39,50 @@ const handleFontSizeChange: DragInputCallbackType<
   nextValue,
   scene,
 }) => {
-  const elementsMap = scene.getNonDeletedElementsMap();
+    const elementsMap = scene.getNonDeletedElementsMap();
 
-  const origElement = originalElements[0];
-  if (origElement) {
-    const latestElement = elementsMap.get(origElement.id);
-    if (!latestElement || !isTextElement(latestElement)) {
-      return;
-    }
+    const origElement = originalElements[0];
+    if (origElement) {
+      const latestElement = elementsMap.get(origElement.id);
+      if (!latestElement || !isTextElement(latestElement)) {
+        return;
+      }
 
-    let nextFontSize;
+      let nextFontSize;
 
-    if (nextValue !== undefined) {
-      nextFontSize = Math.max(Math.round(nextValue), MIN_FONT_SIZE);
-    } else if (origElement.type === "text") {
-      const originalFontSize = Math.round(origElement.fontSize);
-      const changeInFontSize = Math.round(accumulatedChange);
-      nextFontSize = Math.max(
-        originalFontSize + changeInFontSize,
-        MIN_FONT_SIZE,
-      );
-      if (shouldChangeByStepSize) {
-        nextFontSize = getStepSizedValue(nextFontSize, STEP_SIZE);
+      if (nextValue !== undefined) {
+        nextFontSize = Math.max(Math.round(nextValue), MIN_FONT_SIZE);
+      } else if (origElement.type === "text") {
+        const originalFontSize = Math.round(origElement.fontSize);
+        const changeInFontSize = Math.round(accumulatedChange);
+        nextFontSize = Math.max(
+          originalFontSize + changeInFontSize,
+          MIN_FONT_SIZE,
+        );
+        if (shouldChangeByStepSize) {
+          nextFontSize = getStepSizedValue(nextFontSize, STEP_SIZE);
+        }
+      }
+
+      if (nextFontSize) {
+        scene.mutateElement(latestElement, {
+          fontSize: nextFontSize,
+        });
+        redrawTextBoundingBox(
+          latestElement,
+          scene.getContainerElement(latestElement),
+          scene,
+        );
       }
     }
-
-    if (nextFontSize) {
-      scene.mutateElement(latestElement, {
-        fontSize: nextFontSize,
-      });
-      redrawTextBoundingBox(
-        latestElement,
-        scene.getContainerElement(latestElement),
-        scene,
-      );
-    }
-  }
-};
+  };
 
 const FontSize = ({ element, scene, appState, property }: FontSizeProps) => {
   const _element = isTextElement(element)
     ? element
     : hasBoundTextElement(element)
-    ? getBoundTextElement(element, scene.getNonDeletedElementsMap())
-    : null;
+      ? getBoundTextElement(element, scene.getNonDeletedElementsMap())
+      : null;
 
   if (!_element) {
     return null;

@@ -1,4 +1,4 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
 import { Drawink } from "@drawink/drawink";
 import {
@@ -6,7 +6,7 @@ import {
   getSizeFromPoints,
   reseed,
   arrayToMap,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
@@ -15,7 +15,7 @@ import {
   unmountComponent,
 } from "@drawink/drawink/tests/test-utils";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import { isLinearElement } from "../src/typeChecks";
 import { resizeSingleElement } from "../src/resizeElements";

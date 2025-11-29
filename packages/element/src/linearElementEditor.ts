@@ -10,9 +10,9 @@ import {
   curveLength,
   curvePointAtLength,
   lineSegment,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { getCurvePathOps } from "@excalidraw/utils/shape";
+import { getCurvePathOps } from "@drawink/utils/shape";
 
 import {
   DRAGGING_THRESHOLD,
@@ -22,7 +22,7 @@ import {
   invariant,
   isShallowEqual,
   getFeatureFlag,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   deconstructLinearOrFreeDrawElement,
@@ -31,9 +31,9 @@ import {
   moveArrowAboveBindable,
   projectFixedPointOntoDiagonal,
   type Store,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import type { Radians } from "@excalidraw/math";
+import type { Radians } from "@drawink/math";
 
 import type {
   AppState,
@@ -412,15 +412,15 @@ export class LinearElementEditor {
         ...linearElementEditor.initialState,
         altFocusPoint:
           !linearElementEditor.initialState.altFocusPoint &&
-          startBindingElement &&
-          updates?.suggestedBinding?.id !== startBindingElement.id
+            startBindingElement &&
+            updates?.suggestedBinding?.id !== startBindingElement.id
             ? projectFixedPointOntoDiagonal(
-                element,
-                pointFrom<GlobalPoint>(element.x, element.y),
-                startBindingElement,
-                "start",
-                elementsMap,
-              )
+              element,
+              pointFrom<GlobalPoint>(element.x, element.y),
+              startBindingElement,
+              "start",
+              elementsMap,
+            )
             : linearElementEditor.initialState.altFocusPoint,
       },
     };
@@ -470,12 +470,11 @@ export class LinearElementEditor {
 
     invariant(
       lastClickedPoint > -1 &&
-        selectedPointsIndices.includes(lastClickedPoint) &&
-        element.points[lastClickedPoint],
+      selectedPointsIndices.includes(lastClickedPoint) &&
+      element.points[lastClickedPoint],
       `There must be a valid lastClickedPoint in order to drag it. selectedPointsIndices(${JSON.stringify(
         selectedPointsIndices,
-      )}) points(0..${
-        element.points.length - 1
+      )}) points(0..${element.points.length - 1
       }) lastClickedPoint(${lastClickedPoint})`,
     );
 
@@ -600,10 +599,10 @@ export class LinearElementEditor {
     const newSelectedMidPointHoveredCoords =
       !startIsSelected && !endIsSelected
         ? LinearElementEditor.getPointGlobalCoordinates(
-            element,
-            draggingPoint,
-            elementsMap,
-          )
+          element,
+          draggingPoint,
+          elementsMap,
+        )
         : null;
 
     const newHoverPointIndex = newLastClickedPoint;
@@ -621,14 +620,14 @@ export class LinearElementEditor {
       ) as DrawinkBindableElement | null);
     const altFocusPointBindableElement =
       endIsSelected && // The "other" end (i.e. "end") is dragged
-      startBindingElement &&
-      updates?.suggestedBinding?.id !== startBindingElement.id // The end point is not hovering the start bindable + it's binding gap
+        startBindingElement &&
+        updates?.suggestedBinding?.id !== startBindingElement.id // The end point is not hovering the start bindable + it's binding gap
         ? startBindingElement
         : startIsSelected && // The "other" end (i.e. "start") is dragged
           endBindingElement &&
           updates?.suggestedBinding?.id !== endBindingElement.id // The start point is not hovering the end bindable + it's binding gap
-        ? endBindingElement
-        : null;
+          ? endBindingElement
+          : null;
 
     const newLinearElementEditor: LinearElementEditor = {
       ...linearElementEditor,
@@ -638,15 +637,15 @@ export class LinearElementEditor {
         lastClickedPoint: newLastClickedPoint,
         altFocusPoint:
           !linearElementEditor.initialState.altFocusPoint && // We only set it once per arrow drag
-          isBindingElement(element) &&
-          altFocusPointBindableElement
+            isBindingElement(element) &&
+            altFocusPointBindableElement
             ? projectFixedPointOntoDiagonal(
-                element,
-                pointFrom<GlobalPoint>(element.x, element.y),
-                altFocusPointBindableElement,
-                "start",
-                elementsMap,
-              )
+              element,
+              pointFrom<GlobalPoint>(element.x, element.y),
+              altFocusPointBindableElement,
+              "start",
+              elementsMap,
+            )
             : linearElementEditor.initialState.altFocusPoint,
       },
       segmentMidPointHoveredCoords: newSelectedMidPointHoveredCoords,
@@ -734,14 +733,14 @@ export class LinearElementEditor {
               pointerDownState.lastClickedPoint,
             )
             ? selectedPointsIndices &&
-              selectedPointsIndices.filter(
-                (pointIndex) =>
-                  pointIndex !== pointerDownState.lastClickedPoint,
-              )
+            selectedPointsIndices.filter(
+              (pointIndex) =>
+                pointIndex !== pointerDownState.lastClickedPoint,
+            )
             : selectedPointsIndices
           : selectedPointsIndices?.includes(pointerDownState.lastClickedPoint)
-          ? [pointerDownState.lastClickedPoint]
-          : selectedPointsIndices,
+            ? [pointerDownState.lastClickedPoint]
+            : selectedPointsIndices,
       isDragging: false,
       pointerOffset: { x: 0, y: 0 },
       customLineAngle: null,
@@ -931,7 +930,7 @@ export class LinearElementEditor {
 
     invariant(
       (lines.length === 0 && curves.length > 0) ||
-        (lines.length > 0 && curves.length === 0),
+      (lines.length > 0 && curves.length === 0),
       "Only linears built out of either segments or curves are supported",
     );
     invariant(
@@ -1102,9 +1101,9 @@ export class LinearElementEditor {
         ? event.shiftKey ||
           linearElementEditor.selectedPointsIndices?.includes(clickedPointIndex)
           ? normalizeSelectedPoints([
-              ...(linearElementEditor.selectedPointsIndices || []),
-              clickedPointIndex,
-            ])
+            ...(linearElementEditor.selectedPointsIndices || []),
+            clickedPointIndex,
+          ])
           : [clickedPointIndex]
         : null;
     ret.linearElementEditor = {
@@ -1126,9 +1125,9 @@ export class LinearElementEditor {
       selectedPointsIndices: nextSelectedPointsIndices,
       pointerOffset: targetPoint
         ? {
-            x: scenePointer.x - targetPoint[0],
-            y: scenePointer.y - targetPoint[1],
-          }
+          x: scenePointer.x - targetPoint[0],
+          y: scenePointer.y - targetPoint[1],
+        }
         : { x: 0, y: 0 },
     };
 
@@ -1174,9 +1173,9 @@ export class LinearElementEditor {
       }
       return appState.selectedLinearElement?.lastUncommittedPoint
         ? {
-            ...appState.selectedLinearElement,
-            lastUncommittedPoint: null,
-          }
+          ...appState.selectedLinearElement,
+          lastUncommittedPoint: null,
+        }
         : appState.selectedLinearElement;
     }
 
@@ -1279,10 +1278,10 @@ export class LinearElementEditor {
 
     return p
       ? pointRotateRads(
-          pointFrom<GlobalPoint>(x + p[0], y + p[1]),
-          center,
-          element.angle,
-        )
+        pointFrom<GlobalPoint>(x + p[0], y + p[1]),
+        center,
+        element.angle,
+      )
       : pointRotateRads(pointFrom<GlobalPoint>(x, y), center, element.angle);
   }
 
@@ -1461,7 +1460,7 @@ export class LinearElementEditor {
     const isUncommittedPoint =
       app.state.selectedLinearElement?.isEditing &&
       app.state.selectedLinearElement?.lastUncommittedPoint ===
-        element.points[element.points.length - 1];
+      element.points[element.points.length - 1];
 
     const nextPoints = element.points.filter((_, idx) => {
       return !pointIndices.includes(idx);
@@ -1572,27 +1571,27 @@ export class LinearElementEditor {
 
     const nextPoints = isElbowArrow(element)
       ? [
-          pointUpdates.get(0)?.point ?? points[0],
-          pointUpdates.get(points.length - 1)?.point ??
-            points[points.length - 1],
-        ]
+        pointUpdates.get(0)?.point ?? points[0],
+        pointUpdates.get(points.length - 1)?.point ??
+        points[points.length - 1],
+      ]
       : points.map((p, idx) => {
-          const current = pointUpdates.get(idx)?.point ?? p;
+        const current = pointUpdates.get(idx)?.point ?? p;
 
-          if (
-            otherUpdates?.moveMidPointsWithElement &&
-            idx !== 0 &&
-            idx !== points.length - 1 &&
-            !pointUpdates.has(idx)
-          ) {
-            return current;
-          }
+        if (
+          otherUpdates?.moveMidPointsWithElement &&
+          idx !== 0 &&
+          idx !== points.length - 1 &&
+          !pointUpdates.has(idx)
+        ) {
+          return current;
+        }
 
-          return pointFrom<LocalPoint>(
-            current[0] - offsetX,
-            current[1] - offsetY,
-          );
-        });
+        return pointFrom<LocalPoint>(
+          current[0] - offsetX,
+          current[1] - offsetY,
+        );
+      });
 
     LinearElementEditor._updatePoints(
       element,
@@ -2035,13 +2034,13 @@ export class LinearElementEditor {
 
       const point = pointFrom<GlobalPoint>(
         element.x +
-          (element.fixedSegments![offset].start[0] +
-            element.fixedSegments![offset].end[0]) /
-            2,
+        (element.fixedSegments![offset].start[0] +
+          element.fixedSegments![offset].end[0]) /
+        2,
         element.y +
-          (element.fixedSegments![offset].start[1] +
-            element.fixedSegments![offset].end[1]) /
-            2,
+        (element.fixedSegments![offset].start[1] +
+          element.fixedSegments![offset].end[1]) /
+        2,
       );
 
       return {
@@ -2145,8 +2144,8 @@ const pointDraggingUpdates = (
         suggestedBinding: startIsDragged
           ? start.element
           : endIsDragged
-          ? end.element
-          : null,
+            ? end.element
+            : null,
       },
     };
   }
@@ -2216,15 +2215,15 @@ const pointDraggingUpdates = (
   // Simulate the updated arrow for the bind point calculation
   const offsetStartLocalPoint = startIsDragged
     ? pointFrom<LocalPoint>(
-        element.points[0][0] + deltaX,
-        element.points[0][1] + deltaY,
-      )
+      element.points[0][0] + deltaX,
+      element.points[0][1] + deltaY,
+    )
     : element.points[0];
   const offsetEndLocalPoint = endIsDragged
     ? pointFrom<LocalPoint>(
-        element.points[element.points.length - 1][0] + deltaX,
-        element.points[element.points.length - 1][1] + deltaY,
-      )
+      element.points[element.points.length - 1][0] + deltaX,
+      element.points[element.points.length - 1][1] + deltaY,
+    )
     : element.points[element.points.length - 1];
   const nextArrow = {
     ...element,
@@ -2237,14 +2236,14 @@ const pointDraggingUpdates = (
       updates.startBinding === undefined
         ? element.startBinding
         : updates.startBinding === null
-        ? null
-        : updates.startBinding,
+          ? null
+          : updates.startBinding,
     endBinding:
       updates.endBinding === undefined
         ? element.endBinding
         : updates.endBinding === null
-        ? null
-        : updates.endBinding,
+          ? null
+          : updates.endBinding,
   };
 
   // We need to use a custom intersector to ensure that if there is a big "jump"
@@ -2272,9 +2271,9 @@ const pointDraggingUpdates = (
   // so we look up the old binding to trigger updateBoundPoint
   const endBindable = nextArrow.endBinding
     ? end.element ??
-      (elementsMap.get(
-        nextArrow.endBinding.elementId,
-      )! as DrawinkBindableElement)
+    (elementsMap.get(
+      nextArrow.endBinding.elementId,
+    )! as DrawinkBindableElement)
     : null;
 
   const endLocalPoint = startIsDraggingOverEndElement
@@ -2282,17 +2281,17 @@ const pointDraggingUpdates = (
     : endIsDraggingOverStartElement &&
       app.state.bindMode !== "inside" &&
       getFeatureFlag("COMPLEX_BINDINGS")
-    ? nextArrow.points[0]
-    : endBindable
-    ? updateBoundPoint(
-        element,
-        "endBinding",
-        nextArrow.endBinding,
-        endBindable,
-        elementsMap,
-        customIntersector,
-      ) || nextArrow.points[nextArrow.points.length - 1]
-    : nextArrow.points[nextArrow.points.length - 1];
+      ? nextArrow.points[0]
+      : endBindable
+        ? updateBoundPoint(
+          element,
+          "endBinding",
+          nextArrow.endBinding,
+          endBindable,
+          elementsMap,
+          customIntersector,
+        ) || nextArrow.points[nextArrow.points.length - 1]
+        : nextArrow.points[nextArrow.points.length - 1];
 
   // We need to keep the simulated next arrow up-to-date, because
   // updateBoundPoint looks at the opposite point
@@ -2302,9 +2301,9 @@ const pointDraggingUpdates = (
   // so we look up the old binding to trigger updateBoundPoint
   const startBindable = nextArrow.startBinding
     ? start.element ??
-      (elementsMap.get(
-        nextArrow.startBinding.elementId,
-      )! as DrawinkBindableElement)
+    (elementsMap.get(
+      nextArrow.startBinding.elementId,
+    )! as DrawinkBindableElement)
     : null;
 
   const startLocalPoint =
@@ -2313,17 +2312,17 @@ const pointDraggingUpdates = (
       : startIsDraggingOverEndElement &&
         app.state.bindMode !== "inside" &&
         getFeatureFlag("COMPLEX_BINDINGS")
-      ? nextArrow.points[nextArrow.points.length - 1]
-      : startBindable
-      ? updateBoundPoint(
-          element,
-          "startBinding",
-          nextArrow.startBinding,
-          startBindable,
-          elementsMap,
-          customIntersector,
-        ) || nextArrow.points[0]
-      : nextArrow.points[0];
+        ? nextArrow.points[nextArrow.points.length - 1]
+        : startBindable
+          ? updateBoundPoint(
+            element,
+            "startBinding",
+            nextArrow.startBinding,
+            startBindable,
+            elementsMap,
+            customIntersector,
+          ) || nextArrow.points[0]
+          : nextArrow.points[0];
 
   const endChanged =
     pointDistance(
@@ -2346,9 +2345,9 @@ const pointDraggingUpdates = (
     updates:
       updates.startBinding || updates.suggestedBinding
         ? {
-            startBinding: updates.startBinding,
-            suggestedBinding: updates.suggestedBinding,
-          }
+          startBinding: updates.startBinding,
+          suggestedBinding: updates.suggestedBinding,
+        }
         : undefined,
     positions: new Map(
       indices.map((idx) => {
@@ -2356,15 +2355,15 @@ const pointDraggingUpdates = (
           idx,
           idx === 0
             ? {
-                point: startLocalPoint,
-                isDragging: true,
-              }
+              point: startLocalPoint,
+              isDragging: true,
+            }
             : idx === element.points.length - 1
-            ? {
+              ? {
                 point: endLocalPoint,
                 isDragging: true,
               }
-            : naiveDraggingPoints.get(idx)!,
+              : naiveDraggingPoints.get(idx)!,
         ];
       }),
     ),

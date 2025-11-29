@@ -1,0 +1,19 @@
+{
+  "description": "Drawink's ESLint config",
+  "license": "MIT",
+  "main": "eslintrc.json",
+  "name": "@drawink/eslint-config",
+  "peerDependencies": {
+    "@typescript-eslint/parser": ">=4",
+    "@typescript-eslint/eslint-plugin": ">=4",
+    "eslint-config-prettier": ">=7",
+    "eslint-plugin-prettier": ">=3",
+    "eslint": ">=7",
+    "prettier": ">=2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "https://github.com/excalidraw/eslint-config",
+  "version": "1.0.3"
+}

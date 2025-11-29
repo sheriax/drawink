@@ -1,10 +1,10 @@
-import { sceneCoordsToViewportCoords } from "@excalidraw/common";
-import { getElementAbsoluteCoords } from "@excalidraw/element";
+import { sceneCoordsToViewportCoords } from "@drawink/common";
+import { getElementAbsoluteCoords } from "@drawink/element";
 
 import type {
   ElementsMap,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { useDrawinkAppState } from "../components/App";
 

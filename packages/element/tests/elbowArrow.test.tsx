@@ -1,5 +1,5 @@
-import { ARROW_TYPE } from "@excalidraw/common";
-import { pointFrom } from "@excalidraw/math";
+import { ARROW_TYPE } from "@drawink/common";
+import { pointFrom } from "@drawink/math";
 import { Drawink } from "@drawink/drawink";
 import { actionSelectAll } from "@drawink/drawink/actions";
 import { actionDuplicateSelection } from "@drawink/drawink/actions/actionDuplicateSelection";
@@ -12,10 +12,10 @@ import {
   queryByTestId,
   render,
 } from "@drawink/drawink/tests/test-utils";
-import "@excalidraw/utils/test-utils";
-import { bindBindingElement } from "@excalidraw/element";
+import "@drawink/utils/test-utils";
+import { bindBindingElement } from "@drawink/element";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import { Scene } from "../src/Scene";
 

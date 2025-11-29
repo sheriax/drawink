@@ -3,7 +3,7 @@ import type {
   AppState,
   InteractiveCanvasAppState,
 } from "@drawink/drawink/types";
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
 import { getBoundTextElement } from "./textElement";
 
@@ -178,10 +178,10 @@ export const selectGroupsForSelectedElements = (function () {
   > => {
     const selectedElements = app
       ? app.scene.getSelectedElements({
-          selectedElementIds: appState.selectedElementIds,
-          // supplying elements explicitly in case we're passed non-state elements
-          elements,
-        })
+        selectedElementIds: appState.selectedElementIds,
+        // supplying elements explicitly in case we're passed non-state elements
+        elements,
+      })
       : getSelectedElements(elements, appState);
 
     if (!selectedElements.length) {

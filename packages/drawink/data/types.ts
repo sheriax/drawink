@@ -1,6 +1,6 @@
-import type { VERSIONS } from "@excalidraw/common";
+import type { VERSIONS } from "@drawink/common";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import type { cleanAppStateForExport } from "../appState";
 import type {

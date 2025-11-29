@@ -7,39 +7,39 @@ import {
   isRTL,
   isTestEnv,
   getVerticalOffset,
-} from "@excalidraw/common";
-import { normalizeLink, toValidURL } from "@excalidraw/common";
-import { hashString } from "@excalidraw/element";
-import { getUncroppedWidthAndHeight } from "@excalidraw/element";
+} from "@drawink/common";
+import { normalizeLink, toValidURL } from "@drawink/common";
+import { hashString } from "@drawink/element";
+import { getUncroppedWidthAndHeight } from "@drawink/element";
 import {
   createPlaceholderEmbeddableLabel,
   getEmbedLink,
-} from "@excalidraw/element";
-import { LinearElementEditor } from "@excalidraw/element";
-import { getBoundTextElement, getContainerElement } from "@excalidraw/element";
-import { getLineHeightInPx } from "@excalidraw/element";
+} from "@drawink/element";
+import { LinearElementEditor } from "@drawink/element";
+import { getBoundTextElement, getContainerElement } from "@drawink/element";
+import { getLineHeightInPx } from "@drawink/element";
 import {
   isArrowElement,
   isIframeLikeElement,
   isInitializedImageElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { getContainingFrame } from "@excalidraw/element";
+import { getContainingFrame } from "@drawink/element";
 
-import { getCornerRadius, isPathALoop } from "@excalidraw/element";
+import { getCornerRadius, isPathALoop } from "@drawink/element";
 
-import { ShapeCache } from "@excalidraw/element";
+import { ShapeCache } from "@drawink/element";
 
-import { getFreeDrawSvgPath, IMAGE_INVERT_FILTER } from "@excalidraw/element";
+import { getFreeDrawSvgPath, IMAGE_INVERT_FILTER } from "@drawink/element";
 
-import { getElementAbsoluteCoords } from "@excalidraw/element";
+import { getElementAbsoluteCoords } from "@drawink/element";
 
 import type {
   DrawinkElement,
   DrawinkTextElementWithContainer,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import type { RenderableElementsMap, SVGRenderConfig } from "../scene/types";
 import type { AppState, BinaryFiles } from "../types";
@@ -160,8 +160,7 @@ const renderElementToSvg = (
       node.setAttribute("stroke-linecap", "round");
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${
-          offsetY || 0
+        `translate(${offsetX || 0} ${offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
 
@@ -193,8 +192,7 @@ const renderElementToSvg = (
       node.setAttribute("stroke-linecap", "round");
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${
-          offsetY || 0
+        `translate(${offsetX || 0} ${offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       addToRoot(node, element);
@@ -221,8 +219,7 @@ const renderElementToSvg = (
       embeddableNode.setAttribute("stroke-linecap", "round");
       embeddableNode.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${
-          offsetY || 0
+        `translate(${offsetX || 0} ${offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       while (embeddableNode.firstChild) {
@@ -343,8 +340,7 @@ const renderElementToSvg = (
         }
         node.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${
-            offsetY || 0
+          `translate(${offsetX || 0} ${offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
         if (
@@ -380,10 +376,10 @@ const renderElementToSvg = (
       );
       const node = backgroundFillShape
         ? roughSVGDrawWithPrecision(
-            rsvg,
-            backgroundFillShape,
-            MAX_DECIMALS_FOR_SVG_EXPORT,
-          )
+          rsvg,
+          backgroundFillShape,
+          MAX_DECIMALS_FOR_SVG_EXPORT,
+        )
         : svgRoot.ownerDocument!.createElementNS(SVG_NS, "g");
       if (opacity !== 1) {
         node.setAttribute("stroke-opacity", `${opacity}`);
@@ -391,8 +387,7 @@ const renderElementToSvg = (
       }
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${
-          offsetY || 0
+        `translate(${offsetX || 0} ${offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       node.setAttribute("stroke", "none");
@@ -498,10 +493,8 @@ const renderElementToSvg = (
         if (element.scale[0] !== 1 || element.scale[1] !== 1) {
           use.setAttribute(
             "transform",
-            `translate(${adjustedCenterX} ${adjustedCenterY}) scale(${
-              element.scale[0]
-            } ${
-              element.scale[1]
+            `translate(${adjustedCenterX} ${adjustedCenterY}) scale(${element.scale[0]
+            } ${element.scale[1]
             }) translate(${-adjustedCenterX} ${-adjustedCenterY})`,
           );
         }
@@ -530,8 +523,7 @@ const renderElementToSvg = (
         g.appendChild(use);
         g.setAttribute(
           "transform",
-          `translate(${offsetX - normalizedCropX} ${
-            offsetY - normalizedCropY
+          `translate(${offsetX - normalizedCropX} ${offsetY - normalizedCropY
           }) rotate(${degree} ${adjustedCenterX} ${adjustedCenterY})`,
         );
 
@@ -586,8 +578,7 @@ const renderElementToSvg = (
 
         rect.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${
-            offsetY || 0
+          `translate(${offsetX || 0} ${offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
 
@@ -615,8 +606,7 @@ const renderElementToSvg = (
 
         node.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${
-            offsetY || 0
+          `translate(${offsetX || 0} ${offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
         const lines = element.text.replace(/\r\n?/g, "\n").split("\n");
@@ -628,8 +618,8 @@ const renderElementToSvg = (
           element.textAlign === "center"
             ? element.width / 2
             : element.textAlign === "right"
-            ? element.width
-            : 0;
+              ? element.width
+              : 0;
         const verticalOffset = getVerticalOffset(
           element.fontFamily,
           element.fontSize,
@@ -640,8 +630,8 @@ const renderElementToSvg = (
           element.textAlign === "center"
             ? "middle"
             : element.textAlign === "right" || direction === "rtl"
-            ? "end"
-            : "start";
+              ? "end"
+              : "start";
         for (let i = 0; i < lines.length; i++) {
           const text = svgRoot.ownerDocument!.createElementNS(SVG_NS, "text");
           text.textContent = lines[i];

@@ -1,12 +1,12 @@
-import { LaserPointer } from "@excalidraw/laser-pointer";
+import { LaserPointer } from "@drawink/laser-pointer";
 
 import {
   SVG_NS,
   getSvgPathFromStroke,
   sceneCoordsToViewportCoords,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { LaserPointerOptions } from "@excalidraw/laser-pointer";
+import type { LaserPointerOptions } from "@drawink/laser-pointer";
 
 import type { AnimationFrameHandler } from "./animation-frame-handler";
 import type App from "./components/App";

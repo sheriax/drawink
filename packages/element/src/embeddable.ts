@@ -3,10 +3,10 @@ import {
   VERTICAL_ALIGN,
   escapeDoubleQuotes,
   getFontString,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type { DrawinkProps } from "@drawink/drawink/types";
-import type { MarkRequired } from "@excalidraw/common/utility-types";
+import type { MarkRequired } from "@drawink/common/utility-types";
 
 import { newTextElement } from "./newElement";
 import { wrapText } from "./textWrapping";

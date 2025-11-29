@@ -1,15 +1,15 @@
-import { degreesToRadians, radiansToDegrees } from "@excalidraw/math";
+import { degreesToRadians, radiansToDegrees } from "@drawink/math";
 
-import { getBoundTextElement } from "@excalidraw/element";
-import { isArrowElement } from "@excalidraw/element";
+import { getBoundTextElement } from "@drawink/element";
+import { isArrowElement } from "@drawink/element";
 
-import { isInGroup } from "@excalidraw/element";
+import { isInGroup } from "@drawink/element";
 
-import type { Degrees } from "@excalidraw/math";
+import type { Degrees } from "@drawink/math";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import { angleIcon } from "../icons";
 
@@ -38,66 +38,66 @@ const handleDegreeChange: DragInputCallbackType<
   property,
   scene,
 }) => {
-  const elementsMap = scene.getNonDeletedElementsMap();
-  const editableLatestIndividualElements = originalElements
-    .map((el) => elementsMap.get(el.id))
-    .filter((el) => el && !isInGroup(el) && isPropertyEditable(el, property));
-  const editableOriginalIndividualElements = originalElements.filter(
-    (el) => !isInGroup(el) && isPropertyEditable(el, property),
-  );
+    const elementsMap = scene.getNonDeletedElementsMap();
+    const editableLatestIndividualElements = originalElements
+      .map((el) => elementsMap.get(el.id))
+      .filter((el) => el && !isInGroup(el) && isPropertyEditable(el, property));
+    const editableOriginalIndividualElements = originalElements.filter(
+      (el) => !isInGroup(el) && isPropertyEditable(el, property),
+    );
 
-  if (nextValue !== undefined) {
-    const nextAngle = degreesToRadians(nextValue as Degrees);
+    if (nextValue !== undefined) {
+      const nextAngle = degreesToRadians(nextValue as Degrees);
 
-    for (const element of editableLatestIndividualElements) {
-      if (!element) {
+      for (const element of editableLatestIndividualElements) {
+        if (!element) {
+          continue;
+        }
+        scene.mutateElement(element, {
+          angle: nextAngle,
+        });
+
+        const boundTextElement = getBoundTextElement(element, elementsMap);
+        if (boundTextElement && !isArrowElement(element)) {
+          scene.mutateElement(boundTextElement, { angle: nextAngle });
+        }
+      }
+
+      scene.triggerUpdate();
+
+      return;
+    }
+
+    for (let i = 0; i < editableLatestIndividualElements.length; i++) {
+      const latestElement = editableLatestIndividualElements[i];
+      if (!latestElement) {
         continue;
       }
-      scene.mutateElement(element, {
+      const originalElement = editableOriginalIndividualElements[i];
+      const originalAngleInDegrees =
+        Math.round(radiansToDegrees(originalElement.angle) * 100) / 100;
+      const changeInDegrees = Math.round(accumulatedChange);
+      let nextAngleInDegrees = (originalAngleInDegrees + changeInDegrees) % 360;
+      if (shouldChangeByStepSize) {
+        nextAngleInDegrees = getStepSizedValue(nextAngleInDegrees, STEP_SIZE);
+      }
+
+      nextAngleInDegrees =
+        nextAngleInDegrees < 0 ? nextAngleInDegrees + 360 : nextAngleInDegrees;
+
+      const nextAngle = degreesToRadians(nextAngleInDegrees as Degrees);
+
+      scene.mutateElement(latestElement, {
         angle: nextAngle,
       });
 
-      const boundTextElement = getBoundTextElement(element, elementsMap);
-      if (boundTextElement && !isArrowElement(element)) {
+      const boundTextElement = getBoundTextElement(latestElement, elementsMap);
+      if (boundTextElement && !isArrowElement(latestElement)) {
         scene.mutateElement(boundTextElement, { angle: nextAngle });
       }
     }
-
     scene.triggerUpdate();
-
-    return;
-  }
-
-  for (let i = 0; i < editableLatestIndividualElements.length; i++) {
-    const latestElement = editableLatestIndividualElements[i];
-    if (!latestElement) {
-      continue;
-    }
-    const originalElement = editableOriginalIndividualElements[i];
-    const originalAngleInDegrees =
-      Math.round(radiansToDegrees(originalElement.angle) * 100) / 100;
-    const changeInDegrees = Math.round(accumulatedChange);
-    let nextAngleInDegrees = (originalAngleInDegrees + changeInDegrees) % 360;
-    if (shouldChangeByStepSize) {
-      nextAngleInDegrees = getStepSizedValue(nextAngleInDegrees, STEP_SIZE);
-    }
-
-    nextAngleInDegrees =
-      nextAngleInDegrees < 0 ? nextAngleInDegrees + 360 : nextAngleInDegrees;
-
-    const nextAngle = degreesToRadians(nextAngleInDegrees as Degrees);
-
-    scene.mutateElement(latestElement, {
-      angle: nextAngle,
-    });
-
-    const boundTextElement = getBoundTextElement(latestElement, elementsMap);
-    if (boundTextElement && !isArrowElement(latestElement)) {
-      scene.mutateElement(boundTextElement, { angle: nextAngle });
-    }
-  }
-  scene.triggerUpdate();
-};
+  };
 
 const MultiAngle = ({
   elements,

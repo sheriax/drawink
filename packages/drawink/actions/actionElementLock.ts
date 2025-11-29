@@ -1,14 +1,14 @@
-import { KEYS, arrayToMap, randomId } from "@excalidraw/common";
+import { KEYS, arrayToMap, randomId } from "@drawink/common";
 
 import {
   elementsAreInSameGroup,
   newElementWith,
   selectGroupsFromGivenElements,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { LockedIcon, UnlockedIcon } from "../components/icons";
 
@@ -120,8 +120,8 @@ export const actionToggleElementLock = register({
       ? newGroupId
         ? newGroupId
         : isAGroup
-        ? selectedElements[0].groupIds.at(-1)!
-        : selectedElements[0].id
+          ? selectedElements[0].groupIds.at(-1)!
+          : selectedElements[0].id
       : null;
 
     return {

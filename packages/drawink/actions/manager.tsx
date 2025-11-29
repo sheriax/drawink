@@ -1,11 +1,11 @@
 import React from "react";
 
-import { isPromiseLike } from "@excalidraw/common";
+import { isPromiseLike } from "@drawink/common";
 
 import type {
   DrawinkElement,
   OrderedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { trackEvent } from "../analytics";
 
@@ -37,8 +37,7 @@ const trackAction = (
           trackEvent(
             action.trackEvent.category,
             action.trackEvent.action || action.name,
-            `${source} (${
-              app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
+            `${source} (${app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
             })`,
           );
         }

@@ -1,7 +1,7 @@
 import type {
   DrawinkTextElement,
   FontFamilyValues,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { FONT_FAMILY, FONT_FAMILY_FALLBACKS } from "./constants";
 

@@ -1,4 +1,4 @@
-import { MIME_TYPES } from "@excalidraw/common";
+import { MIME_TYPES } from "@drawink/common";
 import { getDefaultAppState } from "@drawink/drawink/appState";
 import {
   copyBlobToClipboardAsPng,
@@ -17,7 +17,7 @@ import type {
   DrawinkElement,
   DrawinkFrameLikeElement,
   NonDeleted,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type { AppState, BinaryFiles } from "@drawink/drawink/types";
 
 export { MIME_TYPES };

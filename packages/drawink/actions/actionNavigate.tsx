@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import { invariant } from "@excalidraw/common";
+import { invariant } from "@drawink/common";
 
 import { getClientColor } from "../clients";
 import { Avatar } from "../components/Avatar";
@@ -100,7 +100,7 @@ export const actionGoToCollaborator = register<Collaborator>({
       >
         <Avatar
           color={background}
-          onClick={() => {}}
+          onClick={() => { }}
           name={collaborator.username || ""}
           src={collaborator.avatarUrl}
           className={statusClassNames}

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-import { isFiniteNumber } from "@excalidraw/math";
+import { isFiniteNumber } from "@drawink/math";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { trackEvent } from "../../analytics";
 import { useUIAppState } from "../../context/ui-appState";
@@ -55,18 +55,18 @@ type OnTestSubmitRetValue = {
   rateLimit?: number | null;
   rateLimitRemaining?: number | null;
 } & (
-  | { generatedResponse: string | undefined; error?: null | undefined }
-  | {
+    | { generatedResponse: string | undefined; error?: null | undefined }
+    | {
       error: Error;
       generatedResponse?: null | undefined;
     }
-);
+  );
 
 export const TTDDialog = (
   props:
     | {
-        onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
-      }
+      onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
+    }
     | { __fallback: true },
 ) => {
   const appState = useUIAppState();
@@ -89,11 +89,11 @@ export const TTDDialogBase = withInternalFallback(
   }: {
     tab: "text-to-diagram" | "mermaid";
   } & (
-    | {
+      | {
         onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
       }
-    | { __fallback: true }
-  )) => {
+      | { __fallback: true }
+    )) => {
     const app = useApp();
     const setAppState = useDrawinkSetAppState();
 
@@ -215,7 +215,7 @@ export const TTDDialogBase = withInternalFallback(
     const [mermaidToDrawinkLib, setMermaidToDrawinkLib] =
       useState<MermaidToDrawinkLibProps>({
         loaded: false,
-        api: import("@excalidraw/mermaid-to-excalidraw"),
+        api: import("@drawink/mermaid-to-excalidraw"),
       });
 
     useEffect(() => {

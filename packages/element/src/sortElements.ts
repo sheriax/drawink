@@ -1,4 +1,4 @@
-import { arrayToMapWithIndex } from "@excalidraw/common";
+import { arrayToMapWithIndex } from "@drawink/common";
 
 import type { DrawinkElement } from "./types";
 

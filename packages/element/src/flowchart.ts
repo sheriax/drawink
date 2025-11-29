@@ -1,6 +1,6 @@
-import { KEYS, invariant, toBrandedType } from "@excalidraw/common";
+import { KEYS, invariant, toBrandedType } from "@drawink/common";
 
-import { type GlobalPoint, pointFrom, type LocalPoint } from "@excalidraw/math";
+import { type GlobalPoint, pointFrom, type LocalPoint } from "@drawink/math";
 
 import type {
   AppState,
@@ -198,8 +198,8 @@ const getOffsets = (
       linkedNodes.length === 0
         ? 0
         : (linkedNodes.length + 1) % 2 === 0
-        ? ((linkedNodes.length + 1) / 2) * _HORIZONTAL_OFFSET
-        : (linkedNodes.length / 2) * _HORIZONTAL_OFFSET * -1;
+          ? ((linkedNodes.length + 1) / 2) * _HORIZONTAL_OFFSET
+          : (linkedNodes.length / 2) * _HORIZONTAL_OFFSET * -1;
 
     if (direction === "up") {
       return {
@@ -222,8 +222,8 @@ const getOffsets = (
     linkedNodes.length === 0
       ? 0
       : (linkedNodes.length + 1) % 2 === 0
-      ? ((linkedNodes.length + 1) / 2) * _VERTICAL_OFFSET
-      : (linkedNodes.length / 2) * _VERTICAL_OFFSET * -1;
+        ? ((linkedNodes.length + 1) / 2) * _VERTICAL_OFFSET
+        : (linkedNodes.length / 2) * _VERTICAL_OFFSET * -1;
 
   if (direction === "left") {
     return {

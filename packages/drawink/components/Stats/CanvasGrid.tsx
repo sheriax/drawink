@@ -1,4 +1,4 @@
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import { getNormalizedGridStep } from "../../scene";
 
@@ -41,9 +41,9 @@ const CanvasGrid = ({
           } else if (instantChange) {
             nextGridStep = shouldChangeByStepSize
               ? getStepSizedValue(
-                  state.gridStep + STEP_SIZE * Math.sign(instantChange),
-                  STEP_SIZE,
-                )
+                state.gridStep + STEP_SIZE * Math.sign(instantChange),
+                STEP_SIZE,
+              )
               : state.gridStep + instantChange;
           }
 

@@ -1,38 +1,38 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
-import { bindOrUnbindBindingElement } from "@excalidraw/element/binding";
+import { bindOrUnbindBindingElement } from "@drawink/element/binding";
 import {
   isValidPolygon,
   LinearElementEditor,
   newElementWith,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
 import {
   isBindingElement,
   isFreeDrawElement,
   isLinearElement,
   isLineElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
 import {
   KEYS,
   arrayToMap,
   invariant,
   updateActiveTool,
-} from "@excalidraw/common";
-import { isPathALoop } from "@excalidraw/element";
+} from "@drawink/common";
+import { isPathALoop } from "@drawink/element";
 
-import { isInvisiblySmallElement } from "@excalidraw/element";
+import { isInvisiblySmallElement } from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { GlobalPoint, LocalPoint } from "@excalidraw/math";
+import type { GlobalPoint, LocalPoint } from "@drawink/math";
 import type {
   DrawinkElement,
   DrawinkLinearElement,
   NonDeleted,
   PointsPositionUpdates,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { t } from "../i18n";
 import { resetCursor } from "../cursor";
@@ -141,11 +141,11 @@ export const actionFinalize = register<FormData>({
           elements:
             element.points.length < 2 || isInvisiblySmallElement(element)
               ? elements.map((el) => {
-                  if (el.id === element.id) {
-                    return newElementWith(el, { isDeleted: true });
-                  }
-                  return el;
-                })
+                if (el.id === element.id) {
+                  return newElementWith(el, { isDeleted: true });
+                }
+                return el;
+              })
               : newElements,
           appState: {
             ...appState,
@@ -153,14 +153,14 @@ export const actionFinalize = register<FormData>({
             selectedLinearElement: activeToolLocked
               ? null
               : {
-                  ...linearElementEditor,
-                  selectedPointsIndices: null,
-                  isEditing: false,
-                  initialState: {
-                    ...linearElementEditor.initialState,
-                    lastClickedPoint: -1,
-                  },
+                ...linearElementEditor,
+                selectedPointsIndices: null,
+                isEditing: false,
+                initialState: {
+                  ...linearElementEditor.initialState,
+                  lastClickedPoint: -1,
                 },
+              },
             selectionElement: null,
             suggestedBinding: null,
             newElement: null,
@@ -285,16 +285,16 @@ export const actionFinalize = register<FormData>({
 
     selectedLinearElement = selectedLinearElement
       ? {
-          ...selectedLinearElement,
-          isEditing: appState.newElement
-            ? false
-            : selectedLinearElement.isEditing,
-          initialState: {
-            ...selectedLinearElement.initialState,
-            lastClickedPoint: -1,
-            origin: null,
-          },
-        }
+        ...selectedLinearElement,
+        isEditing: appState.newElement
+          ? false
+          : selectedLinearElement.isEditing,
+        initialState: {
+          ...selectedLinearElement.initialState,
+          lastClickedPoint: -1,
+          origin: null,
+        },
+      }
       : selectedLinearElement;
 
     return {
@@ -305,7 +305,7 @@ export const actionFinalize = register<FormData>({
         activeTool:
           (appState.activeTool.locked ||
             appState.activeTool.type === "freedraw") &&
-          element
+            element
             ? appState.activeTool
             : activeTool,
         activeEmbeddable: null,
@@ -317,12 +317,12 @@ export const actionFinalize = register<FormData>({
         suggestedBinding: null,
         selectedElementIds:
           element &&
-          !appState.activeTool.locked &&
-          appState.activeTool.type !== "freedraw"
+            !appState.activeTool.locked &&
+            appState.activeTool.type !== "freedraw"
             ? {
-                ...appState.selectedElementIds,
-                [element.id]: true,
-              }
+              ...appState.selectedElementIds,
+              [element.id]: true,
+            }
             : appState.selectedElementIds,
 
         selectedLinearElement,

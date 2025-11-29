@@ -8,13 +8,13 @@ import {
   getFontString,
   isProdEnv,
   invariant,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { pointFrom, pointRotateRads, type Radians } from "@excalidraw/math";
+import { pointFrom, pointRotateRads, type Radians } from "@drawink/math";
 
 import type { AppState } from "@drawink/drawink/types";
 
-import type { ExtractSetType } from "@excalidraw/common/utility-types";
+import type { ExtractSetType } from "@drawink/common/utility-types";
 
 import {
   resetOriginalContainerCache,
@@ -193,9 +193,9 @@ export const handleBindTextResize = (
       // fix the y coord when resizing from ne/nw/n
       const updatedY =
         !isArrowElement(container) &&
-        (transformHandleType === "ne" ||
-          transformHandleType === "nw" ||
-          transformHandleType === "n")
+          (transformHandleType === "ne" ||
+            transformHandleType === "nw" ||
+            transformHandleType === "n")
           ? container.y - diff
           : container.y;
       scene.mutateElement(container, {

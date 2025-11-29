@@ -5,9 +5,9 @@ import {
   CODES,
   KEYS,
   getLineHeight,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { newElementWith } from "@excalidraw/element";
+import { newElementWith } from "@drawink/element";
 
 import {
   hasBoundTextElement,
@@ -17,16 +17,16 @@ import {
   isArrowElement,
   isDrawinkElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
 import {
   getBoundTextElement,
   redrawTextBoundingBox,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { DrawinkTextElement } from "@excalidraw/element/types";
+import type { DrawinkTextElement } from "@drawink/element/types";
 
 import { paintIcon } from "../components/icons";
 
@@ -106,9 +106,9 @@ export const actionPasteStyles = register({
             roughness: elementStylesToCopyFrom?.roughness,
             roundness: elementStylesToCopyFrom.roundness
               ? canApplyRoundnessTypeToElement(
-                  elementStylesToCopyFrom.roundness.type,
-                  element,
-                )
+                elementStylesToCopyFrom.roundness.type,
+                element,
+              )
                 ? elementStylesToCopyFrom.roundness
                 : getDefaultRoundnessTypeForElement(element)
               : null,

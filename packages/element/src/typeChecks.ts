@@ -1,10 +1,10 @@
-import { ROUNDNESS, assertNever } from "@excalidraw/common";
+import { ROUNDNESS, assertNever } from "@drawink/common";
 
-import { pointsEqual } from "@excalidraw/math";
+import { pointsEqual } from "@drawink/math";
 
 import type { ElementOrToolType } from "@drawink/drawink/types";
 
-import type { MarkNonNullable } from "@excalidraw/common/utility-types";
+import type { MarkNonNullable } from "@drawink/common/utility-types";
 
 import type { Bounds } from "./bounds";
 import type {
@@ -356,7 +356,7 @@ export const getDefaultRoundnessTypeForElement = (
   return null;
 };
 
-// TODO: Move this to @excalidraw/math
+// TODO: Move this to @drawink/math
 export const isBounds = (box: unknown): box is Bounds =>
   Array.isArray(box) &&
   box.length === 4 &&

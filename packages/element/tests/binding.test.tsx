@@ -1,6 +1,6 @@
-import { KEYS, arrayToMap } from "@excalidraw/common";
+import { KEYS, arrayToMap } from "@drawink/common";
 
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
 import { actionWrapTextInContainer } from "@drawink/drawink/actions/actionBoundText";
 
@@ -323,7 +323,7 @@ describe("binding for simple arrows", () => {
 
     it(
       "editing arrow and moving its head to bind it to element A, finalizing the" +
-        "editing by clicking on element A should end up selecting A",
+      "editing by clicking on element A should end up selecting A",
       async () => {
         UI.createElement("rectangle", {
           y: 0,

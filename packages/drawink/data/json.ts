@@ -4,9 +4,9 @@ import {
   getExportSource,
   MIME_TYPES,
   VERSIONS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { cleanAppStateForExport, clearAppStateForDatabase } from "../appState";
 
@@ -61,7 +61,7 @@ export const serializeAsJSON = (
       type === "local"
         ? filterOutDeletedFiles(elements, files)
         : // will be stripped from JSON
-          undefined,
+        undefined,
   };
 
   return JSON.stringify(data, null, 2);

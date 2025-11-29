@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
-import { EVENT, KEYS, rgbToHex } from "@excalidraw/common";
+import { EVENT, KEYS, rgbToHex } from "@drawink/common";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { useUIAppState } from "../context/ui-appState";
 import { atom } from "../editor-jotai";

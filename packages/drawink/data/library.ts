@@ -15,15 +15,15 @@ import {
   toValidURL,
   Queue,
   Emitter,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { hashElementsVersion, hashString } from "@excalidraw/element";
+import { hashElementsVersion, hashString } from "@drawink/element";
 
-import { getCommonBoundingBox } from "@excalidraw/element";
+import { getCommonBoundingBox } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
-import type { MaybePromise } from "@excalidraw/common/utility-types";
+import type { MaybePromise } from "@drawink/common/utility-types";
 
 import { atom, editorJotaiStore } from "../editor-jotai";
 
@@ -134,7 +134,7 @@ const isUniqueItem = (
       return (
         libItemDrawinkItem.id === targetLibraryItem.elements[idx].id &&
         libItemDrawinkItem.versionNonce ===
-          targetLibraryItem.elements[idx].versionNonce
+        targetLibraryItem.elements[idx].versionNonce
       );
     });
   });
@@ -307,7 +307,7 @@ class Library {
       return new Promise<LibraryItems>(async (resolve, reject) => {
         try {
           const source = await (typeof libraryItems === "function" &&
-          !(libraryItems instanceof Blob)
+            !(libraryItems instanceof Blob)
             ? libraryItems(this.currLibraryItems)
             : libraryItems);
 
@@ -363,8 +363,8 @@ class Library {
       | LibraryItems
       | Promise<LibraryItems>
       | ((
-          latestLibraryItems: LibraryItems,
-        ) => LibraryItems | Promise<LibraryItems>),
+        latestLibraryItems: LibraryItems,
+      ) => LibraryItems | Promise<LibraryItems>),
   ): Promise<LibraryItems> => {
     const task = new Promise<LibraryItems>(async (resolve, reject) => {
       try {
@@ -507,19 +507,19 @@ export const validateLibraryUrl = (
     typeof validator === "function"
       ? validator(libraryUrl)
       : validator.some((allowedUrlDef) => {
-          const allowedUrl = new URL(
-            `https://${allowedUrlDef.replace(/^https?:\/\//, "")}`,
-          );
+        const allowedUrl = new URL(
+          `https://${allowedUrlDef.replace(/^https?:\/\//, "")}`,
+        );
 
-          const { hostname, pathname } = new URL(libraryUrl);
+        const { hostname, pathname } = new URL(libraryUrl);
 
-          return (
-            new RegExp(`(^|\\.)${allowedUrl.hostname}$`).test(hostname) &&
-            new RegExp(
-              `^${allowedUrl.pathname.replace(/\/+$/, "")}(/+|$)`,
-            ).test(pathname)
-          );
-        })
+        return (
+          new RegExp(`(^|\\.)${allowedUrl.hostname}$`).test(hostname) &&
+          new RegExp(
+            `^${allowedUrl.pathname.replace(/\/+$/, "")}(/+|$)`,
+          ).test(pathname)
+        );
+      })
   ) {
     return true;
   }
@@ -683,11 +683,11 @@ export const useHandleLibrary = (
      */
     validateLibraryUrl?: (libraryUrl: string) => boolean;
   } & (
-    | {
+      | {
         /** @deprecated we recommend using `opts.adapter` instead */
         getInitialLibraryItems?: () => MaybePromise<LibraryItemsSource>;
       }
-    | {
+      | {
         adapter: LibraryPersistenceAdapter;
         /**
          * Adapter that takes care of loading data from legacy data store.
@@ -698,7 +698,7 @@ export const useHandleLibrary = (
          */
         migrationAdapter?: LibraryMigrationAdapter;
       }
-  ),
+    ),
 ) => {
   const { excalidrawAPI } = opts;
 
@@ -744,10 +744,10 @@ export const useHandleLibrary = (
       // for confirmation
       await (shouldPrompt && document.hidden
         ? new Promise<void>((resolve) => {
-            window.addEventListener("focus", () => resolve(), {
-              once: true,
-            });
-          })
+          window.addEventListener("focus", () => resolve(), {
+            once: true,
+          });
+        })
         : null);
 
       try {

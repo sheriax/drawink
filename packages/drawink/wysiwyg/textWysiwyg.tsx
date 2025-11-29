@@ -8,15 +8,15 @@ import {
   getFontFamilyString,
   isTestEnv,
   MIME_TYPES,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   originalContainerCache,
   updateOriginalContainerCache,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { LinearElementEditor } from "@excalidraw/element";
-import { bumpVersion } from "@excalidraw/element";
+import { LinearElementEditor } from "@drawink/element";
+import { bumpVersion } from "@drawink/element";
 import {
   getBoundTextElementId,
   getContainerElement,
@@ -27,22 +27,22 @@ import {
   computeContainerDimensionForBoundText,
   computeBoundTextPosition,
   getBoundTextElement,
-} from "@excalidraw/element";
-import { getTextWidth } from "@excalidraw/element";
-import { normalizeText } from "@excalidraw/element";
-import { wrapText } from "@excalidraw/element";
+} from "@drawink/element";
+import { getTextWidth } from "@drawink/element";
+import { normalizeText } from "@drawink/element";
+import { wrapText } from "@drawink/element";
 import {
   isArrowElement,
   isBoundToContainer,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
 import type {
   DrawinkElement,
   DrawinkLinearElement,
   DrawinkTextElementWithContainer,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { actionSaveToActiveFile } from "../actions";
 
@@ -502,9 +502,9 @@ export const textWysiwyg = ({
           startIndices.concat(
             idx
               ? // curr line index is prev line's start + prev line's length + \n
-                startIndices[idx - 1] + lines[idx - 1].length + 1
+              startIndices[idx - 1] + lines[idx - 1].length + 1
               : // first selected line
-                selectionStart,
+              selectionStart,
           ),
         [] as number[],
       )

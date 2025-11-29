@@ -1,14 +1,14 @@
-import * as MermaidToDrawink from "@excalidraw/mermaid-to-excalidraw";
+import * as MermaidToDrawink from "@drawink/mermaid-to-excalidraw";
 import React from "react";
 import { vi } from "vitest";
 
-import type { parseMermaidToDrawink } from "@excalidraw/mermaid-to-excalidraw";
+import type { parseMermaidToDrawink } from "@drawink/mermaid-to-excalidraw";
 
 export const mockMermaidToDrawink = (opts: {
   parseMermaidToDrawink: typeof parseMermaidToDrawink;
   mockRef?: boolean;
 }) => {
-  vi.mock("@excalidraw/mermaid-to-excalidraw", async (importActual) => {
+  vi.mock("@drawink/mermaid-to-excalidraw", async (importActual) => {
     const module = (await importActual()) as any;
 
     return {

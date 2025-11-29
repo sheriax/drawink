@@ -1,6 +1,6 @@
 import { API } from "@drawink/drawink/tests/helpers/api";
 
-import type { Bounds } from "@excalidraw/element";
+import type { Bounds } from "@drawink/element";
 
 import {
   elementPartiallyOverlapsWithOrContainsBBox,

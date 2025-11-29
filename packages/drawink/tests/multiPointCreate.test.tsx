@@ -1,9 +1,9 @@
 import React from "react";
 import { vi } from "vitest";
 
-import { KEYS, reseed } from "@excalidraw/common";
+import { KEYS, reseed } from "@drawink/common";
 
-import type { DrawinkLinearElement } from "@excalidraw/element/types";
+import type { DrawinkLinearElement } from "@drawink/element/types";
 
 import { Drawink } from "../index";
 

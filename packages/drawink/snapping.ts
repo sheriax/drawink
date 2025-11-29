@@ -5,32 +5,32 @@ import {
   rangeIntersection,
   rangesOverlap,
   type GlobalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { TOOL_TYPE, KEYS } from "@excalidraw/common";
+import { TOOL_TYPE, KEYS } from "@drawink/common";
 import {
   getCommonBounds,
   getDraggedElementsBounds,
   getElementAbsoluteCoords,
-} from "@excalidraw/element";
-import { isBoundToContainer } from "@excalidraw/element";
+} from "@drawink/element";
+import { isBoundToContainer } from "@drawink/element";
 
-import { getMaximumGroups } from "@excalidraw/element";
+import { getMaximumGroups } from "@drawink/element";
 
 import {
   getSelectedElements,
   getVisibleAndNonSelectedElements,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import type { InclusiveRange } from "@excalidraw/math";
+import type { InclusiveRange } from "@drawink/math";
 
-import type { Bounds } from "@excalidraw/element";
-import type { MaybeTransformHandleType } from "@excalidraw/element";
+import type { Bounds } from "@drawink/element";
+import type { MaybeTransformHandleType } from "@drawink/element";
 import type {
   ElementsMap,
   DrawinkElement,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import type {
   AppClassProperties,
@@ -83,12 +83,12 @@ export type Gap = {
 export type GapSnap = {
   type: "gap";
   direction:
-    | "center_horizontal"
-    | "center_vertical"
-    | "side_left"
-    | "side_right"
-    | "side_top"
-    | "side_bottom";
+  | "center_horizontal"
+  | "center_vertical"
+  | "side_left"
+  | "side_right"
+  | "side_top"
+  | "side_bottom";
   gap: Gap;
   offset: number;
 };
@@ -207,9 +207,9 @@ export const getElementsCorners = (
     boundingBoxCorners?: boolean;
     dragOffset?: Vector2D;
   } = {
-    omitCenter: false,
-    boundingBoxCorners: false,
-  },
+      omitCenter: false,
+      boundingBoxCorners: false,
+    },
 ): GlobalPoint[] => {
   let result: GlobalPoint[] = [];
 

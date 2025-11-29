@@ -1,6 +1,6 @@
-import { getGlobalCSSVariable } from "@excalidraw/common";
+import { getGlobalCSSVariable } from "@drawink/common";
 
-import { getCommonBounds } from "@excalidraw/element";
+import { getCommonBounds } from "@drawink/element";
 
 import { getLanguage } from "../i18n";
 
@@ -82,50 +82,50 @@ export const getScrollBars = (
   const horizontalDeltaMultiplier =
     extendedSceneWidth > sceneWidth
       ? (extendedSceneWidth * appState.zoom.value) /
-        (scrollbarWidth + scrollWidthOffset)
+      (scrollbarWidth + scrollWidthOffset)
       : viewportWidth / (scrollbarWidth + scrollWidthOffset);
 
   const verticalDeltaMultiplier =
     extendedSceneHeight > sceneHeight
       ? (extendedSceneHeight * appState.zoom.value) /
-        (scrollbarHeight + scrollbarHeightOffset)
+      (scrollbarHeight + scrollbarHeightOffset)
       : viewportHeight / (scrollbarHeight + scrollbarHeightOffset);
   return {
     horizontal:
       viewportMinX === sceneMinX && viewportMaxX === sceneMaxX
         ? null
         : {
-            x:
-              Math.max(safeArea.left, SCROLLBAR_MARGIN) +
-              SCROLLBAR_WIDTH +
-              ((viewportMinX - sceneMinX) / extendedSceneWidth) * viewportWidth,
-            y:
-              viewportHeight -
-              SCROLLBAR_WIDTH -
-              Math.max(SCROLLBAR_MARGIN, safeArea.bottom),
-            width: scrollbarWidth,
-            height: SCROLLBAR_WIDTH,
-            deltaMultiplier: horizontalDeltaMultiplier,
-          },
+          x:
+            Math.max(safeArea.left, SCROLLBAR_MARGIN) +
+            SCROLLBAR_WIDTH +
+            ((viewportMinX - sceneMinX) / extendedSceneWidth) * viewportWidth,
+          y:
+            viewportHeight -
+            SCROLLBAR_WIDTH -
+            Math.max(SCROLLBAR_MARGIN, safeArea.bottom),
+          width: scrollbarWidth,
+          height: SCROLLBAR_WIDTH,
+          deltaMultiplier: horizontalDeltaMultiplier,
+        },
 
     vertical:
       viewportMinY === sceneMinY && viewportMaxY === sceneMaxY
         ? null
         : {
-            x: isRTL
-              ? Math.max(safeArea.left, SCROLLBAR_MARGIN)
-              : viewportWidth -
-                SCROLLBAR_WIDTH -
-                Math.max(safeArea.right, SCROLLBAR_MARGIN),
-            y:
-              Math.max(safeArea.top, SCROLLBAR_MARGIN) +
-              SCROLLBAR_WIDTH +
-              ((viewportMinY - sceneMinY) / extendedSceneHeight) *
-                viewportHeight,
-            width: SCROLLBAR_WIDTH,
-            height: scrollbarHeight,
-            deltaMultiplier: verticalDeltaMultiplier,
-          },
+          x: isRTL
+            ? Math.max(safeArea.left, SCROLLBAR_MARGIN)
+            : viewportWidth -
+            SCROLLBAR_WIDTH -
+            Math.max(safeArea.right, SCROLLBAR_MARGIN),
+          y:
+            Math.max(safeArea.top, SCROLLBAR_MARGIN) +
+            SCROLLBAR_WIDTH +
+            ((viewportMinY - sceneMinY) / extendedSceneHeight) *
+            viewportHeight,
+          width: SCROLLBAR_WIDTH,
+          height: scrollbarHeight,
+          deltaMultiplier: verticalDeltaMultiplier,
+        },
   };
 };
 

@@ -1,8 +1,8 @@
-import { isImageElement } from "@excalidraw/element";
+import { isImageElement } from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { DrawinkImageElement } from "@excalidraw/element/types";
+import type { DrawinkImageElement } from "@drawink/element/types";
 
 import { ToolButton } from "../components/ToolButton";
 import { cropIcon } from "../components/icons";

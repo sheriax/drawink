@@ -1,12 +1,12 @@
-import { COLORS_PER_ROW, COLOR_PALETTE, KEYS } from "@excalidraw/common";
+import { COLORS_PER_ROW, COLOR_PALETTE, KEYS } from "@drawink/common";
 
 import type {
   ColorPickerColor,
   ColorPalette,
   ColorPaletteCustom,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { ValueOf } from "@excalidraw/common/utility-types";
+import type { ValueOf } from "@drawink/common/utility-types";
 
 import {
   colorPickerHotkeyBindings,
@@ -183,8 +183,8 @@ export const colorPickerKeyNavHandler = ({
       activeSectionIndex + indexOffset > sections.length - 1
         ? 0
         : activeSectionIndex + indexOffset < 0
-        ? sections.length - 1
-        : activeSectionIndex + indexOffset;
+          ? sections.length - 1
+          : activeSectionIndex + indexOffset;
 
     const nextSection = sections[nextSectionIndex];
 

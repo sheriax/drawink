@@ -1,9 +1,9 @@
-import { DEFAULT_EXPORT_PADDING, EDITOR_LS_KEYS } from "@excalidraw/common";
+import { DEFAULT_EXPORT_PADDING, EDITOR_LS_KEYS } from "@drawink/common";
 
-import type { MermaidConfig } from "@excalidraw/mermaid-to-excalidraw";
-import type { MermaidToDrawinkResult } from "@excalidraw/mermaid-to-excalidraw/dist/interfaces";
+import type { MermaidConfig } from "@drawink/mermaid-to-excalidraw";
+import type { MermaidToDrawinkResult } from "@drawink/mermaid-to-excalidraw/dist/interfaces";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { EditorLocalStorage } from "../../data/EditorLocalStorage";
 import { canvasToBlob } from "../../data/blob";

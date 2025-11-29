@@ -1,7 +1,7 @@
-import { arrayToMap } from "@excalidraw/common";
-import { isPointWithinBounds, pointFrom } from "@excalidraw/math";
-import { doLineSegmentsIntersect } from "@excalidraw/utils/bbox";
-import { elementsOverlappingBBox } from "@excalidraw/utils/withinBounds";
+import { arrayToMap } from "@drawink/common";
+import { isPointWithinBounds, pointFrom } from "@drawink/math";
+import { doLineSegmentsIntersect } from "@drawink/utils/bbox";
+import { elementsOverlappingBBox } from "@drawink/utils/withinBounds";
 
 import type {
   AppClassProperties,
@@ -9,7 +9,7 @@ import type {
   StaticCanvasAppState,
 } from "@drawink/drawink/types";
 
-import type { ReadonlySetLike } from "@excalidraw/common/utility-types";
+import type { ReadonlySetLike } from "@drawink/common/utility-types";
 
 import { getElementsWithinSelection, getSelectedElements } from "./selection";
 import { getElementsInGroup, selectGroupsFromGivenElements } from "./groups";

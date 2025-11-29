@@ -5,7 +5,7 @@ import {
   getFontString,
   isTestEnv,
   normalizeEOL,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type { FontString, DrawinkTextElement } from "./types";
 

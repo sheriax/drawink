@@ -1,4 +1,4 @@
-import { KEYS, reseed } from "@excalidraw/common";
+import { KEYS, reseed } from "@drawink/common";
 
 import { Drawink } from "@drawink/drawink";
 

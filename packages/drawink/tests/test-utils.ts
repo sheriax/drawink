@@ -9,13 +9,13 @@ import {
 } from "@testing-library/react";
 import ansi from "ansicolor";
 
-import { ORIG_ID, arrayToMap } from "@excalidraw/common";
+import { ORIG_ID, arrayToMap } from "@drawink/common";
 
-import { getSelectedElements } from "@excalidraw/element";
+import { getSelectedElements } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
-import type { AllPossibleKeys } from "@excalidraw/common/utility-types";
+import type { AllPossibleKeys } from "@drawink/common/utility-types";
 
 import { STORAGE_KEYS } from "../../../excalidraw-app/app_constants";
 
@@ -159,17 +159,17 @@ export const mockBoundingClientRect = (
     height = 1080,
     x = 0,
     y = 0,
-    toJSON = () => {},
+    toJSON = () => { },
   } = {
-    top: 10,
-    left: 20,
-    bottom: 10,
-    right: 10,
-    width: 200,
-    x: 10,
-    y: 20,
-    height: 100,
-  },
+      top: 10,
+      left: 20,
+      bottom: 10,
+      right: 10,
+      width: 200,
+      x: 10,
+      y: 20,
+      height: 100,
+    },
 ) => {
   // override getBoundingClientRect as by default it will always return all values as 0 even if customized in html
   global.window.HTMLDivElement.prototype.getBoundingClientRect = () => ({
@@ -242,10 +242,10 @@ export const togglePopover = (label: string) => {
       (this as any).cb = cb;
     }
 
-    observe() {}
+    observe() { }
 
-    unobserve() {}
-    disconnect() {}
+    unobserve() { }
+    disconnect() { }
   };
 
   UI.clickLabeledElement(label);
@@ -319,8 +319,8 @@ export const assertElements = <T extends AllPossibleKeys<DrawinkElement>>(
     selected?: true;
   } & (
       | {
-          id: DrawinkElement["id"];
-        }
+        id: DrawinkElement["id"];
+      }
       | { [ORIG_ID]?: string }
     ))[],
 ) => {
@@ -392,11 +392,9 @@ export const assertElements = <T extends AllPossibleKeys<DrawinkElement>>(
         .map((id: string, index: number) => {
           const act = actualElements[index];
 
-          return `${
-            id === err.expected[index] ? ansi.green(id) : ansi.red(id)
-          } (${act.type.slice(0, 4)}${
-            ORIG_ID in act ? ` ↳ ${(act as any)[ORIG_ID]}` : ""
-          })`;
+          return `${id === err.expected[index] ? ansi.green(id) : ansi.red(id)
+            } (${act.type.slice(0, 4)}${ORIG_ID in act ? ` ↳ ${(act as any)[ORIG_ID]}` : ""
+            })`;
         })
         .join(", ")}]`,
     )}\n${ansi.lightGray(
@@ -407,11 +405,10 @@ export const assertElements = <T extends AllPossibleKeys<DrawinkElement>>(
             expEl &&
             actualElements.find((el) => el.id === (expEl as any)[ORIG_ID]);
           return expEl
-            ? `${
-                exp === err.actual[index]
-                  ? ansi.green(expEl.id)
-                  : ansi.red(expEl.id)
-              } (${expEl.type.slice(0, 4)}${origEl ? ` ↳ ${origEl.id}` : ""})`
+            ? `${exp === err.actual[index]
+              ? ansi.green(expEl.id)
+              : ansi.red(expEl.id)
+            } (${expEl.type.slice(0, 4)}${origEl ? ` ↳ ${origEl.id}` : ""})`
             : exp;
         })
         .join(", ")}]\n`,

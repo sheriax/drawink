@@ -1,19 +1,19 @@
-import { clamp, round } from "@excalidraw/math";
+import { clamp, round } from "@drawink/math";
 
-import { MIN_WIDTH_OR_HEIGHT } from "@excalidraw/common";
+import { MIN_WIDTH_OR_HEIGHT } from "@drawink/common";
 import {
   MINIMAL_CROP_SIZE,
   getUncroppedWidthAndHeight,
-} from "@excalidraw/element";
-import { resizeSingleElement } from "@excalidraw/element";
-import { isImageElement } from "@excalidraw/element";
-import { isFrameLikeElement } from "@excalidraw/element";
-import { getElementsInResizingFrame } from "@excalidraw/element";
-import { replaceAllElementsInFrame } from "@excalidraw/element";
+} from "@drawink/element";
+import { resizeSingleElement } from "@drawink/element";
+import { isImageElement } from "@drawink/element";
+import { isFrameLikeElement } from "@drawink/element";
+import { getElementsInResizingFrame } from "@drawink/element";
+import { replaceAllElementsInFrame } from "@drawink/element";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import DragInput from "./DragInput";
 import { getStepSizedValue, isPropertyEditable } from "./utils";
@@ -52,232 +52,232 @@ const handleDimensionChange: DragInputCallbackType<
   app,
   setAppState,
 }) => {
-  const elementsMap = scene.getNonDeletedElementsMap();
-  const origElement = originalElements[0];
-  const latestElement = elementsMap.get(origElement.id);
-  if (origElement && latestElement) {
-    const keepAspectRatio =
-      shouldKeepAspectRatio || _shouldKeepAspectRatio(origElement);
-    const aspectRatio = origElement.width / origElement.height;
+    const elementsMap = scene.getNonDeletedElementsMap();
+    const origElement = originalElements[0];
+    const latestElement = elementsMap.get(origElement.id);
+    if (origElement && latestElement) {
+      const keepAspectRatio =
+        shouldKeepAspectRatio || _shouldKeepAspectRatio(origElement);
+      const aspectRatio = origElement.width / origElement.height;
 
-    if (originalAppState.croppingElementId === origElement.id) {
-      const element = elementsMap.get(origElement.id);
+      if (originalAppState.croppingElementId === origElement.id) {
+        const element = elementsMap.get(origElement.id);
 
-      if (!element || !isImageElement(element) || !element.crop) {
-        return;
-      }
-
-      const crop = element.crop;
-      let nextCrop = { ...crop };
-
-      const isFlippedByX = element.scale[0] === -1;
-      const isFlippedByY = element.scale[1] === -1;
-
-      const { width: uncroppedWidth, height: uncroppedHeight } =
-        getUncroppedWidthAndHeight(element);
-
-      const naturalToUncroppedWidthRatio = crop.naturalWidth / uncroppedWidth;
-      const naturalToUncroppedHeightRatio =
-        crop.naturalHeight / uncroppedHeight;
-
-      const MAX_POSSIBLE_WIDTH = isFlippedByX
-        ? crop.width + crop.x
-        : crop.naturalWidth - crop.x;
-
-      const MAX_POSSIBLE_HEIGHT = isFlippedByY
-        ? crop.height + crop.y
-        : crop.naturalHeight - crop.y;
-
-      const MIN_WIDTH = MINIMAL_CROP_SIZE * naturalToUncroppedWidthRatio;
-      const MIN_HEIGHT = MINIMAL_CROP_SIZE * naturalToUncroppedHeightRatio;
-
-      if (nextValue !== undefined) {
-        if (property === "width") {
-          const nextValueInNatural = nextValue * naturalToUncroppedWidthRatio;
-
-          const nextCropWidth = clamp(
-            nextValueInNatural,
-            MIN_WIDTH,
-            MAX_POSSIBLE_WIDTH,
-          );
-
-          nextCrop = {
-            ...nextCrop,
-            width: nextCropWidth,
-            x: isFlippedByX ? crop.x + crop.width - nextCropWidth : crop.x,
-          };
-        } else if (property === "height") {
-          const nextValueInNatural = nextValue * naturalToUncroppedHeightRatio;
-          const nextCropHeight = clamp(
-            nextValueInNatural,
-            MIN_HEIGHT,
-            MAX_POSSIBLE_HEIGHT,
-          );
-
-          nextCrop = {
-            ...nextCrop,
-            height: nextCropHeight,
-            y: isFlippedByY ? crop.y + crop.height - nextCropHeight : crop.y,
-          };
+        if (!element || !isImageElement(element) || !element.crop) {
+          return;
         }
+
+        const crop = element.crop;
+        let nextCrop = { ...crop };
+
+        const isFlippedByX = element.scale[0] === -1;
+        const isFlippedByY = element.scale[1] === -1;
+
+        const { width: uncroppedWidth, height: uncroppedHeight } =
+          getUncroppedWidthAndHeight(element);
+
+        const naturalToUncroppedWidthRatio = crop.naturalWidth / uncroppedWidth;
+        const naturalToUncroppedHeightRatio =
+          crop.naturalHeight / uncroppedHeight;
+
+        const MAX_POSSIBLE_WIDTH = isFlippedByX
+          ? crop.width + crop.x
+          : crop.naturalWidth - crop.x;
+
+        const MAX_POSSIBLE_HEIGHT = isFlippedByY
+          ? crop.height + crop.y
+          : crop.naturalHeight - crop.y;
+
+        const MIN_WIDTH = MINIMAL_CROP_SIZE * naturalToUncroppedWidthRatio;
+        const MIN_HEIGHT = MINIMAL_CROP_SIZE * naturalToUncroppedHeightRatio;
+
+        if (nextValue !== undefined) {
+          if (property === "width") {
+            const nextValueInNatural = nextValue * naturalToUncroppedWidthRatio;
+
+            const nextCropWidth = clamp(
+              nextValueInNatural,
+              MIN_WIDTH,
+              MAX_POSSIBLE_WIDTH,
+            );
+
+            nextCrop = {
+              ...nextCrop,
+              width: nextCropWidth,
+              x: isFlippedByX ? crop.x + crop.width - nextCropWidth : crop.x,
+            };
+          } else if (property === "height") {
+            const nextValueInNatural = nextValue * naturalToUncroppedHeightRatio;
+            const nextCropHeight = clamp(
+              nextValueInNatural,
+              MIN_HEIGHT,
+              MAX_POSSIBLE_HEIGHT,
+            );
+
+            nextCrop = {
+              ...nextCrop,
+              height: nextCropHeight,
+              y: isFlippedByY ? crop.y + crop.height - nextCropHeight : crop.y,
+            };
+          }
+
+          scene.mutateElement(element, {
+            crop: nextCrop,
+            width: nextCrop.width / (crop.naturalWidth / uncroppedWidth),
+            height: nextCrop.height / (crop.naturalHeight / uncroppedHeight),
+          });
+          return;
+        }
+
+        const changeInWidth = property === "width" ? instantChange : 0;
+        const changeInHeight = property === "height" ? instantChange : 0;
+
+        const nextCropWidth = clamp(
+          crop.width + changeInWidth,
+          MIN_WIDTH,
+          MAX_POSSIBLE_WIDTH,
+        );
+
+        const nextCropHeight = clamp(
+          crop.height + changeInHeight,
+          MIN_WIDTH,
+          MAX_POSSIBLE_HEIGHT,
+        );
+
+        nextCrop = {
+          ...crop,
+          x: isFlippedByX ? crop.x + crop.width - nextCropWidth : crop.x,
+          y: isFlippedByY ? crop.y + crop.height - nextCropHeight : crop.y,
+          width: nextCropWidth,
+          height: nextCropHeight,
+        };
 
         scene.mutateElement(element, {
           crop: nextCrop,
           width: nextCrop.width / (crop.naturalWidth / uncroppedWidth),
           height: nextCrop.height / (crop.naturalHeight / uncroppedHeight),
         });
+
         return;
       }
 
-      const changeInWidth = property === "width" ? instantChange : 0;
-      const changeInHeight = property === "height" ? instantChange : 0;
-
-      const nextCropWidth = clamp(
-        crop.width + changeInWidth,
-        MIN_WIDTH,
-        MAX_POSSIBLE_WIDTH,
-      );
-
-      const nextCropHeight = clamp(
-        crop.height + changeInHeight,
-        MIN_WIDTH,
-        MAX_POSSIBLE_HEIGHT,
-      );
-
-      nextCrop = {
-        ...crop,
-        x: isFlippedByX ? crop.x + crop.width - nextCropWidth : crop.x,
-        y: isFlippedByY ? crop.y + crop.height - nextCropHeight : crop.y,
-        width: nextCropWidth,
-        height: nextCropHeight,
-      };
-
-      scene.mutateElement(element, {
-        crop: nextCrop,
-        width: nextCrop.width / (crop.naturalWidth / uncroppedWidth),
-        height: nextCrop.height / (crop.naturalHeight / uncroppedHeight),
-      });
-
-      return;
-    }
-
-    // User types in a value to stats then presses Enter
-    if (nextValue !== undefined) {
-      const nextWidth = Math.max(
-        property === "width"
-          ? nextValue
-          : keepAspectRatio
-          ? nextValue * aspectRatio
-          : origElement.width,
-        MIN_WIDTH_OR_HEIGHT,
-      );
-      const nextHeight = Math.max(
-        property === "height"
-          ? nextValue
-          : keepAspectRatio
-          ? nextValue / aspectRatio
-          : origElement.height,
-        MIN_WIDTH_OR_HEIGHT,
-      );
-
-      resizeSingleElement(
-        nextWidth,
-        nextHeight,
-        latestElement,
-        origElement,
-        originalElementsMap,
-        scene,
-        property === "width" ? "e" : "s",
-        {
-          shouldMaintainAspectRatio: keepAspectRatio,
-        },
-      );
-
-      // Handle frame membership update for resized frames
-      if (isFrameLikeElement(latestElement)) {
-        const nextElementsInFrame = getElementsInResizingFrame(
-          scene.getElementsIncludingDeleted(),
-          latestElement,
-          originalAppState,
-          scene.getNonDeletedElementsMap(),
+      // User types in a value to stats then presses Enter
+      if (nextValue !== undefined) {
+        const nextWidth = Math.max(
+          property === "width"
+            ? nextValue
+            : keepAspectRatio
+              ? nextValue * aspectRatio
+              : origElement.width,
+          MIN_WIDTH_OR_HEIGHT,
+        );
+        const nextHeight = Math.max(
+          property === "height"
+            ? nextValue
+            : keepAspectRatio
+              ? nextValue / aspectRatio
+              : origElement.height,
+          MIN_WIDTH_OR_HEIGHT,
         );
 
-        const updatedElements = replaceAllElementsInFrame(
-          scene.getElementsIncludingDeleted(),
-          nextElementsInFrame,
+        resizeSingleElement(
+          nextWidth,
+          nextHeight,
           latestElement,
-          app,
+          origElement,
+          originalElementsMap,
+          scene,
+          property === "width" ? "e" : "s",
+          {
+            shouldMaintainAspectRatio: keepAspectRatio,
+          },
         );
 
-        scene.replaceAllElements(updatedElements);
-      }
+        // Handle frame membership update for resized frames
+        if (isFrameLikeElement(latestElement)) {
+          const nextElementsInFrame = getElementsInResizingFrame(
+            scene.getElementsIncludingDeleted(),
+            latestElement,
+            originalAppState,
+            scene.getNonDeletedElementsMap(),
+          );
 
-      return;
-    }
+          const updatedElements = replaceAllElementsInFrame(
+            scene.getElementsIncludingDeleted(),
+            nextElementsInFrame,
+            latestElement,
+            app,
+          );
 
-    // Stats slider is dragged
-    {
-      const changeInWidth = property === "width" ? accumulatedChange : 0;
-      const changeInHeight = property === "height" ? accumulatedChange : 0;
-
-      let nextWidth = Math.max(0, origElement.width + changeInWidth);
-      if (property === "width") {
-        if (shouldChangeByStepSize) {
-          nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
-        } else {
-          nextWidth = Math.round(nextWidth);
+          scene.replaceAllElements(updatedElements);
         }
+
+        return;
       }
 
-      let nextHeight = Math.max(0, origElement.height + changeInHeight);
-      if (property === "height") {
-        if (shouldChangeByStepSize) {
-          nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
-        } else {
-          nextHeight = Math.round(nextHeight);
-        }
-      }
+      // Stats slider is dragged
+      {
+        const changeInWidth = property === "width" ? accumulatedChange : 0;
+        const changeInHeight = property === "height" ? accumulatedChange : 0;
 
-      if (keepAspectRatio) {
+        let nextWidth = Math.max(0, origElement.width + changeInWidth);
         if (property === "width") {
-          nextHeight = Math.round((nextWidth / aspectRatio) * 100) / 100;
-        } else {
-          nextWidth = Math.round(nextHeight * aspectRatio * 100) / 100;
+          if (shouldChangeByStepSize) {
+            nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
+          } else {
+            nextWidth = Math.round(nextWidth);
+          }
         }
-      }
 
-      nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
-      nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
+        let nextHeight = Math.max(0, origElement.height + changeInHeight);
+        if (property === "height") {
+          if (shouldChangeByStepSize) {
+            nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
+          } else {
+            nextHeight = Math.round(nextHeight);
+          }
+        }
 
-      resizeSingleElement(
-        nextWidth,
-        nextHeight,
-        latestElement,
-        origElement,
-        originalElementsMap,
-        scene,
-        property === "width" ? "e" : "s",
-        {
-          shouldMaintainAspectRatio: keepAspectRatio,
-        },
-      );
+        if (keepAspectRatio) {
+          if (property === "width") {
+            nextHeight = Math.round((nextWidth / aspectRatio) * 100) / 100;
+          } else {
+            nextWidth = Math.round(nextHeight * aspectRatio * 100) / 100;
+          }
+        }
 
-      // Handle highlighting frame element candidates
-      if (isFrameLikeElement(latestElement)) {
-        const nextElementsInFrame = getElementsInResizingFrame(
-          scene.getElementsIncludingDeleted(),
+        nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
+        nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
+
+        resizeSingleElement(
+          nextWidth,
+          nextHeight,
           latestElement,
-          originalAppState,
-          scene.getNonDeletedElementsMap(),
+          origElement,
+          originalElementsMap,
+          scene,
+          property === "width" ? "e" : "s",
+          {
+            shouldMaintainAspectRatio: keepAspectRatio,
+          },
         );
 
-        setAppState({
-          elementsToHighlight: nextElementsInFrame,
-        });
+        // Handle highlighting frame element candidates
+        if (isFrameLikeElement(latestElement)) {
+          const nextElementsInFrame = getElementsInResizingFrame(
+            scene.getElementsIncludingDeleted(),
+            latestElement,
+            originalAppState,
+            scene.getNonDeletedElementsMap(),
+          );
+
+          setAppState({
+            elementsToHighlight: nextElementsInFrame,
+          });
+        }
       }
     }
-  }
-};
+  };
 
 const handleDragFinished: DragFinishedCallbackType = ({
   setAppState,

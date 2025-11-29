@@ -7,11 +7,11 @@ import {
   COLOR_PALETTE,
   isTransparent,
   isWritableElement,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { ColorTuple, ColorPaletteCustom } from "@excalidraw/common";
+import type { ColorTuple, ColorPaletteCustom } from "@drawink/common";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { useAtom } from "../../editor-jotai";
 import { t } from "../../i18n";
@@ -55,8 +55,8 @@ export const getColor = (color: string): string | null => {
   return isValidColor(`#${color}`)
     ? `#${color}`
     : isValidColor(color)
-    ? color
-    : null;
+      ? color
+      : null;
 };
 
 interface ColorPickerProps {
@@ -201,10 +201,10 @@ const ColorPickerPopupContent = ({
               return force === false || state
                 ? null
                 : {
-                    keepOpenOnAlt: false,
-                    onSelect: onChange,
-                    colorPickerType: type,
-                  };
+                  keepOpenOnAlt: false,
+                  onSelect: onChange,
+                  colorPickerType: type,
+                };
             });
           }}
           onEscape={(event) => {

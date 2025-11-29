@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CODES } from "@excalidraw/common";
+import { CODES } from "@drawink/common";
 
 import { copiedStyles } from "../actions/actionStyles";
 import { Drawink } from "../index";
@@ -26,7 +26,7 @@ describe("actionStyles", () => {
   afterEach(async () => {
     // https://github.com/floating-ui/floating-ui/issues/1908#issuecomment-1301553793
     // affects node v16+
-    await act(async () => {});
+    await act(async () => { });
   });
 
   it("should copy & paste styles via keyboard", async () => {

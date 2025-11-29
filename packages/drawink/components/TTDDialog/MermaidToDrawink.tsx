@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useDeferredValue } from "react";
 
-import { EDITOR_LS_KEYS, debounce, isDevEnv } from "@excalidraw/common";
+import { EDITOR_LS_KEYS, debounce, isDevEnv } from "@drawink/common";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { useApp } from "../App";
 import { ArrowRightIcon } from "../icons";

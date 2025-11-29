@@ -4,10 +4,10 @@ import {
   CJK_HAND_DRAWN_FALLBACK_FONT,
   WINDOWS_EMOJI_FALLBACK_FONT,
   getFontFamilyFallbacks,
-} from "@excalidraw/common";
-import { getContainerElement } from "@excalidraw/element";
-import { charWidth } from "@excalidraw/element";
-import { containsCJK } from "@excalidraw/element";
+} from "@drawink/common";
+import { getContainerElement } from "@drawink/element";
+import { charWidth } from "@drawink/element";
+import { containsCJK } from "@drawink/element";
 
 import {
   FONT_METADATA,
@@ -15,20 +15,20 @@ import {
   getFontString,
   PromisePool,
   promiseTry,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { ShapeCache } from "@excalidraw/element";
+import { ShapeCache } from "@drawink/element";
 
-import { isTextElement } from "@excalidraw/element";
+import { isTextElement } from "@drawink/element";
 
 import type {
   DrawinkElement,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
-import type { ValueOf } from "@excalidraw/common/utility-types";
+import type { ValueOf } from "@drawink/common/utility-types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import { CascadiaFontFaces } from "./Cascadia";
 import { ComicShannsFontFaces } from "./ComicShanns";
@@ -49,12 +49,12 @@ export class Fonts {
 
   private static _registered:
     | Map<
-        number,
-        {
-          metadata: FontMetadata;
-          fontFaces: DrawinkFontFace[];
-        }
-      >
+      number,
+      {
+        metadata: FontMetadata;
+        fontFaces: DrawinkFontFace[];
+      }
+    >
     | undefined;
 
   private static _initialized: boolean = false;
@@ -326,11 +326,11 @@ export class Fonts {
     this:
       | Fonts
       | {
-          registered: Map<
-            number,
-            { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
-          >;
-        },
+        registered: Map<
+          number,
+          { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
+        >;
+      },
     family: string,
     metadata: FontMetadata,
     ...fontFacesDecriptors: DrawinkFontFaceDescriptor[]

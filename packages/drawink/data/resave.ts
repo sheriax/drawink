@@ -1,4 +1,4 @@
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { getFileHandleType, isImageFileHandleType } from "./blob";
 

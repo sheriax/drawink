@@ -5,12 +5,12 @@ import {
   CLASSES,
   DEFAULT_SIDEBAR,
   KEYS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type {
   DrawinkFrameLikeElement,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { Drawink } from "../index";
 

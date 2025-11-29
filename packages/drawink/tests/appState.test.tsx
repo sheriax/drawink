@@ -1,8 +1,8 @@
 import React from "react";
 
-import { EXPORT_DATA_TYPES, MIME_TYPES } from "@excalidraw/common";
+import { EXPORT_DATA_TYPES, MIME_TYPES } from "@drawink/common";
 
-import type { DrawinkTextElement } from "@excalidraw/element/types";
+import type { DrawinkTextElement } from "@drawink/element/types";
 
 import { getDefaultAppState } from "../appState";
 import { Drawink } from "../index";

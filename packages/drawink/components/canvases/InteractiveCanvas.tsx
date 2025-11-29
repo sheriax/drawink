@@ -5,7 +5,7 @@ import {
   isShallowEqual,
   sceneCoordsToViewportCoords,
   type EditorInterface,
-} from "@excalidraw/common";
+} from "@drawink/common";
 import { AnimationController } from "@drawink/drawink/renderer/animation";
 
 import type {
@@ -19,7 +19,7 @@ import type {
 import type {
   NonDeletedDrawinkElement,
   NonDeletedSceneElementsMap,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { t } from "../../i18n";
 import { renderInteractiveScene } from "../../renderer/interactiveScene";

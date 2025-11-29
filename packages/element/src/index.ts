@@ -1,4 +1,4 @@
-import { toIterable } from "@excalidraw/common";
+import { toIterable } from "@drawink/common";
 
 import { isInvisiblySmallElement } from "./sizeHelpers";
 

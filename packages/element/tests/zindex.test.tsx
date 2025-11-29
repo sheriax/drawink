@@ -1,4 +1,4 @@
-import { reseed } from "@excalidraw/common";
+import { reseed } from "@drawink/common";
 
 import {
   actionSendBackward,

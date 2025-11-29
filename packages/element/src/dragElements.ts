@@ -3,7 +3,7 @@ import {
   getGridPoint,
   getFontString,
   DRAGGING_THRESHOLD,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type {
   AppState,
@@ -12,7 +12,7 @@ import type {
   PointerDownState,
 } from "@drawink/drawink/types";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { unbindBindingElement, updateBoundElements } from "./binding";
 import { getCommonBounds } from "./bounds";
@@ -146,7 +146,7 @@ export const dragSelectedElements = (
 
       elementsToUpdate.size > 1 ||
       Math.max(Math.abs(adjustedOffset.x), Math.abs(adjustedOffset.y)) >
-        DRAGGING_THRESHOLD ||
+      DRAGGING_THRESHOLD ||
       (!element.startBinding && !element.endBinding)
     ) {
       updateElementCoords(pointerDownState, element, scene, adjustedOffset);

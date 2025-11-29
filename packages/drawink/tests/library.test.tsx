@@ -2,11 +2,11 @@ import { act, queryByTestId } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
 
-import { MIME_TYPES, ORIG_ID } from "@excalidraw/common";
+import { MIME_TYPES, ORIG_ID } from "@drawink/common";
 
-import { getCommonBoundingBox } from "@excalidraw/element";
+import { getCommonBoundingBox } from "@drawink/element";
 
-import type { DrawinkGenericElement } from "@excalidraw/element/types";
+import type { DrawinkGenericElement } from "@drawink/element/types";
 
 import { parseLibraryJSON } from "../data/blob";
 import { serializeLibraryAsJSON } from "../data/json";

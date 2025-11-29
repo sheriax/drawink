@@ -1,7 +1,7 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 import { vi } from "vitest";
 
-import type { DrawinkArrowElement } from "@excalidraw/element/types";
+import type { DrawinkArrowElement } from "@drawink/element/types";
 
 import { convertToDrawinkElements } from "./transform";
 

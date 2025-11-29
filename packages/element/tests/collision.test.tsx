@@ -1,7 +1,7 @@
-import { type GlobalPoint, type LocalPoint, pointFrom } from "@excalidraw/math";
+import { type GlobalPoint, type LocalPoint, pointFrom } from "@drawink/math";
 import { Drawink } from "@drawink/drawink";
 import { UI } from "@drawink/drawink/tests/helpers/ui";
-import "@excalidraw/utils/test-utils";
+import "@drawink/utils/test-utils";
 import { render } from "@drawink/drawink/tests/test-utils";
 
 import { hitElementItself } from "../src/collision";

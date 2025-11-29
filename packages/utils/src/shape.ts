@@ -13,7 +13,7 @@
  */
 import { pointsOnBezierCurves } from "points-on-curve";
 
-import { invariant } from "@excalidraw/common";
+import { invariant } from "@drawink/common";
 import {
   curve,
   lineSegment,
@@ -32,9 +32,9 @@ import {
   vectorScale,
   type GlobalPoint,
   type LocalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { getElementAbsoluteCoords } from "@excalidraw/element";
+import { getElementAbsoluteCoords } from "@drawink/element";
 
 import type {
   ElementsMap,
@@ -51,8 +51,8 @@ import type {
   DrawinkRectangleElement,
   DrawinkSelectionElement,
   DrawinkTextElement,
-} from "@excalidraw/element/types";
-import type { Curve, LineSegment, Polygon, Radians } from "@excalidraw/math";
+} from "@drawink/element/types";
+import type { Curve, LineSegment, Polygon, Radians } from "@drawink/math";
 
 import type { Drawable, Op } from "roughjs/bin/core";
 
@@ -78,29 +78,29 @@ export type Ellipse<Point extends GlobalPoint | LocalPoint> = {
 
 export type GeometricShape<Point extends GlobalPoint | LocalPoint> =
   | {
-      type: "line";
-      data: LineSegment<Point>;
-    }
+    type: "line";
+    data: LineSegment<Point>;
+  }
   | {
-      type: "polygon";
-      data: Polygon<Point>;
-    }
+    type: "polygon";
+    data: Polygon<Point>;
+  }
   | {
-      type: "curve";
-      data: Curve<Point>;
-    }
+    type: "curve";
+    data: Curve<Point>;
+  }
   | {
-      type: "ellipse";
-      data: Ellipse<Point>;
-    }
+    type: "ellipse";
+    data: Ellipse<Point>;
+  }
   | {
-      type: "polyline";
-      data: Polyline<Point>;
-    }
+    type: "polyline";
+    data: Polyline<Point>;
+  }
   | {
-      type: "polycurve";
-      data: Polycurve<Point>;
-    };
+    type: "polycurve";
+    data: Polycurve<Point>;
+  };
 
 type RectangularElement =
   | DrawinkRectangleElement
@@ -283,13 +283,13 @@ export const getFreedrawShape = <Point extends GlobalPoint | LocalPoint>(
   return (
     isClosed
       ? {
-          type: "polygon",
-          data: polygonFromPoints(polyline.flat()),
-        }
+        type: "polygon",
+        data: polygonFromPoints(polyline.flat()),
+      }
       : {
-          type: "polyline",
-          data: polyline,
-        }
+        type: "polyline",
+        data: polyline,
+      }
   ) as GeometricShape<Point>;
 };
 
@@ -481,7 +481,7 @@ export const pointInEllipse = <Point extends LocalPoint | GlobalPoint>(
 
   return (
     (rotatedPointX / halfWidth) * (rotatedPointX / halfWidth) +
-      (rotatedPointY / halfHeight) * (rotatedPointY / halfHeight) <=
+    (rotatedPointY / halfHeight) * (rotatedPointY / halfHeight) <=
     1
   );
 };

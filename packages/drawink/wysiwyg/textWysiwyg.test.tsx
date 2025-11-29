@@ -1,7 +1,7 @@
 import { queryByText } from "@testing-library/react";
 
-import { pointFrom } from "@excalidraw/math";
-import { getOriginalContainerHeightFromCache } from "@excalidraw/element";
+import { pointFrom } from "@drawink/math";
+import { getOriginalContainerHeightFromCache } from "@drawink/element";
 
 import {
   CODES,
@@ -9,12 +9,12 @@ import {
   FONT_FAMILY,
   TEXT_ALIGN,
   VERTICAL_ALIGN,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type {
   DrawinkTextElement,
   DrawinkTextElementWithContainer,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";

@@ -2,9 +2,9 @@ import * as Popover from "@radix-ui/react-popover";
 import clsx from "clsx";
 import React, { useLayoutEffect } from "react";
 
-import { supportsResizeObserver, isShallowEqual } from "@excalidraw/common";
+import { supportsResizeObserver, isShallowEqual } from "@drawink/common";
 
-import type { MarkRequired } from "@excalidraw/common/utility-types";
+import type { MarkRequired } from "@drawink/common/utility-types";
 
 import { t } from "../i18n";
 
@@ -221,11 +221,11 @@ export const UserList = React.memo(
                 <Island padding={2}>
                   {uniqueCollaboratorsArray.length >=
                     SHOW_COLLABORATORS_FILTER_AT && (
-                    <QuickSearch
-                      placeholder={t("quickSearch.placeholder")}
-                      onChange={setSearchTerm}
-                    />
-                  )}
+                      <QuickSearch
+                        placeholder={t("quickSearch.placeholder")}
+                        onChange={setSearchTerm}
+                      />
+                    )}
                   <ScrollableList
                     className={"dropdown-menu UserList__collaborators"}
                     placeholder={t("userList.empty")}
@@ -233,18 +233,18 @@ export const UserList = React.memo(
                     {/* The list checks for `Children.count()`, hence defensively returning empty list */}
                     {filteredCollaborators.length > 0
                       ? [
-                          <div className="hint">{t("userList.hint.text")}</div>,
-                          filteredCollaborators.map((collaborator) =>
-                            renderCollaborator({
-                              actionManager,
-                              collaborator,
-                              socketId: collaborator.socketId,
-                              withName: true,
-                              isBeingFollowed:
-                                collaborator.socketId === userToFollow,
-                            }),
-                          ),
-                        ]
+                        <div className="hint">{t("userList.hint.text")}</div>,
+                        filteredCollaborators.map((collaborator) =>
+                          renderCollaborator({
+                            actionManager,
+                            collaborator,
+                            socketId: collaborator.socketId,
+                            withName: true,
+                            isBeingFollowed:
+                              collaborator.socketId === userToFollow,
+                          }),
+                        ),
+                      ]
                       : []}
                   </ScrollableList>
                   <Popover.Arrow

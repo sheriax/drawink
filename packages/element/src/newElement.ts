@@ -10,11 +10,11 @@ import {
   getFontString,
   getUpdatedTimestamp,
   getLineHeight,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { Radians } from "@excalidraw/math";
+import type { Radians } from "@drawink/math";
 
-import type { MarkOptional, Merge } from "@excalidraw/common/utility-types";
+import type { MarkOptional, Merge } from "@drawink/common/utility-types";
 
 import {
   getElementAbsoluteCoords,
@@ -230,8 +230,8 @@ const getTextElementPositionOffsets = (
       opts.textAlign === "center"
         ? metrics.width / 2
         : opts.textAlign === "right"
-        ? metrics.width
-        : 0,
+          ? metrics.width
+          : 0,
     y: opts.verticalAlign === "middle" ? metrics.height / 2 : 0,
   };
 };

@@ -1,15 +1,15 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 
-import { EVENT, KEYS, cloneJSON } from "@excalidraw/common";
+import { EVENT, KEYS, cloneJSON } from "@drawink/common";
 
-import { deepCopyElement } from "@excalidraw/element";
+import { deepCopyElement } from "@drawink/element";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
-import type { ElementsMap, DrawinkElement } from "@excalidraw/element/types";
+import type { ElementsMap, DrawinkElement } from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import { useApp, useDrawinkSetAppState } from "../App";
 import { InlineIcon } from "../InlineIcon";

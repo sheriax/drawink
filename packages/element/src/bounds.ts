@@ -5,7 +5,7 @@ import {
   invariant,
   rescalePoints,
   sizeOf,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   degreesToRadians,
@@ -14,9 +14,9 @@ import {
   pointFrom,
   pointFromArray,
   pointRotateRads,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { getCurvePathOps } from "@excalidraw/utils/shape";
+import { getCurvePathOps } from "@drawink/utils/shape";
 
 import { pointsOnBezierCurves } from "points-on-curve";
 
@@ -27,11 +27,11 @@ import type {
   LineSegment,
   LocalPoint,
   Radians,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
 import type { AppState } from "@drawink/drawink/types";
 
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
 import { generateRoughOptions } from "./shape";
 import { ShapeCache } from "./shape";
@@ -1070,9 +1070,9 @@ export const getResizedElementAbsoluteCoords = (
     const gen = rough.generator();
     const curve = !element.roundness
       ? gen.linearPath(
-          points as [number, number][],
-          generateRoughOptions(element),
-        )
+        points as [number, number][],
+        generateRoughOptions(element),
+      )
       : gen.curve(points as [number, number][], generateRoughOptions(element));
 
     const ops = getCurvePathOps(curve);
@@ -1097,9 +1097,9 @@ export const getElementPointsCoords = (
   const curve =
     element.roundness == null
       ? gen.linearPath(
-          points as [number, number][],
-          generateRoughOptions(element),
-        )
+        points as [number, number][],
+        generateRoughOptions(element),
+      )
       : gen.curve(points as [number, number][], generateRoughOptions(element));
   const ops = getCurvePathOps(curve);
   const [minX, minY, maxX, maxY] = getMinMaxXYFromCurvePathOps(ops);

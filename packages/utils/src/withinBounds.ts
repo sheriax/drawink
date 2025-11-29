@@ -1,27 +1,27 @@
-import { arrayToMap } from "@excalidraw/common";
-import { getElementBounds } from "@excalidraw/element";
+import { arrayToMap } from "@drawink/common";
+import { getElementBounds } from "@drawink/element";
 import {
   isArrowElement,
   isDrawinkElement,
   isFreeDrawElement,
   isLinearElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 import {
   rangeIncludesValue,
   pointFrom,
   pointRotateRads,
   rangeInclusive,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type { Bounds } from "@excalidraw/element";
+import type { Bounds } from "@drawink/element";
 import type {
   DrawinkElement,
   DrawinkFreeDrawElement,
   DrawinkLinearElement,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
-import type { LocalPoint } from "@excalidraw/math";
+} from "@drawink/element/types";
+import type { LocalPoint } from "@drawink/math";
 
 type Element = NonDeletedDrawinkElement;
 type Elements = readonly NonDeletedDrawinkElement[];
@@ -35,11 +35,11 @@ const getNonLinearElementRelativePoints = (
     DrawinkLinearElement | DrawinkFreeDrawElement
   >,
 ): [
-  TopLeft: LocalPoint,
-  TopRight: LocalPoint,
-  BottomRight: LocalPoint,
-  BottomLeft: LocalPoint,
-] => {
+    TopLeft: LocalPoint,
+    TopRight: LocalPoint,
+    BottomRight: LocalPoint,
+    BottomLeft: LocalPoint,
+  ] => {
   if (element.type === "diamond") {
     return [
       pointFrom(element.width / 2, 0),
@@ -197,8 +197,8 @@ export const elementsOverlappingBBox = ({
       type === "overlap"
         ? elementPartiallyOverlapsWithOrContainsBBox(element, adjustedBBox)
         : type === "inside"
-        ? isElementInsideBBox(element, adjustedBBox)
-        : isElementInsideBBox(element, adjustedBBox, true);
+          ? isElementInsideBBox(element, adjustedBBox)
+          : isElementInsideBBox(element, adjustedBBox, true);
 
     if (isOverlaping) {
       includedElementSet.add(element.id);

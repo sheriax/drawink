@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
-import { THEME } from "@excalidraw/common";
+import { THEME } from "@drawink/common";
 
-import type { ValueOf } from "@excalidraw/common/utility-types";
+import type { ValueOf } from "@drawink/common/utility-types";
 
 import { useDrawinkAppState } from "../App";
 

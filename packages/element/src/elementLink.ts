@@ -2,7 +2,7 @@
  * Create and link between shapes.
  */
 
-import { ELEMENT_LINK_KEY, normalizeLink } from "@excalidraw/common";
+import { ELEMENT_LINK_KEY, normalizeLink } from "@drawink/common";
 
 import type { AppProps, AppState } from "@drawink/drawink/types";
 
@@ -98,7 +98,7 @@ export const parseElementLinkFromURL = (url: string) => {
       const id = searchParams.get(ELEMENT_LINK_KEY);
       return id;
     }
-  } catch {}
+  } catch { }
 
   return null;
 };

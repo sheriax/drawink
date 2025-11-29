@@ -1,6 +1,6 @@
 import { API } from "@drawink/drawink/tests/helpers/api";
 
-import { mutateElement } from "@excalidraw/element";
+import { mutateElement } from "@drawink/element";
 
 import { normalizeElementOrder } from "../src/sortElements";
 

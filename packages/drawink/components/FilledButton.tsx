@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { forwardRef, useState } from "react";
 
-import { isPromiseLike } from "@excalidraw/common";
+import { isPromiseLike } from "@drawink/common";
 
 import { AbortError } from "../errors";
 

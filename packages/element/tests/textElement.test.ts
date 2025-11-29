@@ -1,7 +1,7 @@
-import { getLineHeight } from "@excalidraw/common";
+import { getLineHeight } from "@drawink/common";
 import { API } from "@drawink/drawink/tests/helpers/api";
 
-import { FONT_FAMILY, TEXT_ALIGN, VERTICAL_ALIGN } from "@excalidraw/common";
+import { FONT_FAMILY, TEXT_ALIGN, VERTICAL_ALIGN } from "@drawink/common";
 
 import {
   computeContainerDimensionForBoundText,

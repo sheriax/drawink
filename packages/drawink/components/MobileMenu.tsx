@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { useTunnels } from "../context/tunnels";
 import { t } from "../i18n";

@@ -1,8 +1,8 @@
-import { DEFAULT_FONT_FAMILY } from "@excalidraw/common";
+import { DEFAULT_FONT_FAMILY } from "@drawink/common";
 
-import type { Radians } from "@excalidraw/math";
+import type { Radians } from "@drawink/math";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 const elementBase: Omit<DrawinkElement, "type"> = {
   id: "vWrqOAfkind2qcm7LDAGZ",

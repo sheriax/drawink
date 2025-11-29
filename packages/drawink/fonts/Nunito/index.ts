@@ -1,4 +1,4 @@
-import { GOOGLE_FONTS_RANGES } from "@excalidraw/common";
+import { GOOGLE_FONTS_RANGES } from "@drawink/common";
 
 import { type DrawinkFontFaceDescriptor } from "../Fonts";
 

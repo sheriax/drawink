@@ -1,4 +1,4 @@
-import type { LocalPoint, Radians } from "@excalidraw/math";
+import type { LocalPoint, Radians } from "@drawink/math";
 
 import type {
   FONT_FAMILY,
@@ -6,14 +6,14 @@ import type {
   TEXT_ALIGN,
   THEME,
   VERTICAL_ALIGN,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import type {
   MakeBrand,
   MarkNonNullable,
   Merge,
   ValueOf,
-} from "@excalidraw/common/utility-types";
+} from "@drawink/common/utility-types";
 
 export type ChartType = "bar" | "line";
 export type FillStyle = "hachure" | "cross-hatch" | "solid" | "zigzag";
@@ -104,14 +104,14 @@ export type DrawinkEmbeddableElement = _DrawinkElementBase &
 
 export type MagicGenerationData =
   | {
-      status: "pending";
-    }
+    status: "pending";
+  }
   | { status: "done"; html: string }
   | {
-      status: "error";
-      message?: string;
-      code: "ERR_GENERATION_INTERRUPTED" | string;
-    };
+    status: "error";
+    message?: string;
+    code: "ERR_GENERATION_INTERRUPTED" | string;
+  };
 
 export type DrawinkIframeElement = _DrawinkElementBase &
   Readonly<{
@@ -126,13 +126,13 @@ export type DrawinkIframeLikeElement =
 
 export type IframeData =
   | {
-      intrinsicSize: { w: number; h: number };
-      error?: Error;
-      sandbox?: { allowSameOrigin?: boolean };
-    } & (
-      | { type: "video" | "generic"; link: string }
-      | { type: "document"; srcdoc: (theme: Theme) => string }
-    );
+    intrinsicSize: { w: number; h: number };
+    error?: Error;
+    sandbox?: { allowSameOrigin?: boolean };
+  } & (
+    | { type: "video" | "generic"; link: string }
+    | { type: "document"; srcdoc: (theme: Theme) => string }
+  );
 
 export type ImageCrop = {
   x: number;

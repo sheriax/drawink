@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
 
-import type { DrawinkElement, NonDeleted } from "@excalidraw/element/types";
+import type { DrawinkElement, NonDeleted } from "@drawink/element/types";
 
 import { useTransition } from "../hooks/useTransition";
 
@@ -13,9 +13,9 @@ import type { ReactNode } from "react";
 type LibraryOrPendingItem = readonly (
   | LibraryItem
   | /* pending library item */ {
-      id: null;
-      elements: readonly NonDeleted<DrawinkElement>[];
-    }
+    id: null;
+    elements: readonly NonDeleted<DrawinkElement>[];
+  }
 )[];
 
 interface Props {

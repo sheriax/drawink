@@ -1,4 +1,4 @@
-import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR } from "@excalidraw/common";
+import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR } from "@drawink/common";
 
 import {
   isFlowchartNodeElement,
@@ -7,11 +7,11 @@ import {
   isLineElement,
   isTextBindableContainer,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { isNodeInFlowchart } from "@excalidraw/element";
+import { isNodeInFlowchart } from "@drawink/element";
 
-import type { EditorInterface } from "@excalidraw/common";
+import type { EditorInterface } from "@drawink/common";
 
 import { t } from "../i18n";
 import { getShortcutKey } from "../shortcut";
@@ -116,13 +116,13 @@ const getHints = ({
     }
     return isImageElement(targetElement)
       ? t("hints.resizeImage", {
-          shortcut_1: getTaggedShortcutKey("Shift"),
-          shortcut_2: getTaggedShortcutKey("Alt"),
-        })
+        shortcut_1: getTaggedShortcutKey("Shift"),
+        shortcut_2: getTaggedShortcutKey("Alt"),
+      })
       : t("hints.resize", {
-          shortcut_1: getTaggedShortcutKey("Shift"),
-          shortcut_2: getTaggedShortcutKey("Alt"),
-        });
+        shortcut_1: getTaggedShortcutKey("Shift"),
+        shortcut_2: getTaggedShortcutKey("Alt"),
+      });
   }
 
   if (isRotating && lastPointerDownWith === "mouse") {
@@ -187,22 +187,22 @@ const getHints = ({
         if (appState.selectedLinearElement?.isEditing) {
           return appState.selectedLinearElement.selectedPointsIndices
             ? t("hints.lineEditor_pointSelected", {
-                shortcut_1: getTaggedShortcutKey("Delete"),
-                shortcut_2: getTaggedShortcutKey(["CtrlOrCmd", "D"]),
-              })
+              shortcut_1: getTaggedShortcutKey("Delete"),
+              shortcut_2: getTaggedShortcutKey(["CtrlOrCmd", "D"]),
+            })
             : t("hints.lineEditor_nothingSelected", {
-                shortcut_1: getTaggedShortcutKey("Shift"),
-                shortcut_2: getTaggedShortcutKey("Alt"),
-              });
+              shortcut_1: getTaggedShortcutKey("Shift"),
+              shortcut_2: getTaggedShortcutKey("Alt"),
+            });
         }
         return isLineElement(selectedElements[0])
           ? t("hints.lineEditor_line_info", {
-              shortcut: getTaggedShortcutKey("Enter"),
-            })
+            shortcut: getTaggedShortcutKey("Enter"),
+          })
           : t("hints.lineEditor_info", {
-              shortcut_1: getTaggedShortcutKey("CtrlOrCmd"),
-              shortcut_2: getTaggedShortcutKey(["CtrlOrCmd", "Enter"]),
-            });
+            shortcut_1: getTaggedShortcutKey("CtrlOrCmd"),
+            shortcut_2: getTaggedShortcutKey(["CtrlOrCmd", "Enter"]),
+          });
       }
       if (
         !appState.newElement &&

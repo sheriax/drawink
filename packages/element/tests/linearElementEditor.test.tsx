@@ -1,4 +1,4 @@
-import { pointCenter, pointFrom } from "@excalidraw/math";
+import { pointCenter, pointFrom } from "@drawink/math";
 import { act, queryByTestId, queryByText } from "@testing-library/react";
 import { vi } from "vitest";
 
@@ -8,7 +8,7 @@ import {
   KEYS,
   reseed,
   arrayToMap,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { Drawink } from "@drawink/drawink";
 import * as InteractiveCanvas from "@drawink/drawink/renderer/interactiveScene";
@@ -24,7 +24,7 @@ import {
   unmountComponent,
 } from "@drawink/drawink/tests/test-utils";
 
-import type { GlobalPoint, LocalPoint } from "@excalidraw/math";
+import type { GlobalPoint, LocalPoint } from "@drawink/math";
 
 import { wrapText } from "../src";
 import * as textElementUtils from "../src/textElement";

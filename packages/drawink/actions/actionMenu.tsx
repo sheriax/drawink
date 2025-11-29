@@ -1,6 +1,6 @@
-import { KEYS } from "@excalidraw/common";
+import { KEYS } from "@drawink/common";
 
-import { CaptureUpdateAction } from "@excalidraw/element";
+import { CaptureUpdateAction } from "@drawink/element";
 
 import { HelpIconThin } from "../components/icons";
 
@@ -23,8 +23,8 @@ export const actionShortcuts = register({
           appState.openDialog?.name === "help"
             ? null
             : {
-                name: "help",
-              },
+              name: "help",
+            },
         openMenu: null,
         openPopup: null,
       },

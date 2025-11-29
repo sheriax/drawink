@@ -1,18 +1,18 @@
-import { round } from "@excalidraw/math";
+import { round } from "@drawink/math";
 import clsx from "clsx";
 import throttle from "lodash.throttle";
 import { useEffect, useMemo, useState, memo } from "react";
 
-import { STATS_PANELS } from "@excalidraw/common";
-import { getCommonBounds } from "@excalidraw/element";
-import { getUncroppedWidthAndHeight } from "@excalidraw/element";
-import { isImageElement } from "@excalidraw/element";
+import { STATS_PANELS } from "@drawink/common";
+import { getCommonBounds } from "@drawink/element";
+import { getUncroppedWidthAndHeight } from "@drawink/element";
+import { isImageElement } from "@drawink/element";
 
-import { frameAndChildrenSelectedTogether } from "@excalidraw/element";
+import { frameAndChildrenSelectedTogether } from "@drawink/element";
 
-import { elementsAreInSameGroup } from "@excalidraw/element";
+import { elementsAreInSameGroup } from "@drawink/element";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
 import { t } from "../../i18n";
 import { isGridModeEnabled } from "../../snapping";

@@ -1,30 +1,30 @@
-import { pointFrom, type GlobalPoint } from "@excalidraw/math";
+import { pointFrom, type GlobalPoint } from "@drawink/math";
 import { useMemo } from "react";
 
-import { MIN_WIDTH_OR_HEIGHT } from "@excalidraw/common";
+import { MIN_WIDTH_OR_HEIGHT } from "@drawink/common";
 import {
   getElementsInResizingFrame,
   isFrameLikeElement,
   replaceAllElementsInFrame,
   updateBoundElements,
-} from "@excalidraw/element";
+} from "@drawink/element";
 import {
   rescalePointsInElement,
   resizeSingleElement,
-} from "@excalidraw/element";
-import { getBoundTextElement, handleBindTextResize } from "@excalidraw/element";
+} from "@drawink/element";
+import { getBoundTextElement, handleBindTextResize } from "@drawink/element";
 
-import { isTextElement } from "@excalidraw/element";
+import { isTextElement } from "@drawink/element";
 
-import { getCommonBounds } from "@excalidraw/utils";
+import { getCommonBounds } from "@drawink/utils";
 
 import type {
   ElementsMap,
   DrawinkElement,
   NonDeletedSceneElementsMap,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import DragInput from "./DragInput";
 import { getAtomicUnits, getStepSizedValue, isPropertyEditable } from "./utils";
@@ -162,9 +162,123 @@ const handleDimensionChange: DragInputCallbackType<
   setAppState,
   app,
 }) => {
-  const elementsMap = scene.getNonDeletedElementsMap();
-  const atomicUnits = getAtomicUnits(originalElements, originalAppState);
-  if (nextValue !== undefined) {
+    const elementsMap = scene.getNonDeletedElementsMap();
+    const atomicUnits = getAtomicUnits(originalElements, originalAppState);
+    if (nextValue !== undefined) {
+      for (const atomicUnit of atomicUnits) {
+        const elementsInUnit = getElementsInAtomicUnit(
+          atomicUnit,
+          elementsMap,
+          originalElementsMap,
+        );
+
+        if (elementsInUnit.length > 1) {
+          const latestElements = elementsInUnit.map((el) => el.latest!);
+          const originalElements = elementsInUnit.map((el) => el.original!);
+          const [x1, y1, x2, y2] = getCommonBounds(originalElements);
+          const initialWidth = x2 - x1;
+          const initialHeight = y2 - y1;
+          const aspectRatio = initialWidth / initialHeight;
+          const nextWidth = Math.max(
+            MIN_WIDTH_OR_HEIGHT,
+            property === "width" ? Math.max(0, nextValue) : initialWidth,
+          );
+          const nextHeight = Math.max(
+            MIN_WIDTH_OR_HEIGHT,
+            property === "height" ? Math.max(0, nextValue) : initialHeight,
+          );
+
+          resizeGroup(
+            nextWidth,
+            nextHeight,
+            initialHeight,
+            aspectRatio,
+            pointFrom(x1, y1),
+            property,
+            latestElements,
+            originalElements,
+            originalElementsMap,
+            scene,
+          );
+        } else {
+          const [el] = elementsInUnit;
+          const latestElement = el?.latest;
+          const origElement = el?.original;
+
+          if (
+            latestElement &&
+            origElement &&
+            isPropertyEditable(latestElement, property)
+          ) {
+            let nextWidth =
+              property === "width" ? Math.max(0, nextValue) : latestElement.width;
+            if (property === "width") {
+              if (shouldChangeByStepSize) {
+                nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
+              } else {
+                nextWidth = Math.round(nextWidth);
+              }
+            }
+
+            let nextHeight =
+              property === "height"
+                ? Math.max(0, nextValue)
+                : latestElement.height;
+            if (property === "height") {
+              if (shouldChangeByStepSize) {
+                nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
+              } else {
+                nextHeight = Math.round(nextHeight);
+              }
+            }
+
+            nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
+            nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
+
+            resizeSingleElement(
+              nextWidth,
+              nextHeight,
+              latestElement,
+              origElement,
+              originalElementsMap,
+              scene,
+              property === "width" ? "e" : "s",
+              {
+                shouldInformMutation: false,
+              },
+            );
+
+            // Handle frame membership update for resized frames
+            if (isFrameLikeElement(latestElement)) {
+              const nextElementsInFrame = getElementsInResizingFrame(
+                scene.getElementsIncludingDeleted(),
+                latestElement,
+                originalAppState,
+                scene.getNonDeletedElementsMap(),
+              );
+
+              const updatedElements = replaceAllElementsInFrame(
+                scene.getElementsIncludingDeleted(),
+                nextElementsInFrame,
+                latestElement,
+                app,
+              );
+
+              scene.replaceAllElements(updatedElements);
+            }
+          }
+        }
+      }
+
+      scene.triggerUpdate();
+
+      return;
+    }
+
+    const changeInWidth = property === "width" ? accumulatedChange : 0;
+    const changeInHeight = property === "height" ? accumulatedChange : 0;
+    const elementsToHighlight: DrawinkElement[] = [];
+
     for (const atomicUnit of atomicUnits) {
       const elementsInUnit = getElementsInAtomicUnit(
         atomicUnit,
@@ -175,18 +289,31 @@ const handleDimensionChange: DragInputCallbackType<
       if (elementsInUnit.length > 1) {
         const latestElements = elementsInUnit.map((el) => el.latest!);
         const originalElements = elementsInUnit.map((el) => el.original!);
+
         const [x1, y1, x2, y2] = getCommonBounds(originalElements);
         const initialWidth = x2 - x1;
         const initialHeight = y2 - y1;
         const aspectRatio = initialWidth / initialHeight;
-        const nextWidth = Math.max(
-          MIN_WIDTH_OR_HEIGHT,
-          property === "width" ? Math.max(0, nextValue) : initialWidth,
-        );
-        const nextHeight = Math.max(
-          MIN_WIDTH_OR_HEIGHT,
-          property === "height" ? Math.max(0, nextValue) : initialHeight,
-        );
+        let nextWidth = Math.max(0, initialWidth + changeInWidth);
+        if (property === "width") {
+          if (shouldChangeByStepSize) {
+            nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
+          } else {
+            nextWidth = Math.round(nextWidth);
+          }
+        }
+
+        let nextHeight = Math.max(0, initialHeight + changeInHeight);
+        if (property === "height") {
+          if (shouldChangeByStepSize) {
+            nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
+          } else {
+            nextHeight = Math.round(nextHeight);
+          }
+        }
+
+        nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
+        nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
 
         resizeGroup(
           nextWidth,
@@ -210,8 +337,7 @@ const handleDimensionChange: DragInputCallbackType<
           origElement &&
           isPropertyEditable(latestElement, property)
         ) {
-          let nextWidth =
-            property === "width" ? Math.max(0, nextValue) : latestElement.width;
+          let nextWidth = Math.max(0, origElement.width + changeInWidth);
           if (property === "width") {
             if (shouldChangeByStepSize) {
               nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
@@ -220,10 +346,7 @@ const handleDimensionChange: DragInputCallbackType<
             }
           }
 
-          let nextHeight =
-            property === "height"
-              ? Math.max(0, nextValue)
-              : latestElement.height;
+          let nextHeight = Math.max(0, origElement.height + changeInHeight);
           if (property === "height") {
             if (shouldChangeByStepSize) {
               nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
@@ -248,7 +371,7 @@ const handleDimensionChange: DragInputCallbackType<
             },
           );
 
-          // Handle frame membership update for resized frames
+          // Handle highlighting frame element candidates
           if (isFrameLikeElement(latestElement)) {
             const nextElementsInFrame = getElementsInResizingFrame(
               scene.getElementsIncludingDeleted(),
@@ -257,141 +380,18 @@ const handleDimensionChange: DragInputCallbackType<
               scene.getNonDeletedElementsMap(),
             );
 
-            const updatedElements = replaceAllElementsInFrame(
-              scene.getElementsIncludingDeleted(),
-              nextElementsInFrame,
-              latestElement,
-              app,
-            );
-
-            scene.replaceAllElements(updatedElements);
+            elementsToHighlight.push(...nextElementsInFrame);
           }
         }
       }
     }
+
+    setAppState({
+      elementsToHighlight,
+    });
 
     scene.triggerUpdate();
-
-    return;
-  }
-
-  const changeInWidth = property === "width" ? accumulatedChange : 0;
-  const changeInHeight = property === "height" ? accumulatedChange : 0;
-  const elementsToHighlight: DrawinkElement[] = [];
-
-  for (const atomicUnit of atomicUnits) {
-    const elementsInUnit = getElementsInAtomicUnit(
-      atomicUnit,
-      elementsMap,
-      originalElementsMap,
-    );
-
-    if (elementsInUnit.length > 1) {
-      const latestElements = elementsInUnit.map((el) => el.latest!);
-      const originalElements = elementsInUnit.map((el) => el.original!);
-
-      const [x1, y1, x2, y2] = getCommonBounds(originalElements);
-      const initialWidth = x2 - x1;
-      const initialHeight = y2 - y1;
-      const aspectRatio = initialWidth / initialHeight;
-      let nextWidth = Math.max(0, initialWidth + changeInWidth);
-      if (property === "width") {
-        if (shouldChangeByStepSize) {
-          nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
-        } else {
-          nextWidth = Math.round(nextWidth);
-        }
-      }
-
-      let nextHeight = Math.max(0, initialHeight + changeInHeight);
-      if (property === "height") {
-        if (shouldChangeByStepSize) {
-          nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
-        } else {
-          nextHeight = Math.round(nextHeight);
-        }
-      }
-
-      nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
-      nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
-
-      resizeGroup(
-        nextWidth,
-        nextHeight,
-        initialHeight,
-        aspectRatio,
-        pointFrom(x1, y1),
-        property,
-        latestElements,
-        originalElements,
-        originalElementsMap,
-        scene,
-      );
-    } else {
-      const [el] = elementsInUnit;
-      const latestElement = el?.latest;
-      const origElement = el?.original;
-
-      if (
-        latestElement &&
-        origElement &&
-        isPropertyEditable(latestElement, property)
-      ) {
-        let nextWidth = Math.max(0, origElement.width + changeInWidth);
-        if (property === "width") {
-          if (shouldChangeByStepSize) {
-            nextWidth = getStepSizedValue(nextWidth, STEP_SIZE);
-          } else {
-            nextWidth = Math.round(nextWidth);
-          }
-        }
-
-        let nextHeight = Math.max(0, origElement.height + changeInHeight);
-        if (property === "height") {
-          if (shouldChangeByStepSize) {
-            nextHeight = getStepSizedValue(nextHeight, STEP_SIZE);
-          } else {
-            nextHeight = Math.round(nextHeight);
-          }
-        }
-
-        nextWidth = Math.max(MIN_WIDTH_OR_HEIGHT, nextWidth);
-        nextHeight = Math.max(MIN_WIDTH_OR_HEIGHT, nextHeight);
-
-        resizeSingleElement(
-          nextWidth,
-          nextHeight,
-          latestElement,
-          origElement,
-          originalElementsMap,
-          scene,
-          property === "width" ? "e" : "s",
-          {
-            shouldInformMutation: false,
-          },
-        );
-
-        // Handle highlighting frame element candidates
-        if (isFrameLikeElement(latestElement)) {
-          const nextElementsInFrame = getElementsInResizingFrame(
-            scene.getElementsIncludingDeleted(),
-            latestElement,
-            originalAppState,
-            scene.getNonDeletedElementsMap(),
-          );
-
-          elementsToHighlight.push(...nextElementsInFrame);
-        }
-      }
-    }
-  }
-
-  setAppState({
-    elementsToHighlight,
-  });
-
-  scene.triggerUpdate();
-};
+  };
 
 const handleDragFinished: DragFinishedCallbackType = ({
   setAppState,

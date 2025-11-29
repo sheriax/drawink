@@ -7,9 +7,9 @@ import {
   findLastIndex,
   getUpdatedTimestamp,
   isTestEnv,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
 import type { AppState } from "@drawink/drawink/types";
 
@@ -103,7 +103,7 @@ export const duplicateElements = (
       >;
     }) => Partial<DrawinkElement>;
   } & (
-    | {
+      | {
         /**
          * Duplicates all elements in array.
          *
@@ -112,7 +112,7 @@ export const duplicateElements = (
          */
         type: "everything";
       }
-    | {
+      | {
         /**
          * Duplicates specified elements and inserts them back into the array
          * in specified order.
@@ -130,7 +130,7 @@ export const duplicateElements = (
           selectedGroupIds: AppState["selectedGroupIds"];
         };
       }
-  ),
+    ),
 ) => {
   let { elements } = opts;
 
@@ -138,9 +138,9 @@ export const duplicateElements = (
     "appState" in opts
       ? opts.appState
       : ({
-          editingGroupId: null,
-          selectedGroupIds: {},
-        } as const);
+        editingGroupId: null,
+        selectedGroupIds: {},
+      } as const);
 
   // Ids of elements that have already been processed so we don't push them
   // into the array twice if we end up backtracking when retrieving

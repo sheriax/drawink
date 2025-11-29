@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { KEYS } from "@excalidraw/common";
+import { KEYS } from "@drawink/common";
 
 import { getShortcutKey } from "../..//shortcut";
 import { useAtom } from "../../editor-jotai";
@@ -118,10 +118,10 @@ export const ColorInput = ({
                 s
                   ? null
                   : {
-                      keepOpenOnAlt: false,
-                      onSelect: (color) => onChange(color),
-                      colorPickerType,
-                    },
+                    keepOpenOnAlt: false,
+                    onSelect: (color) => onChange(color),
+                    colorPickerType,
+                  },
               )
             }
             title={`${t(

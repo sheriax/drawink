@@ -1,27 +1,27 @@
-import { FRAME_STYLE, throttleRAF } from "@excalidraw/common";
-import { isElementLink } from "@excalidraw/element";
-import { createPlaceholderEmbeddableLabel } from "@excalidraw/element";
-import { getBoundTextElement } from "@excalidraw/element";
+import { FRAME_STYLE, throttleRAF } from "@drawink/common";
+import { isElementLink } from "@drawink/element";
+import { createPlaceholderEmbeddableLabel } from "@drawink/element";
+import { getBoundTextElement } from "@drawink/element";
 import {
   isEmbeddableElement,
   isIframeLikeElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 import {
   elementOverlapsWithFrame,
   getTargetFrame,
   shouldApplyFrameClip,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { renderElement } from "@excalidraw/element";
+import { renderElement } from "@drawink/element";
 
-import { getElementAbsoluteCoords } from "@excalidraw/element";
+import { getElementAbsoluteCoords } from "@drawink/element";
 
 import type {
   ElementsMap,
   DrawinkFrameLikeElement,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import {
   EXTERNAL_LINK_IMG,
@@ -387,7 +387,7 @@ const _renderStaticScene = ({
             (isExporting ||
               (isEmbeddableElement(element) &&
                 renderConfig.embedsValidationStatus.get(element.id) !==
-                  true)) &&
+                true)) &&
             element.width &&
             element.height
           ) {

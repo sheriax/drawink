@@ -1,6 +1,6 @@
 import { useState, useLayoutEffect } from "react";
 
-import { THEME } from "@excalidraw/common";
+import { THEME } from "@drawink/common";
 
 import { useEditorInterface, useDrawinkContainer } from "../components/App";
 import { useUIAppState } from "../context/ui-appState";

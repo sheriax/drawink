@@ -1,13 +1,13 @@
-import { pointFrom, pointRotateRads } from "@excalidraw/math";
+import { pointFrom, pointRotateRads } from "@drawink/math";
 import { useMemo } from "react";
 
-import { isTextElement } from "@excalidraw/element";
+import { isTextElement } from "@drawink/element";
 
-import { getCommonBounds } from "@excalidraw/element";
+import { getCommonBounds } from "@drawink/element";
 
-import type { ElementsMap, DrawinkElement } from "@excalidraw/element/types";
+import type { ElementsMap, DrawinkElement } from "@drawink/element/types";
 
-import type { Scene } from "@excalidraw/element";
+import type { Scene } from "@drawink/element";
 
 import StatsDragInput from "./DragInput";
 import {
@@ -131,90 +131,90 @@ const handlePositionChange: DragInputCallbackType<
   originalAppState,
   app,
 }) => {
-  const elementsMap = scene.getNonDeletedElementsMap();
+    const elementsMap = scene.getNonDeletedElementsMap();
 
-  if (nextValue !== undefined) {
-    for (const atomicUnit of getAtomicUnits(
-      originalElements,
-      originalAppState,
-    )) {
-      const elementsInUnit = getElementsInAtomicUnit(
-        atomicUnit,
-        elementsMap,
-        originalElementsMap,
-      );
-
-      if (elementsInUnit.length > 1) {
-        const [x1, y1, ,] = getCommonBounds(
-          elementsInUnit.map((el) => el.latest!),
-        );
-        const newTopLeftX = property === "x" ? nextValue : x1;
-        const newTopLeftY = property === "y" ? nextValue : y1;
-
-        moveGroupTo(
-          newTopLeftX,
-          newTopLeftY,
-          elementsInUnit.map((el) => el.original),
+    if (nextValue !== undefined) {
+      for (const atomicUnit of getAtomicUnits(
+        originalElements,
+        originalAppState,
+      )) {
+        const elementsInUnit = getElementsInAtomicUnit(
+          atomicUnit,
+          elementsMap,
           originalElementsMap,
-          scene,
-          app.state,
         );
-      } else {
-        const origElement = elementsInUnit[0]?.original;
-        const latestElement = elementsInUnit[0]?.latest;
-        if (
-          origElement &&
-          latestElement &&
-          isPropertyEditable(latestElement, property)
-        ) {
-          const [cx, cy] = [
-            origElement.x + origElement.width / 2,
-            origElement.y + origElement.height / 2,
-          ];
-          const [topLeftX, topLeftY] = pointRotateRads(
-            pointFrom(origElement.x, origElement.y),
-            pointFrom(cx, cy),
-            origElement.angle,
-          );
 
-          const newTopLeftX = property === "x" ? nextValue : topLeftX;
-          const newTopLeftY = property === "y" ? nextValue : topLeftY;
-          moveElement(
+        if (elementsInUnit.length > 1) {
+          const [x1, y1, ,] = getCommonBounds(
+            elementsInUnit.map((el) => el.latest!),
+          );
+          const newTopLeftX = property === "x" ? nextValue : x1;
+          const newTopLeftY = property === "y" ? nextValue : y1;
+
+          moveGroupTo(
             newTopLeftX,
             newTopLeftY,
-            origElement,
+            elementsInUnit.map((el) => el.original),
+            originalElementsMap,
             scene,
             app.state,
-            originalElementsMap,
-            false,
           );
+        } else {
+          const origElement = elementsInUnit[0]?.original;
+          const latestElement = elementsInUnit[0]?.latest;
+          if (
+            origElement &&
+            latestElement &&
+            isPropertyEditable(latestElement, property)
+          ) {
+            const [cx, cy] = [
+              origElement.x + origElement.width / 2,
+              origElement.y + origElement.height / 2,
+            ];
+            const [topLeftX, topLeftY] = pointRotateRads(
+              pointFrom(origElement.x, origElement.y),
+              pointFrom(cx, cy),
+              origElement.angle,
+            );
+
+            const newTopLeftX = property === "x" ? nextValue : topLeftX;
+            const newTopLeftY = property === "y" ? nextValue : topLeftY;
+            moveElement(
+              newTopLeftX,
+              newTopLeftY,
+              origElement,
+              scene,
+              app.state,
+              originalElementsMap,
+              false,
+            );
+          }
         }
       }
+
+      scene.triggerUpdate();
+      return;
     }
 
+    const change = shouldChangeByStepSize
+      ? getStepSizedValue(accumulatedChange, STEP_SIZE)
+      : accumulatedChange;
+
+    const changeInTopX = property === "x" ? change : 0;
+    const changeInTopY = property === "y" ? change : 0;
+
+    moveElements(
+      property,
+      changeInTopX,
+      changeInTopY,
+      originalElements,
+      originalElementsMap,
+      scene,
+      app.state,
+    );
+
     scene.triggerUpdate();
-    return;
-  }
-
-  const change = shouldChangeByStepSize
-    ? getStepSizedValue(accumulatedChange, STEP_SIZE)
-    : accumulatedChange;
-
-  const changeInTopX = property === "x" ? change : 0;
-  const changeInTopY = property === "y" ? change : 0;
-
-  moveElements(
-    property,
-    changeInTopX,
-    changeInTopY,
-    originalElements,
-    originalElementsMap,
-    scene,
-    app.state,
-  );
-
-  scene.triggerUpdate();
-};
+  };
 
 const MultiPosition = ({
   property,

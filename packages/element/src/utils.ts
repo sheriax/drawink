@@ -4,7 +4,7 @@ import {
   invariant,
   LINE_CONFIRM_THRESHOLD,
   ROUNDNESS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   curve,
@@ -23,9 +23,9 @@ import {
   vectorNormalize,
   vectorScale,
   type GlobalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type { Curve, LineSegment, LocalPoint } from "@excalidraw/math";
+import type { Curve, LineSegment, LocalPoint } from "@drawink/math";
 
 import type { NormalizedZoomValue, Zoom } from "@drawink/drawink/types";
 
@@ -292,17 +292,17 @@ export function deconstructRectanguloidElement(
   const corners =
     offset > 0
       ? baseCorners.map(
-          (corner) =>
-            curveCatmullRomCubicApproxPoints(
-              curveOffsetPoints(corner, offset),
-            )!,
-        )
+        (corner) =>
+          curveCatmullRomCubicApproxPoints(
+            curveOffsetPoints(corner, offset),
+          )!,
+      )
       : [
-          [baseCorners[0]],
-          [baseCorners[1]],
-          [baseCorners[2]],
-          [baseCorners[3]],
-        ];
+        [baseCorners[0]],
+        [baseCorners[1]],
+        [baseCorners[2]],
+        [baseCorners[3]],
+      ];
 
   const sides = [
     lineSegment<GlobalPoint>(
@@ -506,65 +506,65 @@ const getDiagonalsForBindableElement = (
   const diagonalOne = shrinkSegment(
     isRectangularElement(element)
       ? lineSegment<GlobalPoint>(
-          pointRotateRads(
-            pointFrom<GlobalPoint>(element.x, element.y),
-            center,
-            element.angle,
-          ),
-          pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width,
-              element.y + element.height,
-            ),
-            center,
-            element.angle,
-          ),
-        )
-      : lineSegment<GlobalPoint>(
-          pointRotateRads(
-            pointFrom<GlobalPoint>(element.x + element.width / 2, element.y),
-            center,
-            element.angle,
-          ),
-          pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width / 2,
-              element.y + element.height,
-            ),
-            center,
-            element.angle,
-          ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(element.x, element.y),
+          center,
+          element.angle,
         ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(
+            element.x + element.width,
+            element.y + element.height,
+          ),
+          center,
+          element.angle,
+        ),
+      )
+      : lineSegment<GlobalPoint>(
+        pointRotateRads(
+          pointFrom<GlobalPoint>(element.x + element.width / 2, element.y),
+          center,
+          element.angle,
+        ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(
+            element.x + element.width / 2,
+            element.y + element.height,
+          ),
+          center,
+          element.angle,
+        ),
+      ),
   );
   const diagonalTwo = shrinkSegment(
     isRectangularElement(element)
       ? lineSegment<GlobalPoint>(
-          pointRotateRads(
-            pointFrom<GlobalPoint>(element.x + element.width, element.y),
-            center,
-            element.angle,
-          ),
-          pointRotateRads(
-            pointFrom<GlobalPoint>(element.x, element.y + element.height),
-            center,
-            element.angle,
-          ),
-        )
-      : lineSegment<GlobalPoint>(
-          pointRotateRads(
-            pointFrom<GlobalPoint>(element.x, element.y + element.height / 2),
-            center,
-            element.angle,
-          ),
-          pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width,
-              element.y + element.height / 2,
-            ),
-            center,
-            element.angle,
-          ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(element.x + element.width, element.y),
+          center,
+          element.angle,
         ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(element.x, element.y + element.height),
+          center,
+          element.angle,
+        ),
+      )
+      : lineSegment<GlobalPoint>(
+        pointRotateRads(
+          pointFrom<GlobalPoint>(element.x, element.y + element.height / 2),
+          center,
+          element.angle,
+        ),
+        pointRotateRads(
+          pointFrom<GlobalPoint>(
+            element.x + element.width,
+            element.y + element.height / 2,
+          ),
+          center,
+          element.angle,
+        ),
+      ),
   );
 
   return [diagonalOne, diagonalTwo];
@@ -596,10 +596,10 @@ export const projectFixedPointOntoDiagonal = (
     vectorScale(
       vectorFromPoint(point, a),
       2 * pointDistance(a, point) +
-        Math.max(
-          pointDistance(diagonalOne[0], diagonalOne[1]),
-          pointDistance(diagonalTwo[0], diagonalTwo[1]),
-        ),
+      Math.max(
+        pointDistance(diagonalOne[0], diagonalOne[1]),
+        pointDistance(diagonalTwo[0], diagonalTwo[1]),
+      ),
     ),
     a,
   );

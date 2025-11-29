@@ -1,7 +1,7 @@
-import { arrayToMap, findIndex, findLastIndex } from "@excalidraw/common";
+import { arrayToMap, findIndex, findLastIndex } from "@drawink/common";
 
 import type { AppState } from "@drawink/drawink/types";
-import type { GlobalPoint } from "@excalidraw/math";
+import type { GlobalPoint } from "@drawink/math";
 
 import { isFrameLikeElement, isTextElement } from "./typeChecks";
 import { getElementsInGroup } from "./groups";
@@ -46,9 +46,9 @@ const getIndicesToMove = (
     elementsToBeMoved
       ? elementsToBeMoved
       : getSelectedElements(elements, appState, {
-          includeBoundTextElement: true,
-          includeElementsInFrames: true,
-        }),
+        includeBoundTextElement: true,
+        includeElementsInFrames: true,
+      }),
   );
   while (++index < elements.length) {
     const element = elements[index];
@@ -97,13 +97,13 @@ const getTargetIndexAccountingForBinding = (
     if (containerElement) {
       return direction === "left"
         ? Math.min(
-            elements.indexOf(containerElement),
-            elements.indexOf(nextElement),
-          )
+          elements.indexOf(containerElement),
+          elements.indexOf(nextElement),
+        )
         : Math.max(
-            elements.indexOf(containerElement),
-            elements.indexOf(nextElement),
-          );
+          elements.indexOf(containerElement),
+          elements.indexOf(nextElement),
+        );
     }
   } else {
     const boundElementId = nextElement.boundElements?.find(
@@ -114,13 +114,13 @@ const getTargetIndexAccountingForBinding = (
       if (boundTextElement) {
         return direction === "left"
           ? Math.min(
-              elements.indexOf(boundTextElement),
-              elements.indexOf(nextElement),
-            )
+            elements.indexOf(boundTextElement),
+            elements.indexOf(nextElement),
+          )
           : Math.max(
-              elements.indexOf(boundTextElement),
-              elements.indexOf(nextElement),
-            );
+            elements.indexOf(boundTextElement),
+            elements.indexOf(nextElement),
+          );
       }
     }
   }
@@ -227,10 +227,10 @@ const getTargetIndex = (
   const candidateIndex =
     direction === "left"
       ? findLastIndex(
-          elements,
-          (el) => indexFilter(el),
-          Math.max(0, boundaryIndex - 1),
-        )
+        elements,
+        (el) => indexFilter(el),
+        Math.max(0, boundaryIndex - 1),
+      )
       : findIndex(elements, (el) => indexFilter(el), boundaryIndex + 1);
 
   const nextElement = elements[candidateIndex];
@@ -284,8 +284,8 @@ const getTargetIndex = (
 
   const siblingGroupId = appState.editingGroupId
     ? nextElement.groupIds[
-        nextElement.groupIds.indexOf(appState.editingGroupId) - 1
-      ]
+    nextElement.groupIds.indexOf(appState.editingGroupId) - 1
+    ]
     : nextElement.groupIds[nextElement.groupIds.length - 1];
 
   const elementsInSiblingGroup = getElementsInGroup(elements, siblingGroupId);
@@ -296,8 +296,8 @@ const getTargetIndex = (
     return direction === "left"
       ? elements.indexOf(elementsInSiblingGroup[0])
       : elements.indexOf(
-          elementsInSiblingGroup[elementsInSiblingGroup.length - 1],
-        );
+        elementsInSiblingGroup[elementsInSiblingGroup.length - 1],
+      );
   }
 
   return candidateIndex;
@@ -377,17 +377,17 @@ const shiftElementsByOne = (
     elements =
       direction === "left"
         ? [
-            ...leadingElements,
-            ...targetElements,
-            ...displacedElements,
-            ...trailingElements,
-          ]
+          ...leadingElements,
+          ...targetElements,
+          ...displacedElements,
+          ...trailingElements,
+        ]
         : [
-            ...leadingElements,
-            ...displacedElements,
-            ...targetElements,
-            ...trailingElements,
-          ];
+          ...leadingElements,
+          ...displacedElements,
+          ...targetElements,
+          ...trailingElements,
+        ];
   });
 
   syncMovedIndices(elements, targetElementsMap);
@@ -464,17 +464,17 @@ const shiftElementsToEnd = (
   const nextElements =
     direction === "left"
       ? [
-          ...leadingElements,
-          ...targetElements,
-          ...displacedElements,
-          ...trailingElements,
-        ]
+        ...leadingElements,
+        ...targetElements,
+        ...displacedElements,
+        ...trailingElements,
+      ]
       : [
-          ...leadingElements,
-          ...displacedElements,
-          ...targetElements,
-          ...trailingElements,
-        ];
+        ...leadingElements,
+        ...displacedElements,
+        ...targetElements,
+        ...trailingElements,
+      ];
 
   syncMovedIndices(nextElements, targetElementsMap);
 

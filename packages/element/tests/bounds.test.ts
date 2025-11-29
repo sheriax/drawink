@@ -1,8 +1,8 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
-import { arrayToMap, ROUNDNESS } from "@excalidraw/common";
+import { arrayToMap, ROUNDNESS } from "@drawink/common";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import { getElementAbsoluteCoords, getElementBounds } from "../src/bounds";
 
@@ -23,21 +23,21 @@ const _ce = ({
   a?: number;
   t?: string;
 }) =>
-  ({
-    type: t || "rectangle",
-    strokeColor: "#000",
-    backgroundColor: "#000",
-    fillStyle: "solid",
-    strokeWidth: 1,
-    roundness: { type: ROUNDNESS.PROPORTIONAL_RADIUS },
-    roughness: 0,
-    opacity: 1,
-    x,
-    y,
-    width: w,
-    height: h,
-    angle: a,
-  } as DrawinkElement);
+({
+  type: t || "rectangle",
+  strokeColor: "#000",
+  backgroundColor: "#000",
+  fillStyle: "solid",
+  strokeWidth: 1,
+  roundness: { type: ROUNDNESS.PROPORTIONAL_RADIUS },
+  roughness: 0,
+  opacity: 1,
+  x,
+  y,
+  width: w,
+  height: h,
+  angle: a,
+} as DrawinkElement);
 
 describe("getElementAbsoluteCoords", () => {
   it("test x1 coordinate", () => {

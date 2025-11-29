@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
-import type { ColorPaletteCustom } from "@excalidraw/common";
+import type { ColorPaletteCustom } from "@drawink/common";
 
 import { useAtom } from "../../editor-jotai";
 import { t } from "../../i18n";
@@ -75,9 +75,8 @@ const PickerColorList = ({
               onChange(color);
               setActiveColorPickerSection("baseColors");
             }}
-            title={`${label}${
-              color.startsWith("#") ? ` ${color}` : ""
-            } — ${keybinding}`}
+            title={`${label}${color.startsWith("#") ? ` ${color}` : ""
+              } — ${keybinding}`}
             aria-label={`${label} — ${keybinding}`}
             style={color ? { "--swatch-color": color } : undefined}
             data-testid={`color-${key}`}

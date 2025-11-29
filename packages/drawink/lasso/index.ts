@@ -2,28 +2,28 @@ import {
   type GlobalPoint,
   type LineSegment,
   pointFrom,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import { getElementLineSegments } from "@excalidraw/element";
-import { LinearElementEditor } from "@excalidraw/element";
+import { getElementLineSegments } from "@drawink/element";
+import { LinearElementEditor } from "@drawink/element";
 import {
   isFrameLikeElement,
   isLinearElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import { getFrameChildren } from "@excalidraw/element";
-import { selectGroupsForSelectedElements } from "@excalidraw/element";
+import { getFrameChildren } from "@drawink/element";
+import { selectGroupsForSelectedElements } from "@drawink/element";
 
-import { getContainerElement } from "@excalidraw/element";
+import { getContainerElement } from "@drawink/element";
 
-import { arrayToMap, easeOut, isShallowEqual } from "@excalidraw/common";
+import { arrayToMap, easeOut, isShallowEqual } from "@drawink/common";
 
 import type {
   DrawinkElement,
   DrawinkLinearElement,
   NonDeleted,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { type AnimationFrameHandler } from "../animation-frame-handler";
 
@@ -150,14 +150,14 @@ export class LassoTrail extends AnimatedTrail {
         selectedGroupIds: nextSelection.selectedGroupIds,
         selectedLinearElement:
           selectedIds.length === 1 &&
-          !selectedGroupIds.length &&
-          isLinearElement(this.app.scene.getNonDeletedElement(selectedIds[0]))
+            !selectedGroupIds.length &&
+            isLinearElement(this.app.scene.getNonDeletedElement(selectedIds[0]))
             ? new LinearElementEditor(
-                this.app.scene.getNonDeletedElement(
-                  selectedIds[0],
-                ) as NonDeleted<DrawinkLinearElement>,
-                this.app.scene.getNonDeletedElementsMap(),
-              )
+              this.app.scene.getNonDeletedElement(
+                selectedIds[0],
+              ) as NonDeleted<DrawinkLinearElement>,
+              this.app.scene.getNonDeletedElementsMap(),
+            )
             : null,
       };
     });

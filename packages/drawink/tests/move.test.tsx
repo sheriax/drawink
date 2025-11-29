@@ -1,13 +1,13 @@
 import React from "react";
 import { vi } from "vitest";
-import { KEYS, reseed } from "@excalidraw/common";
-import { bindBindingElement } from "@excalidraw/element";
-import "@excalidraw/utils/test-utils";
+import { KEYS, reseed } from "@drawink/common";
+import { bindBindingElement } from "@drawink/element";
+import "@drawink/utils/test-utils";
 
 import type {
   DrawinkArrowElement,
   NonDeleted,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { Drawink } from "../index";
 import * as InteractiveCanvas from "../renderer/interactiveScene";

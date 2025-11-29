@@ -5,7 +5,7 @@ import {
   DEFAULT_CANVAS_BACKGROUND_PICKS,
   DEFAULT_ELEMENT_BACKGROUND_PICKS,
   DEFAULT_ELEMENT_STROKE_PICKS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { isColorDark } from "./colorPickerUtils";
 

@@ -16,7 +16,7 @@ import {
   vectorSubtract,
   vectorDot,
   vectorNormalize,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
 import {
   COLOR_PALETTE,
@@ -109,7 +109,7 @@ import {
   loadDesktopUIModePreference,
   setDesktopUIMode,
   isSelectionLikeTool,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   getObservedAppState,
@@ -248,9 +248,9 @@ import {
   doBoundsIntersect,
   isPointInElement,
   maxBindingDistance_simple,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
-import type { GlobalPoint, LocalPoint, Radians } from "@excalidraw/math";
+import type { GlobalPoint, LocalPoint, Radians } from "@drawink/math";
 
 import type {
   DrawinkElement,
@@ -276,9 +276,9 @@ import type {
   DrawinkElbowArrowElement,
   SceneElementsMap,
   DrawinkBindableElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
-import type { Mutable, ValueOf } from "@excalidraw/common/utility-types";
+import type { Mutable, ValueOf } from "@drawink/common/utility-types";
 
 import {
   actionAddToLibrary,
@@ -3476,7 +3476,7 @@ class App extends React.Component<AppProps, AppState> {
 
     // ------------------- Successful Mermaid -------------------
     if (!isPlainPaste && isMaybeMermaidDefinition(data.text)) {
-      const api = await import("@excalidraw/mermaid-to-excalidraw");
+      const api = await import("@drawink/mermaid-to-drawink");
       try {
         const { elements: skeletonElements, files } =
           await api.parseMermaidToDrawink(data.text);

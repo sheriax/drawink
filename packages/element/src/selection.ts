@@ -1,4 +1,4 @@
-import { arrayToMap, isShallowEqual } from "@excalidraw/common";
+import { arrayToMap, isShallowEqual } from "@drawink/common";
 
 import type {
   AppState,
@@ -223,8 +223,8 @@ export const getTargetElements = (
   appState.editingTextElement
     ? [appState.editingTextElement]
     : appState.newElement
-    ? [appState.newElement]
-    : getSelectedElements(elements, appState, {
+      ? [appState.newElement]
+      : getSelectedElements(elements, appState, {
         includeBoundTextElement: true,
       });
 
