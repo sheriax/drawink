@@ -6,19 +6,19 @@ import { trackEvent } from "@drawink/drawink/analytics";
 import { Card } from "@drawink/drawink/components/Card";
 import { DrawinkLogo } from "@drawink/drawink/components/DrawinkLogo";
 import { ToolButton } from "@drawink/drawink/components/ToolButton";
-import { MIME_TYPES, getFrame } from "@excalidraw/common";
+import { MIME_TYPES, getFrame } from "@drawink/common";
 import {
   encryptData,
   generateEncryptionKey,
 } from "@drawink/drawink/data/encryption";
 import { serializeAsJSON } from "@drawink/drawink/data/json";
-import { isInitializedImageElement } from "@excalidraw/element";
+import { isInitializedImageElement } from "@drawink/element";
 import { useI18n } from "@drawink/drawink/i18n";
 
 import type {
   FileId,
   NonDeletedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type {
   AppState,
   BinaryFileData,

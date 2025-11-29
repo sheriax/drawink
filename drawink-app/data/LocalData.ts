@@ -15,7 +15,7 @@ import {
   CANVAS_SEARCH_TAB,
   DEFAULT_SIDEBAR,
   debounce,
-} from "@excalidraw/common";
+} from "@drawink/common";
 import {
   createStore,
   entries,
@@ -26,18 +26,18 @@ import {
   get,
 } from "idb-keyval";
 
-import { appJotaiStore, atom } from "excalidraw-app/app-jotai";
-import { getNonDeletedElements } from "@excalidraw/element";
+import { appJotaiStore, atom } from "drawink-app/app-jotai";
+import { getNonDeletedElements } from "@drawink/element";
 
 import type { LibraryPersistedData } from "@drawink/drawink/data/library";
 import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { DrawinkElement, FileId } from "@excalidraw/element/types";
+import type { DrawinkElement, FileId } from "@drawink/element/types";
 import type {
   AppState,
   BinaryFileData,
   BinaryFiles,
 } from "@drawink/drawink/types";
-import type { MaybePromise } from "@excalidraw/common/utility-types";
+import type { MaybePromise } from "@drawink/common/utility-types";
 
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
 

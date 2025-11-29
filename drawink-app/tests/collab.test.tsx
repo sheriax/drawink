@@ -3,14 +3,14 @@ import {
   createRedoAction,
   createUndoAction,
 } from "@drawink/drawink/actions/actionHistory";
-import { syncInvalidIndices } from "@excalidraw/element";
+import { syncInvalidIndices } from "@drawink/element";
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { act, render, waitFor } from "@drawink/drawink/tests/test-utils";
 import { vi } from "vitest";
 
-import { StoreIncrement } from "@excalidraw/element";
+import { StoreIncrement } from "@drawink/element";
 
-import type { DurableIncrement, EphemeralIncrement } from "@excalidraw/element";
+import type { DurableIncrement, EphemeralIncrement } from "@drawink/element";
 
 import DrawinkApp from "../App";
 
@@ -27,7 +27,7 @@ Object.defineProperty(window, "crypto", {
   },
 });
 
-vi.mock("../../excalidraw-app/data/firebase.ts", () => {
+vi.mock("../../drawink-app/data/firebase.ts", () => {
   const loadFromFirebase = async () => null;
   const saveToFirebase = () => {};
   const isSavedToFirebase = () => true;

@@ -8,33 +8,33 @@ import {
   getNormalizedCanvasDimensions,
 } from "@drawink/drawink/renderer/helpers";
 import { type AppState } from "@drawink/drawink/types";
-import { arrayToMap, throttleRAF } from "@excalidraw/common";
+import { arrayToMap, throttleRAF } from "@drawink/common";
 import { useCallback } from "react";
 
 import {
   getGlobalFixedPointForBindableElement,
   isArrowElement,
   isBindableElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 
 import {
   isLineSegment,
   type GlobalPoint,
   type LineSegment,
-} from "@excalidraw/math";
-import { isCurve } from "@excalidraw/math/curve";
+} from "@drawink/math";
+import { isCurve } from "@drawink/math/curve";
 
 import React from "react";
 
-import type { Curve } from "@excalidraw/math";
-import type { DebugElement } from "@excalidraw/common";
+import type { Curve } from "@drawink/math";
+import type { DebugElement } from "@drawink/common";
 import type {
   ElementsMap,
   DrawinkArrowElement,
   DrawinkBindableElement,
   FixedPointBinding,
   OrderedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 
 import { STORAGE_KEYS } from "../app_constants";
 

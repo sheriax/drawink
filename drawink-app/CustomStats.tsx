@@ -5,11 +5,11 @@ import {
   debounce,
   getVersion,
   nFormatter,
-} from "@excalidraw/common";
+} from "@drawink/common";
 import { t } from "@drawink/drawink/i18n";
 import { useEffect, useState } from "react";
 
-import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 import type { UIAppState } from "@drawink/drawink/types";
 
 import {

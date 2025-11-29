@@ -6,9 +6,9 @@ import {
 import { MainMenu } from "@drawink/drawink/index";
 import React from "react";
 
-import { isDevEnv } from "@excalidraw/common";
+import { isDevEnv } from "@drawink/common";
 
-import type { Theme } from "@excalidraw/element/types";
+import type { Theme } from "@drawink/element/types";
 
 import { LanguageList } from "../app-language/LanguageList";
 // import { isDrawinkPlusSignedUser } from "../app_constants";

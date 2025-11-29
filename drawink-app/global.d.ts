@@ -2,5 +2,5 @@ import "@drawink/drawink/global";
 import "@drawink/drawink/css";
 
 interface Window {
-  __EXCALIDRAW_SHA__: string | undefined;
+  __DRAWINK_SHA__: string | undefined;
 }

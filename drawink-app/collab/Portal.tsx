@@ -1,11 +1,11 @@
 import { CaptureUpdateAction } from "@drawink/drawink";
 import { trackEvent } from "@drawink/drawink/analytics";
 import { encryptData } from "@drawink/drawink/data/encryption";
-import { newElementWith } from "@excalidraw/element";
+import { newElementWith } from "@drawink/element";
 import throttle from "lodash.throttle";
 
-import type { UserIdleState } from "@excalidraw/common";
-import type { OrderedDrawinkElement } from "@excalidraw/element/types";
+import type { UserIdleState } from "@drawink/common";
+import type { OrderedDrawinkElement } from "@drawink/element/types";
 import type {
   OnUserFollowedPayload,
   SocketId,

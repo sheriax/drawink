@@ -3,7 +3,7 @@ import {
   getDefaultAppState,
 } from "@drawink/drawink/appState";
 
-import type { DrawinkElement } from "@excalidraw/element/types";
+import type { DrawinkElement } from "@drawink/element/types";
 import type { AppState } from "@drawink/drawink/types";
 
 import { STORAGE_KEYS } from "../app_constants";

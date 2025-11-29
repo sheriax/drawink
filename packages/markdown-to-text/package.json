@@ -1,5 +1,5 @@
 {
-  "name": "@excalidraw/markdown-to-text",
+  "name": "@drawink/markdown-to-text",
   "version": "0.1.2",
   "description": "Parse the markdown and returns a string",
   "main": "dist/index.js",

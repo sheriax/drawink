@@ -1,8 +1,8 @@
 import { THEME } from "@drawink/drawink";
-import { EVENT, CODES, KEYS } from "@excalidraw/common";
+import { EVENT, CODES, KEYS } from "@drawink/common";
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import type { Theme } from "@excalidraw/element/types";
+import type { Theme } from "@drawink/element/types";
 
 import { STORAGE_KEYS } from "./app_constants";
 

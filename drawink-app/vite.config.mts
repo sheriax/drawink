@@ -24,55 +24,55 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: [
         {
-          find: /^@excalidraw\/common$/,
+          find: /^@drawink\/common$/,
           replacement: path.resolve(
             __dirname,
             "../packages/common/src/index.ts",
           ),
         },
         {
-          find: /^@excalidraw\/common\/(.*?)/,
+          find: /^@drawink\/common\/(.*?)/,
           replacement: path.resolve(__dirname, "../packages/common/src/$1"),
         },
         {
-          find: /^@excalidraw\/element$/,
+          find: /^@drawink\/element$/,
           replacement: path.resolve(
             __dirname,
             "../packages/element/src/index.ts",
           ),
         },
         {
-          find: /^@excalidraw\/element\/(.*?)/,
+          find: /^@drawink\/element\/(.*?)/,
           replacement: path.resolve(__dirname, "../packages/element/src/$1"),
         },
         {
-          find: /^@excalidraw\/excalidraw$/,
+          find: /^@drawink\/drawink$/,
           replacement: path.resolve(
             __dirname,
-            "../packages/excalidraw/index.tsx",
+            "../packages/drawink/index.tsx",
           ),
         },
         {
-          find: /^@excalidraw\/excalidraw\/(.*?)/,
-          replacement: path.resolve(__dirname, "../packages/excalidraw/$1"),
+          find: /^@drawink\/drawink\/(.*?)/,
+          replacement: path.resolve(__dirname, "../packages/drawink/$1"),
         },
         {
-          find: /^@excalidraw\/math$/,
+          find: /^@drawink\/math$/,
           replacement: path.resolve(__dirname, "../packages/math/src/index.ts"),
         },
         {
-          find: /^@excalidraw\/math\/(.*?)/,
+          find: /^@drawink\/math\/(.*?)/,
           replacement: path.resolve(__dirname, "../packages/math/src/$1"),
         },
         {
-          find: /^@excalidraw\/utils$/,
+          find: /^@drawink\/utils$/,
           replacement: path.resolve(
             __dirname,
             "../packages/utils/src/index.ts",
           ),
         },
         {
-          find: /^@excalidraw\/utils\/(.*?)/,
+          find: /^@drawink\/utils\/(.*?)/,
           replacement: path.resolve(__dirname, "../packages/utils/src/$1"),
         },
       ],
@@ -95,7 +95,7 @@ export default defineConfig(({ mode }) => {
           // or fallback hence not clubbing with locales so first load followed by offline mode works fine. This is how CRA used to work too.
           manualChunks(id) {
             if (
-              id.includes("packages/excalidraw/locales") &&
+              id.includes("packages/drawink/locales") &&
               id.match(/en.json|percentages.json/) === null
             ) {
               const index = id.indexOf("locales/");
@@ -121,10 +121,11 @@ export default defineConfig(({ mode }) => {
       react(),
       checker({
         typescript: true,
-        eslint:
-          envVars.VITE_APP_ENABLE_ESLINT === "false"
-            ? undefined
-            : { lintCommand: 'eslint "./**/*.{js,ts,tsx}"' },
+        // Disabled eslint checker due to vite-plugin-checker ESM/CommonJS compatibility issue
+        // eslint:
+        //   envVars.VITE_APP_ENABLE_ESLINT === "false"
+        //     ? undefined
+        //     : { lintCommand: 'eslint "./**/*.{js,ts,tsx}"' },
         overlay: {
           initialIsOpen: envVars.VITE_APP_COLLAPSE_OVERLAY === "false",
           badgeStyle: "margin-bottom: 4rem; margin-left: 1rem",

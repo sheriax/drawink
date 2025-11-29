@@ -31,7 +31,7 @@ import {
   resolvablePromise,
   // isRunningInIframe,
   isDevEnv,
-} from "@excalidraw/common";
+} from "@drawink/common";
 import polyfill from "@drawink/drawink/polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadFromBlob } from "@drawink/drawink/data/blob";
@@ -48,10 +48,10 @@ import {
   share,
   youtubeIcon,
 } from "@drawink/drawink/components/icons";
-import { isElementLink } from "@excalidraw/element";
+import { isElementLink } from "@drawink/element";
 import { restore, restoreAppState } from "@drawink/drawink/data/restore";
-import { newElementWith } from "@excalidraw/element";
-import { isInitializedImageElement } from "@excalidraw/element";
+import { newElementWith } from "@drawink/element";
+import { isInitializedImageElement } from "@drawink/element";
 import clsx from "clsx";
 import {
   parseLibraryTokensFromUrl,
@@ -64,7 +64,7 @@ import type {
   FileId,
   NonDeletedDrawinkElement,
   OrderedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type {
   AppState,
   DrawinkImperativeAPI,
@@ -72,8 +72,8 @@ import type {
   DrawinkInitialDataState,
   UIAppState,
 } from "@drawink/drawink/types";
-import type { ResolutionType } from "@excalidraw/common/utility-types";
-import type { ResolvablePromise } from "@excalidraw/common/utils";
+import type { ResolutionType } from "@drawink/common/utility-types";
+import type { ResolvablePromise } from "@drawink/common/utils";
 
 import CustomStats from "./CustomStats";
 import {
@@ -801,7 +801,7 @@ const DrawinkWrapper = () => {
   return (
     <div
       style={{ height: "100%" }}
-      className={clsx("excalidraw-app", {
+      className={clsx("drawink-app", {
         "is-collaborating": isCollaborating,
       })}
     >
@@ -1095,7 +1095,7 @@ const DrawinkWrapper = () => {
               keywords: ["features", "tutorials", "howto", "help", "community"],
               perform: () => {
                 window.open(
-                  "https://youtube.com/@excalidraw",
+                  "https://youtube.com/@drawink",
                   "_blank",
                   "noopener noreferrer",
                 );

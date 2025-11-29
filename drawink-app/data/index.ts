@@ -9,26 +9,26 @@ import {
 } from "@drawink/drawink/data/encryption";
 import { serializeAsJSON } from "@drawink/drawink/data/json";
 import { restore } from "@drawink/drawink/data/restore";
-import { isInvisiblySmallElement } from "@excalidraw/element";
-import { isInitializedImageElement } from "@excalidraw/element";
+import { isInvisiblySmallElement } from "@drawink/element";
+import { isInitializedImageElement } from "@drawink/element";
 import { t } from "@drawink/drawink/i18n";
-import { bytesToHexString } from "@excalidraw/common";
+import { bytesToHexString } from "@drawink/common";
 
-import type { UserIdleState } from "@excalidraw/common";
+import type { UserIdleState } from "@drawink/common";
 import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { SceneBounds } from "@excalidraw/element";
+import type { SceneBounds } from "@drawink/element";
 import type {
   DrawinkElement,
   FileId,
   OrderedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type {
   AppState,
   BinaryFileData,
   BinaryFiles,
   SocketId,
 } from "@drawink/drawink/types";
-import type { MakeBrand } from "@excalidraw/common/utility-types";
+import type { MakeBrand } from "@drawink/common/utility-types";
 
 import {
   DELETED_ELEMENT_TIMEOUT,

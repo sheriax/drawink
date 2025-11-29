@@ -1,7 +1,7 @@
 import { DEFAULT_EXPORT_PADDING, EDITOR_LS_KEYS } from "@drawink/common";
 
-import type { MermaidConfig } from "@drawink/mermaid-to-excalidraw";
-import type { MermaidToDrawinkResult } from "@drawink/mermaid-to-excalidraw/dist/interfaces";
+import type { MermaidConfig } from "@drawink/mermaid-to-drawink";
+import type { MermaidToDrawinkResult } from "@drawink/mermaid-to-drawink/dist/interfaces";
 
 import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 

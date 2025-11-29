@@ -15,7 +15,7 @@ import {
 import { useUIAppState } from "@drawink/drawink/context/ui-appState";
 import { useCopyStatus } from "@drawink/drawink/hooks/useCopiedIndicator";
 import { useI18n } from "@drawink/drawink/i18n";
-import { KEYS, getFrame } from "@excalidraw/common";
+import { KEYS, getFrame } from "@drawink/common";
 import { useEffect, useRef, useState } from "react";
 
 import { atom, useAtom, useAtomValue } from "../app-jotai";

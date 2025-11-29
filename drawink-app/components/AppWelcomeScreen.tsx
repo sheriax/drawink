@@ -1,5 +1,5 @@
 // import { loginIcon } from "@drawink/drawink/components/icons";
-// import { POINTER_EVENTS } from "@excalidraw/common";
+// import { POINTER_EVENTS } from "@drawink/common";
 import { useI18n } from "@drawink/drawink/i18n";
 import { WelcomeScreen } from "@drawink/drawink/index";
 import React from "react";

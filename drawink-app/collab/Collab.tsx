@@ -6,7 +6,7 @@ import {
   reconcileElements,
 } from "@drawink/drawink";
 import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
-import { APP_NAME, EVENT } from "@excalidraw/common";
+import { APP_NAME, EVENT } from "@drawink/common";
 import {
   IDLE_THRESHOLD,
   ACTIVE_THRESHOLD,
@@ -17,11 +17,11 @@ import {
   preventUnload,
   resolvablePromise,
   throttleRAF,
-} from "@excalidraw/common";
+} from "@drawink/common";
 import { decryptData } from "@drawink/drawink/data/encryption";
-import { getVisibleSceneBounds } from "@excalidraw/element";
-import { newElementWith } from "@excalidraw/element";
-import { isImageElement, isInitializedImageElement } from "@excalidraw/element";
+import { getVisibleSceneBounds } from "@drawink/element";
+import { newElementWith } from "@drawink/element";
+import { isImageElement, isInitializedImageElement } from "@drawink/element";
 import { AbortError } from "@drawink/drawink/errors";
 import { t } from "@drawink/drawink/i18n";
 import { withBatchedUpdates } from "@drawink/drawink/reactUtils";
@@ -39,7 +39,7 @@ import type {
   FileId,
   InitializedDrawinkImageElement,
   OrderedDrawinkElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type {
   BinaryFileData,
   DrawinkImperativeAPI,
@@ -47,7 +47,7 @@ import type {
   Collaborator,
   Gesture,
 } from "@drawink/drawink/types";
-import type { Mutable, ValueOf } from "@excalidraw/common/utility-types";
+import type { Mutable, ValueOf } from "@drawink/common/utility-types";
 
 import { appJotaiStore, atom } from "../app-jotai";
 import {
@@ -467,7 +467,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     existingRoomLinkData: null | { roomId: string; roomKey: string },
   ) => {
     if (!this.state.username) {
-      import("@excalidraw/random-username").then(({ getRandomUsername }) => {
+      import("@drawink/random-username").then(({ getRandomUsername }) => {
         const username = getRandomUsername();
         this.setUsername(username);
       });

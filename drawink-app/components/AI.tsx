@@ -6,7 +6,7 @@ import {
   TTDDialog,
 } from "@drawink/drawink";
 import { getDataURL } from "@drawink/drawink/data/blob";
-import { safelyParseJSON } from "@excalidraw/common";
+import { safelyParseJSON } from "@drawink/common";
 
 import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
 

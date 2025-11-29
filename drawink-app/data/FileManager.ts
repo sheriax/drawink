@@ -1,7 +1,7 @@
 import { CaptureUpdateAction } from "@drawink/drawink";
 import { compressData } from "@drawink/drawink/data/encode";
-import { newElementWith } from "@excalidraw/element";
-import { isInitializedImageElement } from "@excalidraw/element";
+import { newElementWith } from "@drawink/element";
+import { isInitializedImageElement } from "@drawink/element";
 import { t } from "@drawink/drawink/i18n";
 
 import type {
@@ -9,7 +9,7 @@ import type {
   DrawinkImageElement,
   FileId,
   InitializedDrawinkImageElement,
-} from "@excalidraw/element/types";
+} from "@drawink/element/types";
 import type {
   BinaryFileData,
   BinaryFileMetadata,
