@@ -25,6 +25,7 @@ const DropdownMenuItemLink = ({
   shortcut?: string;
   className?: string;
   selected?: boolean;
+  disabled?: boolean;
   onSelect?: (event: Event) => void;
   rel?: string;
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
@@ -39,7 +40,14 @@ const DropdownMenuItemLink = ({
       rel={rel || "noopener"}
       className={getDropdownMenuItemClassName(className, selected)}
       title={rest.title ?? rest["aria-label"]}
-      onClick={handleClick}
+      onClick={(e) => {
+        if (rest.disabled) {
+          e.preventDefault();
+          return;
+        }
+        handleClick(e);
+      }}
+      aria-disabled={rest.disabled}
     >
       <MenuItemContent icon={icon} shortcut={shortcut}>
         {children}

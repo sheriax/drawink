@@ -3,7 +3,7 @@ import {
   messageCircleIcon,
   presentationIcon,
 } from "@excalidraw/excalidraw/components/icons";
-import { LinkButton } from "@excalidraw/excalidraw/components/LinkButton";
+// import { LinkButton } from "@excalidraw/excalidraw/components/LinkButton";
 import { useUIAppState } from "@excalidraw/excalidraw/context/ui-appState";
 
 import "./AppSidebar.scss";
@@ -41,13 +41,13 @@ export const AppSidebar = () => {
           <div className="app-sidebar-promo-text">
             Make comments with Excalidraw+
           </div>
-          <LinkButton
+          {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP
             }/plus?utm_source=excalidraw&utm_medium=app&utm_content=comments_promo#excalidraw-redirect`}
           >
             Sign up now
-          </LinkButton>
+          </LinkButton> */}
         </div>
       </Sidebar.Tab>
       <Sidebar.Tab tab="presentation" className="px-3">
@@ -65,13 +65,13 @@ export const AppSidebar = () => {
           <div className="app-sidebar-promo-text">
             Create presentations with Excalidraw+
           </div>
-          <LinkButton
+          {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP
             }/plus?utm_source=excalidraw&utm_medium=app&utm_content=presentations_promo#excalidraw-redirect`}
           >
             Sign up now
-          </LinkButton>
+          </LinkButton> */}
         </div>
       </Sidebar.Tab>
     </DefaultSidebar>

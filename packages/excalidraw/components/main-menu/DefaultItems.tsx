@@ -47,7 +47,7 @@ import {
 
 import "./DefaultItems.scss";
 
-export const LoadScene = () => {
+export const LoadScene = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
   const elements = useExcalidrawElements();
@@ -83,6 +83,7 @@ export const LoadScene = () => {
       data-testid="load-button"
       shortcut={getShortcutFromShortcutName("loadScene")}
       aria-label={t("buttons.load")}
+      disabled={props?.disabled}
     >
       {t("buttons.load")}
     </DropdownMenuItem>
@@ -90,7 +91,7 @@ export const LoadScene = () => {
 };
 LoadScene.displayName = "LoadScene";
 
-export const SaveToActiveFile = () => {
+export const SaveToActiveFile = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
 
@@ -105,12 +106,13 @@ export const SaveToActiveFile = () => {
       onSelect={() => actionManager.executeAction(actionSaveToActiveFile)}
       icon={save}
       aria-label={`${t("buttons.save")}`}
+      disabled={props?.disabled}
     >{`${t("buttons.save")}`}</DropdownMenuItem>
   );
 };
 SaveToActiveFile.displayName = "SaveToActiveFile";
 
-export const SaveAsImage = () => {
+export const SaveAsImage = (props?: { disabled?: boolean }) => {
   const setAppState = useExcalidrawSetAppState();
   const { t } = useI18n();
   return (
@@ -120,6 +122,7 @@ export const SaveAsImage = () => {
       onSelect={() => setAppState({ openDialog: { name: "imageExport" } })}
       shortcut={getShortcutFromShortcutName("imageExport")}
       aria-label={t("buttons.exportImage")}
+      disabled={props?.disabled}
     >
       {t("buttons.exportImage")}
     </DropdownMenuItem>
@@ -127,7 +130,10 @@ export const SaveAsImage = () => {
 };
 SaveAsImage.displayName = "SaveAsImage";
 
-export const CommandPalette = (opts?: { className?: string }) => {
+export const CommandPalette = (opts?: {
+  className?: string;
+  disabled?: boolean;
+}) => {
   const setAppState = useExcalidrawSetAppState();
   const { t } = useI18n();
 
@@ -142,6 +148,7 @@ export const CommandPalette = (opts?: { className?: string }) => {
       shortcut={getShortcutFromShortcutName("commandPalette")}
       aria-label={t("commandPalette.title")}
       className={opts?.className}
+      disabled={opts?.disabled}
     >
       {t("commandPalette.title")}
     </DropdownMenuItem>
@@ -149,7 +156,10 @@ export const CommandPalette = (opts?: { className?: string }) => {
 };
 CommandPalette.displayName = "CommandPalette";
 
-export const SearchMenu = (opts?: { className?: string }) => {
+export const SearchMenu = (opts?: {
+  className?: string;
+  disabled?: boolean;
+}) => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
 
@@ -163,6 +173,7 @@ export const SearchMenu = (opts?: { className?: string }) => {
       shortcut={getShortcutFromShortcutName("searchMenu")}
       aria-label={t("search.title")}
       className={opts?.className}
+      disabled={opts?.disabled}
     >
       {t("search.title")}
     </DropdownMenuItem>
@@ -170,7 +181,7 @@ export const SearchMenu = (opts?: { className?: string }) => {
 };
 SearchMenu.displayName = "SearchMenu";
 
-export const Help = () => {
+export const Help = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
 
   const actionManager = useExcalidrawActionManager();
@@ -182,6 +193,7 @@ export const Help = () => {
       onSelect={() => actionManager.executeAction(actionShortcuts)}
       shortcut="?"
       aria-label={t("helpDialog.title")}
+      disabled={props?.disabled}
     >
       {t("helpDialog.title")}
     </DropdownMenuItem>
@@ -218,10 +230,12 @@ export const ToggleTheme = (
         allowSystemTheme: true;
         theme: Theme | "system";
         onSelect: (theme: Theme | "system") => void;
+        disabled?: boolean;
       }
     | {
         allowSystemTheme?: false;
         onSelect?: (theme: Theme) => void;
+        disabled?: boolean;
       },
 ) => {
   const { t } = useI18n();
@@ -256,6 +270,7 @@ export const ToggleTheme = (
             ariaLabel: t("buttons.systemMode"),
           },
         ]}
+        disabled={props.disabled}
       >
         {t("labels.theme")}
       </DropdownMenuItemContentRadio>
@@ -284,6 +299,7 @@ export const ToggleTheme = (
           ? t("buttons.lightMode")
           : t("buttons.darkMode")
       }
+      disabled={props?.disabled}
     >
       {appState.theme === THEME.DARK
         ? t("buttons.lightMode")
@@ -293,7 +309,7 @@ export const ToggleTheme = (
 };
 ToggleTheme.displayName = "ToggleTheme";
 
-export const ChangeCanvasBackground = () => {
+export const ChangeCanvasBackground = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
   const appState = useUIAppState();
   const actionManager = useExcalidrawActionManager();
@@ -306,7 +322,12 @@ export const ChangeCanvasBackground = () => {
     return null;
   }
   return (
-    <div style={{ marginTop: "0.5rem" }}>
+    <div
+      style={{
+        marginTop: "0.5rem",
+        ...(props?.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
+      }}
+    >
       <div
         data-testid="canvas-background-label"
         style={{ fontSize: ".75rem", marginBottom: ".5rem" }}
@@ -321,7 +342,7 @@ export const ChangeCanvasBackground = () => {
 };
 ChangeCanvasBackground.displayName = "ChangeCanvasBackground";
 
-export const Export = () => {
+export const Export = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
   const setAppState = useExcalidrawSetAppState();
   return (
@@ -332,6 +353,7 @@ export const Export = () => {
       }}
       data-testid="json-export-button"
       aria-label={t("buttons.export")}
+      disabled={props?.disabled}
     >
       {t("buttons.export")}
     </DropdownMenuItem>
@@ -339,7 +361,7 @@ export const Export = () => {
 };
 Export.displayName = "Export";
 
-export const Socials = () => {
+export const Socials = (props?: { disabled?: boolean }) => {
   const { t } = useI18n();
 
   return (
@@ -348,6 +370,7 @@ export const Socials = () => {
         icon={GithubIcon}
         href="https://github.com/excalidraw/excalidraw"
         aria-label="GitHub"
+        disabled={props?.disabled}
       >
         GitHub
       </DropdownMenuItemLink>
@@ -355,6 +378,7 @@ export const Socials = () => {
         icon={XBrandIcon}
         href="https://x.com/excalidraw"
         aria-label="X"
+        disabled={props?.disabled}
       >
         {t("labels.followUs")}
       </DropdownMenuItemLink>
@@ -362,6 +386,7 @@ export const Socials = () => {
         icon={DiscordIcon}
         href="https://discord.gg/UexuTaE"
         aria-label="Discord"
+        disabled={props?.disabled}
       >
         {t("labels.discordChat")}
       </DropdownMenuItemLink>
@@ -373,9 +398,11 @@ Socials.displayName = "Socials";
 export const LiveCollaborationTrigger = ({
   onSelect,
   isCollaborating,
+  disabled,
 }: {
   onSelect: () => void;
   isCollaborating: boolean;
+  disabled?: boolean;
 }) => {
   const { t } = useI18n();
   return (
@@ -386,6 +413,7 @@ export const LiveCollaborationTrigger = ({
         "active-collab": isCollaborating,
       })}
       onSelect={onSelect}
+      disabled={disabled}
     >
       {t("labels.liveCollaboration")}
     </DropdownMenuItem>

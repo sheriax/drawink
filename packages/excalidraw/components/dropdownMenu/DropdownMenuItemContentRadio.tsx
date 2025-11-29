@@ -12,6 +12,7 @@ type Props<T> = {
   onChange: (value: T) => void;
   children: React.ReactNode;
   name: string;
+  disabled?: boolean;
 };
 
 const DropdownMenuItemContentRadio = <T,>({
@@ -21,12 +22,16 @@ const DropdownMenuItemContentRadio = <T,>({
   choices,
   children,
   name,
+  disabled,
 }: Props<T>) => {
   const editorInterface = useEditorInterface();
 
   return (
     <>
-      <div className="dropdown-menu-item-base dropdown-menu-item-bare">
+      <div
+        className="dropdown-menu-item-base dropdown-menu-item-bare"
+        style={disabled ? { opacity: 0.5, pointerEvents: "none" } : undefined}
+      >
         <label className="dropdown-menu-item__text" htmlFor={name}>
           {children}
         </label>
