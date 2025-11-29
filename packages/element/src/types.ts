@@ -33,11 +33,11 @@ export type VerticalAlign = typeof VERTICAL_ALIGN[VerticalAlignKeys];
 export type FractionalIndex = string & { _brand: "franctionalIndex" };
 
 export type BoundElement = Readonly<{
-  id: ExcalidrawLinearElement["id"];
+  id: DrawinkLinearElement["id"];
   type: "arrow" | "text";
 }>;
 
-type _ExcalidrawElementBase = Readonly<{
+type _DrawinkElementBase = Readonly<{
   id: string;
   x: number;
   y: number;
@@ -81,23 +81,23 @@ type _ExcalidrawElementBase = Readonly<{
   customData?: Record<string, any>;
 }>;
 
-export type ExcalidrawSelectionElement = _ExcalidrawElementBase & {
+export type DrawinkSelectionElement = _DrawinkElementBase & {
   type: "selection";
 };
 
-export type ExcalidrawRectangleElement = _ExcalidrawElementBase & {
+export type DrawinkRectangleElement = _DrawinkElementBase & {
   type: "rectangle";
 };
 
-export type ExcalidrawDiamondElement = _ExcalidrawElementBase & {
+export type DrawinkDiamondElement = _DrawinkElementBase & {
   type: "diamond";
 };
 
-export type ExcalidrawEllipseElement = _ExcalidrawElementBase & {
+export type DrawinkEllipseElement = _DrawinkElementBase & {
   type: "ellipse";
 };
 
-export type ExcalidrawEmbeddableElement = _ExcalidrawElementBase &
+export type DrawinkEmbeddableElement = _DrawinkElementBase &
   Readonly<{
     type: "embeddable";
   }>;
@@ -113,16 +113,16 @@ export type MagicGenerationData =
       code: "ERR_GENERATION_INTERRUPTED" | string;
     };
 
-export type ExcalidrawIframeElement = _ExcalidrawElementBase &
+export type DrawinkIframeElement = _DrawinkElementBase &
   Readonly<{
     type: "iframe";
     // TODO move later to AI-specific frame
     customData?: { generationData?: MagicGenerationData };
   }>;
 
-export type ExcalidrawIframeLikeElement =
-  | ExcalidrawIframeElement
-  | ExcalidrawEmbeddableElement;
+export type DrawinkIframeLikeElement =
+  | DrawinkIframeElement
+  | DrawinkEmbeddableElement;
 
 export type IframeData =
   | {
@@ -143,7 +143,7 @@ export type ImageCrop = {
   naturalHeight: number;
 };
 
-export type ExcalidrawImageElement = _ExcalidrawElementBase &
+export type DrawinkImageElement = _DrawinkElementBase &
   Readonly<{
     type: "image";
     fileId: FileId | null;
@@ -155,84 +155,84 @@ export type ExcalidrawImageElement = _ExcalidrawElementBase &
     crop: ImageCrop | null;
   }>;
 
-export type InitializedExcalidrawImageElement = MarkNonNullable<
-  ExcalidrawImageElement,
+export type InitializedDrawinkImageElement = MarkNonNullable<
+  DrawinkImageElement,
   "fileId"
 >;
 
-export type ExcalidrawFrameElement = _ExcalidrawElementBase & {
+export type DrawinkFrameElement = _DrawinkElementBase & {
   type: "frame";
   name: string | null;
 };
 
-export type ExcalidrawMagicFrameElement = _ExcalidrawElementBase & {
+export type DrawinkMagicFrameElement = _DrawinkElementBase & {
   type: "magicframe";
   name: string | null;
 };
 
-export type ExcalidrawFrameLikeElement =
-  | ExcalidrawFrameElement
-  | ExcalidrawMagicFrameElement;
+export type DrawinkFrameLikeElement =
+  | DrawinkFrameElement
+  | DrawinkMagicFrameElement;
 
 /**
  * These are elements that don't have any additional properties.
  */
-export type ExcalidrawGenericElement =
-  | ExcalidrawSelectionElement
-  | ExcalidrawRectangleElement
-  | ExcalidrawDiamondElement
-  | ExcalidrawEllipseElement;
+export type DrawinkGenericElement =
+  | DrawinkSelectionElement
+  | DrawinkRectangleElement
+  | DrawinkDiamondElement
+  | DrawinkEllipseElement;
 
-export type ExcalidrawFlowchartNodeElement =
-  | ExcalidrawRectangleElement
-  | ExcalidrawDiamondElement
-  | ExcalidrawEllipseElement;
+export type DrawinkFlowchartNodeElement =
+  | DrawinkRectangleElement
+  | DrawinkDiamondElement
+  | DrawinkEllipseElement;
 
-export type ExcalidrawRectanguloidElement =
-  | ExcalidrawRectangleElement
-  | ExcalidrawImageElement
-  | ExcalidrawTextElement
-  | ExcalidrawFreeDrawElement
-  | ExcalidrawIframeLikeElement
-  | ExcalidrawFrameLikeElement
-  | ExcalidrawEmbeddableElement
-  | ExcalidrawSelectionElement;
+export type DrawinkRectanguloidElement =
+  | DrawinkRectangleElement
+  | DrawinkImageElement
+  | DrawinkTextElement
+  | DrawinkFreeDrawElement
+  | DrawinkIframeLikeElement
+  | DrawinkFrameLikeElement
+  | DrawinkEmbeddableElement
+  | DrawinkSelectionElement;
 
 /**
- * ExcalidrawElement should be JSON serializable and (eventually) contain
- * no computed data. The list of all ExcalidrawElements should be shareable
+ * DrawinkElement should be JSON serializable and (eventually) contain
+ * no computed data. The list of all DrawinkElements should be shareable
  * between peers and contain no state local to the peer.
  */
-export type ExcalidrawElement =
-  | ExcalidrawGenericElement
-  | ExcalidrawTextElement
-  | ExcalidrawLinearElement
-  | ExcalidrawArrowElement
-  | ExcalidrawFreeDrawElement
-  | ExcalidrawImageElement
-  | ExcalidrawFrameElement
-  | ExcalidrawMagicFrameElement
-  | ExcalidrawIframeElement
-  | ExcalidrawEmbeddableElement;
+export type DrawinkElement =
+  | DrawinkGenericElement
+  | DrawinkTextElement
+  | DrawinkLinearElement
+  | DrawinkArrowElement
+  | DrawinkFreeDrawElement
+  | DrawinkImageElement
+  | DrawinkFrameElement
+  | DrawinkMagicFrameElement
+  | DrawinkIframeElement
+  | DrawinkEmbeddableElement;
 
-export type ExcalidrawNonSelectionElement = Exclude<
-  ExcalidrawElement,
-  ExcalidrawSelectionElement
+export type DrawinkNonSelectionElement = Exclude<
+  DrawinkElement,
+  DrawinkSelectionElement
 >;
 
-export type Ordered<TElement extends ExcalidrawElement> = TElement & {
+export type Ordered<TElement extends DrawinkElement> = TElement & {
   index: FractionalIndex;
 };
 
-export type OrderedExcalidrawElement = Ordered<ExcalidrawElement>;
+export type OrderedDrawinkElement = Ordered<DrawinkElement>;
 
-export type NonDeleted<TElement extends ExcalidrawElement> = TElement & {
+export type NonDeleted<TElement extends DrawinkElement> = TElement & {
   isDeleted: boolean;
 };
 
-export type NonDeletedExcalidrawElement = NonDeleted<ExcalidrawElement>;
+export type NonDeletedDrawinkElement = NonDeleted<DrawinkElement>;
 
-export type ExcalidrawTextElement = _ExcalidrawElementBase &
+export type DrawinkTextElement = _DrawinkElementBase &
   Readonly<{
     type: "text";
     fontSize: number;
@@ -240,7 +240,7 @@ export type ExcalidrawTextElement = _ExcalidrawElementBase &
     text: string;
     textAlign: TextAlign;
     verticalAlign: VerticalAlign;
-    containerId: ExcalidrawGenericElement["id"] | null;
+    containerId: DrawinkGenericElement["id"] | null;
     originalText: string;
     /**
      * If `true` the width will fit the text. If `false`, the text will
@@ -256,33 +256,33 @@ export type ExcalidrawTextElement = _ExcalidrawElementBase &
     lineHeight: number & { _brand: "unitlessLineHeight" };
   }>;
 
-export type ExcalidrawBindableElement =
-  | ExcalidrawRectangleElement
-  | ExcalidrawDiamondElement
-  | ExcalidrawEllipseElement
-  | ExcalidrawTextElement
-  | ExcalidrawImageElement
-  | ExcalidrawIframeElement
-  | ExcalidrawEmbeddableElement
-  | ExcalidrawFrameElement
-  | ExcalidrawMagicFrameElement;
+export type DrawinkBindableElement =
+  | DrawinkRectangleElement
+  | DrawinkDiamondElement
+  | DrawinkEllipseElement
+  | DrawinkTextElement
+  | DrawinkImageElement
+  | DrawinkIframeElement
+  | DrawinkEmbeddableElement
+  | DrawinkFrameElement
+  | DrawinkMagicFrameElement;
 
-export type ExcalidrawTextContainer =
-  | ExcalidrawRectangleElement
-  | ExcalidrawDiamondElement
-  | ExcalidrawEllipseElement
-  | ExcalidrawArrowElement;
+export type DrawinkTextContainer =
+  | DrawinkRectangleElement
+  | DrawinkDiamondElement
+  | DrawinkEllipseElement
+  | DrawinkArrowElement;
 
-export type ExcalidrawTextElementWithContainer = {
-  containerId: ExcalidrawTextContainer["id"];
-} & ExcalidrawTextElement;
+export type DrawinkTextElementWithContainer = {
+  containerId: DrawinkTextContainer["id"];
+} & DrawinkTextElement;
 
 export type FixedPoint = [number, number];
 
 export type BindMode = "inside" | "orbit" | "skip";
 
 export type FixedPointBinding = {
-  elementId: ExcalidrawBindableElement["id"];
+  elementId: DrawinkBindableElement["id"];
 
   // Represents the fixed point binding information in form of a vertical and
   // horizontal ratio (i.e. a percentage value in the 0.0-1.0 range). This ratio
@@ -317,7 +317,7 @@ export type Arrowhead =
   | "crowfoot_many"
   | "crowfoot_one_or_many";
 
-export type ExcalidrawLinearElement = _ExcalidrawElementBase &
+export type DrawinkLinearElement = _DrawinkElementBase &
   Readonly<{
     type: "line" | "arrow";
     points: readonly LocalPoint[];
@@ -327,7 +327,7 @@ export type ExcalidrawLinearElement = _ExcalidrawElementBase &
     endArrowhead: Arrowhead | null;
   }>;
 
-export type ExcalidrawLineElement = ExcalidrawLinearElement &
+export type DrawinkLineElement = DrawinkLinearElement &
   Readonly<{
     type: "line";
     polygon: boolean;
@@ -339,14 +339,14 @@ export type FixedSegment = {
   index: Index;
 };
 
-export type ExcalidrawArrowElement = ExcalidrawLinearElement &
+export type DrawinkArrowElement = DrawinkLinearElement &
   Readonly<{
     type: "arrow";
     elbowed: boolean;
   }>;
 
-export type ExcalidrawElbowArrowElement = Merge<
-  ExcalidrawArrowElement,
+export type DrawinkElbowArrowElement = Merge<
+  DrawinkArrowElement,
   {
     elbowed: true;
     fixedSegments: readonly FixedSegment[] | null;
@@ -371,7 +371,7 @@ export type ExcalidrawElbowArrowElement = Merge<
   }
 >;
 
-export type ExcalidrawFreeDrawElement = _ExcalidrawElementBase &
+export type DrawinkFreeDrawElement = _DrawinkElementBase &
   Readonly<{
     type: "freedraw";
     points: readonly LocalPoint[];
@@ -381,22 +381,22 @@ export type ExcalidrawFreeDrawElement = _ExcalidrawElementBase &
 
 export type FileId = string & { _brand: "FileId" };
 
-export type ExcalidrawElementType = ExcalidrawElement["type"];
+export type DrawinkElementType = DrawinkElement["type"];
 
 /**
  * Map of excalidraw elements.
  * Unspecified whether deleted or non-deleted.
  * Can be a subset of Scene elements.
  */
-export type ElementsMap = Map<ExcalidrawElement["id"], ExcalidrawElement>;
+export type ElementsMap = Map<DrawinkElement["id"], DrawinkElement>;
 
 /**
  * Map of non-deleted elements.
  * Can be a subset of Scene elements.
  */
 export type NonDeletedElementsMap = Map<
-  ExcalidrawElement["id"],
-  NonDeletedExcalidrawElement
+  DrawinkElement["id"],
+  NonDeletedDrawinkElement
 > &
   MakeBrand<"NonDeletedElementsMap">;
 
@@ -405,8 +405,8 @@ export type NonDeletedElementsMap = Map<
  * Not a subset. Use this type when you need access to current Scene elements.
  */
 export type SceneElementsMap = Map<
-  ExcalidrawElement["id"],
-  Ordered<ExcalidrawElement>
+  DrawinkElement["id"],
+  Ordered<DrawinkElement>
 > &
   MakeBrand<"SceneElementsMap">;
 
@@ -415,21 +415,21 @@ export type SceneElementsMap = Map<
  * Not a subset. Use this type when you need access to current Scene elements.
  */
 export type NonDeletedSceneElementsMap = Map<
-  ExcalidrawElement["id"],
-  Ordered<NonDeletedExcalidrawElement>
+  DrawinkElement["id"],
+  Ordered<NonDeletedDrawinkElement>
 > &
   MakeBrand<"NonDeletedSceneElementsMap">;
 
 export type ElementsMapOrArray =
-  | readonly ExcalidrawElement[]
+  | readonly DrawinkElement[]
   | Readonly<ElementsMap>;
 
-export type ExcalidrawLinearElementSubType =
+export type DrawinkLinearElementSubType =
   | "line"
   | "sharpArrow"
   | "curvedArrow"
   | "elbowArrow";
 
 export type ConvertibleGenericTypes = "rectangle" | "diamond" | "ellipse";
-export type ConvertibleLinearTypes = ExcalidrawLinearElementSubType;
+export type ConvertibleLinearTypes = DrawinkLinearElementSubType;
 export type ConvertibleTypes = ConvertibleGenericTypes | ConvertibleLinearTypes;

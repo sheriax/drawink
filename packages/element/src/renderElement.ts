@@ -30,7 +30,7 @@ import type {
   Zoom,
   InteractiveCanvasAppState,
   ElementsPendingErasure,
-  PendingExcalidrawElements,
+  PendingDrawinkElements,
   NormalizedZoomValue,
 } from "@excalidraw/excalidraw/types";
 
@@ -67,13 +67,13 @@ import { getCornerRadius } from "./utils";
 import { ShapeCache } from "./shape";
 
 import type {
-  ExcalidrawElement,
-  ExcalidrawTextElement,
-  NonDeletedExcalidrawElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawImageElement,
-  ExcalidrawTextElementWithContainer,
-  ExcalidrawFrameLikeElement,
+  DrawinkElement,
+  DrawinkTextElement,
+  NonDeletedDrawinkElement,
+  DrawinkFreeDrawElement,
+  DrawinkImageElement,
+  DrawinkTextElementWithContainer,
+  DrawinkFrameLikeElement,
   NonDeletedSceneElementsMap,
   ElementsMap,
 } from "./types";
@@ -89,14 +89,14 @@ export const IMAGE_INVERT_FILTER =
   "invert(100%) hue-rotate(180deg) saturate(1.25)";
 
 const isPendingImageElement = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   renderConfig: StaticCanvasRenderConfig,
 ) =>
   isInitializedImageElement(element) &&
   !renderConfig.imageCache.has(element.fileId);
 
 const shouldResetImageFilter = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState | InteractiveCanvasAppState,
 ) => {
@@ -108,7 +108,7 @@ const shouldResetImageFilter = (
   );
 };
 
-const getCanvasPadding = (element: ExcalidrawElement) => {
+const getCanvasPadding = (element: DrawinkElement) => {
   switch (element.type) {
     case "freedraw":
       return element.strokeWidth * 12;
@@ -125,10 +125,10 @@ const getCanvasPadding = (element: ExcalidrawElement) => {
 };
 
 export const getRenderOpacity = (
-  element: ExcalidrawElement,
-  containingFrame: ExcalidrawFrameLikeElement | null,
+  element: DrawinkElement,
+  containingFrame: DrawinkFrameLikeElement | null,
   elementsPendingErasure: ElementsPendingErasure,
-  pendingNodes: Readonly<PendingExcalidrawElements> | null,
+  pendingNodes: Readonly<PendingDrawinkElements> | null,
   globalAlpha: number = 1,
 ) => {
   // multiplying frame opacity with element opacity to combine them
@@ -150,8 +150,8 @@ export const getRenderOpacity = (
   return opacity;
 };
 
-export interface ExcalidrawElementWithCanvas {
-  element: ExcalidrawElement | ExcalidrawTextElement;
+export interface DrawinkElementWithCanvas {
+  element: DrawinkElement | DrawinkTextElement;
   canvas: HTMLCanvasElement;
   theme: AppState["theme"];
   scale: number;
@@ -160,13 +160,13 @@ export interface ExcalidrawElementWithCanvas {
   canvasOffsetX: number;
   canvasOffsetY: number;
   boundTextElementVersion: number | null;
-  imageCrop: ExcalidrawImageElement["crop"] | null;
+  imageCrop: DrawinkImageElement["crop"] | null;
   containingFrameOpacity: number;
   boundTextCanvas: HTMLCanvasElement;
 }
 
 const cappedElementCanvasSize = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   elementsMap: ElementsMap,
   zoom: Zoom,
 ): {
@@ -221,12 +221,12 @@ const cappedElementCanvasSize = (
 };
 
 const generateElementCanvas = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   elementsMap: NonDeletedSceneElementsMap,
   zoom: Zoom,
   renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState | InteractiveCanvasAppState,
-): ExcalidrawElementWithCanvas | null => {
+): DrawinkElementWithCanvas | null => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d")!;
   const padding = getCanvasPadding(element);
@@ -383,7 +383,7 @@ IMAGE_ERROR_PLACEHOLDER_IMG.src = `data:${MIME_TYPES.svg},${encodeURIComponent(
 )}`;
 
 const drawImagePlaceholder = (
-  element: ExcalidrawImageElement,
+  element: DrawinkImageElement,
   context: CanvasRenderingContext2D,
 ) => {
   context.fillStyle = "#E7E7E7";
@@ -408,7 +408,7 @@ const drawImagePlaceholder = (
 };
 
 const drawElementOnCanvas = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   rc: RoughCanvas,
   context: CanvasRenderingContext2D,
   renderConfig: StaticCanvasRenderConfig,
@@ -549,12 +549,12 @@ const drawElementOnCanvas = (
 };
 
 export const elementWithCanvasCache = new WeakMap<
-  ExcalidrawElement,
-  ExcalidrawElementWithCanvas
+  DrawinkElement,
+  DrawinkElementWithCanvas
 >();
 
 const generateElementWithCanvas = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   elementsMap: NonDeletedSceneElementsMap,
   renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState | InteractiveCanvasAppState,
@@ -611,7 +611,7 @@ const generateElementWithCanvas = (
 };
 
 const drawElementFromCanvas = (
-  elementWithCanvas: ExcalidrawElementWithCanvas,
+  elementWithCanvas: DrawinkElementWithCanvas,
   context: CanvasRenderingContext2D,
   renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState | InteractiveCanvasAppState,
@@ -684,7 +684,7 @@ const drawElementFromCanvas = (
       const textElement = getBoundTextElement(
         element,
         allElementsMap,
-      ) as ExcalidrawTextElementWithContainer;
+      ) as DrawinkTextElementWithContainer;
       const coords = getContainerCoords(element);
       context.strokeStyle = "#c92a2a";
       context.lineWidth = 3;
@@ -702,7 +702,7 @@ const drawElementFromCanvas = (
 };
 
 export const renderSelectionElement = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   context: CanvasRenderingContext2D,
   appState: InteractiveCanvasAppState,
   selectionColor: InteractiveCanvasRenderConfig["selectionColor"],
@@ -726,7 +726,7 @@ export const renderSelectionElement = (
 };
 
 export const renderElement = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   elementsMap: RenderableElementsMap,
   allElementsMap: NonDeletedSceneElementsMap,
   rc: RoughCanvas,
@@ -851,7 +851,7 @@ export const renderElement = (
             const boundTextCoords =
               LinearElementEditor.getBoundTextElementPosition(
                 container,
-                element as ExcalidrawTextElementWithContainer,
+                element as DrawinkTextElementWithContainer,
                 elementsMap,
               );
             shiftX = (x2 - x1) / 2 - (boundTextCoords.x - x1);
@@ -1026,25 +1026,25 @@ export const renderElement = (
   context.globalAlpha = 1;
 };
 
-export const pathsCache = new WeakMap<ExcalidrawFreeDrawElement, Path2D>([]);
+export const pathsCache = new WeakMap<DrawinkFreeDrawElement, Path2D>([]);
 
-export function generateFreeDrawShape(element: ExcalidrawFreeDrawElement) {
+export function generateFreeDrawShape(element: DrawinkFreeDrawElement) {
   const svgPathData = getFreeDrawSvgPath(element);
   const path = new Path2D(svgPathData);
   pathsCache.set(element, path);
   return path;
 }
 
-export function getFreeDrawPath2D(element: ExcalidrawFreeDrawElement) {
+export function getFreeDrawPath2D(element: DrawinkFreeDrawElement) {
   return pathsCache.get(element);
 }
 
-export function getFreeDrawSvgPath(element: ExcalidrawFreeDrawElement) {
+export function getFreeDrawSvgPath(element: DrawinkFreeDrawElement) {
   return getSvgPathFromStroke(getFreedrawOutlinePoints(element));
 }
 
 export function getFreedrawOutlineAsSegments(
-  element: ExcalidrawFreeDrawElement,
+  element: DrawinkFreeDrawElement,
   points: [number, number][],
   elementsMap: ElementsMap,
 ) {
@@ -1099,7 +1099,7 @@ export function getFreedrawOutlineAsSegments(
   );
 }
 
-export function getFreedrawOutlinePoints(element: ExcalidrawFreeDrawElement) {
+export function getFreedrawOutlinePoints(element: DrawinkFreeDrawElement) {
   // If input points are empty (should they ever be?) return a dot
   const inputPoints = element.simulatePressure
     ? element.points

@@ -3,7 +3,7 @@ import {
   distributeVertically,
 } from "@excalidraw/excalidraw/actions";
 import { defaultLang, setLanguage } from "@excalidraw/excalidraw/i18n";
-import { Excalidraw } from "@excalidraw/excalidraw";
+import { Drawink } from "@excalidraw/excalidraw";
 
 import { API } from "@excalidraw/excalidraw/tests/helpers/api";
 import { UI, Pointer, Keyboard } from "@excalidraw/excalidraw/tests/helpers/ui";
@@ -71,7 +71,7 @@ describe("distributing", () => {
     await act(() => {
       return setLanguage(defaultLang);
     });
-    await render(<Excalidraw handleKeyboardGlobally={true} />);
+    await render(<Drawink handleKeyboardGlobally={true} />);
   });
 
   it("should distribute selected elements horizontally", async () => {

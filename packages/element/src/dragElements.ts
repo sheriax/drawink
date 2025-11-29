@@ -12,7 +12,7 @@ import type {
   PointerDownState,
 } from "@excalidraw/excalidraw/types";
 
-import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
+import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
 
 import { unbindBindingElement, updateBoundElements } from "./binding";
 import { getCommonBounds } from "./bounds";
@@ -30,11 +30,11 @@ import {
 import type { Scene } from "./Scene";
 
 import type { Bounds } from "./bounds";
-import type { ExcalidrawElement } from "./types";
+import type { DrawinkElement } from "./types";
 
 export const dragSelectedElements = (
   pointerDownState: PointerDownState,
-  _selectedElements: NonDeletedExcalidrawElement[],
+  _selectedElements: NonDeletedDrawinkElement[],
   offset: { x: number; y: number },
   scene: Scene,
   snapOffset: {
@@ -69,7 +69,7 @@ export const dragSelectedElements = (
   // we do not want a frame and its elements to be selected at the same time
   // but when it happens (due to some bug), we want to avoid updating element
   // in the frame twice, hence the use of set
-  const elementsToUpdate = new Set<NonDeletedExcalidrawElement>(
+  const elementsToUpdate = new Set<NonDeletedDrawinkElement>(
     selectedElements,
   );
   const frames = selectedElements
@@ -84,7 +84,7 @@ export const dragSelectedElements = (
     }
   }
 
-  const origElements: ExcalidrawElement[] = [];
+  const origElements: DrawinkElement[] = [];
 
   for (const element of elementsToUpdate) {
     const origElement = pointerDownState.originalElements.get(element.id);
@@ -203,7 +203,7 @@ const calculateOffset = (
 
 const updateElementCoords = (
   pointerDownState: PointerDownState,
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   scene: Scene,
   dragOffset: { x: number; y: number },
 ) => {
@@ -220,7 +220,7 @@ const updateElementCoords = (
 };
 
 export const getDragOffsetXY = (
-  selectedElements: NonDeletedExcalidrawElement[],
+  selectedElements: NonDeletedDrawinkElement[],
   x: number,
   y: number,
 ): [number, number] => {
@@ -245,7 +245,7 @@ export const dragNewElement = ({
   originOffset = null,
   informMutation = true,
 }: {
-  newElement: NonDeletedExcalidrawElement;
+  newElement: NonDeletedDrawinkElement;
   elementType: AppState["activeTool"]["type"];
   originX: number;
   originY: number;

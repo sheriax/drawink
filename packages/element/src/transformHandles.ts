@@ -23,8 +23,8 @@ import {
 import type { Bounds } from "./bounds";
 import type {
   ElementsMap,
-  ExcalidrawElement,
-  NonDeletedExcalidrawElement,
+  DrawinkElement,
+  NonDeletedDrawinkElement,
   PointerType,
 } from "./types";
 
@@ -270,7 +270,7 @@ export const getTransformHandlesFromCoords = (
 };
 
 export const getTransformHandles = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   zoom: Zoom,
   elementsMap: ElementsMap,
   pointerType: PointerType = "mouse",
@@ -326,7 +326,7 @@ export const getTransformHandles = (
 };
 
 export const hasBoundingBox = (
-  elements: readonly NonDeletedExcalidrawElement[],
+  elements: readonly NonDeletedDrawinkElement[],
   appState: InteractiveCanvasAppState,
   editorInterface: EditorInterface,
 ) => {

@@ -6,7 +6,7 @@
 npm install @excalidraw/utils
 ```
 
-If you prefer Yarn over npm, use this command to install the Excalidraw utils package:
+If you prefer Yarn over npm, use this command to install the Drawink utils package:
 
 ```bash
 yarn add @excalidraw/utils
@@ -20,15 +20,15 @@ See [`serializeAsJSON`](https://github.com/excalidraw/excalidraw/blob/master/src
 
 ### `exportToBlob` (async)
 
-Export an Excalidraw diagram to a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Export an Drawink diagram to a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
 ### `exportToSvg`
 
-Export an Excalidraw diagram to a [SVGElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGElement).
+Export an Drawink diagram to a [SVGElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGElement).
 
 ## Usage
 
-Excalidraw utils is published as a UMD (Universal Module Definition). If you are using a module bundler (for instance, Webpack), you can import it as an ES6 module:
+Drawink utils is published as a UMD (Universal Module Definition). If you are using a module bundler (for instance, Webpack), you can import it as an ES6 module:
 
 ```js
 import { exportToSvg, exportToBlob } from "@excalidraw/utils";
@@ -39,8 +39,8 @@ To use it in a browser directly:
 ```html
 <script src="https://unpkg.com/@excalidraw/utils@0.1.0/dist/excalidraw-utils.min.js"></script>
 <script>
-  // ExcalidrawUtils is a global variable defined by excalidraw.min.js
-  const { exportToSvg, exportToBlob } = ExcalidrawUtils;
+  // DrawinkUtils is a global variable defined by excalidraw.min.js
+  const { exportToSvg, exportToBlob } = DrawinkUtils;
 </script>
 ```
 
@@ -82,11 +82,11 @@ const excalidrawDiagram = {
   },
 };
 
-// Export the Excalidraw diagram as SVG string
+// Export the Drawink diagram as SVG string
 const svg = exportToSvg(excalidrawDiagram);
 console.log(svg.outerHTML);
 
-// Export the Excalidraw diagram as PNG Blob URL
+// Export the Drawink diagram as PNG Blob URL
 (async () => {
   const blob = await exportToBlob({
     ...excalidrawDiagram,

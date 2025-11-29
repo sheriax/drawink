@@ -23,8 +23,8 @@ import {
 import type { TransformHandleType } from "./transformHandles";
 import type {
   ElementsMap,
-  ExcalidrawElement,
-  ExcalidrawImageElement,
+  DrawinkElement,
+  DrawinkImageElement,
   ImageCrop,
   NonDeleted,
 } from "./types";
@@ -32,7 +32,7 @@ import type {
 export const MINIMAL_CROP_SIZE = 10;
 
 export const cropElement = (
-  element: ExcalidrawImageElement,
+  element: DrawinkImageElement,
   elementsMap: ElementsMap,
   transformHandle: TransformHandleType,
   naturalWidth: number,
@@ -406,7 +406,7 @@ export const cropElement = (
 };
 
 const recomputeOrigin = (
-  stateAtCropStart: NonDeleted<ExcalidrawElement>,
+  stateAtCropStart: NonDeleted<DrawinkElement>,
   transformHandle: TransformHandleType,
   width: number,
   height: number,
@@ -477,7 +477,7 @@ const recomputeOrigin = (
 
 // refer to https://link.excalidraw.com/l/6rfy1007QOo/6stx5PmRn0k
 export const getUncroppedImageElement = (
-  element: ExcalidrawImageElement,
+  element: DrawinkImageElement,
   elementsMap: ElementsMap,
 ) => {
   if (element.crop) {
@@ -532,7 +532,7 @@ export const getUncroppedImageElement = (
       -element.angle as Radians,
     );
 
-    const uncroppedElement: ExcalidrawImageElement = {
+    const uncroppedElement: DrawinkImageElement = {
       ...element,
       x: unrotatedTopLeft[0],
       y: unrotatedTopLeft[1],
@@ -547,7 +547,7 @@ export const getUncroppedImageElement = (
   return element;
 };
 
-export const getUncroppedWidthAndHeight = (element: ExcalidrawImageElement) => {
+export const getUncroppedWidthAndHeight = (element: DrawinkImageElement) => {
   if (element.crop) {
     const width =
       element.width / (element.crop.width / element.crop.naturalWidth);
@@ -568,7 +568,7 @@ export const getUncroppedWidthAndHeight = (element: ExcalidrawImageElement) => {
 
 const adjustCropPosition = (
   crop: ImageCrop,
-  scale: ExcalidrawImageElement["scale"],
+  scale: DrawinkImageElement["scale"],
 ) => {
   let cropX = crop.x;
   let cropY = crop.y;
@@ -591,7 +591,7 @@ const adjustCropPosition = (
 };
 
 export const getFlipAdjustedCropPosition = (
-  element: ExcalidrawImageElement,
+  element: DrawinkImageElement,
   natural = false,
 ) => {
   const crop = element.crop;

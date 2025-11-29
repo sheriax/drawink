@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// ExcalidrawImageElement & related helpers
+// DrawinkImageElement & related helpers
 // -----------------------------------------------------------------------------
 
 import { MIME_TYPES, SVG_NS } from "@excalidraw/common";
@@ -13,9 +13,9 @@ import type {
 import { isInitializedImageElement } from "./typeChecks";
 
 import type {
-  ExcalidrawElement,
+  DrawinkElement,
   FileId,
-  InitializedExcalidrawImageElement,
+  InitializedDrawinkImageElement,
 } from "./types";
 
 export const loadHTMLImageElement = (dataURL: DataURL) => {
@@ -89,11 +89,11 @@ export const updateImageCache = async ({
 };
 
 export const getInitializedImageElements = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
 ) =>
   elements.filter((element) =>
     isInitializedImageElement(element),
-  ) as InitializedExcalidrawImageElement[];
+  ) as InitializedDrawinkImageElement[];
 
 export const isHTMLSVGElement = (node: Node | null): node is SVGElement => {
   // lower-casing due to XML/HTML convention differences

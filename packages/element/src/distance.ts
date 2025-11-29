@@ -18,16 +18,16 @@ import { elementCenterPoint } from "./bounds";
 
 import type {
   ElementsMap,
-  ExcalidrawDiamondElement,
-  ExcalidrawElement,
-  ExcalidrawEllipseElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawLinearElement,
-  ExcalidrawRectanguloidElement,
+  DrawinkDiamondElement,
+  DrawinkElement,
+  DrawinkEllipseElement,
+  DrawinkFreeDrawElement,
+  DrawinkLinearElement,
+  DrawinkRectanguloidElement,
 } from "./types";
 
 export const distanceToElement = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   elementsMap: ElementsMap,
   p: GlobalPoint,
 ): number => {
@@ -61,7 +61,7 @@ export const distanceToElement = (
  * @returns The eucledian distance to the outline of the rectanguloid element
  */
 const distanceToRectanguloidElement = (
-  element: ExcalidrawRectanguloidElement,
+  element: DrawinkRectanguloidElement,
   elementsMap: ElementsMap,
   p: GlobalPoint,
 ) => {
@@ -90,7 +90,7 @@ const distanceToRectanguloidElement = (
  * @returns The eucledian distance to the outline of the diamond
  */
 const distanceToDiamondElement = (
-  element: ExcalidrawDiamondElement,
+  element: DrawinkDiamondElement,
   elementsMap: ElementsMap,
   p: GlobalPoint,
 ): number => {
@@ -119,7 +119,7 @@ const distanceToDiamondElement = (
  * @returns The eucledian distance to the outline of the ellipse
  */
 const distanceToEllipseElement = (
-  element: ExcalidrawEllipseElement,
+  element: DrawinkEllipseElement,
   elementsMap: ElementsMap,
   p: GlobalPoint,
 ): number => {
@@ -132,7 +132,7 @@ const distanceToEllipseElement = (
 };
 
 const distanceToLinearOrFreeDraElement = (
-  element: ExcalidrawLinearElement | ExcalidrawFreeDrawElement,
+  element: DrawinkLinearElement | DrawinkFreeDrawElement,
   p: GlobalPoint,
 ) => {
   const [lines, curves] = deconstructLinearOrFreeDrawElement(element);

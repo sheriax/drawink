@@ -1,6 +1,7 @@
 {
-  "name": "@excalidraw/common",
+  "name": "@drawink/common",
   "version": "0.18.0",
+  "private": true,
   "type": "module",
   "types": "./dist/types/common/src/index.d.ts",
   "main": "./dist/prod/index.js",
@@ -22,14 +23,10 @@
   "files": [
     "dist/*"
   ],
-  "description": "Excalidraw common functions, constants, etc.",
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT",
+  "description": "Drawink common functions, constants, etc.",
   "keywords": [
-    "excalidraw",
-    "excalidraw-utils"
+    "drawink",
+    "drawink-utils"
   ],
   "browserslist": {
     "production": [
@@ -50,8 +47,6 @@
       "last 1 safari version"
     ]
   },
-  "bugs": "https://github.com/excalidraw/excalidraw/issues",
-  "repository": "https://github.com/excalidraw/excalidraw",
   "scripts": {
     "gen:types": "rimraf types && tsc",
     "build:esm": "rimraf dist && node ../../scripts/buildBase.js && yarn gen:types"

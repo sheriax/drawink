@@ -1,6 +1,7 @@
 {
-  "name": "@excalidraw/element",
+  "name": "@drawink/element",
   "version": "0.18.0",
+  "private": true,
   "type": "module",
   "types": "./dist/types/element/src/index.d.ts",
   "main": "./dist/prod/index.js",
@@ -22,14 +23,10 @@
   "files": [
     "dist/*"
   ],
-  "description": "Excalidraw elements-related logic",
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT",
+  "description": "Drawink elements-related logic",
   "keywords": [
-    "excalidraw",
-    "excalidraw-utils"
+    "drawink",
+    "drawink-utils"
   ],
   "browserslist": {
     "production": [
@@ -50,14 +47,12 @@
       "last 1 safari version"
     ]
   },
-  "bugs": "https://github.com/excalidraw/excalidraw/issues",
-  "repository": "https://github.com/excalidraw/excalidraw",
   "scripts": {
     "gen:types": "rimraf types && tsc",
     "build:esm": "rimraf dist && node ../../scripts/buildBase.js && yarn gen:types"
   },
   "dependencies": {
-    "@excalidraw/common": "0.18.0",
-    "@excalidraw/math": "0.18.0"
+    "@drawink/common": "0.18.0",
+    "@drawink/math": "0.18.0"
   }
 }

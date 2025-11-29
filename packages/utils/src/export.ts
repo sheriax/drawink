@@ -14,8 +14,8 @@ import {
 } from "@excalidraw/excalidraw/scene/export";
 
 import type {
-  ExcalidrawElement,
-  ExcalidrawFrameLikeElement,
+  DrawinkElement,
+  DrawinkFrameLikeElement,
   NonDeleted,
 } from "@excalidraw/element/types";
 import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
@@ -23,11 +23,11 @@ import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
 export { MIME_TYPES };
 
 type ExportOpts = {
-  elements: readonly NonDeleted<ExcalidrawElement>[];
+  elements: readonly NonDeleted<DrawinkElement>[];
   appState?: Partial<Omit<AppState, "offsetTop" | "offsetLeft">>;
   files: BinaryFiles | null;
   maxWidthOrHeight?: number;
-  exportingFrame?: ExcalidrawFrameLikeElement | null;
+  exportingFrame?: DrawinkFrameLikeElement | null;
   getDimensions?: (
     width: number,
     height: number,

@@ -8,7 +8,7 @@ import type { AppProps, AppState } from "@excalidraw/excalidraw/types";
 
 import { elementsAreInSameGroup } from "./groups";
 
-import type { ExcalidrawElement } from "./types";
+import type { DrawinkElement } from "./types";
 
 export const defaultGetElementLinkFromSelection: Exclude<
   AppProps["generateLinkForSelection"],
@@ -29,7 +29,7 @@ export const defaultGetElementLinkFromSelection: Exclude<
 };
 
 export const getLinkIdAndTypeFromSelection = (
-  selectedElements: ExcalidrawElement[],
+  selectedElements: DrawinkElement[],
   appState: AppState,
 ): {
   id: string;
@@ -66,7 +66,7 @@ export const getLinkIdAndTypeFromSelection = (
 };
 
 export const canCreateLinkFromElements = (
-  selectedElements: ExcalidrawElement[],
+  selectedElements: DrawinkElement[],
 ) => {
   if (selectedElements.length === 1) {
     return true;

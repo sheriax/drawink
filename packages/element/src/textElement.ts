@@ -35,17 +35,17 @@ import type { Scene } from "./Scene";
 import type { MaybeTransformHandleType } from "./transformHandles";
 import type {
   ElementsMap,
-  ExcalidrawElement,
-  ExcalidrawElementType,
-  ExcalidrawTextContainer,
-  ExcalidrawTextElement,
-  ExcalidrawTextElementWithContainer,
-  NonDeletedExcalidrawElement,
+  DrawinkElement,
+  DrawinkElementType,
+  DrawinkTextContainer,
+  DrawinkTextElement,
+  DrawinkTextElementWithContainer,
+  NonDeletedDrawinkElement,
 } from "./types";
 
 export const redrawTextBoundingBox = (
-  textElement: ExcalidrawTextElement,
-  container: ExcalidrawElement | null,
+  textElement: DrawinkTextElement,
+  container: DrawinkElement | null,
   scene: Scene,
 ) => {
   const elementsMap = scene.getNonDeletedElementsMap();
@@ -100,7 +100,7 @@ export const redrawTextBoundingBox = (
   if (container) {
     const maxContainerHeight = getBoundTextMaxHeight(
       container,
-      textElement as ExcalidrawTextElementWithContainer,
+      textElement as DrawinkTextElementWithContainer,
     );
     const maxContainerWidth = getBoundTextMaxWidth(container, textElement);
 
@@ -124,7 +124,7 @@ export const redrawTextBoundingBox = (
     const updatedTextElement = {
       ...textElement,
       ...boundTextUpdates,
-    } as ExcalidrawTextElementWithContainer;
+    } as DrawinkTextElementWithContainer;
 
     const { x, y } = computeBoundTextPosition(
       container,
@@ -140,7 +140,7 @@ export const redrawTextBoundingBox = (
 };
 
 export const handleBindTextResize = (
-  container: NonDeletedExcalidrawElement,
+  container: NonDeletedDrawinkElement,
   scene: Scene,
   transformHandleType: MaybeTransformHandleType,
   shouldMaintainAspectRatio = false,
@@ -220,8 +220,8 @@ export const handleBindTextResize = (
 };
 
 export const computeBoundTextPosition = (
-  container: ExcalidrawElement,
-  boundTextElement: ExcalidrawTextElementWithContainer,
+  container: DrawinkElement,
+  boundTextElement: DrawinkTextElementWithContainer,
   elementsMap: ElementsMap,
 ) => {
   if (isArrowElement(container)) {
@@ -277,14 +277,14 @@ export const computeBoundTextPosition = (
   return { x, y };
 };
 
-export const getBoundTextElementId = (container: ExcalidrawElement | null) => {
+export const getBoundTextElementId = (container: DrawinkElement | null) => {
   return container?.boundElements?.length
     ? container?.boundElements?.find((ele) => ele.type === "text")?.id || null
     : null;
 };
 
 export const getBoundTextElement = (
-  element: ExcalidrawElement | null,
+  element: DrawinkElement | null,
   elementsMap: ElementsMap,
 ) => {
   if (!element) {
@@ -294,27 +294,27 @@ export const getBoundTextElement = (
 
   if (boundTextElementId) {
     return (elementsMap.get(boundTextElementId) ||
-      null) as ExcalidrawTextElementWithContainer | null;
+      null) as DrawinkTextElementWithContainer | null;
   }
   return null;
 };
 
 export const getContainerElement = (
-  element: ExcalidrawTextElement | null,
+  element: DrawinkTextElement | null,
   elementsMap: ElementsMap,
-): ExcalidrawTextContainer | null => {
+): DrawinkTextContainer | null => {
   if (!element) {
     return null;
   }
   if (element.containerId) {
     return (elementsMap.get(element.containerId) ||
-      null) as ExcalidrawTextContainer | null;
+      null) as DrawinkTextContainer | null;
   }
   return null;
 };
 
 export const getContainerCenter = (
-  container: ExcalidrawElement,
+  container: DrawinkElement,
   appState: AppState,
   elementsMap: ElementsMap,
 ) => {
@@ -352,7 +352,7 @@ export const getContainerCenter = (
   return { x: midSegmentMidpoint[0], y: midSegmentMidpoint[1] };
 };
 
-export const getContainerCoords = (container: NonDeletedExcalidrawElement) => {
+export const getContainerCoords = (container: NonDeletedDrawinkElement) => {
   let offsetX = BOUND_TEXT_PADDING;
   let offsetY = BOUND_TEXT_PADDING;
 
@@ -373,8 +373,8 @@ export const getContainerCoords = (container: NonDeletedExcalidrawElement) => {
 };
 
 export const getTextElementAngle = (
-  textElement: ExcalidrawTextElement,
-  container: ExcalidrawTextContainer | null,
+  textElement: DrawinkTextElement,
+  container: DrawinkTextContainer | null,
 ) => {
   if (isArrowElement(container)) {
     return 0;
@@ -386,8 +386,8 @@ export const getTextElementAngle = (
 };
 
 export const getBoundTextElementPosition = (
-  container: ExcalidrawElement,
-  boundTextElement: ExcalidrawTextElementWithContainer,
+  container: DrawinkElement,
+  boundTextElement: DrawinkTextElementWithContainer,
   elementsMap: ElementsMap,
 ) => {
   if (isArrowElement(container)) {
@@ -400,7 +400,7 @@ export const getBoundTextElementPosition = (
 };
 
 export const shouldAllowVerticalAlign = (
-  selectedElements: NonDeletedExcalidrawElement[],
+  selectedElements: NonDeletedDrawinkElement[],
   elementsMap: ElementsMap,
 ) => {
   return selectedElements.some((element) => {
@@ -416,7 +416,7 @@ export const shouldAllowVerticalAlign = (
 };
 
 export const suppportsHorizontalAlign = (
-  selectedElements: NonDeletedExcalidrawElement[],
+  selectedElements: NonDeletedDrawinkElement[],
   elementsMap: ElementsMap,
 ) => {
   return selectedElements.some((element) => {
@@ -440,7 +440,7 @@ const VALID_CONTAINER_TYPES = new Set([
 ]);
 
 export const isValidTextContainer = (element: {
-  type: ExcalidrawElementType;
+  type: DrawinkElementType;
 }) => VALID_CONTAINER_TYPES.has(element.type);
 
 export const computeContainerDimensionForBoundText = (
@@ -463,8 +463,8 @@ export const computeContainerDimensionForBoundText = (
 };
 
 export const getBoundTextMaxWidth = (
-  container: ExcalidrawElement,
-  boundTextElement: ExcalidrawTextElement | null,
+  container: DrawinkElement,
+  boundTextElement: DrawinkTextElement | null,
 ) => {
   const { width } = container;
   if (isArrowElement(container)) {
@@ -488,8 +488,8 @@ export const getBoundTextMaxWidth = (
 };
 
 export const getBoundTextMaxHeight = (
-  container: ExcalidrawElement,
-  boundTextElement: ExcalidrawTextElementWithContainer,
+  container: DrawinkElement,
+  boundTextElement: DrawinkTextElementWithContainer,
 ) => {
   const { height } = container;
   if (isArrowElement(container)) {
@@ -515,7 +515,7 @@ export const getBoundTextMaxHeight = (
 
 /** retrieves text from text elements and concatenates to a single string */
 export const getTextFromElements = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
   separator = "\n\n",
 ) => {
   const text = elements

@@ -1,6 +1,6 @@
 import {
-  convertToExcalidrawElements,
-  Excalidraw,
+  convertToDrawinkElements,
+  Drawink,
 } from "@excalidraw/excalidraw";
 
 import { API } from "@excalidraw/excalidraw/tests/helpers/api";
@@ -10,7 +10,7 @@ import {
   render,
 } from "@excalidraw/excalidraw/tests/test-utils";
 
-import type { ExcalidrawElement } from "../src/types";
+import type { DrawinkElement } from "../src/types";
 
 const { h } = window;
 const mouse = new Pointer("mouse");
@@ -35,8 +35,8 @@ describe("adding elements to frames", () => {
   };
 
   function resizeFrameOverElement(
-    frame: ExcalidrawElement,
-    element: ExcalidrawElement,
+    frame: DrawinkElement,
+    element: DrawinkElement,
   ) {
     mouse.clickAt(0, 0);
     mouse.downAt(frame.x + frame.width, frame.y + frame.height);
@@ -48,8 +48,8 @@ describe("adding elements to frames", () => {
   }
 
   function dragElementIntoFrame(
-    frame: ExcalidrawElement,
-    element: ExcalidrawElement,
+    frame: DrawinkElement,
+    element: DrawinkElement,
   ) {
     mouse.clickAt(element.x, element.y);
     mouse.downAt(element.x + element.width / 2, element.y + element.height / 2);
@@ -58,7 +58,7 @@ describe("adding elements to frames", () => {
   }
 
   function selectElementAndDuplicate(
-    element: ExcalidrawElement,
+    element: DrawinkElement,
     moveTo: [number, number] = [element.x + 25, element.y + 25],
   ) {
     const [x, y] = [
@@ -73,20 +73,20 @@ describe("adding elements to frames", () => {
     });
   }
 
-  function expectEqualIds(expected: ExcalidrawElement[]) {
+  function expectEqualIds(expected: DrawinkElement[]) {
     expect(h.elements.map((x) => x.id)).toEqual(expected.map((x) => x.id));
   }
 
-  let frame: ExcalidrawElement;
-  let rect1: ExcalidrawElement;
-  let rect2: ExcalidrawElement;
-  let rect3: ExcalidrawElement;
-  let rect4: ExcalidrawElement;
-  let text: ExcalidrawElement;
-  let arrow: ExcalidrawElement;
+  let frame: DrawinkElement;
+  let rect1: DrawinkElement;
+  let rect2: DrawinkElement;
+  let rect3: DrawinkElement;
+  let rect4: DrawinkElement;
+  let text: DrawinkElement;
+  let arrow: DrawinkElement;
 
   beforeEach(async () => {
-    await render(<Excalidraw />);
+    await render(<Drawink />);
 
     frame = API.createElement({ id: "id0", type: "frame", x: 0, width: 150 });
     rect1 = API.createElement({
@@ -257,7 +257,7 @@ describe("adding elements to frames", () => {
     initialOrder: ElementType[],
     expectedOrder: ElementType[],
   ) => {
-    await render(<Excalidraw />);
+    await render(<Drawink />);
 
     const frame = API.createElement({ type: "frame", x: 0, y: 0 });
 
@@ -265,7 +265,7 @@ describe("adding elements to frames", () => {
       reorderElements(
         [
           frame,
-          ...convertToExcalidrawElements([
+          ...convertToDrawinkElements([
             {
               type: containerType,
               x: 100,

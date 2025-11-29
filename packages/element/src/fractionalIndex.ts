@@ -8,9 +8,9 @@ import { hasBoundTextElement } from "./typeChecks";
 
 import type {
   ElementsMap,
-  ExcalidrawElement,
+  DrawinkElement,
   FractionalIndex,
-  OrderedExcalidrawElement,
+  OrderedDrawinkElement,
   SceneElementsMap,
 } from "./types";
 
@@ -41,7 +41,7 @@ export class InvalidFractionalIndexError extends Error {
  * @throws `InvalidFractionalIndexError` if invalid index is detected.
  */
 export const validateFractionalIndices = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
   {
     shouldThrow = false,
     includeBoundTextValidation = false,
@@ -52,13 +52,13 @@ export const validateFractionalIndices = (
     includeBoundTextValidation: boolean;
     ignoreLogs?: true;
     reconciliationContext?: {
-      localElements: ReadonlyArray<ExcalidrawElement>;
-      remoteElements: ReadonlyArray<ExcalidrawElement>;
+      localElements: ReadonlyArray<DrawinkElement>;
+      remoteElements: ReadonlyArray<DrawinkElement>;
     };
   },
 ) => {
   const errorMessages = [];
-  const stringifyElement = (element: ExcalidrawElement | void) =>
+  const stringifyElement = (element: DrawinkElement | void) =>
     `${element?.index}:${element?.id}:${element?.type}:${element?.isDeleted}:${element?.version}:${element?.versionNonce}`;
 
   const indices = elements.map((x) => x.index);
@@ -128,7 +128,7 @@ export const validateFractionalIndices = (
  * - when there is no fractional index in one of the elements, respect the order of the array
  */
 export const orderByFractionalIndex = (
-  elements: OrderedExcalidrawElement[],
+  elements: OrderedDrawinkElement[],
 ) => {
   return elements.sort((a, b) => {
     // in case the indices are not the defined at runtime
@@ -153,9 +153,9 @@ export const orderByFractionalIndex = (
  * If the synchronization fails or the result is invalid, it fallbacks to `syncInvalidIndices`.
  */
 export const syncMovedIndices = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
   movedElements: ElementsMap,
-): OrderedExcalidrawElement[] => {
+): OrderedDrawinkElement[] => {
   try {
     const elementsMap = arrayToMap(elements);
     const indicesGroups = getMovedIndicesGroups(elements, movedElements);
@@ -192,7 +192,7 @@ export const syncMovedIndices = (
     syncInvalidIndices(elements);
   }
 
-  return elements as OrderedExcalidrawElement[];
+  return elements as OrderedDrawinkElement[];
 };
 
 /**
@@ -201,8 +201,8 @@ export const syncMovedIndices = (
  * WARN: in edge cases it could modify the elements which were not moved, as it's impossible to guess the actually moved elements from the elements array itself.
  */
 export const syncInvalidIndices = (
-  elements: readonly ExcalidrawElement[],
-): OrderedExcalidrawElement[] => {
+  elements: readonly DrawinkElement[],
+): OrderedDrawinkElement[] => {
   const elementsMap = arrayToMap(elements);
   const indicesGroups = getInvalidIndicesGroups(elements);
   const elementsUpdates = generateIndices(elements, indicesGroups);
@@ -211,7 +211,7 @@ export const syncInvalidIndices = (
     mutateElement(element, elementsMap, { index });
   }
 
-  return elements as OrderedExcalidrawElement[];
+  return elements as OrderedDrawinkElement[];
 };
 
 /**
@@ -220,7 +220,7 @@ export const syncInvalidIndices = (
  * WARN: in edge cases it could modify the elements which were not moved, as it's impossible to guess the actually moved elements from the elements array itself.
  */
 export const syncInvalidIndicesImmutable = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
 ): SceneElementsMap | undefined => {
   const syncedElements = arrayToMap(elements);
   const indicesGroups = getInvalidIndicesGroups(elements);
@@ -239,7 +239,7 @@ export const syncInvalidIndicesImmutable = (
  * NOTE: First and last elements within the groups are indices of lower and upper bounds.
  */
 const getMovedIndicesGroups = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
   movedElements: ElementsMap,
 ) => {
   const indicesGroups: number[][] = [];
@@ -273,19 +273,19 @@ const getMovedIndicesGroups = (
  *
  * WARN: First and last items within the groups do NOT have to be contiguous, those are the found lower and upper bounds!
  */
-const getInvalidIndicesGroups = (elements: readonly ExcalidrawElement[]) => {
+const getInvalidIndicesGroups = (elements: readonly DrawinkElement[]) => {
   const indicesGroups: number[][] = [];
 
   // once we find lowerBound / upperBound, it cannot be lower than that, so we cache it for better perf.
-  let lowerBound: ExcalidrawElement["index"] | undefined = undefined;
-  let upperBound: ExcalidrawElement["index"] | undefined = undefined;
+  let lowerBound: DrawinkElement["index"] | undefined = undefined;
+  let upperBound: DrawinkElement["index"] | undefined = undefined;
   let lowerBoundIndex: number = -1;
   let upperBoundIndex: number = 0;
 
   /** @returns maybe valid lowerBound */
   const getLowerBound = (
     index: number,
-  ): [ExcalidrawElement["index"] | undefined, number] => {
+  ): [DrawinkElement["index"] | undefined, number] => {
     const lowerBound = elements[lowerBoundIndex]
       ? elements[lowerBoundIndex].index
       : undefined;
@@ -308,7 +308,7 @@ const getInvalidIndicesGroups = (elements: readonly ExcalidrawElement[]) => {
   /** @returns always valid upperBound */
   const getUpperBound = (
     index: number,
-  ): [ExcalidrawElement["index"] | undefined, number] => {
+  ): [DrawinkElement["index"] | undefined, number] => {
     const upperBound = elements[upperBoundIndex]
       ? elements[upperBoundIndex].index
       : undefined;
@@ -374,9 +374,9 @@ const getInvalidIndicesGroups = (elements: readonly ExcalidrawElement[]) => {
 };
 
 const isValidFractionalIndex = (
-  index: ExcalidrawElement["index"] | undefined,
-  predecessor: ExcalidrawElement["index"] | undefined,
-  successor: ExcalidrawElement["index"] | undefined,
+  index: DrawinkElement["index"] | undefined,
+  predecessor: DrawinkElement["index"] | undefined,
+  successor: DrawinkElement["index"] | undefined,
 ) => {
   if (!index) {
     return false;
@@ -401,11 +401,11 @@ const isValidFractionalIndex = (
 };
 
 const generateIndices = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
   indicesGroups: number[][],
 ) => {
   const elementsUpdates = new Map<
-    ExcalidrawElement,
+    DrawinkElement,
     { index: FractionalIndex }
   >();
 
@@ -432,8 +432,8 @@ const generateIndices = (
 };
 
 const isOrderedElement = (
-  element: ExcalidrawElement,
-): element is OrderedExcalidrawElement => {
+  element: DrawinkElement,
+): element is OrderedDrawinkElement => {
   // for now it's sufficient whether the index is there
   // meaning, the element was already ordered in the past
   // meaning, it is not a newly inserted element, not an unrestored element, etc.

@@ -70,16 +70,16 @@ import type {
   TransformHandleDirection,
 } from "./transformHandles";
 import type {
-  ExcalidrawLinearElement,
-  ExcalidrawTextElement,
-  NonDeletedExcalidrawElement,
+  DrawinkLinearElement,
+  DrawinkTextElement,
+  NonDeletedDrawinkElement,
   NonDeleted,
-  ExcalidrawElement,
-  ExcalidrawTextElementWithContainer,
-  ExcalidrawImageElement,
+  DrawinkElement,
+  DrawinkTextElementWithContainer,
+  DrawinkImageElement,
   ElementsMap,
-  ExcalidrawElbowArrowElement,
-  ExcalidrawArrowElement,
+  DrawinkElbowArrowElement,
+  DrawinkArrowElement,
 } from "./types";
 import type { ElementUpdate } from "./mutateElement";
 
@@ -87,7 +87,7 @@ import type { ElementUpdate } from "./mutateElement";
 export const transformElements = (
   originalElements: PointerDownState["originalElements"],
   transformHandleType: MaybeTransformHandleType,
-  selectedElements: readonly NonDeletedExcalidrawElement[],
+  selectedElements: readonly NonDeletedDrawinkElement[],
   scene: Scene,
   shouldRotateWithDiscreteAngle: boolean,
   shouldResizeFromCenter: boolean,
@@ -201,7 +201,7 @@ export const transformElements = (
 };
 
 const rotateSingleElement = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   scene: Scene,
   pointerX: number,
   pointerY: number,
@@ -227,14 +227,14 @@ const rotateSingleElement = (
   }
   const boundTextElementId = getBoundTextElementId(element);
 
-  let update: ElementUpdate<NonDeletedExcalidrawElement> = {
+  let update: ElementUpdate<NonDeletedDrawinkElement> = {
     angle,
   };
 
   if (isBindingElement(element)) {
     update = {
       ...update,
-    } as ElementUpdate<ExcalidrawArrowElement>;
+    } as ElementUpdate<DrawinkArrowElement>;
 
     if (element.startBinding) {
       unbindBindingElement(element, "start", scene);
@@ -248,7 +248,7 @@ const rotateSingleElement = (
 
   if (boundTextElementId) {
     const textElement =
-      scene.getElement<ExcalidrawTextElementWithContainer>(boundTextElementId);
+      scene.getElement<DrawinkTextElementWithContainer>(boundTextElementId);
 
     if (textElement && !isArrowElement(element)) {
       const { x, y } = computeBoundTextPosition(
@@ -266,7 +266,7 @@ const rotateSingleElement = (
 };
 
 export const rescalePointsInElement = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   width: number,
   height: number,
   normalizePoints: boolean,
@@ -283,7 +283,7 @@ export const rescalePointsInElement = (
     : {};
 
 export const measureFontSizeFromWidth = (
-  element: NonDeleted<ExcalidrawTextElement>,
+  element: NonDeleted<DrawinkTextElement>,
   elementsMap: ElementsMap,
   nextWidth: number,
 ): { size: number } | null => {
@@ -308,8 +308,8 @@ export const measureFontSizeFromWidth = (
 };
 
 export const resizeSingleTextElement = (
-  origElement: NonDeleted<ExcalidrawTextElement>,
-  element: NonDeleted<ExcalidrawTextElement>,
+  origElement: NonDeleted<DrawinkTextElement>,
+  element: NonDeleted<DrawinkTextElement>,
   scene: Scene,
   transformHandleType: TransformHandleDirection,
   shouldResizeFromCenter: boolean,
@@ -388,7 +388,7 @@ export const resizeSingleTextElement = (
       shouldResizeFromCenter,
     );
 
-    const resizedElement: Partial<ExcalidrawTextElement> = {
+    const resizedElement: Partial<DrawinkTextElement> = {
       width: Math.abs(newWidth),
       height: Math.abs(metrics.height),
       x: newOrigin.x,
@@ -403,7 +403,7 @@ export const resizeSingleTextElement = (
 
 const rotateMultipleElements = (
   originalElements: PointerDownState["originalElements"],
-  elements: readonly NonDeletedExcalidrawElement[],
+  elements: readonly NonDeletedDrawinkElement[],
   scene: Scene,
   pointerX: number,
   pointerY: number,
@@ -420,8 +420,8 @@ const rotateMultipleElements = (
   }
 
   const rotatedElementsMap = new Map<
-    ExcalidrawElement["id"],
-    NonDeletedExcalidrawElement
+    DrawinkElement["id"],
+    NonDeletedDrawinkElement
   >(elements.map((element) => [element.id, element]));
 
   for (const element of elements) {
@@ -489,7 +489,7 @@ const rotateMultipleElements = (
 
 export const getResizeOffsetXY = (
   transformHandleType: MaybeTransformHandleType,
-  selectedElements: NonDeletedExcalidrawElement[],
+  selectedElements: NonDeletedDrawinkElement[],
   elementsMap: ElementsMap,
   x: number,
   y: number,
@@ -548,7 +548,7 @@ export const getResizeOffsetXY = (
 
 export const getResizeArrowDirection = (
   transformHandleType: MaybeTransformHandleType,
-  element: NonDeleted<ExcalidrawLinearElement>,
+  element: NonDeleted<DrawinkLinearElement>,
 ): "origin" | "end" => {
   const [, [px, py]] = element.points;
   const isResizeEnd =
@@ -722,8 +722,8 @@ const getResizedOrigin = (
 export const resizeSingleElement = (
   nextWidth: number,
   nextHeight: number,
-  latestElement: ExcalidrawElement,
-  origElement: ExcalidrawElement,
+  latestElement: DrawinkElement,
+  origElement: DrawinkElement,
   originalElementsMap: ElementsMap,
   scene: Scene,
   handleDirection: TransformHandleDirection,
@@ -878,7 +878,7 @@ export const resizeSingleElement = (
     Number.isFinite(newOrigin.x) &&
     Number.isFinite(newOrigin.y)
   ) {
-    let updates: ElementUpdate<ExcalidrawElement> = {
+    let updates: ElementUpdate<DrawinkElement> = {
       ...newOrigin,
       width: Math.abs(nextWidth),
       height: Math.abs(nextHeight),
@@ -889,7 +889,7 @@ export const resizeSingleElement = (
       if (latestElement.startBinding) {
         updates = {
           ...updates,
-        } as ElementUpdate<ExcalidrawArrowElement>;
+        } as ElementUpdate<DrawinkArrowElement>;
 
         if (latestElement.startBinding) {
           unbindBindingElement(latestElement, "start", scene);
@@ -900,7 +900,7 @@ export const resizeSingleElement = (
         updates = {
           ...updates,
           endBinding: null,
-        } as ElementUpdate<ExcalidrawArrowElement>;
+        } as ElementUpdate<DrawinkArrowElement>;
       }
     }
 
@@ -926,8 +926,8 @@ export const resizeSingleElement = (
 };
 
 const getNextSingleWidthAndHeightFromPointer = (
-  latestElement: ExcalidrawElement,
-  origElement: ExcalidrawElement,
+  latestElement: DrawinkElement,
+  origElement: DrawinkElement,
   handleDirection: TransformHandleDirection,
   pointerX: number,
   pointerY: number,
@@ -1020,7 +1020,7 @@ const getNextSingleWidthAndHeightFromPointer = (
 };
 
 const getNextMultipleWidthAndHeightFromPointer = (
-  selectedElements: readonly NonDeletedExcalidrawElement[],
+  selectedElements: readonly NonDeletedDrawinkElement[],
   originalElementsMap: ElementsMap,
   elementsMap: ElementsMap,
   handleDirection: TransformHandleDirection,
@@ -1065,7 +1065,7 @@ const getNextMultipleWidthAndHeightFromPointer = (
         ),
       },
     ];
-  }, [] as ExcalidrawTextElementWithContainer[]);
+  }, [] as DrawinkTextElementWithContainer[]);
 
   const originalBoundingBox = getCommonBoundingBox(
     originalElementsArray.map((orig) => orig).concat(boundTextElements),
@@ -1147,7 +1147,7 @@ const getNextMultipleWidthAndHeightFromPointer = (
 };
 
 export const resizeMultipleElements = (
-  selectedElements: readonly NonDeletedExcalidrawElement[],
+  selectedElements: readonly NonDeletedDrawinkElement[],
   elementsMap: ElementsMap,
   handleDirection: TransformHandleDirection,
   scene: Scene,
@@ -1194,9 +1194,9 @@ export const resizeMultipleElements = (
     (
       acc: {
         /** element at resize start */
-        orig: NonDeletedExcalidrawElement;
+        orig: NonDeletedDrawinkElement;
         /** latest element */
-        latest: NonDeletedExcalidrawElement;
+        latest: NonDeletedDrawinkElement;
       }[],
       element,
     ) => {
@@ -1237,7 +1237,7 @@ export const resizeMultipleElements = (
           ),
         },
       ];
-    }, [] as ExcalidrawTextElementWithContainer[]);
+    }, [] as DrawinkTextElementWithContainer[]);
 
     boundingBox = getCommonBoundingBox(
       targetElements.map(({ orig }) => orig).concat(boundTextElements),
@@ -1328,17 +1328,17 @@ export const resizeMultipleElements = (
     const [flipFactorX, flipFactorY] = [flipByX ? -1 : 1, flipByY ? -1 : 1];
 
     const elementsAndUpdates: {
-      element: NonDeletedExcalidrawElement;
+      element: NonDeletedDrawinkElement;
       update: Mutable<
-        Pick<ExcalidrawElement, "x" | "y" | "width" | "height" | "angle">
+        Pick<DrawinkElement, "x" | "y" | "width" | "height" | "angle">
       > & {
-        points?: ExcalidrawLinearElement["points"];
-        fontSize?: ExcalidrawTextElement["fontSize"];
-        scale?: ExcalidrawImageElement["scale"];
-        boundTextFontSize?: ExcalidrawTextElement["fontSize"];
-        startBinding?: ExcalidrawElbowArrowElement["startBinding"];
-        endBinding?: ExcalidrawElbowArrowElement["endBinding"];
-        fixedSegments?: ExcalidrawElbowArrowElement["fixedSegments"];
+        points?: DrawinkLinearElement["points"];
+        fontSize?: DrawinkTextElement["fontSize"];
+        scale?: DrawinkImageElement["scale"];
+        boundTextFontSize?: DrawinkTextElement["fontSize"];
+        startBinding?: DrawinkElbowArrowElement["startBinding"];
+        endBinding?: DrawinkElbowArrowElement["endBinding"];
+        fixedSegments?: DrawinkElbowArrowElement["fixedSegments"];
       };
     }[] = [];
 
@@ -1434,7 +1434,7 @@ export const resizeMultipleElements = (
 
       const boundTextElement = originalElementsMap.get(
         getBoundTextElementId(orig) ?? "",
-      ) as ExcalidrawTextElementWithContainer | undefined;
+      ) as DrawinkTextElementWithContainer | undefined;
 
       if (boundTextElement) {
         if (keepAspectRatio) {
@@ -1456,8 +1456,8 @@ export const resizeMultipleElements = (
 
     const elementsToUpdate = elementsAndUpdates.map(({ element }) => element);
     const resizedElementsMap = new Map<
-      ExcalidrawElement["id"],
-      NonDeletedExcalidrawElement
+      DrawinkElement["id"],
+      NonDeletedDrawinkElement
     >(elementsAndUpdates.map(({ element }) => [element.id, element]));
 
     for (const {

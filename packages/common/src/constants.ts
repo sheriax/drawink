@@ -1,5 +1,5 @@
 import type {
-  ExcalidrawElement,
+  DrawinkElement,
   FontFamilyValues,
 } from "@excalidraw/element/types";
 import type { AppProps, AppState } from "@excalidraw/excalidraw/types";
@@ -9,7 +9,7 @@ import { COLOR_PALETTE } from "./colors";
 export const supportsResizeObserver =
   typeof window !== "undefined" && "ResizeObserver" in window;
 
-export const APP_NAME = "Excalidraw";
+export const APP_NAME = "Drawink";
 
 // distance when creating text before it's considered `autoResize: false`
 // we're using higher threshold so that clicks that end up being drags
@@ -184,13 +184,13 @@ export const THEME = {
 } as const;
 
 export const FRAME_STYLE = {
-  strokeColor: "#bbb" as ExcalidrawElement["strokeColor"],
-  strokeWidth: 2 as ExcalidrawElement["strokeWidth"],
-  strokeStyle: "solid" as ExcalidrawElement["strokeStyle"],
-  fillStyle: "solid" as ExcalidrawElement["fillStyle"],
-  roughness: 0 as ExcalidrawElement["roughness"],
-  roundness: null as ExcalidrawElement["roundness"],
-  backgroundColor: "transparent" as ExcalidrawElement["backgroundColor"],
+  strokeColor: "#bbb" as DrawinkElement["strokeColor"],
+  strokeWidth: 2 as DrawinkElement["strokeWidth"],
+  strokeStyle: "solid" as DrawinkElement["strokeStyle"],
+  fillStyle: "solid" as DrawinkElement["fillStyle"],
+  roughness: 0 as DrawinkElement["roughness"],
+  roundness: null as DrawinkElement["roundness"],
+  backgroundColor: "transparent" as DrawinkElement["backgroundColor"],
   radius: 8,
   nameOffsetY: 3,
   nameColorLightTheme: "#999999",
@@ -402,14 +402,14 @@ export const STROKE_WIDTH = {
 } as const;
 
 export const DEFAULT_ELEMENT_PROPS: {
-  strokeColor: ExcalidrawElement["strokeColor"];
-  backgroundColor: ExcalidrawElement["backgroundColor"];
-  fillStyle: ExcalidrawElement["fillStyle"];
-  strokeWidth: ExcalidrawElement["strokeWidth"];
-  strokeStyle: ExcalidrawElement["strokeStyle"];
-  roughness: ExcalidrawElement["roughness"];
-  opacity: ExcalidrawElement["opacity"];
-  locked: ExcalidrawElement["locked"];
+  strokeColor: DrawinkElement["strokeColor"];
+  backgroundColor: DrawinkElement["backgroundColor"];
+  fillStyle: DrawinkElement["fillStyle"];
+  strokeWidth: DrawinkElement["strokeWidth"];
+  strokeStyle: DrawinkElement["strokeStyle"];
+  roughness: DrawinkElement["roughness"];
+  opacity: DrawinkElement["opacity"];
+  locked: DrawinkElement["locked"];
 } = {
   strokeColor: COLOR_PALETTE.black,
   backgroundColor: COLOR_PALETTE.transparent,

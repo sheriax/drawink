@@ -5,7 +5,7 @@ import {
   getFontString,
 } from "@excalidraw/common";
 
-import type { ExcalidrawProps } from "@excalidraw/excalidraw/types";
+import type { DrawinkProps } from "@excalidraw/excalidraw/types";
 import type { MarkRequired } from "@excalidraw/common/utility-types";
 
 import { newTextElement } from "./newElement";
@@ -13,8 +13,8 @@ import { wrapText } from "./textWrapping";
 import { isIframeElement } from "./typeChecks";
 
 import type {
-  ExcalidrawElement,
-  ExcalidrawIframeLikeElement,
+  DrawinkElement,
+  DrawinkIframeLikeElement,
   IframeData,
 } from "./types";
 
@@ -323,8 +323,8 @@ export const getEmbedLink = (
 };
 
 export const createPlaceholderEmbeddableLabel = (
-  element: ExcalidrawIframeLikeElement,
-): ExcalidrawElement => {
+  element: DrawinkIframeLikeElement,
+): DrawinkElement => {
   let text: string;
   if (isIframeElement(element)) {
     text = "IFrame element";
@@ -424,7 +424,7 @@ export const maybeParseEmbedSrc = (str: string): string => {
 
 export const embeddableURLValidator = (
   url: string | null | undefined,
-  validateEmbeddable: ExcalidrawProps["validateEmbeddable"],
+  validateEmbeddable: DrawinkProps["validateEmbeddable"],
 ): boolean => {
   if (!url) {
     return false;

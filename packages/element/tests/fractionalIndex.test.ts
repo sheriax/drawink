@@ -15,7 +15,7 @@ import { API } from "@excalidraw/excalidraw/tests/helpers/api";
 
 import type {
   ElementsMap,
-  ExcalidrawElement,
+  DrawinkElement,
   FractionalIndex,
 } from "@excalidraw/element/types";
 
@@ -750,7 +750,7 @@ function testInvalidIndicesSync(args: {
 function prepareArguments(
   elementsLike: { id: string; index?: string }[],
   movedElementsIds?: string[],
-): [ExcalidrawElement[], ElementsMap | undefined] {
+): [DrawinkElement[], ElementsMap | undefined] {
   const elements = elementsLike.map((x) =>
     API.createElement({ id: x.id, index: x.index as FractionalIndex }),
   );
@@ -764,7 +764,7 @@ function prepareArguments(
 
 function test(
   name: string,
-  elements: ExcalidrawElement[],
+  elements: DrawinkElement[],
   movedElements: ElementsMap | undefined,
   expectUnchangedElements: Map<string, { id: string }>,
   expectValidInput?: boolean,

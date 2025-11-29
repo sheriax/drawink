@@ -13,9 +13,9 @@ import { makeNextSelectedElementIds, getSelectedElements } from "./selection";
 
 import type {
   GroupId,
-  ExcalidrawElement,
+  DrawinkElement,
   NonDeleted,
-  NonDeletedExcalidrawElement,
+  NonDeletedDrawinkElement,
   ElementsMapOrArray,
   ElementsMap,
 } from "./types";
@@ -23,7 +23,7 @@ import type {
 export const selectGroup = (
   groupId: GroupId,
   appState: InteractiveCanvasAppState,
-  elements: readonly NonDeleted<ExcalidrawElement>[],
+  elements: readonly NonDeleted<DrawinkElement>[],
 ): Pick<
   InteractiveCanvasAppState,
   "selectedGroupIds" | "selectedElementIds" | "editingGroupId"
@@ -68,14 +68,14 @@ export const selectGroupsForSelectedElements = (function () {
     "selectedGroupIds" | "editingGroupId" | "selectedElementIds"
   >;
 
-  let lastSelectedElements: readonly NonDeleted<ExcalidrawElement>[] | null =
+  let lastSelectedElements: readonly NonDeleted<DrawinkElement>[] | null =
     null;
-  let lastElements: readonly NonDeleted<ExcalidrawElement>[] | null = null;
+  let lastElements: readonly NonDeleted<DrawinkElement>[] | null = null;
   let lastReturnValue: SelectGroupsReturnType | null = null;
 
   const _selectGroups = (
-    selectedElements: readonly NonDeleted<ExcalidrawElement>[],
-    elements: readonly NonDeleted<ExcalidrawElement>[],
+    selectedElements: readonly NonDeleted<DrawinkElement>[],
+    elements: readonly NonDeleted<DrawinkElement>[],
     appState: Pick<AppState, "selectedElementIds" | "editingGroupId">,
     prevAppState: InteractiveCanvasAppState,
   ): SelectGroupsReturnType => {
@@ -163,7 +163,7 @@ export const selectGroupsForSelectedElements = (function () {
    */
   const selectGroupsForSelectedElements = (
     appState: Pick<AppState, "selectedElementIds" | "editingGroupId">,
-    elements: readonly NonDeletedExcalidrawElement[],
+    elements: readonly NonDeletedDrawinkElement[],
     prevAppState: InteractiveCanvasAppState,
     /**
      * supply null in cases where you don't have access to App instance and
@@ -213,7 +213,7 @@ export const selectGroupsForSelectedElements = (function () {
  */
 export const isSelectedViaGroup = (
   appState: InteractiveCanvasAppState,
-  element: ExcalidrawElement,
+  element: DrawinkElement,
 ) => getSelectedGroupForElement(appState, element) != null;
 
 export const getSelectedGroupForElement = (
@@ -221,7 +221,7 @@ export const getSelectedGroupForElement = (
     InteractiveCanvasAppState,
     "editingGroupId" | "selectedGroupIds"
   >,
-  element: ExcalidrawElement,
+  element: DrawinkElement,
 ) =>
   element.groupIds
     .filter((groupId) => groupId !== appState.editingGroupId)
@@ -237,7 +237,7 @@ export const getSelectedGroupIds = (
 // given a list of elements, return the the actual group ids that should be selected
 // or used to update the elements
 export const selectGroupsFromGivenElements = (
-  elements: readonly NonDeleted<ExcalidrawElement>[],
+  elements: readonly NonDeleted<DrawinkElement>[],
   appState: InteractiveCanvasAppState,
 ) => {
   let nextAppState: InteractiveCanvasAppState = {
@@ -267,7 +267,7 @@ export const selectGroupsFromGivenElements = (
 
 export const editGroupForSelectedElement = (
   appState: AppState,
-  element: NonDeleted<ExcalidrawElement>,
+  element: NonDeleted<DrawinkElement>,
 ): AppState => {
   return {
     ...appState,
@@ -279,14 +279,14 @@ export const editGroupForSelectedElement = (
   };
 };
 
-export const isElementInGroup = (element: ExcalidrawElement, groupId: string) =>
+export const isElementInGroup = (element: DrawinkElement, groupId: string) =>
   element.groupIds.includes(groupId);
 
 export const getElementsInGroup = (
   elements: ElementsMapOrArray,
   groupId: string,
 ) => {
-  const elementsInGroup: ExcalidrawElement[] = [];
+  const elementsInGroup: DrawinkElement[] = [];
   for (const element of elements.values()) {
     if (isElementInGroup(element, groupId)) {
       elementsInGroup.push(element);
@@ -296,12 +296,12 @@ export const getElementsInGroup = (
 };
 
 export const getSelectedGroupIdForElement = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   selectedGroupIds: { [groupId: string]: boolean },
 ) => element.groupIds.find((groupId) => selectedGroupIds[groupId]);
 
 export const addToGroup = (
-  prevGroupIds: ExcalidrawElement["groupIds"],
+  prevGroupIds: DrawinkElement["groupIds"],
   newGroupId: GroupId,
   editingGroupId: AppState["editingGroupId"],
 ) => {
@@ -317,19 +317,19 @@ export const addToGroup = (
 };
 
 export const removeFromSelectedGroups = (
-  groupIds: ExcalidrawElement["groupIds"],
+  groupIds: DrawinkElement["groupIds"],
   selectedGroupIds: { [groupId: string]: boolean },
 ) => groupIds.filter((groupId) => !selectedGroupIds[groupId]);
 
 export const getMaximumGroups = (
-  elements: ExcalidrawElement[],
+  elements: DrawinkElement[],
   elementsMap: ElementsMap,
-): ExcalidrawElement[][] => {
-  const groups: Map<String, ExcalidrawElement[]> = new Map<
+): DrawinkElement[][] => {
+  const groups: Map<String, DrawinkElement[]> = new Map<
     String,
-    ExcalidrawElement[]
+    DrawinkElement[]
   >();
-  elements.forEach((element: ExcalidrawElement) => {
+  elements.forEach((element: DrawinkElement) => {
     const groupId =
       element.groupIds.length === 0
         ? element.id
@@ -367,7 +367,7 @@ export const getNonDeletedGroupIds = (elements: ElementsMap) => {
 };
 
 export const elementsAreInSameGroup = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly DrawinkElement[],
 ) => {
   const allGroups = elements.flatMap((element) => element.groupIds);
   const groupCount = new Map<string, number>();
@@ -383,12 +383,12 @@ export const elementsAreInSameGroup = (
   return maxGroup === elements.length;
 };
 
-export const isInGroup = (element: NonDeletedExcalidrawElement) => {
+export const isInGroup = (element: NonDeletedDrawinkElement) => {
   return element.groupIds.length > 0;
 };
 
 export const getNewGroupIdsForDuplication = (
-  groupIds: ExcalidrawElement["groupIds"],
+  groupIds: DrawinkElement["groupIds"],
   editingGroupId: AppState["editingGroupId"],
   mapper: (groupId: GroupId) => GroupId,
 ) => {
@@ -408,19 +408,19 @@ export const getNewGroupIdsForDuplication = (
 // given a list of selected elements, return the element grouped by their immediate group selected state
 // in the case if only one group is selected and all elements selected are within the group, it will respect group hierarchy in accordance to their nested grouping order
 export const getSelectedElementsByGroup = (
-  selectedElements: ExcalidrawElement[],
+  selectedElements: DrawinkElement[],
   elementsMap: ElementsMap,
   appState: Readonly<AppState>,
-): ExcalidrawElement[][] => {
+): DrawinkElement[][] => {
   const selectedGroupIds = getSelectedGroupIds(appState);
   const unboundElements = selectedElements.filter(
     (element) => !isBoundToContainer(element),
   );
-  const groups: Map<string, ExcalidrawElement[]> = new Map();
-  const elements: Map<string, ExcalidrawElement[]> = new Map();
+  const groups: Map<string, DrawinkElement[]> = new Map();
+  const elements: Map<string, DrawinkElement[]> = new Map();
 
   // helper function to add an element to the elements map
-  const addToElementsMap = (element: ExcalidrawElement) => {
+  const addToElementsMap = (element: DrawinkElement) => {
     // elements
     const currentElementMembers = elements.get(element.id) || [];
     const boundTextElement = getBoundTextElement(element, elementsMap);
@@ -432,7 +432,7 @@ export const getSelectedElementsByGroup = (
   };
 
   // helper function to add an element to the groups map
-  const addToGroupsMap = (element: ExcalidrawElement, groupId: string) => {
+  const addToGroupsMap = (element: DrawinkElement, groupId: string) => {
     // groups
     const currentGroupMembers = groups.get(groupId) || [];
     const boundTextElement = getBoundTextElement(element, elementsMap);
@@ -447,7 +447,7 @@ export const getSelectedElementsByGroup = (
   // and all elements selected are within the group, it will respect group hierarchy in accordance to
   // their nested grouping order
   const handleSingleSelectedGroupCase = (
-    element: ExcalidrawElement,
+    element: DrawinkElement,
     selectedGroupId: GroupId,
   ) => {
     const indexOfSelectedGroupId = element.groupIds.indexOf(selectedGroupId, 0);

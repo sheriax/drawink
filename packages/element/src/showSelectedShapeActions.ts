@@ -2,11 +2,11 @@ import type { UIAppState } from "@excalidraw/excalidraw/types";
 
 import { getSelectedElements } from "./selection";
 
-import type { NonDeletedExcalidrawElement } from "./types";
+import type { NonDeletedDrawinkElement } from "./types";
 
 export const showSelectedShapeActions = (
   appState: UIAppState,
-  elements: readonly NonDeletedExcalidrawElement[],
+  elements: readonly NonDeletedDrawinkElement[],
 ) =>
   Boolean(
     !appState.viewModeEnabled &&

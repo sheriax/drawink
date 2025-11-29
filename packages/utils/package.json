@@ -1,6 +1,7 @@
 {
-  "name": "@excalidraw/utils",
+  "name": "@drawink/utils",
   "version": "0.1.2",
+  "private": true,
   "type": "module",
   "types": "./dist/types/utils/src/index.d.ts",
   "main": "./dist/prod/index.js",
@@ -19,14 +20,10 @@
   "files": [
     "dist/*"
   ],
-  "description": "Excalidraw utility functions",
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT",
+  "description": "Drawink utility functions",
   "keywords": [
-    "excalidraw",
-    "excalidraw-utils"
+    "drawink",
+    "drawink-utils"
   ],
   "browserslist": {
     "production": [
@@ -66,8 +63,6 @@
     "wawoff2": "2.0.1",
     "which": "4.0.0"
   },
-  "bugs": "https://github.com/excalidraw/excalidraw/issues",
-  "repository": "https://github.com/excalidraw/excalidraw",
   "scripts": {
     "gen:types": "rimraf types && tsc",
     "build:esm": "rimraf dist && node ../../scripts/buildUtils.js && yarn gen:types"

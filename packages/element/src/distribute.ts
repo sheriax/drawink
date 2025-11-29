@@ -5,7 +5,7 @@ import { newElementWith } from "./mutateElement";
 
 import { getSelectedElementsByGroup } from "./groups";
 
-import type { ElementsMap, ExcalidrawElement } from "./types";
+import type { ElementsMap, DrawinkElement } from "./types";
 
 export interface Distribution {
   space: "between";
@@ -13,11 +13,11 @@ export interface Distribution {
 }
 
 export const distributeElements = (
-  selectedElements: ExcalidrawElement[],
+  selectedElements: DrawinkElement[],
   elementsMap: ElementsMap,
   distribution: Distribution,
   appState: Readonly<AppState>,
-): ExcalidrawElement[] => {
+): DrawinkElement[] => {
   const [start, mid, end, extent] =
     distribution.axis === "x"
       ? (["minX", "midX", "maxX", "width"] as const)
