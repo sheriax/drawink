@@ -17,7 +17,7 @@ export const AppWelcomeScreen: React.FC<{
     // headingContent = t("welcomeScreen.app.center_heading_plus")
     //   .split(/(Drawink\+)/)
     //   .map((bit, idx) => {
-    //     if (bit === "Drawink+") {
+    //     if (bit === "Drawink Pro") {
     //       return (
     //         <a
     //           style={{ pointerEvents: POINTER_EVENTS.inheritFromUI }}
@@ -26,7 +26,7 @@ export const AppWelcomeScreen: React.FC<{
     //           }?utm_source=drawink&utm_medium=app&utm_content=welcomeScreenSignedInUser`}
     //           key={idx}
     //         >
-    //           Drawink+
+    //           Drawink Pro
     //         </a>
     //       );
     //     }

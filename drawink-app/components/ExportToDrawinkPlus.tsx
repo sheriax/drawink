@@ -78,8 +78,7 @@ export const exportToDrawinkPlus = async (
   }
 
   window.open(
-    `${
-      import.meta.env.VITE_APP_PLUS_APP
+    `${import.meta.env.VITE_APP_PLUS_APP
     }/import?drawink=${id},${encryptionKey}`,
   );
 };
@@ -104,11 +103,11 @@ export const ExportToDrawinkPlus: React.FC<{
           }}
         />
       </div>
-      <h2>Drawink+</h2>
+      <h2>Drawink Pro</h2>
       <div className="Card-details">
         {t("exportDialog.drawinkplus_description")}
       </div>
-      <ToolButton
+      {/* <ToolButton
         className="Card-button"
         type="button"
         title={t("exportDialog.drawinkplus_button")}
@@ -126,7 +125,7 @@ export const ExportToDrawinkPlus: React.FC<{
             }
           }
         }}
-      />
+      /> */}
     </Card>
   );
 };

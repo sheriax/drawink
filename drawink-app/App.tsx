@@ -329,11 +329,11 @@ const initializeScene = async (opts: {
   } else if (scene) {
     return isExternalScene && jsonBackendMatch
       ? {
-          scene,
-          isExternalScene,
-          id: jsonBackendMatch[1],
-          key: jsonBackendMatch[2],
-        }
+        scene,
+        isExternalScene,
+        id: jsonBackendMatch[1],
+        key: jsonBackendMatch[2],
+      }
       : { scene, isExternalScene: false };
   }
   return { scene: null, isExternalScene: false };
@@ -760,15 +760,14 @@ const DrawinkWrapper = () => {
   }
 
   const DrawinkPlusCommand = {
-    label: "Drawink+",
+    label: "Drawink Pro",
     category: DEFAULT_CATEGORIES.links,
     predicate: true,
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
     keywords: ["plus", "cloud", "server"],
     perform: () => {
       window.open(
-        `${
-          import.meta.env.VITE_APP_PLUS_LP
+        `${import.meta.env.VITE_APP_PLUS_LP
         }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
@@ -790,8 +789,7 @@ const DrawinkWrapper = () => {
     ],
     perform: () => {
       window.open(
-        `${
-          import.meta.env.VITE_APP_PLUS_APP
+        `${import.meta.env.VITE_APP_PLUS_APP
         }?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
@@ -818,27 +816,27 @@ const DrawinkWrapper = () => {
               onExportToBackend,
               renderCustomUI: drawinkAPI
                 ? (elements, appState, files) => {
-                    return (
-                      <ExportToDrawinkPlus
-                        elements={elements}
-                        appState={appState}
-                        files={files}
-                        name={drawinkAPI.getName()}
-                        onError={(error) => {
-                          drawinkAPI?.updateScene({
-                            appState: {
-                              errorMessage: error.message,
-                            },
-                          });
-                        }}
-                        onSuccess={() => {
-                          drawinkAPI.updateScene({
-                            appState: { openDialog: null },
-                          });
-                        }}
-                      />
-                    );
-                  }
+                  return (
+                    <ExportToDrawinkPlus
+                      elements={elements}
+                      appState={appState}
+                      files={files}
+                      name={drawinkAPI.getName()}
+                      onError={(error) => {
+                        drawinkAPI?.updateScene({
+                          appState: {
+                            errorMessage: error.message,
+                          },
+                        });
+                      }}
+                      onSuccess={() => {
+                        drawinkAPI.updateScene({
+                          appState: { openDialog: null },
+                        });
+                      }}
+                    />
+                  );
+                }
                 : undefined,
             },
           },
@@ -1099,11 +1097,11 @@ const DrawinkWrapper = () => {
             },
             ...(isDrawinkPlusSignedUser
               ? [
-                  {
-                    ...DrawinkPlusAppCommand,
-                    label: "Sign in / Go to Drawink+",
-                  },
-                ]
+                {
+                  ...DrawinkPlusAppCommand,
+                  label: "Sign in / Go to Drawink Pro",
+                },
+              ]
               : [DrawinkPlusCommand, DrawinkPlusAppCommand]),
 
             {

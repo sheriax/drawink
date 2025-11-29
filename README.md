@@ -9,7 +9,7 @@
   <a href="https://drawink.com">Drawink Editor</a> |
   <a href="https://plus.drawink.com/blog">Blog</a> |
   <a href="https://docs.drawink.com">Documentation</a> |
-  <a href="https://plus.drawink.com">Drawink+</a>
+  <a href="https://plus.drawink.com">Drawink Pro</a>
 </h4>
 
 <div align="center">
@@ -117,7 +117,7 @@ Check out our [documentation](https://docs.drawink.com/docs/@drawink/drawink/ins
 
 ## Sponsors & support
 
-If you like the project, you can become a sponsor at [Open Collective](https://opencollective.com/drawink) or use [Drawink+](https://plus.drawink.com/).
+If you like the project, you can become a sponsor at [Open Collective](https://opencollective.com/drawink) or use [Drawink Pro](https://plus.drawink.com/).
 
 ## Thank you for supporting Drawink
 

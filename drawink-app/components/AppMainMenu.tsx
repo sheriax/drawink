@@ -48,7 +48,7 @@ export const AppMainMenu: React.FC<{
         }/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger`}
         className=""
       >
-        Drawink+
+        Drawink Pro
       </MainMenu.ItemLink> */}
       <MainMenu.DefaultItems.Socials disabled />
       {/* <MainMenu.ItemLink

@@ -17,7 +17,7 @@ export const DrawinkPlusPromoBanner = ({
   //     rel="noopener"
   //     className="plus-banner"
   //   >
-  //     Drawink+
+  //     Drawink Pro
   //   </a>
   // );
 };
