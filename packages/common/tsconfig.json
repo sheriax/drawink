@@ -3,6 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist/types"
   },
-  "include": ["src/**/*", "global.d.ts"],
-  "exclude": ["**/*.test.*", "tests", "types", "examples", "dist"]
+  "include": [
+    "src/**/*",
+    "global.d.ts"
+  ],
+  "exclude": [
+    "**/*.test.*",
+    "tests",
+    "types",
+    "examples",
+    "dist",
+    "node_modules"
+  ]
 }
