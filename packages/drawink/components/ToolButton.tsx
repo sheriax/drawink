@@ -39,26 +39,26 @@ type ToolButtonBaseProps = {
 
 type ToolButtonProps =
   | (ToolButtonBaseProps & {
-    type: "button";
-    children?: React.ReactNode;
-    onClick?(event: React.MouseEvent): void;
-  })
+      type: "button";
+      children?: React.ReactNode;
+      onClick?(event: React.MouseEvent): void;
+    })
   | (ToolButtonBaseProps & {
-    type: "submit";
-    children?: React.ReactNode;
-    onClick?(event: React.MouseEvent): void;
-  })
+      type: "submit";
+      children?: React.ReactNode;
+      onClick?(event: React.MouseEvent): void;
+    })
   | (ToolButtonBaseProps & {
-    type: "icon";
-    children?: React.ReactNode;
-    onClick?(): void;
-  })
+      type: "icon";
+      children?: React.ReactNode;
+      onClick?(): void;
+    })
   | (ToolButtonBaseProps & {
-    type: "radio";
-    checked: boolean;
-    onChange?(data: { pointerType: PointerType | null }): void;
-    onPointerDown?(data: { pointerType: PointerType }): void;
-  });
+      type: "radio";
+      checked: boolean;
+      onChange?(data: { pointerType: PointerType | null }): void;
+      onPointerDown?(data: { pointerType: PointerType }): void;
+    });
 
 export const ToolButton = React.forwardRef(
   (

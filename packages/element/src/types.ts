@@ -104,14 +104,14 @@ export type DrawinkEmbeddableElement = _DrawinkElementBase &
 
 export type MagicGenerationData =
   | {
-    status: "pending";
-  }
+      status: "pending";
+    }
   | { status: "done"; html: string }
   | {
-    status: "error";
-    message?: string;
-    code: "ERR_GENERATION_INTERRUPTED" | string;
-  };
+      status: "error";
+      message?: string;
+      code: "ERR_GENERATION_INTERRUPTED" | string;
+    };
 
 export type DrawinkIframeElement = _DrawinkElementBase &
   Readonly<{
@@ -126,13 +126,13 @@ export type DrawinkIframeLikeElement =
 
 export type IframeData =
   | {
-    intrinsicSize: { w: number; h: number };
-    error?: Error;
-    sandbox?: { allowSameOrigin?: boolean };
-  } & (
-    | { type: "video" | "generic"; link: string }
-    | { type: "document"; srcdoc: (theme: Theme) => string }
-  );
+      intrinsicSize: { w: number; h: number };
+      error?: Error;
+      sandbox?: { allowSameOrigin?: boolean };
+    } & (
+      | { type: "video" | "generic"; link: string }
+      | { type: "document"; srcdoc: (theme: Theme) => string }
+    );
 
 export type ImageCrop = {
   x: number;

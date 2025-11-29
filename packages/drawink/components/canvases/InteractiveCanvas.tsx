@@ -182,7 +182,7 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
             for (const key in nextAnimationState) {
               if (
                 nextAnimationState[
-                key as keyof InteractiveSceneRenderAnimationState
+                  key as keyof InteractiveSceneRenderAnimationState
                 ] !== undefined
               ) {
                 return nextAnimationState;

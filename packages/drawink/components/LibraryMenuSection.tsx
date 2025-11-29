@@ -13,9 +13,9 @@ import type { ReactNode } from "react";
 type LibraryOrPendingItem = readonly (
   | LibraryItem
   | /* pending library item */ {
-    id: null;
-    elements: readonly NonDeleted<DrawinkElement>[];
-  }
+      id: null;
+      elements: readonly NonDeleted<DrawinkElement>[];
+    }
 )[];
 
 interface Props {

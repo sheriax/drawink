@@ -18,10 +18,7 @@ const MobileFooter = ({
   if (editorInterface.formFactor === "phone") {
     return (
       <Footer>
-        <CustomFooter
-          drawinkAPI={drawinkAPI}
-          drawinkLib={drawinkLib}
-        />
+        <CustomFooter drawinkAPI={drawinkAPI} drawinkLib={drawinkLib} />
       </Footer>
     );
   }

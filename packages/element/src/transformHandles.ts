@@ -7,10 +7,7 @@ import { pointFrom, pointRotateRads } from "@drawink/math";
 
 import type { Radians } from "@drawink/math";
 
-import type {
-  InteractiveCanvasAppState,
-  Zoom,
-} from "@drawink/drawink/types";
+import type { InteractiveCanvasAppState, Zoom } from "@drawink/drawink/types";
 
 import { getElementAbsoluteCoords } from "./bounds";
 import {
@@ -155,62 +152,62 @@ export const getTransformHandlesFromCoords = (
     nw: omitSides.nw
       ? undefined
       : generateTransformHandle(
-        x1 - dashedLineMargin - handleMarginX + centeringOffset,
-        y1 - dashedLineMargin - handleMarginY + centeringOffset,
-        handleWidth,
-        handleHeight,
-        cx,
-        cy,
-        angle,
-      ),
+          x1 - dashedLineMargin - handleMarginX + centeringOffset,
+          y1 - dashedLineMargin - handleMarginY + centeringOffset,
+          handleWidth,
+          handleHeight,
+          cx,
+          cy,
+          angle,
+        ),
     ne: omitSides.ne
       ? undefined
       : generateTransformHandle(
-        x2 + dashedLineMargin - centeringOffset,
-        y1 - dashedLineMargin - handleMarginY + centeringOffset,
-        handleWidth,
-        handleHeight,
-        cx,
-        cy,
-        angle,
-      ),
+          x2 + dashedLineMargin - centeringOffset,
+          y1 - dashedLineMargin - handleMarginY + centeringOffset,
+          handleWidth,
+          handleHeight,
+          cx,
+          cy,
+          angle,
+        ),
     sw: omitSides.sw
       ? undefined
       : generateTransformHandle(
-        x1 - dashedLineMargin - handleMarginX + centeringOffset,
-        y2 + dashedLineMargin - centeringOffset,
-        handleWidth,
-        handleHeight,
-        cx,
-        cy,
-        angle,
-      ),
+          x1 - dashedLineMargin - handleMarginX + centeringOffset,
+          y2 + dashedLineMargin - centeringOffset,
+          handleWidth,
+          handleHeight,
+          cx,
+          cy,
+          angle,
+        ),
     se: omitSides.se
       ? undefined
       : generateTransformHandle(
-        x2 + dashedLineMargin - centeringOffset,
-        y2 + dashedLineMargin - centeringOffset,
-        handleWidth,
-        handleHeight,
-        cx,
-        cy,
-        angle,
-      ),
+          x2 + dashedLineMargin - centeringOffset,
+          y2 + dashedLineMargin - centeringOffset,
+          handleWidth,
+          handleHeight,
+          cx,
+          cy,
+          angle,
+        ),
     rotation: omitSides.rotation
       ? undefined
       : generateTransformHandle(
-        x1 + width / 2 - handleWidth / 2,
-        y1 -
-        dashedLineMargin -
-        handleMarginY +
-        centeringOffset -
-        ROTATION_RESIZE_HANDLE_GAP / zoom.value,
-        handleWidth,
-        handleHeight,
-        cx,
-        cy,
-        angle,
-      ),
+          x1 + width / 2 - handleWidth / 2,
+          y1 -
+            dashedLineMargin -
+            handleMarginY +
+            centeringOffset -
+            ROTATION_RESIZE_HANDLE_GAP / zoom.value,
+          handleWidth,
+          handleHeight,
+          cx,
+          cy,
+          angle,
+        ),
   };
 
   // We only want to show height handles (all cardinal directions)  above a certain size
@@ -312,8 +309,8 @@ export const getTransformHandles = (
   const margin = isLinearElement(element)
     ? DEFAULT_TRANSFORM_HANDLE_SPACING + 8
     : isImageElement(element)
-      ? 0
-      : DEFAULT_TRANSFORM_HANDLE_SPACING;
+    ? 0
+    : DEFAULT_TRANSFORM_HANDLE_SPACING;
   return getTransformHandlesFromCoords(
     getElementAbsoluteCoords(element, elementsMap, true),
     element.angle,

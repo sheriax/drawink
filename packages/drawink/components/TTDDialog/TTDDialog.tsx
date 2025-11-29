@@ -55,18 +55,18 @@ type OnTestSubmitRetValue = {
   rateLimit?: number | null;
   rateLimitRemaining?: number | null;
 } & (
-    | { generatedResponse: string | undefined; error?: null | undefined }
-    | {
+  | { generatedResponse: string | undefined; error?: null | undefined }
+  | {
       error: Error;
       generatedResponse?: null | undefined;
     }
-  );
+);
 
 export const TTDDialog = (
   props:
     | {
-      onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
-    }
+        onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
+      }
     | { __fallback: true },
 ) => {
   const appState = useUIAppState();
@@ -89,11 +89,11 @@ export const TTDDialogBase = withInternalFallback(
   }: {
     tab: "text-to-diagram" | "mermaid";
   } & (
-      | {
+    | {
         onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
       }
-      | { __fallback: true }
-    )) => {
+    | { __fallback: true }
+  )) => {
     const app = useApp();
     const setAppState = useDrawinkSetAppState();
 
@@ -274,9 +274,7 @@ export const TTDDialogBase = withInternalFallback(
           )}
 
           <TTDDialogTab className="ttd-dialog-content" tab="mermaid">
-            <MermaidToDrawink
-              mermaidToDrawinkLib={mermaidToDrawinkLib}
-            />
+            <MermaidToDrawink mermaidToDrawinkLib={mermaidToDrawinkLib} />
           </TTDDialogTab>
           {!("__fallback" in rest) && (
             <TTDDialogTab className="ttd-dialog-content" tab="text-to-diagram">

@@ -122,9 +122,9 @@ export const actionClearCanvas = register({
         activeTool:
           appState.activeTool.type === "image"
             ? {
-              ...appState.activeTool,
-              type: app.state.preferredSelectionTool.type,
-            }
+                ...appState.activeTool,
+                type: app.state.preferredSelectionTool.type,
+              }
             : appState.activeTool,
       },
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,

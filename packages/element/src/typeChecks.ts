@@ -242,9 +242,7 @@ export const isTextBindableContainer = (
   );
 };
 
-export const isDrawinkElement = (
-  element: any,
-): element is DrawinkElement => {
+export const isDrawinkElement = (element: any): element is DrawinkElement => {
   const type: DrawinkElementType | undefined = element?.type;
   if (!type) {
     return false;
@@ -338,9 +336,7 @@ export const canApplyRoundnessTypeToElement = (
   return false;
 };
 
-export const getDefaultRoundnessTypeForElement = (
-  element: DrawinkElement,
-) => {
+export const getDefaultRoundnessTypeForElement = (element: DrawinkElement) => {
   if (isUsingProportionalRadius(element.type)) {
     return {
       type: ROUNDNESS.PROPORTIONAL_RADIUS,

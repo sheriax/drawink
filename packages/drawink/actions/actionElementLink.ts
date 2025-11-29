@@ -33,9 +33,9 @@ export const actionCopyElementLink = register({
             app.props.generateLinkForSelection
               ? app.props.generateLinkForSelection(idAndType.id, idAndType.type)
               : defaultGetElementLinkFromSelection(
-                idAndType.id,
-                idAndType.type,
-              ),
+                  idAndType.id,
+                  idAndType.type,
+                ),
           );
 
           return {

@@ -61,7 +61,7 @@ export const serializeAsJSON = (
       type === "local"
         ? filterOutDeletedFiles(elements, files)
         : // will be stripped from JSON
-        undefined,
+          undefined,
   };
 
   return JSON.stringify(data, null, 2);

@@ -4,10 +4,7 @@ import { KEYS, reseed } from "@drawink/common";
 import { bindBindingElement } from "@drawink/element";
 import "@drawink/utils/test-utils";
 
-import type {
-  DrawinkArrowElement,
-  NonDeleted,
-} from "@drawink/element/types";
+import type { DrawinkArrowElement, NonDeleted } from "@drawink/element/types";
 
 import { Drawink } from "../index";
 import * as InteractiveCanvas from "../renderer/interactiveScene";

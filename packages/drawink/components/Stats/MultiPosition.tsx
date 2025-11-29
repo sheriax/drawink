@@ -131,90 +131,90 @@ const handlePositionChange: DragInputCallbackType<
   originalAppState,
   app,
 }) => {
-    const elementsMap = scene.getNonDeletedElementsMap();
+  const elementsMap = scene.getNonDeletedElementsMap();
 
-    if (nextValue !== undefined) {
-      for (const atomicUnit of getAtomicUnits(
-        originalElements,
-        originalAppState,
-      )) {
-        const elementsInUnit = getElementsInAtomicUnit(
-          atomicUnit,
-          elementsMap,
-          originalElementsMap,
+  if (nextValue !== undefined) {
+    for (const atomicUnit of getAtomicUnits(
+      originalElements,
+      originalAppState,
+    )) {
+      const elementsInUnit = getElementsInAtomicUnit(
+        atomicUnit,
+        elementsMap,
+        originalElementsMap,
+      );
+
+      if (elementsInUnit.length > 1) {
+        const [x1, y1, ,] = getCommonBounds(
+          elementsInUnit.map((el) => el.latest!),
         );
+        const newTopLeftX = property === "x" ? nextValue : x1;
+        const newTopLeftY = property === "y" ? nextValue : y1;
 
-        if (elementsInUnit.length > 1) {
-          const [x1, y1, ,] = getCommonBounds(
-            elementsInUnit.map((el) => el.latest!),
+        moveGroupTo(
+          newTopLeftX,
+          newTopLeftY,
+          elementsInUnit.map((el) => el.original),
+          originalElementsMap,
+          scene,
+          app.state,
+        );
+      } else {
+        const origElement = elementsInUnit[0]?.original;
+        const latestElement = elementsInUnit[0]?.latest;
+        if (
+          origElement &&
+          latestElement &&
+          isPropertyEditable(latestElement, property)
+        ) {
+          const [cx, cy] = [
+            origElement.x + origElement.width / 2,
+            origElement.y + origElement.height / 2,
+          ];
+          const [topLeftX, topLeftY] = pointRotateRads(
+            pointFrom(origElement.x, origElement.y),
+            pointFrom(cx, cy),
+            origElement.angle,
           );
-          const newTopLeftX = property === "x" ? nextValue : x1;
-          const newTopLeftY = property === "y" ? nextValue : y1;
 
-          moveGroupTo(
+          const newTopLeftX = property === "x" ? nextValue : topLeftX;
+          const newTopLeftY = property === "y" ? nextValue : topLeftY;
+          moveElement(
             newTopLeftX,
             newTopLeftY,
-            elementsInUnit.map((el) => el.original),
-            originalElementsMap,
+            origElement,
             scene,
             app.state,
+            originalElementsMap,
+            false,
           );
-        } else {
-          const origElement = elementsInUnit[0]?.original;
-          const latestElement = elementsInUnit[0]?.latest;
-          if (
-            origElement &&
-            latestElement &&
-            isPropertyEditable(latestElement, property)
-          ) {
-            const [cx, cy] = [
-              origElement.x + origElement.width / 2,
-              origElement.y + origElement.height / 2,
-            ];
-            const [topLeftX, topLeftY] = pointRotateRads(
-              pointFrom(origElement.x, origElement.y),
-              pointFrom(cx, cy),
-              origElement.angle,
-            );
-
-            const newTopLeftX = property === "x" ? nextValue : topLeftX;
-            const newTopLeftY = property === "y" ? nextValue : topLeftY;
-            moveElement(
-              newTopLeftX,
-              newTopLeftY,
-              origElement,
-              scene,
-              app.state,
-              originalElementsMap,
-              false,
-            );
-          }
         }
       }
-
-      scene.triggerUpdate();
-      return;
     }
 
-    const change = shouldChangeByStepSize
-      ? getStepSizedValue(accumulatedChange, STEP_SIZE)
-      : accumulatedChange;
-
-    const changeInTopX = property === "x" ? change : 0;
-    const changeInTopY = property === "y" ? change : 0;
-
-    moveElements(
-      property,
-      changeInTopX,
-      changeInTopY,
-      originalElements,
-      originalElementsMap,
-      scene,
-      app.state,
-    );
-
     scene.triggerUpdate();
-  };
+    return;
+  }
+
+  const change = shouldChangeByStepSize
+    ? getStepSizedValue(accumulatedChange, STEP_SIZE)
+    : accumulatedChange;
+
+  const changeInTopX = property === "x" ? change : 0;
+  const changeInTopY = property === "y" ? change : 0;
+
+  moveElements(
+    property,
+    changeInTopX,
+    changeInTopY,
+    originalElements,
+    originalElementsMap,
+    scene,
+    app.state,
+  );
+
+  scene.triggerUpdate();
+};
 
 const MultiPosition = ({
   property,

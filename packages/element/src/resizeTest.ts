@@ -5,10 +5,7 @@ import {
   type Radians,
 } from "@drawink/math";
 
-import {
-  SIDE_RESIZING_THRESHOLD,
-  type EditorInterface,
-} from "@drawink/common";
+import { SIDE_RESIZING_THRESHOLD, type EditorInterface } from "@drawink/common";
 
 import type { GlobalPoint, LineSegment, LocalPoint } from "@drawink/math";
 

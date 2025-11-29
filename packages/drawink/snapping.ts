@@ -83,12 +83,12 @@ export type Gap = {
 export type GapSnap = {
   type: "gap";
   direction:
-  | "center_horizontal"
-  | "center_vertical"
-  | "side_left"
-  | "side_right"
-  | "side_top"
-  | "side_bottom";
+    | "center_horizontal"
+    | "center_vertical"
+    | "side_left"
+    | "side_right"
+    | "side_top"
+    | "side_bottom";
   gap: Gap;
   offset: number;
 };
@@ -207,9 +207,9 @@ export const getElementsCorners = (
     boundingBoxCorners?: boolean;
     dragOffset?: Vector2D;
   } = {
-      omitCenter: false,
-      boundingBoxCorners: false,
-    },
+    omitCenter: false,
+    boundingBoxCorners: false,
+  },
 ): GlobalPoint[] => {
   let result: GlobalPoint[] = [];
 

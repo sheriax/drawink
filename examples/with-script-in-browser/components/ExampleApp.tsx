@@ -125,8 +125,9 @@ export default function ExampleApp({
       resolvablePromise<DrawinkInitialDataState | null>();
   }
 
-  const [drawinkAPI, setDrawinkAPI] =
-    useState<DrawinkImperativeAPI | null>(null);
+  const [drawinkAPI, setDrawinkAPI] = useState<DrawinkImperativeAPI | null>(
+    null,
+  );
 
   useCustom(drawinkAPI, customArgs);
 
@@ -180,10 +181,7 @@ export default function ExampleApp({
       {
         drawinkAPI: (api: DrawinkImperativeAPI) => setDrawinkAPI(api),
         initialData: initialStatePromiseRef.current.promise,
-        onChange: (
-          elements: NonDeletedDrawinkElement[],
-          state: AppState,
-        ) => {
+        onChange: (elements: NonDeletedDrawinkElement[], state: AppState) => {
           console.info("Elements :", elements, "State : ", state);
         },
         onPointerUpdate: (payload: {
@@ -212,10 +210,7 @@ export default function ExampleApp({
       <>
         {drawinkAPI && (
           <Footer>
-            <CustomFooter
-              drawinkAPI={drawinkAPI}
-              drawinkLib={drawinkLib}
-            />
+            <CustomFooter drawinkAPI={drawinkAPI} drawinkLib={drawinkLib} />
           </Footer>
         )}
         <WelcomeScreen />
@@ -408,10 +403,12 @@ export default function ExampleApp({
         { sceneX: commentIcons[id].x, sceneY: commentIcons[id].y },
         appstate,
       );
-      ele.style.left = `${x - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetLeft
-        }px`;
-      ele.style.top = `${y - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetTop
-        }px`;
+      ele.style.left = `${
+        x - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetLeft
+      }px`;
+      ele.style.top = `${
+        y - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetTop
+      }px`;
     });
   };
 
@@ -635,10 +632,7 @@ export default function ExampleApp({
         <MainMenu.DefaultItems.Help />
 
         {drawinkAPI && (
-          <MobileFooter
-            drawinkLib={drawinkLib}
-            drawinkAPI={drawinkAPI}
-          />
+          <MobileFooter drawinkLib={drawinkLib} drawinkAPI={drawinkAPI} />
         )}
       </MainMenu>
     );

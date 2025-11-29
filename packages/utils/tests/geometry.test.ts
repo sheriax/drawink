@@ -8,12 +8,7 @@ import {
   segmentsIntersectAt,
 } from "@drawink/math";
 
-import type {
-  GlobalPoint,
-  LineSegment,
-  Polygon,
-  Radians,
-} from "@drawink/math";
+import type { GlobalPoint, LineSegment, Polygon, Radians } from "@drawink/math";
 
 import { pointInEllipse, pointOnEllipse, type Ellipse } from "../src/shape";
 

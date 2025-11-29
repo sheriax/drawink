@@ -2,10 +2,7 @@ import { KEYS, invariant, toBrandedType } from "@drawink/common";
 
 import { type GlobalPoint, pointFrom, type LocalPoint } from "@drawink/math";
 
-import type {
-  AppState,
-  PendingDrawinkElements,
-} from "@drawink/drawink/types";
+import type { AppState, PendingDrawinkElements } from "@drawink/drawink/types";
 
 import { bindBindingElement } from "./binding";
 import { updateElbowArrowPoints } from "./elbowArrow";
@@ -86,10 +83,7 @@ const getNodeRelatives = (
           return acc;
         }
 
-        invariant(
-          isBindableElement(relative),
-          "not an DrawinkBindableElement",
-        );
+        invariant(isBindableElement(relative), "not an DrawinkBindableElement");
 
         const edgePoint = (
           type === "predecessors" ? el.points[el.points.length - 1] : [0, 0]
@@ -198,8 +192,8 @@ const getOffsets = (
       linkedNodes.length === 0
         ? 0
         : (linkedNodes.length + 1) % 2 === 0
-          ? ((linkedNodes.length + 1) / 2) * _HORIZONTAL_OFFSET
-          : (linkedNodes.length / 2) * _HORIZONTAL_OFFSET * -1;
+        ? ((linkedNodes.length + 1) / 2) * _HORIZONTAL_OFFSET
+        : (linkedNodes.length / 2) * _HORIZONTAL_OFFSET * -1;
 
     if (direction === "up") {
       return {
@@ -222,8 +216,8 @@ const getOffsets = (
     linkedNodes.length === 0
       ? 0
       : (linkedNodes.length + 1) % 2 === 0
-        ? ((linkedNodes.length + 1) / 2) * _VERTICAL_OFFSET
-        : (linkedNodes.length / 2) * _VERTICAL_OFFSET * -1;
+      ? ((linkedNodes.length + 1) / 2) * _VERTICAL_OFFSET
+      : (linkedNodes.length / 2) * _VERTICAL_OFFSET * -1;
 
   if (direction === "left") {
     return {
@@ -464,10 +458,7 @@ const createBindingArrow = (
     endBindingElement.id,
     endBindingElement as OrderedDrawinkElement,
   );
-  changedElements.set(
-    bindingArrow.id,
-    bindingArrow as OrderedDrawinkElement,
-  );
+  changedElements.set(bindingArrow.id, bindingArrow as OrderedDrawinkElement);
 
   LinearElementEditor.movePoints(
     bindingArrow,
@@ -677,10 +668,7 @@ export class FlowChartCreator {
     if (startNode.frameId) {
       const frame = elementsMap.get(startNode.frameId);
 
-      invariant(
-        frame && isFrameElement(frame),
-        "not an DrawinkFrameElement",
-      );
+      invariant(frame && isFrameElement(frame), "not an DrawinkFrameElement");
 
       if (
         frame &&

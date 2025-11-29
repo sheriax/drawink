@@ -331,11 +331,11 @@ const handleSegmentRelease = (
       pointFrom<LocalPoint>(0, 0),
       pointFrom<LocalPoint>(
         arrow.x +
-        (nextSegment?.start[0] ?? arrow.points[arrow.points.length - 1][0]) -
-        x,
+          (nextSegment?.start[0] ?? arrow.points[arrow.points.length - 1][0]) -
+          x,
         arrow.y +
-        (nextSegment?.start[1] ?? arrow.points[arrow.points.length - 1][1]) -
-        y,
+          (nextSegment?.start[1] ?? arrow.points[arrow.points.length - 1][1]) -
+          y,
       ),
     ],
     { isDragging: false },
@@ -521,13 +521,13 @@ const handleSegmentMove = (
         ? segmentLength / 2
         : BASE_PADDING
       : segmentIsTooShort
-        ? -segmentLength / 2
-        : -BASE_PADDING;
+      ? -segmentLength / 2
+      : -BASE_PADDING;
     fixedSegments[activelyModifiedSegmentIdx].start = pointFrom<LocalPoint>(
       fixedSegments[activelyModifiedSegmentIdx].start[0] +
-      (startIsHorizontal ? padding : 0),
+        (startIsHorizontal ? padding : 0),
       fixedSegments[activelyModifiedSegmentIdx].start[1] +
-      (!startIsHorizontal ? padding : 0),
+        (!startIsHorizontal ? padding : 0),
     );
   }
 
@@ -535,7 +535,7 @@ const handleSegmentMove = (
   if (
     lastSegmentIdx === -1 &&
     fixedSegments[activelyModifiedSegmentIdx].index ===
-    arrow.points.length - 1 &&
+      arrow.points.length - 1 &&
     hoveredEndElement
   ) {
     const endIsHorizontal = headingIsHorizontal(endHeading);
@@ -547,13 +547,13 @@ const handleSegmentMove = (
         ? segmentLength / 2
         : BASE_PADDING
       : segmentIsTooShort
-        ? -segmentLength / 2
-        : -BASE_PADDING;
+      ? -segmentLength / 2
+      : -BASE_PADDING;
     fixedSegments[activelyModifiedSegmentIdx].end = pointFrom<LocalPoint>(
       fixedSegments[activelyModifiedSegmentIdx].end[0] +
-      (endIsHorizontal ? padding : 0),
+        (endIsHorizontal ? padding : 0),
       fixedSegments[activelyModifiedSegmentIdx].end[1] +
-      (!endIsHorizontal ? padding : 0),
+        (!endIsHorizontal ? padding : 0),
     );
   }
 
@@ -581,15 +581,15 @@ const handleSegmentMove = (
   const end = nextFixedSegments[activelyModifiedSegmentIdx].end;
   const prevSegmentIsHorizontal =
     newPoints[startIdx - 1] &&
-      !pointsEqual(newPoints[startIdx], newPoints[startIdx - 1])
+    !pointsEqual(newPoints[startIdx], newPoints[startIdx - 1])
       ? headingForPointIsHorizontal(
-        newPoints[startIdx - 1],
-        newPoints[startIdx],
-      )
+          newPoints[startIdx - 1],
+          newPoints[startIdx],
+        )
       : undefined;
   const nextSegmentIsHorizontal =
     newPoints[endIdx + 1] &&
-      !pointsEqual(newPoints[endIdx], newPoints[endIdx + 1])
+    !pointsEqual(newPoints[endIdx], newPoints[endIdx + 1])
       ? headingForPointIsHorizontal(newPoints[endIdx + 1], newPoints[endIdx])
       : undefined;
 
@@ -720,8 +720,8 @@ const handleEndpointDrag = (
     i === 0
       ? pointFrom<GlobalPoint>(arrow.x + p[0], arrow.y + p[1])
       : i === updatedPoints.length - 1
-        ? pointFrom<GlobalPoint>(arrow.x + p[0], arrow.y + p[1])
-        : pointFrom<GlobalPoint>(
+      ? pointFrom<GlobalPoint>(arrow.x + p[0], arrow.y + p[1])
+      : pointFrom<GlobalPoint>(
           arrow.x + arrow.points[i][0],
           arrow.y + arrow.points[i][1],
         ),
@@ -925,23 +925,23 @@ export const updateElbowArrowPoints = (
     invariant(
       !updates.points || updates.points.length >= 2,
       "Updated point array length must match the arrow point length, contain " +
-      "exactly the new start and end points or not be specified at all (i.e. " +
-      "you can't add new points between start and end manually to elbow arrows)",
+        "exactly the new start and end points or not be specified at all (i.e. " +
+        "you can't add new points between start and end manually to elbow arrows)",
     );
 
     invariant(
       !arrow.fixedSegments ||
-      arrow.fixedSegments
-        .map((s) => s.start[0] === s.end[0] || s.start[1] === s.end[1])
-        .every(Boolean),
+        arrow.fixedSegments
+          .map((s) => s.start[0] === s.end[0] || s.start[1] === s.end[1])
+          .every(Boolean),
       "Fixed segments must be either horizontal or vertical",
     );
 
     invariant(
       !updates.fixedSegments ||
-      updates.fixedSegments
-        .map((s) => s.start[0] === s.end[0] || s.start[1] === s.end[1])
-        .every(Boolean),
+        updates.fixedSegments
+          .map((s) => s.start[0] === s.end[0] || s.start[1] === s.end[1])
+          .every(Boolean),
       "Updates to fixed segments must be either horizontal or vertical",
     );
 
@@ -960,16 +960,16 @@ export const updateElbowArrowPoints = (
           segment.index === 1 &&
           pointsEqual(segment.start, (updates.points ?? arrow.points)[0]),
       ) == null &&
-      updates.fixedSegments?.find(
-        (segment) =>
-          segment.index === (updates.points ?? arrow.points).length - 1 &&
-          pointsEqual(
-            segment.end,
-            (updates.points ?? arrow.points)[
-            (updates.points ?? arrow.points).length - 1
-            ],
-          ),
-      ) == null,
+        updates.fixedSegments?.find(
+          (segment) =>
+            segment.index === (updates.points ?? arrow.points).length - 1 &&
+            pointsEqual(
+              segment.end,
+              (updates.points ?? arrow.points)[
+                (updates.points ?? arrow.points).length - 1
+              ],
+            ),
+        ) == null,
       "The first and last segments cannot be fixed",
     );
   }
@@ -979,12 +979,12 @@ export const updateElbowArrowPoints = (
   const updatedPoints: readonly LocalPoint[] = updates.points
     ? updates.points && updates.points.length === 2
       ? arrow.points.map((p, idx) =>
-        idx === 0
-          ? updates.points![0]
-          : idx === arrow.points.length - 1
+          idx === 0
+            ? updates.points![0]
+            : idx === arrow.points.length - 1
             ? updates.points![1]
             : p,
-      )
+        )
       : updates.points.slice()
     : arrow.points.slice();
 
@@ -1234,7 +1234,7 @@ const getElbowArrowData = (
   } else {
     hoveredStartElement = arrow.startBinding
       ? getBindableElementForId(arrow.startBinding.elementId, elementsMap) ||
-      null
+        null
       : null;
     hoveredEndElement = arrow.endBinding
       ? getBindableElementForId(arrow.endBinding.elementId, elementsMap) || null
@@ -1301,49 +1301,49 @@ const getElbowArrowData = (
   ] as Bounds;
   const startElementBounds = hoveredStartElement
     ? aabbForElement(
-      hoveredStartElement,
-      elementsMap,
-      offsetFromHeading(
-        startHeading,
-        arrow.startArrowhead
-          ? getBindingGap(hoveredStartElement, { elbowed: true }) * 6
-          : getBindingGap(hoveredStartElement, { elbowed: true }) * 2,
-        1,
-      ),
-    )
+        hoveredStartElement,
+        elementsMap,
+        offsetFromHeading(
+          startHeading,
+          arrow.startArrowhead
+            ? getBindingGap(hoveredStartElement, { elbowed: true }) * 6
+            : getBindingGap(hoveredStartElement, { elbowed: true }) * 2,
+          1,
+        ),
+      )
     : startPointBounds;
   const endElementBounds = hoveredEndElement
     ? aabbForElement(
-      hoveredEndElement,
-      elementsMap,
-      offsetFromHeading(
-        endHeading,
-        arrow.endArrowhead
-          ? getBindingGap(hoveredEndElement, { elbowed: true }) * 6
-          : getBindingGap(hoveredEndElement, { elbowed: true }) * 2,
-        1,
-      ),
-    )
+        hoveredEndElement,
+        elementsMap,
+        offsetFromHeading(
+          endHeading,
+          arrow.endArrowhead
+            ? getBindingGap(hoveredEndElement, { elbowed: true }) * 6
+            : getBindingGap(hoveredEndElement, { elbowed: true }) * 2,
+          1,
+        ),
+      )
     : endPointBounds;
   const boundsOverlap =
     pointInsideBounds(
       startGlobalPoint,
       hoveredEndElement
         ? aabbForElement(
-          hoveredEndElement,
-          elementsMap,
-          offsetFromHeading(endHeading, BASE_PADDING, BASE_PADDING),
-        )
+            hoveredEndElement,
+            elementsMap,
+            offsetFromHeading(endHeading, BASE_PADDING, BASE_PADDING),
+          )
         : endPointBounds,
     ) ||
     pointInsideBounds(
       endGlobalPoint,
       hoveredStartElement
         ? aabbForElement(
-          hoveredStartElement,
-          elementsMap,
-          offsetFromHeading(startHeading, BASE_PADDING, BASE_PADDING),
-        )
+            hoveredStartElement,
+            elementsMap,
+            offsetFromHeading(startHeading, BASE_PADDING, BASE_PADDING),
+          )
         : startPointBounds,
     );
   const commonBounds = commonAABB(
@@ -1357,36 +1357,36 @@ const getElbowArrowData = (
     commonBounds,
     boundsOverlap
       ? offsetFromHeading(
-        startHeading,
-        !hoveredStartElement && !hoveredEndElement ? 0 : BASE_PADDING,
-        0,
-      )
+          startHeading,
+          !hoveredStartElement && !hoveredEndElement ? 0 : BASE_PADDING,
+          0,
+        )
       : offsetFromHeading(
-        startHeading,
-        !hoveredStartElement && !hoveredEndElement
-          ? 0
-          : BASE_PADDING -
-          (arrow.startArrowhead
-            ? BASE_BINDING_GAP_ELBOW * 6
-            : BASE_BINDING_GAP_ELBOW * 2),
-        BASE_PADDING,
-      ),
+          startHeading,
+          !hoveredStartElement && !hoveredEndElement
+            ? 0
+            : BASE_PADDING -
+                (arrow.startArrowhead
+                  ? BASE_BINDING_GAP_ELBOW * 6
+                  : BASE_BINDING_GAP_ELBOW * 2),
+          BASE_PADDING,
+        ),
     boundsOverlap
       ? offsetFromHeading(
-        endHeading,
-        !hoveredStartElement && !hoveredEndElement ? 0 : BASE_PADDING,
-        0,
-      )
+          endHeading,
+          !hoveredStartElement && !hoveredEndElement ? 0 : BASE_PADDING,
+          0,
+        )
       : offsetFromHeading(
-        endHeading,
-        !hoveredStartElement && !hoveredEndElement
-          ? 0
-          : BASE_PADDING -
-          (arrow.endArrowhead
-            ? BASE_BINDING_GAP_ELBOW * 6
-            : BASE_BINDING_GAP_ELBOW * 2),
-        BASE_PADDING,
-      ),
+          endHeading,
+          !hoveredStartElement && !hoveredEndElement
+            ? 0
+            : BASE_PADDING -
+                (arrow.endArrowhead
+                  ? BASE_BINDING_GAP_ELBOW * 6
+                  : BASE_BINDING_GAP_ELBOW * 2),
+          BASE_PADDING,
+        ),
     boundsOverlap,
     hoveredStartElement && aabbForElement(hoveredStartElement, elementsMap),
     hoveredEndElement && aabbForElement(hoveredEndElement, elementsMap),
@@ -1680,29 +1680,29 @@ const generateDynamicAABBs = (
         ? Math.min((startEl[0] + endEl[2]) / 2, a[0] - startLeft)
         : (startEl[0] + endEl[2]) / 2
       : a[0] > b[0]
-        ? a[0] - startLeft
-        : common[0] - startLeft,
+      ? a[0] - startLeft
+      : common[0] - startLeft,
     a[1] > b[3]
       ? a[0] > b[2] || a[2] < b[0]
         ? Math.min((startEl[1] + endEl[3]) / 2, a[1] - startUp)
         : (startEl[1] + endEl[3]) / 2
       : a[1] > b[1]
-        ? a[1] - startUp
-        : common[1] - startUp,
+      ? a[1] - startUp
+      : common[1] - startUp,
     a[2] < b[0]
       ? a[1] > b[3] || a[3] < b[1]
         ? Math.max((startEl[2] + endEl[0]) / 2, a[2] + startRight)
         : (startEl[2] + endEl[0]) / 2
       : a[2] < b[2]
-        ? a[2] + startRight
-        : common[2] + startRight,
+      ? a[2] + startRight
+      : common[2] + startRight,
     a[3] < b[1]
       ? a[0] > b[2] || a[2] < b[0]
         ? Math.max((startEl[3] + endEl[1]) / 2, a[3] + startDown)
         : (startEl[3] + endEl[1]) / 2
       : a[3] < b[3]
-        ? a[3] + startDown
-        : common[3] + startDown,
+      ? a[3] + startDown
+      : common[3] + startDown,
   ] as Bounds;
   const second = [
     b[0] > a[2]
@@ -1710,29 +1710,29 @@ const generateDynamicAABBs = (
         ? Math.min((endEl[0] + startEl[2]) / 2, b[0] - endLeft)
         : (endEl[0] + startEl[2]) / 2
       : b[0] > a[0]
-        ? b[0] - endLeft
-        : common[0] - endLeft,
+      ? b[0] - endLeft
+      : common[0] - endLeft,
     b[1] > a[3]
       ? b[0] > a[2] || b[2] < a[0]
         ? Math.min((endEl[1] + startEl[3]) / 2, b[1] - endUp)
         : (endEl[1] + startEl[3]) / 2
       : b[1] > a[1]
-        ? b[1] - endUp
-        : common[1] - endUp,
+      ? b[1] - endUp
+      : common[1] - endUp,
     b[2] < a[0]
       ? b[1] > a[3] || b[3] < a[1]
         ? Math.max((endEl[2] + startEl[0]) / 2, b[2] + endRight)
         : (endEl[2] + startEl[0]) / 2
       : b[2] < a[2]
-        ? b[2] + endRight
-        : common[2] + endRight,
+      ? b[2] + endRight
+      : common[2] + endRight,
     b[3] < a[1]
       ? b[0] > a[2] || b[2] < a[0]
         ? Math.max((endEl[3] + startEl[1]) / 2, b[3] + endDown)
         : (endEl[3] + startEl[1]) / 2
       : b[3] < a[3]
-        ? b[3] + endDown
-        : common[3] + endDown,
+      ? b[3] + endDown
+      : common[3] + endDown,
   ] as Bounds;
 
   const c = commonAABB([first, second]);
@@ -2251,16 +2251,16 @@ const getBindPointHeading = (
     otherPoint,
     hoveredElement,
     hoveredElement &&
-    aabbForElement(
-      hoveredElement,
-      elementsMap,
-      Array(4).fill(distanceToElement(hoveredElement, elementsMap, p)) as [
-        number,
-        number,
-        number,
-        number,
-      ],
-    ),
+      aabbForElement(
+        hoveredElement,
+        elementsMap,
+        Array(4).fill(distanceToElement(hoveredElement, elementsMap, p)) as [
+          number,
+          number,
+          number,
+          number,
+        ],
+      ),
     origPoint,
     elementsMap,
     zoom,

@@ -128,8 +128,9 @@ function Picker<T>({
             onClick={(event) => {
               onChange(option.value);
             }}
-            title={`${option.text} ${option.keyBinding && `— ${option.keyBinding.toUpperCase()}`
-              }`}
+            title={`${option.text} ${
+              option.keyBinding && `— ${option.keyBinding.toUpperCase()}`
+            }`}
             aria-label={option.text || "none"}
             aria-keyshortcuts={option.keyBinding || undefined}
             key={option.text}

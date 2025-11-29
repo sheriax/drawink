@@ -283,7 +283,7 @@ describe("Sidebar", () => {
           <Sidebar
             name="customSidebar"
             className="test-sidebar"
-            onDock={() => { }}
+            onDock={() => {}}
             docked
           >
             <Sidebar.Header />
@@ -291,17 +291,14 @@ describe("Sidebar", () => {
         </Drawink>,
       );
 
-      await withDrawinkDimensions(
-        { width: 1920, height: 1080 },
-        async () => {
-          await assertSidebarDockButton(true);
-        },
-      );
+      await withDrawinkDimensions({ width: 1920, height: 1080 }, async () => {
+        await assertSidebarDockButton(true);
+      });
     });
 
     it("shouldn't be user-dockable when only `onDock` supplied w/o `docked`", async () => {
       // we expect warnings in this test and don't want to pollute stdout
-      const mock = jest.spyOn(console, "warn").mockImplementation(() => { });
+      const mock = jest.spyOn(console, "warn").mockImplementation(() => {});
 
       await render(
         <Drawink
@@ -310,19 +307,16 @@ describe("Sidebar", () => {
           <Sidebar
             name="customSidebar"
             className="test-sidebar"
-            onDock={() => { }}
+            onDock={() => {}}
           >
             <Sidebar.Header />
           </Sidebar>
         </Drawink>,
       );
 
-      await withDrawinkDimensions(
-        { width: 1920, height: 1080 },
-        async () => {
-          await assertSidebarDockButton(false);
-        },
-      );
+      await withDrawinkDimensions({ width: 1920, height: 1080 }, async () => {
+        await assertSidebarDockButton(false);
+      });
 
       mock.mockRestore();
     });
@@ -341,56 +335,53 @@ describe("Sidebar", () => {
         </Drawink>,
       );
 
-      await withDrawinkDimensions(
-        { width: 1920, height: 1080 },
-        async () => {
-          expect(
-            container.querySelector<HTMLElement>(
-              "[role=tabpanel][data-testid=library]",
-            ),
-          ).toBeNull();
+      await withDrawinkDimensions({ width: 1920, height: 1080 }, async () => {
+        expect(
+          container.querySelector<HTMLElement>(
+            "[role=tabpanel][data-testid=library]",
+          ),
+        ).toBeNull();
 
-          // open library sidebar
-          expect(await toggleSidebar({ name: "custom", tab: "library" })).toBe(
-            true,
-          );
-          expect(
-            container.querySelector<HTMLElement>(
-              "[role=tabpanel][data-testid=library]",
-            ),
-          ).not.toBeNull();
+        // open library sidebar
+        expect(await toggleSidebar({ name: "custom", tab: "library" })).toBe(
+          true,
+        );
+        expect(
+          container.querySelector<HTMLElement>(
+            "[role=tabpanel][data-testid=library]",
+          ),
+        ).not.toBeNull();
 
-          // switch to comments tab
-          expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-            true,
-          );
-          expect(
-            container.querySelector<HTMLElement>(
-              "[role=tabpanel][data-testid=comments]",
-            ),
-          ).not.toBeNull();
+        // switch to comments tab
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
+          true,
+        );
+        expect(
+          container.querySelector<HTMLElement>(
+            "[role=tabpanel][data-testid=comments]",
+          ),
+        ).not.toBeNull();
 
-          // toggle sidebar closed
-          expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-            false,
-          );
-          expect(
-            container.querySelector<HTMLElement>(
-              "[role=tabpanel][data-testid=comments]",
-            ),
-          ).toBeNull();
+        // toggle sidebar closed
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
+          false,
+        );
+        expect(
+          container.querySelector<HTMLElement>(
+            "[role=tabpanel][data-testid=comments]",
+          ),
+        ).toBeNull();
 
-          // toggle sidebar open
-          expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-            true,
-          );
-          expect(
-            container.querySelector<HTMLElement>(
-              "[role=tabpanel][data-testid=comments]",
-            ),
-          ).not.toBeNull();
-        },
-      );
+        // toggle sidebar open
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
+          true,
+        );
+        expect(
+          container.querySelector<HTMLElement>(
+            "[role=tabpanel][data-testid=comments]",
+          ),
+        ).not.toBeNull();
+      });
     });
   });
 });

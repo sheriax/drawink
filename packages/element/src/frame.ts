@@ -215,10 +215,7 @@ export const groupsAreCompletelyOutOfFrame = (
  * Returns a map of frameId to frame elements. Includes empty frames.
  */
 export const groupByFrameLikes = (elements: readonly DrawinkElement[]) => {
-  const frameElementsMap = new Map<
-    DrawinkElement["id"],
-    DrawinkElement[]
-  >();
+  const frameElementsMap = new Map<DrawinkElement["id"], DrawinkElement[]>();
 
   for (const element of elements) {
     const frameId = isFrameLikeElement(element) ? element.id : element.frameId;
@@ -573,10 +570,7 @@ export const removeElementsFromFrame = (
   elementsToRemove: ReadonlySetLike<NonDeletedDrawinkElement>,
   elementsMap: ElementsMap,
 ) => {
-  const _elementsToRemove = new Map<
-    DrawinkElement["id"],
-    DrawinkElement
-  >();
+  const _elementsToRemove = new Map<DrawinkElement["id"], DrawinkElement>();
 
   const toRemoveElementsByFrame = new Map<
     DrawinkFrameLikeElement["id"],

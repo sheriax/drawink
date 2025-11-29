@@ -65,9 +65,7 @@ const normalizeGroupElementOrder = (elements: readonly DrawinkElement[]) => {
  * original z-index of container (i.e. it moves bound text elements after
  * containers).
  */
-const normalizeBoundElementsOrder = (
-  elements: readonly DrawinkElement[],
-) => {
+const normalizeBoundElementsOrder = (elements: readonly DrawinkElement[]) => {
   const elementsMap = arrayToMapWithIndex(elements);
 
   const origElements: (DrawinkElement | null)[] = elements.slice();
@@ -114,8 +112,6 @@ const normalizeBoundElementsOrder = (
   return [...sortedElements];
 };
 
-export const normalizeElementOrder = (
-  elements: readonly DrawinkElement[],
-) => {
+export const normalizeElementOrder = (elements: readonly DrawinkElement[]) => {
   return normalizeBoundElementsOrder(normalizeGroupElementOrder(elements));
 };

@@ -127,9 +127,7 @@ export const validateFractionalIndices = (
  * - when fractional indices are identical, break the tie based on the element id
  * - when there is no fractional index in one of the elements, respect the order of the array
  */
-export const orderByFractionalIndex = (
-  elements: OrderedDrawinkElement[],
-) => {
+export const orderByFractionalIndex = (elements: OrderedDrawinkElement[]) => {
   return elements.sort((a, b) => {
     // in case the indices are not the defined at runtime
     if (isOrderedElement(a) && isOrderedElement(b)) {
@@ -404,10 +402,7 @@ const generateIndices = (
   elements: readonly DrawinkElement[],
   indicesGroups: number[][],
 ) => {
-  const elementsUpdates = new Map<
-    DrawinkElement,
-    { index: FractionalIndex }
-  >();
+  const elementsUpdates = new Map<DrawinkElement, { index: FractionalIndex }>();
 
   for (const indices of indicesGroups) {
     const lowerBoundIndex = indices.shift()!;

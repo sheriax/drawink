@@ -100,7 +100,7 @@ export const actionGoToCollaborator = register<Collaborator>({
       >
         <Avatar
           color={background}
-          onClick={() => { }}
+          onClick={() => {}}
           name={collaborator.username || ""}
           src={collaborator.avatarUrl}
           className={statusClassNames}

@@ -19,10 +19,7 @@ import {
   isTextElement,
 } from "@drawink/element";
 
-import {
-  getBoundTextElement,
-  redrawTextBoundingBox,
-} from "@drawink/element";
+import { getBoundTextElement, redrawTextBoundingBox } from "@drawink/element";
 
 import { CaptureUpdateAction } from "@drawink/element";
 
@@ -106,9 +103,9 @@ export const actionPasteStyles = register({
             roughness: elementStylesToCopyFrom?.roughness,
             roundness: elementStylesToCopyFrom.roundness
               ? canApplyRoundnessTypeToElement(
-                elementStylesToCopyFrom.roundness.type,
-                element,
-              )
+                  elementStylesToCopyFrom.roundness.type,
+                  element,
+                )
                 ? elementStylesToCopyFrom.roundness
                 : getDefaultRoundnessTypeForElement(element)
               : null,

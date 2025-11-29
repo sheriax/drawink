@@ -12,8 +12,9 @@ export const getDropdownMenuItemClassName = (
   hovered = false,
 ) => {
   return `dropdown-menu-item dropdown-menu-item-base ${className}
-  ${selected ? "dropdown-menu-item--selected" : ""} ${hovered ? "dropdown-menu-item--hovered" : ""
-    }`.trim();
+  ${selected ? "dropdown-menu-item--selected" : ""} ${
+    hovered ? "dropdown-menu-item--hovered" : ""
+  }`.trim();
 };
 
 export const useHandleDropdownMenuItemClick = (

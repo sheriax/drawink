@@ -117,13 +117,13 @@ export const SearchMenu = () => {
         setAppState({
           searchMatches: matchItems.length
             ? {
-              focusedId: null,
-              matches: matchItems.map((searchMatch) => ({
-                id: searchMatch.element.id,
-                focus: false,
-                matchedLines: searchMatch.matchedLines,
-              })),
-            }
+                focusedId: null,
+                matches: matchItems.map((searchMatch) => ({
+                  id: searchMatch.element.id,
+                  focus: false,
+                  matchedLines: searchMatch.matchedLines,
+                })),
+              }
             : null,
         });
       });
@@ -341,10 +341,11 @@ export const SearchMenu = () => {
     });
   }, [setAppState, stableState, app]);
 
-  const matchCount = `${searchMatches.items.length} ${searchMatches.items.length === 1
+  const matchCount = `${searchMatches.items.length} ${
+    searchMatches.items.length === 1
       ? t("search.singleResult")
       : t("search.multipleResults")
-    }`;
+  }`;
 
   return (
     <div className="layer-ui__search">
@@ -370,13 +371,13 @@ export const SearchMenu = () => {
               setAppState({
                 searchMatches: matchItems.length
                   ? {
-                    focusedId: null,
-                    matches: matchItems.map((searchMatch) => ({
-                      id: searchMatch.element.id,
-                      focus: false,
-                      matchedLines: searchMatch.matchedLines,
-                    })),
-                  }
+                      focusedId: null,
+                      matches: matchItems.map((searchMatch) => ({
+                        id: searchMatch.element.id,
+                        focus: false,
+                        matchedLines: searchMatch.matchedLines,
+                      })),
+                    }
                   : null,
               });
 

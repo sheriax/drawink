@@ -97,13 +97,10 @@ export const duplicateElements = (
     overrides?: (data: {
       duplicateElement: DrawinkElement;
       origElement: DrawinkElement;
-      origIdToDuplicateId: Map<
-        DrawinkElement["id"],
-        DrawinkElement["id"]
-      >;
+      origIdToDuplicateId: Map<DrawinkElement["id"], DrawinkElement["id"]>;
     }) => Partial<DrawinkElement>;
   } & (
-      | {
+    | {
         /**
          * Duplicates all elements in array.
          *
@@ -112,7 +109,7 @@ export const duplicateElements = (
          */
         type: "everything";
       }
-      | {
+    | {
         /**
          * Duplicates specified elements and inserts them back into the array
          * in specified order.
@@ -121,16 +118,13 @@ export const duplicateElements = (
          * such as alt-drag or on duplicate action.
          */
         type: "in-place";
-        idsOfElementsToDuplicate: Map<
-          DrawinkElement["id"],
-          DrawinkElement
-        >;
+        idsOfElementsToDuplicate: Map<DrawinkElement["id"], DrawinkElement>;
         appState: {
           editingGroupId: AppState["editingGroupId"];
           selectedGroupIds: AppState["selectedGroupIds"];
         };
       }
-    ),
+  ),
 ) => {
   let { elements } = opts;
 
@@ -138,9 +132,9 @@ export const duplicateElements = (
     "appState" in opts
       ? opts.appState
       : ({
-        editingGroupId: null,
-        selectedGroupIds: {},
-      } as const);
+          editingGroupId: null,
+          selectedGroupIds: {},
+        } as const);
 
   // Ids of elements that have already been processed so we don't push them
   // into the array twice if we end up backtracking when retrieving
@@ -191,46 +185,39 @@ export const duplicateElements = (
   // an element with bound text etc.
   const copyElements = <T extends DrawinkElement | DrawinkElement[]>(
     element: T,
-  ): T extends DrawinkElement[]
-    ? DrawinkElement[]
-    : DrawinkElement | null => {
+  ): T extends DrawinkElement[] ? DrawinkElement[] : DrawinkElement | null => {
     const elements = castArray(element);
 
-    const _newElements = elements.reduce(
-      (acc: DrawinkElement[], element) => {
-        if (processedIds.has(element.id)) {
-          return acc;
-        }
-
-        processedIds.set(element.id, true);
-
-        const newElement = duplicateElement(
-          appState.editingGroupId,
-          groupIdMap,
-          element,
-          opts.randomizeSeed,
-        );
-
-        processedIds.set(newElement.id, true);
-
-        duplicateElementsMap.set(newElement.id, newElement);
-        origIdToDuplicateId.set(element.id, newElement.id);
-        duplicateIdToOrigElement.set(newElement.id, element);
-
-        origElements.push(element);
-        duplicatedElements.push(newElement);
-
-        acc.push(newElement);
+    const _newElements = elements.reduce((acc: DrawinkElement[], element) => {
+      if (processedIds.has(element.id)) {
         return acc;
-      },
-      [],
-    );
+      }
+
+      processedIds.set(element.id, true);
+
+      const newElement = duplicateElement(
+        appState.editingGroupId,
+        groupIdMap,
+        element,
+        opts.randomizeSeed,
+      );
+
+      processedIds.set(newElement.id, true);
+
+      duplicateElementsMap.set(newElement.id, newElement);
+      origIdToDuplicateId.set(element.id, newElement.id);
+      duplicateIdToOrigElement.set(newElement.id, element);
+
+      origElements.push(element);
+      duplicatedElements.push(newElement);
+
+      acc.push(newElement);
+      return acc;
+    }, []);
 
     return (
       Array.isArray(element) ? _newElements : _newElements[0] || null
-    ) as T extends DrawinkElement[]
-      ? DrawinkElement[]
-      : DrawinkElement | null;
+    ) as T extends DrawinkElement[] ? DrawinkElement[] : DrawinkElement | null;
   };
 
   // Helper to position cloned elements in the Z-order the product needs it

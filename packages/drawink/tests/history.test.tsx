@@ -761,9 +761,7 @@ describe("history", () => {
     });
 
     it("should create new history entry on embeddable link paste", async () => {
-      await render(
-        <Drawink autoFocus={true} handleKeyboardGlobally={true} />,
-      );
+      await render(<Drawink autoFocus={true} handleKeyboardGlobally={true} />);
 
       const link = "https://www.youtube.com/watch?v=gkGMXY0wekg";
 
@@ -2354,10 +2352,10 @@ describe("history", () => {
         elements: h.elements.map((el) =>
           el.id === "KPrBI4g_v9qUB1XxYLgSz"
             ? {
-              ...el,
-              x: 600,
-              y: 0,
-            }
+                ...el,
+                x: 600,
+                y: 0,
+              }
             : el,
         ),
         captureUpdate: CaptureUpdateAction.NEVER,
@@ -4530,8 +4528,7 @@ describe("history", () => {
         mouse.up();
 
         expect(
-          (h.elements[2] as DrawinkElbowArrowElement).startBinding
-            ?.fixedPoint,
+          (h.elements[2] as DrawinkElbowArrowElement).startBinding?.fixedPoint,
         ).not.toEqual([1, 0.5001]);
         expect(
           (h.elements[2] as DrawinkElbowArrowElement).startBinding?.mode,
@@ -5034,7 +5031,7 @@ describe("history", () => {
         });
       });
 
-      it("should unbind remotely deleted bindable elements from arrow when the arrow is added through the history", async () => { });
+      it("should unbind remotely deleted bindable elements from arrow when the arrow is added through the history", async () => {});
 
       it("should update bound element points when rectangle was remotely moved and arrow is added back through the history", async () => {
         // bind arrow to rect1 and rect2

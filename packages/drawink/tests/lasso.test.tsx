@@ -355,11 +355,11 @@ describe("Basic lasso selection tests", () => {
       },
     ].map(
       (e) =>
-      ({
-        ...e,
-        angle: e.angle as Radians,
-        index: null,
-      } as DrawinkElement),
+        ({
+          ...e,
+          angle: e.angle as Radians,
+          index: null,
+        } as DrawinkElement),
     );
 
     act(() => {

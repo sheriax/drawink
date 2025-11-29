@@ -193,9 +193,9 @@ export const handleBindTextResize = (
       // fix the y coord when resizing from ne/nw/n
       const updatedY =
         !isArrowElement(container) &&
-          (transformHandleType === "ne" ||
-            transformHandleType === "nw" ||
-            transformHandleType === "n")
+        (transformHandleType === "ne" ||
+          transformHandleType === "nw" ||
+          transformHandleType === "n")
           ? container.y - diff
           : container.y;
       scene.mutateElement(container, {
@@ -439,9 +439,8 @@ const VALID_CONTAINER_TYPES = new Set([
   "arrow",
 ]);
 
-export const isValidTextContainer = (element: {
-  type: DrawinkElementType;
-}) => VALID_CONTAINER_TYPES.has(element.type);
+export const isValidTextContainer = (element: { type: DrawinkElementType }) =>
+  VALID_CONTAINER_TYPES.has(element.type);
 
 export const computeContainerDimensionForBoundText = (
   dimension: number,

@@ -330,17 +330,17 @@ const generateElementCanvas = (
     // Clear the bound text area
     boundTextCanvasContext.clearRect(
       -(boundTextElement.width / 2 + BOUND_TEXT_PADDING) *
-      window.devicePixelRatio *
-      scale,
+        window.devicePixelRatio *
+        scale,
       -(boundTextElement.height / 2 + BOUND_TEXT_PADDING) *
-      window.devicePixelRatio *
-      scale,
+        window.devicePixelRatio *
+        scale,
       (boundTextElement.width + BOUND_TEXT_PADDING * 2) *
-      window.devicePixelRatio *
-      scale,
+        window.devicePixelRatio *
+        scale,
       (boundTextElement.height + BOUND_TEXT_PADDING * 2) *
-      window.devicePixelRatio *
-      scale,
+        window.devicePixelRatio *
+        scale,
     );
   }
 
@@ -472,11 +472,11 @@ const drawElementOnCanvas = (
         const { x, y, width, height } = element.crop
           ? element.crop
           : {
-            x: 0,
-            y: 0,
-            width: img.naturalWidth,
-            height: img.naturalHeight,
-          };
+              x: 0,
+              y: 0,
+              width: img.naturalWidth,
+              height: img.naturalHeight,
+            };
 
         context.drawImage(
           img,
@@ -516,8 +516,8 @@ const drawElementOnCanvas = (
           element.textAlign === "center"
             ? element.width / 2
             : element.textAlign === "right"
-              ? element.width
-              : 0;
+            ? element.width
+            : 0;
 
         const lineHeightPx = getLineHeightInPx(
           element.fontSize,
@@ -562,8 +562,8 @@ const generateElementWithCanvas = (
   const zoom: Zoom = renderConfig
     ? appState.zoom
     : {
-      value: 1 as NormalizedZoomValue,
-    };
+        value: 1 as NormalizedZoomValue,
+      };
   const prevElementWithCanvas = elementWithCanvasCache.get(element);
   const shouldRegenerateBecauseZoom =
     prevElementWithCanvas &&
@@ -669,16 +669,16 @@ const drawElementFromCanvas = (
     context.drawImage(
       elementWithCanvas.canvas!,
       (x1 + appState.scrollX) * window.devicePixelRatio -
-      (padding * elementWithCanvas.scale) / elementWithCanvas.scale,
+        (padding * elementWithCanvas.scale) / elementWithCanvas.scale,
       (y1 + appState.scrollY) * window.devicePixelRatio -
-      (padding * elementWithCanvas.scale) / elementWithCanvas.scale,
+        (padding * elementWithCanvas.scale) / elementWithCanvas.scale,
       elementWithCanvas.canvas!.width / elementWithCanvas.scale,
       elementWithCanvas.canvas!.height / elementWithCanvas.scale,
     );
 
     if (
       import.meta.env.VITE_APP_DEBUG_ENABLE_TEXT_CONTAINER_BOUNDING_BOX ===
-      "true" &&
+        "true" &&
       hasBoundTextElement(element)
     ) {
       const textElement = getBoundTextElement(
@@ -1104,8 +1104,8 @@ export function getFreedrawOutlinePoints(element: DrawinkFreeDrawElement) {
   const inputPoints = element.simulatePressure
     ? element.points
     : element.points.length
-      ? element.points.map(([x, y], i) => [x, y, element.pressures[i]])
-      : [[0, 0, 0.5]];
+    ? element.points.map(([x, y], i) => [x, y, element.pressures[i]])
+    : [[0, 0, 0.5]];
 
   // Consider changing the options for simulated pressure vs real pressure
   const options: StrokeOptions = {

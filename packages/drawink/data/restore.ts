@@ -26,10 +26,7 @@ import {
   projectFixedPointOntoDiagonal,
 } from "@drawink/element";
 import { normalizeFixedPoint } from "@drawink/element";
-import {
-  updateElbowArrowPoints,
-  validateElbowPoints,
-} from "@drawink/element";
+import { updateElbowArrowPoints, validateElbowPoints } from "@drawink/element";
 import { LinearElementEditor } from "@drawink/element";
 import { bumpVersion } from "@drawink/element";
 import { getContainerElement } from "@drawink/element";
@@ -149,8 +146,7 @@ const repairBinding = <T extends DrawinkArrowElement>(
   }
 
   const boundElement =
-    (elementsMap.get(binding.elementId) as DrawinkBindableElement) ||
-    undefined;
+    (elementsMap.get(binding.elementId) as DrawinkBindableElement) || undefined;
   if (boundElement) {
     if (binding.mode) {
       return {
@@ -172,12 +168,12 @@ const repairBinding = <T extends DrawinkArrowElement>(
       mode === "inside"
         ? p
         : projectFixedPointOntoDiagonal(
-          element,
-          p,
-          boundElement,
-          startOrEnd,
-          elementsMap,
-        ) || p;
+            element,
+            p,
+            boundElement,
+            startOrEnd,
+            elementsMap,
+          ) || p;
     const { fixedPoint } = calculateFixedPointForNonElbowArrowBinding(
       element,
       boundElement,
@@ -244,14 +240,14 @@ const restoreElementWithProperties = <
     roundness: element.roundness
       ? element.roundness
       : element.strokeSharpness === "round"
-        ? {
+      ? {
           // for old elements that would now use adaptive radius algo,
           // use legacy algo instead
           type: isUsingAdaptiveRadius(element.type)
             ? ROUNDNESS.LEGACY
             : ROUNDNESS.PROPORTIONAL_RADIUS,
         }
-        : null,
+      : null,
     boundElements: element.boundElementIds
       ? element.boundElementIds.map((id) => ({ type: "arrow", id }))
       : element.boundElements ?? [],
@@ -317,10 +313,10 @@ export const restoreElement = (
         element.lineHeight ||
         (element.height
           ? // detect line-height from current element height and font-size
-          detectLineHeight(element)
+            detectLineHeight(element)
           : // no element height likely means programmatic use, so default
-          // to a fixed line height
-          getLineHeight(element.fontFamily));
+            // to a fixed line height
+            getLineHeight(element.fontFamily));
       element = restoreElementWithProperties(element, {
         fontSize,
         fontFamily,
@@ -384,10 +380,10 @@ export const restoreElement = (
         y,
         ...(isLineElement(element)
           ? {
-            polygon: isValidPolygon(element.points)
-              ? element.polygon ?? false
-              : false,
-          }
+              polygon: isValidPolygon(element.points)
+                ? element.polygon ?? false
+                : false,
+            }
           : {}),
         ...getSizeFromPoints(points),
       });
@@ -426,15 +422,15 @@ export const restoreElement = (
       // TODO: Separate arrow from linear element
       const restoredElement = isElbowArrow(element)
         ? restoreElementWithProperties(element as DrawinkElbowArrowElement, {
-          ...base,
-          elbowed: true,
-          fixedSegments:
-            element.fixedSegments?.length && base.points.length >= 4
-              ? element.fixedSegments
-              : null,
-          startIsSpecial: element.startIsSpecial,
-          endIsSpecial: element.endIsSpecial,
-        })
+            ...base,
+            elbowed: true,
+            fixedSegments:
+              element.fixedSegments?.length && base.points.length >= 4
+                ? element.fixedSegments
+                : null,
+            startIsSpecial: element.startIsSpecial,
+            endIsSpecial: element.endIsSpecial,
+          })
         : restoreElementWithProperties(element as DrawinkArrowElement, base);
 
       return {
@@ -483,10 +479,7 @@ const repairContainerElement = (
     // dedupe bindings & fix boundElement.containerId if not set already
     const boundIds = new Set<DrawinkElement["id"]>();
     container.boundElements = boundElements.reduce(
-      (
-        acc: Mutable<NonNullable<DrawinkElement["boundElements"]>>,
-        binding,
-      ) => {
+      (acc: Mutable<NonNullable<DrawinkElement["boundElements"]>>, binding) => {
         const boundElement = elementsMap.get(binding.id);
         if (boundElement && !boundIds.has(binding.id)) {
           boundIds.add(binding.id);
@@ -578,10 +571,10 @@ export const restoreElements = (
   localElements: readonly DrawinkElement[] | null | undefined,
   opts?:
     | {
-      refreshDimensions?: boolean;
-      repairBindings?: boolean;
-      deleteInvisibleElements?: boolean;
-    }
+        refreshDimensions?: boolean;
+        repairBindings?: boolean;
+        deleteInvisibleElements?: boolean;
+      }
     | undefined,
 ): OrderedDrawinkElement[] => {
   // used to detect duplicate top-level element ids
@@ -768,11 +761,11 @@ const LegacyAppStateMigrations: {
     return [
       "defaultSidebarDockedPreference",
       appState.isSidebarDocked ??
-      coalesceAppStateValue(
-        "defaultSidebarDockedPreference",
-        appState,
-        defaultAppState,
-      ),
+        coalesceAppStateValue(
+          "defaultSidebarDockedPreference",
+          appState,
+          defaultAppState,
+        ),
     ];
   },
 };
@@ -813,8 +806,8 @@ export const restoreAppState = (
       suppliedValue !== undefined
         ? suppliedValue
         : localValue !== undefined
-          ? localValue
-          : defaultValue;
+        ? localValue
+        : defaultValue;
   }
 
   return {

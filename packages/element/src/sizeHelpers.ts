@@ -27,9 +27,7 @@ export const INVISIBLY_SMALL_ELEMENT_SIZE = 0.1;
 // TODO:  remove invisible elements consistently actions, so that invisible elements are not recorded by the store, exported, broadcasted or persisted
 //        - perhaps could be as part of a standalone 'cleanup' action, in addition to 'finalize'
 //        - could also be part of `_clearElements`
-export const isInvisiblySmallElement = (
-  element: DrawinkElement,
-): boolean => {
+export const isInvisiblySmallElement = (element: DrawinkElement): boolean => {
   if (isLinearElement(element) || isFreeDrawElement(element)) {
     return (
       element.points.length < 2 ||

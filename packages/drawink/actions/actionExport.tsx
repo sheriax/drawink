@@ -168,11 +168,11 @@ export const actionSaveToActiveFile = register({
     try {
       const { fileHandle } = isImageFileHandle(appState.fileHandle)
         ? await resaveAsImageWithScene(
-          elements,
-          appState,
-          app.files,
-          app.getName(),
-        )
+            elements,
+            appState,
+            app.files,
+            app.getName(),
+          )
         : await saveAsJSON(elements, appState, app.files, app.getName());
 
       return {
@@ -182,13 +182,13 @@ export const actionSaveToActiveFile = register({
           fileHandle,
           toast: fileHandleExists
             ? {
-              message: fileHandle?.name
-                ? t("toast.fileSavedToFilename").replace(
-                  "{filename}",
-                  `"${fileHandle.name}"`,
-                )
-                : t("toast.fileSaved"),
-            }
+                message: fileHandle?.name
+                  ? t("toast.fileSavedToFilename").replace(
+                      "{filename}",
+                      `"${fileHandle.name}"`,
+                    )
+                  : t("toast.fileSaved"),
+              }
             : null,
         },
       };

@@ -11,11 +11,7 @@
  */
 
 import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
-import {
-  CANVAS_SEARCH_TAB,
-  DEFAULT_SIDEBAR,
-  debounce,
-} from "@drawink/common";
+import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce } from "@drawink/common";
 import {
   createStore,
   entries,

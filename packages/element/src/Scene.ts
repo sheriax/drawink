@@ -34,11 +34,7 @@ import type {
   Ordered,
 } from "@drawink/element/types";
 
-import type {
-  Assert,
-  Mutable,
-  SameType,
-} from "@drawink/common/utility-types";
+import type { Assert, Mutable, SameType } from "@drawink/common/utility-types";
 
 import type { AppState } from "../../drawink/types";
 
@@ -55,10 +51,7 @@ const getNonDeletedElements = <T extends DrawinkElement>(
   for (const element of allElements) {
     if (!element.isDeleted) {
       elements.push(element as NonDeleted<T>);
-      elementsMap.set(
-        element.id,
-        element as Ordered<NonDeletedDrawinkElement>,
-      );
+      elementsMap.set(element.id, element as Ordered<NonDeletedDrawinkElement>);
     }
   }
   return { elementsMap, elements };
@@ -112,8 +105,7 @@ export class Scene {
 
   private callbacks: Set<SceneStateCallback> = new Set();
 
-  private nonDeletedElements: readonly Ordered<NonDeletedDrawinkElement>[] =
-    [];
+  private nonDeletedElements: readonly Ordered<NonDeletedDrawinkElement>[] = [];
   private nonDeletedElementsMap = toBrandedType<NonDeletedSceneElementsMap>(
     new Map(),
   );
@@ -128,10 +120,10 @@ export class Scene {
     elements: readonly NonDeletedDrawinkElement[] | null;
     cache: Map<SelectionHash, NonDeletedDrawinkElement[]>;
   } = {
-      selectedElementIds: null,
-      elements: null,
-      cache: new Map(),
-    };
+    selectedElementIds: null,
+    elements: null,
+    cache: new Map(),
+  };
   /**
    * Random integer regenerated each scene update.
    *
@@ -251,9 +243,7 @@ export class Scene {
    *
    * @returns whether a change was made
    */
-  mapElements(
-    iteratee: (element: DrawinkElement) => DrawinkElement,
-  ): boolean {
+  mapElements(iteratee: (element: DrawinkElement) => DrawinkElement): boolean {
     let didChange = false;
     const newElements = this.elements.map((element) => {
       const nextElement = iteratee(element);
@@ -405,8 +395,8 @@ export class Scene {
   getContainerElement = (
     element:
       | (DrawinkElement & {
-        containerId: DrawinkElement["id"] | null;
-      })
+          containerId: DrawinkElement["id"] | null;
+        })
       | null,
   ) => {
     if (!element) {
@@ -439,9 +429,9 @@ export class Scene {
       informMutation: boolean;
       isDragging: boolean;
     } = {
-        informMutation: true,
-        isDragging: false,
-      },
+      informMutation: true,
+      isDragging: false,
+    },
   ) {
     const elementsMap = this.getNonDeletedElementsMap();
 

@@ -49,12 +49,12 @@ export class Fonts {
 
   private static _registered:
     | Map<
-      number,
-      {
-        metadata: FontMetadata;
-        fontFaces: DrawinkFontFace[];
-      }
-    >
+        number,
+        {
+          metadata: FontMetadata;
+          fontFaces: DrawinkFontFace[];
+        }
+      >
     | undefined;
 
   private static _initialized: boolean = false;
@@ -326,11 +326,11 @@ export class Fonts {
     this:
       | Fonts
       | {
-        registered: Map<
-          number,
-          { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
-        >;
-      },
+          registered: Map<
+            number,
+            { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
+          >;
+        },
     family: string,
     metadata: FontMetadata,
     ...fontFacesDecriptors: DrawinkFontFaceDescriptor[]

@@ -75,139 +75,139 @@ export type ValidLinearElement = {
     verticalAlign?: VerticalAlign;
   } & MarkOptional<ElementConstructorOpts, "x" | "y">;
   end?:
-  | (
     | (
-      | {
-        type: Exclude<
-          DrawinkBindableElement["type"],
-          | "image"
-          | "text"
-          | "frame"
-          | "magicframe"
-          | "embeddable"
-          | "iframe"
-        >;
-        id?: DrawinkGenericElement["id"];
-      }
-      | {
-        id: DrawinkGenericElement["id"];
-        type?: Exclude<
-          DrawinkBindableElement["type"],
-          | "image"
-          | "text"
-          | "frame"
-          | "magicframe"
-          | "embeddable"
-          | "iframe"
-        >;
-      }
-    )
-    | ((
-      | {
-        type: "text";
-        text: string;
-      }
-      | {
-        type?: "text";
-        id: DrawinkTextElement["id"];
-        text: string;
-      }
-    ) &
-      Partial<DrawinkTextElement>)
-  ) &
-  MarkOptional<ElementConstructorOpts, "x" | "y">;
+        | (
+            | {
+                type: Exclude<
+                  DrawinkBindableElement["type"],
+                  | "image"
+                  | "text"
+                  | "frame"
+                  | "magicframe"
+                  | "embeddable"
+                  | "iframe"
+                >;
+                id?: DrawinkGenericElement["id"];
+              }
+            | {
+                id: DrawinkGenericElement["id"];
+                type?: Exclude<
+                  DrawinkBindableElement["type"],
+                  | "image"
+                  | "text"
+                  | "frame"
+                  | "magicframe"
+                  | "embeddable"
+                  | "iframe"
+                >;
+              }
+          )
+        | ((
+            | {
+                type: "text";
+                text: string;
+              }
+            | {
+                type?: "text";
+                id: DrawinkTextElement["id"];
+                text: string;
+              }
+          ) &
+            Partial<DrawinkTextElement>)
+      ) &
+        MarkOptional<ElementConstructorOpts, "x" | "y">;
   start?:
-  | (
     | (
-      | {
-        type: Exclude<
-          DrawinkBindableElement["type"],
-          | "image"
-          | "text"
-          | "frame"
-          | "magicframe"
-          | "embeddable"
-          | "iframe"
-        >;
-        id?: DrawinkGenericElement["id"];
-      }
-      | {
-        id: DrawinkGenericElement["id"];
-        type?: Exclude<
-          DrawinkBindableElement["type"],
-          | "image"
-          | "text"
-          | "frame"
-          | "magicframe"
-          | "embeddable"
-          | "iframe"
-        >;
-      }
-    )
-    | ((
-      | {
-        type: "text";
-        text: string;
-      }
-      | {
-        type?: "text";
-        id: DrawinkTextElement["id"];
-        text: string;
-      }
-    ) &
-      Partial<DrawinkTextElement>)
-  ) &
-  MarkOptional<ElementConstructorOpts, "x" | "y">;
+        | (
+            | {
+                type: Exclude<
+                  DrawinkBindableElement["type"],
+                  | "image"
+                  | "text"
+                  | "frame"
+                  | "magicframe"
+                  | "embeddable"
+                  | "iframe"
+                >;
+                id?: DrawinkGenericElement["id"];
+              }
+            | {
+                id: DrawinkGenericElement["id"];
+                type?: Exclude<
+                  DrawinkBindableElement["type"],
+                  | "image"
+                  | "text"
+                  | "frame"
+                  | "magicframe"
+                  | "embeddable"
+                  | "iframe"
+                >;
+              }
+          )
+        | ((
+            | {
+                type: "text";
+                text: string;
+              }
+            | {
+                type?: "text";
+                id: DrawinkTextElement["id"];
+                text: string;
+              }
+          ) &
+            Partial<DrawinkTextElement>)
+      ) &
+        MarkOptional<ElementConstructorOpts, "x" | "y">;
 } & Partial<DrawinkLinearElement>;
 
 export type ValidContainer =
   | {
-    type: Exclude<DrawinkGenericElement["type"], "selection">;
-    id?: DrawinkGenericElement["id"];
-    label?: {
-      text: string;
-      fontSize?: number;
-      fontFamily?: FontFamilyValues;
-      textAlign?: TextAlign;
-      verticalAlign?: VerticalAlign;
-    } & MarkOptional<ElementConstructorOpts, "x" | "y">;
-  } & ElementConstructorOpts;
+      type: Exclude<DrawinkGenericElement["type"], "selection">;
+      id?: DrawinkGenericElement["id"];
+      label?: {
+        text: string;
+        fontSize?: number;
+        fontFamily?: FontFamilyValues;
+        textAlign?: TextAlign;
+        verticalAlign?: VerticalAlign;
+      } & MarkOptional<ElementConstructorOpts, "x" | "y">;
+    } & ElementConstructorOpts;
 
 export type DrawinkElementSkeleton =
   | Extract<
-    Exclude<DrawinkElement, DrawinkSelectionElement>,
-    DrawinkIframeLikeElement | DrawinkFreeDrawElement
-  >
+      Exclude<DrawinkElement, DrawinkSelectionElement>,
+      DrawinkIframeLikeElement | DrawinkFreeDrawElement
+    >
   | ({
-    type: Extract<DrawinkLinearElement["type"], "line">;
-    x: number;
-    y: number;
-  } & Partial<DrawinkLinearElement>)
+      type: Extract<DrawinkLinearElement["type"], "line">;
+      x: number;
+      y: number;
+    } & Partial<DrawinkLinearElement>)
   | ValidContainer
   | ValidLinearElement
   | ({
-    type: "text";
-    text: string;
-    x: number;
-    y: number;
-    id?: DrawinkTextElement["id"];
-  } & Partial<DrawinkTextElement>)
+      type: "text";
+      text: string;
+      x: number;
+      y: number;
+      id?: DrawinkTextElement["id"];
+    } & Partial<DrawinkTextElement>)
   | ({
-    type: Extract<DrawinkImageElement["type"], "image">;
-    x: number;
-    y: number;
-    fileId: FileId;
-  } & Partial<DrawinkImageElement>)
+      type: Extract<DrawinkImageElement["type"], "image">;
+      x: number;
+      y: number;
+      fileId: FileId;
+    } & Partial<DrawinkImageElement>)
   | ({
-    type: "frame";
-    children: readonly DrawinkElement["id"][];
-    name?: string;
-  } & Partial<DrawinkFrameElement>)
+      type: "frame";
+      children: readonly DrawinkElement["id"][];
+      name?: string;
+    } & Partial<DrawinkFrameElement>)
   | ({
-    type: "magicframe";
-    children: readonly DrawinkElement["id"][];
-    name?: string;
-  } & Partial<DrawinkMagicFrameElement>);
+      type: "magicframe";
+      children: readonly DrawinkElement["id"][];
+      name?: string;
+    } & Partial<DrawinkMagicFrameElement>);
 
 const DEFAULT_LINEAR_ELEMENT_PROPS = {
   width: 100,
@@ -571,10 +571,7 @@ export const convertToDrawinkElements = (
           type: "arrow",
         });
 
-        Object.assign(
-          drawinkElement,
-          getSizeFromPoints(drawinkElement.points),
-        );
+        Object.assign(drawinkElement, getSizeFromPoints(drawinkElement.points));
         break;
       }
       case "text": {

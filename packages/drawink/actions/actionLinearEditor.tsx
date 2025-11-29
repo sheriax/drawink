@@ -1,14 +1,7 @@
-import {
-  isElbowArrow,
-  isLinearElement,
-  isLineElement,
-} from "@drawink/element";
+import { isElbowArrow, isLinearElement, isLineElement } from "@drawink/element";
 import { arrayToMap, invariant } from "@drawink/common";
 
-import {
-  toggleLinePolygonState,
-  CaptureUpdateAction,
-} from "@drawink/element";
+import { toggleLinePolygonState, CaptureUpdateAction } from "@drawink/element";
 
 import type {
   DrawinkLinearElement,

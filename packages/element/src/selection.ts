@@ -34,9 +34,7 @@ import type {
  * we only keep the frames.
  * @param selectedElements
  */
-export const excludeElementsInFramesFromSelection = <
-  T extends DrawinkElement,
->(
+export const excludeElementsInFramesFromSelection = <T extends DrawinkElement>(
   selectedElements: readonly T[],
 ) => {
   const framesInSelection = new Set<T["id"]>();
@@ -223,8 +221,8 @@ export const getTargetElements = (
   appState.editingTextElement
     ? [appState.editingTextElement]
     : appState.newElement
-      ? [appState.newElement]
-      : getSelectedElements(elements, appState, {
+    ? [appState.newElement]
+    : getSelectedElements(elements, appState, {
         includeBoundTextElement: true,
       });
 

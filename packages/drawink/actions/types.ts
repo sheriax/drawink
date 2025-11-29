@@ -24,12 +24,12 @@ export type ActionSource =
 /** if false, the action should be prevented */
 export type ActionResult =
   | {
-    elements?: readonly DrawinkElement[] | null;
-    appState?: Partial<AppState> | null;
-    files?: BinaryFiles | null;
-    captureUpdate: CaptureUpdateActionType;
-    replaceFiles?: boolean;
-  }
+      elements?: readonly DrawinkElement[] | null;
+      appState?: Partial<AppState> | null;
+      files?: BinaryFiles | null;
+      captureUpdate: CaptureUpdateActionType;
+      replaceFiles?: boolean;
+    }
   | false;
 
 type ActionFn<TData = any> = (
@@ -160,19 +160,19 @@ export type PanelComponentProps = {
 export interface Action<TData = any> {
   name: ActionName;
   label:
-  | string
-  | ((
-    elements: readonly DrawinkElement[],
-    appState: Readonly<AppState>,
-    app: AppClassProperties,
-  ) => string);
+    | string
+    | ((
+        elements: readonly DrawinkElement[],
+        appState: Readonly<AppState>,
+        app: AppClassProperties,
+      ) => string);
   keywords?: string[];
   icon?:
-  | React.ReactNode
-  | ((
-    appState: UIAppState,
-    elements: readonly DrawinkElement[],
-  ) => React.ReactNode);
+    | React.ReactNode
+    | ((
+        appState: UIAppState,
+        elements: readonly DrawinkElement[],
+      ) => React.ReactNode);
   PanelComponent?: React.FC<PanelComponentProps>;
   perform: ActionFn<TData>;
   keyPriority?: number;
@@ -190,26 +190,26 @@ export interface Action<TData = any> {
   ) => boolean;
   checked?: (appState: Readonly<AppState>) => boolean;
   trackEvent:
-  | false
-  | {
-    category:
-    | "toolbar"
-    | "element"
-    | "canvas"
-    | "export"
-    | "history"
-    | "menu"
-    | "collab"
-    | "hyperlink"
-    | "search_menu"
-    | "shape_switch";
-    action?: string;
-    predicate?: (
-      appState: Readonly<AppState>,
-      elements: readonly DrawinkElement[],
-      value: any,
-    ) => boolean;
-  };
+    | false
+    | {
+        category:
+          | "toolbar"
+          | "element"
+          | "canvas"
+          | "export"
+          | "history"
+          | "menu"
+          | "collab"
+          | "hyperlink"
+          | "search_menu"
+          | "shape_switch";
+        action?: string;
+        predicate?: (
+          appState: Readonly<AppState>,
+          elements: readonly DrawinkElement[],
+          value: any,
+        ) => boolean;
+      };
   /** if set to `true`, allow action to be performed in viewMode.
    *  Defaults to `false` */
   viewMode?: boolean;

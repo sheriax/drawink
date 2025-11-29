@@ -1,10 +1,7 @@
 import { reconcileElements } from "@drawink/drawink";
 import { MIME_TYPES } from "@drawink/common";
 import { decompressData } from "@drawink/drawink/data/encode";
-import {
-  encryptData,
-  decryptData,
-} from "@drawink/drawink/data/encryption";
+import { encryptData, decryptData } from "@drawink/drawink/data/encryption";
 import { restoreElements } from "@drawink/drawink/data/restore";
 import { getSceneVersion } from "@drawink/element";
 import { initializeApp } from "firebase/app";

@@ -118,9 +118,7 @@ const sidebars = {
                 type: "doc",
                 id: "@drawink/mermaid-to-drawink/codebase/parser/parser",
               },
-              items: [
-                "@drawink/mermaid-to-drawink/codebase/parser/flowchart",
-              ],
+              items: ["@drawink/mermaid-to-drawink/codebase/parser/flowchart"],
             },
             "@drawink/mermaid-to-drawink/codebase/new-diagram-type",
           ],

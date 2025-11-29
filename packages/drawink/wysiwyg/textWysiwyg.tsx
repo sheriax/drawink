@@ -502,9 +502,9 @@ export const textWysiwyg = ({
           startIndices.concat(
             idx
               ? // curr line index is prev line's start + prev line's length + \n
-              startIndices[idx - 1] + lines[idx - 1].length + 1
+                startIndices[idx - 1] + lines[idx - 1].length + 1
               : // first selected line
-              selectionStart,
+                selectionStart,
           ),
         [] as number[],
       )
@@ -561,9 +561,7 @@ export const textWysiwyg = ({
         app.scene.mutateElement(container, {
           boundElements: container.boundElements?.filter(
             (ele) =>
-              !isTextElement(
-                ele as DrawinkTextElement | DrawinkLinearElement,
-              ),
+              !isTextElement(ele as DrawinkTextElement | DrawinkLinearElement),
           ),
         });
       }

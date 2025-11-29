@@ -20,7 +20,7 @@ root.render(
   <StrictMode>
     <App
       appTitle={"Drawink Example"}
-      useCustom={(api: any, args?: any[]) => { }}
+      useCustom={(api: any, args?: any[]) => {}}
       drawinkLib={window.DrawinkLib}
     >
       <Drawink />

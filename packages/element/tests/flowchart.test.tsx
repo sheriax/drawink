@@ -4,10 +4,7 @@ import { Drawink } from "@drawink/drawink";
 
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
-import {
-  render,
-  unmountComponent,
-} from "@drawink/drawink/tests/test-utils";
+import { render, unmountComponent } from "@drawink/drawink/tests/test-utils";
 
 unmountComponent();
 

@@ -55,11 +55,7 @@ interface LogoProps {
   isNotLink?: boolean;
 }
 
-export const DrawinkLogo = ({
-  style,
-  size = "small",
-  withText,
-}: LogoProps) => {
+export const DrawinkLogo = ({ style, size = "small", withText }: LogoProps) => {
   return (
     <div className={`DrawinkLogo is-${size}`} style={style}>
       <LogoIcon />

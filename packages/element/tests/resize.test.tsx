@@ -1,19 +1,11 @@
 import { pointFrom } from "@drawink/math";
 
 import { Drawink } from "@drawink/drawink";
-import {
-  KEYS,
-  getSizeFromPoints,
-  reseed,
-  arrayToMap,
-} from "@drawink/common";
+import { KEYS, getSizeFromPoints, reseed, arrayToMap } from "@drawink/common";
 
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
-import {
-  render,
-  unmountComponent,
-} from "@drawink/drawink/tests/test-utils";
+import { render, unmountComponent } from "@drawink/drawink/tests/test-utils";
 
 import type { LocalPoint } from "@drawink/math";
 

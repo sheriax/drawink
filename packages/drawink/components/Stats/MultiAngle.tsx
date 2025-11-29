@@ -38,66 +38,66 @@ const handleDegreeChange: DragInputCallbackType<
   property,
   scene,
 }) => {
-    const elementsMap = scene.getNonDeletedElementsMap();
-    const editableLatestIndividualElements = originalElements
-      .map((el) => elementsMap.get(el.id))
-      .filter((el) => el && !isInGroup(el) && isPropertyEditable(el, property));
-    const editableOriginalIndividualElements = originalElements.filter(
-      (el) => !isInGroup(el) && isPropertyEditable(el, property),
-    );
+  const elementsMap = scene.getNonDeletedElementsMap();
+  const editableLatestIndividualElements = originalElements
+    .map((el) => elementsMap.get(el.id))
+    .filter((el) => el && !isInGroup(el) && isPropertyEditable(el, property));
+  const editableOriginalIndividualElements = originalElements.filter(
+    (el) => !isInGroup(el) && isPropertyEditable(el, property),
+  );
 
-    if (nextValue !== undefined) {
-      const nextAngle = degreesToRadians(nextValue as Degrees);
+  if (nextValue !== undefined) {
+    const nextAngle = degreesToRadians(nextValue as Degrees);
 
-      for (const element of editableLatestIndividualElements) {
-        if (!element) {
-          continue;
-        }
-        scene.mutateElement(element, {
-          angle: nextAngle,
-        });
-
-        const boundTextElement = getBoundTextElement(element, elementsMap);
-        if (boundTextElement && !isArrowElement(element)) {
-          scene.mutateElement(boundTextElement, { angle: nextAngle });
-        }
-      }
-
-      scene.triggerUpdate();
-
-      return;
-    }
-
-    for (let i = 0; i < editableLatestIndividualElements.length; i++) {
-      const latestElement = editableLatestIndividualElements[i];
-      if (!latestElement) {
+    for (const element of editableLatestIndividualElements) {
+      if (!element) {
         continue;
       }
-      const originalElement = editableOriginalIndividualElements[i];
-      const originalAngleInDegrees =
-        Math.round(radiansToDegrees(originalElement.angle) * 100) / 100;
-      const changeInDegrees = Math.round(accumulatedChange);
-      let nextAngleInDegrees = (originalAngleInDegrees + changeInDegrees) % 360;
-      if (shouldChangeByStepSize) {
-        nextAngleInDegrees = getStepSizedValue(nextAngleInDegrees, STEP_SIZE);
-      }
-
-      nextAngleInDegrees =
-        nextAngleInDegrees < 0 ? nextAngleInDegrees + 360 : nextAngleInDegrees;
-
-      const nextAngle = degreesToRadians(nextAngleInDegrees as Degrees);
-
-      scene.mutateElement(latestElement, {
+      scene.mutateElement(element, {
         angle: nextAngle,
       });
 
-      const boundTextElement = getBoundTextElement(latestElement, elementsMap);
-      if (boundTextElement && !isArrowElement(latestElement)) {
+      const boundTextElement = getBoundTextElement(element, elementsMap);
+      if (boundTextElement && !isArrowElement(element)) {
         scene.mutateElement(boundTextElement, { angle: nextAngle });
       }
     }
+
     scene.triggerUpdate();
-  };
+
+    return;
+  }
+
+  for (let i = 0; i < editableLatestIndividualElements.length; i++) {
+    const latestElement = editableLatestIndividualElements[i];
+    if (!latestElement) {
+      continue;
+    }
+    const originalElement = editableOriginalIndividualElements[i];
+    const originalAngleInDegrees =
+      Math.round(radiansToDegrees(originalElement.angle) * 100) / 100;
+    const changeInDegrees = Math.round(accumulatedChange);
+    let nextAngleInDegrees = (originalAngleInDegrees + changeInDegrees) % 360;
+    if (shouldChangeByStepSize) {
+      nextAngleInDegrees = getStepSizedValue(nextAngleInDegrees, STEP_SIZE);
+    }
+
+    nextAngleInDegrees =
+      nextAngleInDegrees < 0 ? nextAngleInDegrees + 360 : nextAngleInDegrees;
+
+    const nextAngle = degreesToRadians(nextAngleInDegrees as Degrees);
+
+    scene.mutateElement(latestElement, {
+      angle: nextAngle,
+    });
+
+    const boundTextElement = getBoundTextElement(latestElement, elementsMap);
+    if (boundTextElement && !isArrowElement(latestElement)) {
+      scene.mutateElement(boundTextElement, { angle: nextAngle });
+    }
+  }
+  scene.triggerUpdate();
+};
 
 const MultiAngle = ({
   elements,

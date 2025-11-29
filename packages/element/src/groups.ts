@@ -68,8 +68,7 @@ export const selectGroupsForSelectedElements = (function () {
     "selectedGroupIds" | "editingGroupId" | "selectedElementIds"
   >;
 
-  let lastSelectedElements: readonly NonDeleted<DrawinkElement>[] | null =
-    null;
+  let lastSelectedElements: readonly NonDeleted<DrawinkElement>[] | null = null;
   let lastElements: readonly NonDeleted<DrawinkElement>[] | null = null;
   let lastReturnValue: SelectGroupsReturnType | null = null;
 
@@ -178,10 +177,10 @@ export const selectGroupsForSelectedElements = (function () {
   > => {
     const selectedElements = app
       ? app.scene.getSelectedElements({
-        selectedElementIds: appState.selectedElementIds,
-        // supplying elements explicitly in case we're passed non-state elements
-        elements,
-      })
+          selectedElementIds: appState.selectedElementIds,
+          // supplying elements explicitly in case we're passed non-state elements
+          elements,
+        })
       : getSelectedElements(elements, appState);
 
     if (!selectedElements.length) {
@@ -366,9 +365,7 @@ export const getNonDeletedGroupIds = (elements: ElementsMap) => {
   return nonDeletedGroupIds;
 };
 
-export const elementsAreInSameGroup = (
-  elements: readonly DrawinkElement[],
-) => {
+export const elementsAreInSameGroup = (elements: readonly DrawinkElement[]) => {
   const allGroups = elements.flatMap((element) => element.groupIds);
   const groupCount = new Map<string, number>();
   let maxGroup = 0;

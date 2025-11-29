@@ -4,12 +4,12 @@ describe("validateLibraryUrl", () => {
   it("should validate hostname & pathname", () => {
     // valid hostnames
     // -------------------------------------------------------------------------
-    expect(
-      validateLibraryUrl("https://www.drawink.com", ["drawink.com"]),
-    ).toBe(true);
-    expect(
-      validateLibraryUrl("https://drawink.com", ["drawink.com"]),
-    ).toBe(true);
+    expect(validateLibraryUrl("https://www.drawink.com", ["drawink.com"])).toBe(
+      true,
+    );
+    expect(validateLibraryUrl("https://drawink.com", ["drawink.com"])).toBe(
+      true,
+    );
     expect(
       validateLibraryUrl("https://library.drawink.com", ["drawink.com"]),
     ).toBe(true);
@@ -18,15 +18,15 @@ describe("validateLibraryUrl", () => {
         "library.drawink.com",
       ]),
     ).toBe(true);
-    expect(
-      validateLibraryUrl("https://drawink.com/", ["drawink.com/"]),
-    ).toBe(true);
-    expect(
-      validateLibraryUrl("https://drawink.com", ["drawink.com/"]),
-    ).toBe(true);
-    expect(
-      validateLibraryUrl("https://drawink.com/", ["drawink.com"]),
-    ).toBe(true);
+    expect(validateLibraryUrl("https://drawink.com/", ["drawink.com/"])).toBe(
+      true,
+    );
+    expect(validateLibraryUrl("https://drawink.com", ["drawink.com/"])).toBe(
+      true,
+    );
+    expect(validateLibraryUrl("https://drawink.com/", ["drawink.com"])).toBe(
+      true,
+    );
 
     // valid pathnames
     // -------------------------------------------------------------------------

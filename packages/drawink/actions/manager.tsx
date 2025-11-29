@@ -37,7 +37,8 @@ const trackAction = (
           trackEvent(
             action.trackEvent.category,
             action.trackEvent.action || action.name,
-            `${source} (${app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
+            `${source} (${
+              app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
             })`,
           );
         }

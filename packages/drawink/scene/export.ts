@@ -408,7 +408,8 @@ export const exportToSvg = async (
       const rect = svgRoot.ownerDocument.createElementNS(SVG_NS, "rect");
       rect.setAttribute(
         "transform",
-        `translate(${frame.x + offsetX} ${frame.y + offsetY}) rotate(${frame.angle
+        `translate(${frame.x + offsetX} ${frame.y + offsetY}) rotate(${
+          frame.angle
         } ${cx} ${cy})`,
       );
       rect.setAttribute("width", `${frame.width}`);
@@ -482,10 +483,10 @@ export const exportToSvg = async (
       canvasBackgroundColor: viewBackgroundColor,
       embedsValidationStatus: renderEmbeddables
         ? new Map(
-          elementsForRender
-            .filter((element) => isFrameLikeElement(element))
-            .map((element) => [element.id, true]),
-        )
+            elementsForRender
+              .filter((element) => isFrameLikeElement(element))
+              .map((element) => [element.id, true]),
+          )
         : new Map(),
       reuseImages: opts?.reuseImages ?? true,
     },

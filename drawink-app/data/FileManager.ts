@@ -22,15 +22,9 @@ type FileVersion = Required<BinaryFileData>["version"];
 export class FileManager {
   /** files being fetched */
   private fetchingFiles = new Map<DrawinkImageElement["fileId"], true>();
-  private erroredFiles_fetch = new Map<
-    DrawinkImageElement["fileId"],
-    true
-  >();
+  private erroredFiles_fetch = new Map<DrawinkImageElement["fileId"], true>();
   /** files being saved */
-  private savingFiles = new Map<
-    DrawinkImageElement["fileId"],
-    FileVersion
-  >();
+  private savingFiles = new Map<DrawinkImageElement["fileId"], FileVersion>();
   /* files already saved to persistent storage */
   private savedFiles = new Map<DrawinkImageElement["fileId"], FileVersion>();
   private erroredFiles_save = new Map<

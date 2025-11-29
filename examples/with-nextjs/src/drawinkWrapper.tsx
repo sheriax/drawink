@@ -11,7 +11,7 @@ const DrawinkWrapper: React.FC = () => {
     <>
       <App
         appTitle={"Drawink with Nextjs Example"}
-        useCustom={(api: any, args?: any[]) => { }}
+        useCustom={(api: any, args?: any[]) => {}}
         drawinkLib={drawinkLib}
       >
         <Drawink />

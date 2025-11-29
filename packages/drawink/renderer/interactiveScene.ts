@@ -46,10 +46,7 @@ import {
 
 import { getCommonBounds, getElementAbsoluteCoords } from "@drawink/element";
 
-import type {
-  TransformHandles,
-  TransformHandleType,
-} from "@drawink/element";
+import type { TransformHandles, TransformHandleType } from "@drawink/element";
 
 import type {
   ElementsMap,
@@ -1026,44 +1023,44 @@ const renderCropHandles = (
       [number, number],
     ]
   > = [
+    [
+      // x, y
+      [-HALF_WIDTH, -HALF_HEIGHT],
+      // horizontal line: first start and to
+      [0, ZOOMED_HALF_LINE_WIDTH],
+      [HORIZONTAL_LINE_LENGTH, ZOOMED_HALF_LINE_WIDTH],
+      // vertical line: second  start and to
+      [ZOOMED_HALF_LINE_WIDTH, 0],
+      [ZOOMED_HALF_LINE_WIDTH, VERTICAL_LINE_LENGTH],
+    ],
+    [
+      [HALF_WIDTH - ZOOMED_HALF_LINE_WIDTH, -HALF_HEIGHT],
+      [ZOOMED_HALF_LINE_WIDTH, ZOOMED_HALF_LINE_WIDTH],
       [
-        // x, y
-        [-HALF_WIDTH, -HALF_HEIGHT],
-        // horizontal line: first start and to
-        [0, ZOOMED_HALF_LINE_WIDTH],
-        [HORIZONTAL_LINE_LENGTH, ZOOMED_HALF_LINE_WIDTH],
-        // vertical line: second  start and to
-        [ZOOMED_HALF_LINE_WIDTH, 0],
-        [ZOOMED_HALF_LINE_WIDTH, VERTICAL_LINE_LENGTH],
+        -HORIZONTAL_LINE_LENGTH + ZOOMED_HALF_LINE_WIDTH,
+        ZOOMED_HALF_LINE_WIDTH,
       ],
+      [0, 0],
+      [0, VERTICAL_LINE_LENGTH],
+    ],
+    [
+      [-HALF_WIDTH, HALF_HEIGHT],
+      [0, -ZOOMED_HALF_LINE_WIDTH],
+      [HORIZONTAL_LINE_LENGTH, -ZOOMED_HALF_LINE_WIDTH],
+      [ZOOMED_HALF_LINE_WIDTH, 0],
+      [ZOOMED_HALF_LINE_WIDTH, -VERTICAL_LINE_LENGTH],
+    ],
+    [
+      [HALF_WIDTH - ZOOMED_HALF_LINE_WIDTH, HALF_HEIGHT],
+      [ZOOMED_HALF_LINE_WIDTH, -ZOOMED_HALF_LINE_WIDTH],
       [
-        [HALF_WIDTH - ZOOMED_HALF_LINE_WIDTH, -HALF_HEIGHT],
-        [ZOOMED_HALF_LINE_WIDTH, ZOOMED_HALF_LINE_WIDTH],
-        [
-          -HORIZONTAL_LINE_LENGTH + ZOOMED_HALF_LINE_WIDTH,
-          ZOOMED_HALF_LINE_WIDTH,
-        ],
-        [0, 0],
-        [0, VERTICAL_LINE_LENGTH],
+        -HORIZONTAL_LINE_LENGTH + ZOOMED_HALF_LINE_WIDTH,
+        -ZOOMED_HALF_LINE_WIDTH,
       ],
-      [
-        [-HALF_WIDTH, HALF_HEIGHT],
-        [0, -ZOOMED_HALF_LINE_WIDTH],
-        [HORIZONTAL_LINE_LENGTH, -ZOOMED_HALF_LINE_WIDTH],
-        [ZOOMED_HALF_LINE_WIDTH, 0],
-        [ZOOMED_HALF_LINE_WIDTH, -VERTICAL_LINE_LENGTH],
-      ],
-      [
-        [HALF_WIDTH - ZOOMED_HALF_LINE_WIDTH, HALF_HEIGHT],
-        [ZOOMED_HALF_LINE_WIDTH, -ZOOMED_HALF_LINE_WIDTH],
-        [
-          -HORIZONTAL_LINE_LENGTH + ZOOMED_HALF_LINE_WIDTH,
-          -ZOOMED_HALF_LINE_WIDTH,
-        ],
-        [0, 0],
-        [0, -VERTICAL_LINE_LENGTH],
-      ],
-    ];
+      [0, 0],
+      [0, -VERTICAL_LINE_LENGTH],
+    ],
+  ];
 
   handles.forEach((handle) => {
     const [[x, y], [x1s, y1s], [x1t, y1t], [x2s, y2s], [x2t, y2t]] = handle;
@@ -1284,7 +1281,7 @@ const _renderInteractiveScene = ({
       } else if (
         isElbowArrow(firstSelectedLinear)
           ? editor.hoverPointIndex === 0 ||
-          editor.hoverPointIndex === firstSelectedLinear.points.length - 1
+            editor.hoverPointIndex === firstSelectedLinear.points.length - 1
           : editor.hoverPointIndex >= 0
       ) {
         renderLinearElementPointHighlight(context, appState, elementsMap);
@@ -1384,7 +1381,7 @@ const _renderInteractiveScene = ({
               appState.activeEmbeddable.state === "active",
             padding:
               element.id === appState.croppingElementId ||
-                isImageElement(element)
+              isImageElement(element)
                 ? 0
                 : undefined,
           });
@@ -1499,9 +1496,9 @@ const _renderInteractiveScene = ({
         "mouse",
         isFrameSelected
           ? {
-            ...getOmitSidesForEditorInterface(editorInterface),
-            rotation: true,
-          }
+              ...getOmitSidesForEditorInterface(editorInterface),
+              rotation: true,
+            }
           : getOmitSidesForEditorInterface(editorInterface),
       );
       if (selectedElements.some((element) => !element.locked)) {

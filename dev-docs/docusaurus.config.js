@@ -9,8 +9,7 @@ process.env.IS_PREACT = "false";
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Drawink developer docs",
-  tagline:
-    "For Drawink contributors or those integrating the Drawink editor",
+  tagline: "For Drawink contributors or those integrating the Drawink editor",
   url: "https://docs.drawink.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -35,8 +34,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/drawink/drawink/tree/master/dev-docs/",
+          editUrl: "https://github.com/drawink/drawink/tree/master/dev-docs/",
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
         },

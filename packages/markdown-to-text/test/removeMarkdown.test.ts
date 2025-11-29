@@ -127,7 +127,7 @@ describe("Remove Markdown", () => {
         { string: "   > I am a blockquote", expected: "I am a blockquote" },
       ];
 
-      tests.forEach(function (test) {
+      tests.forEach((test) => {
         expect(removeMarkdown(test.string)).to.equal(test.expected);
       });
     });
@@ -150,7 +150,7 @@ describe("Remove Markdown", () => {
         { string: "1 <= 100", expected: "1 <= 100" },
       ];
 
-      tests.forEach(function (test) {
+      tests.forEach((test) => {
         expect(removeMarkdown(test.string)).to.equal(test.expected);
       });
     });
@@ -189,7 +189,7 @@ describe("Remove Markdown", () => {
         removeMarkdown(paragraph, {
           listUnicodeChar: false,
           preserveLinks: true,
-        })
+        }),
       ).to.equal(expected);
     });
   });

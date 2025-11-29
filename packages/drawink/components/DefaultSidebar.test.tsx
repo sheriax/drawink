@@ -3,11 +3,7 @@ import React from "react";
 import { DEFAULT_SIDEBAR } from "@drawink/common";
 
 import { DefaultSidebar } from "../index";
-import {
-  fireEvent,
-  waitFor,
-  withDrawinkDimensions,
-} from "../tests/test-utils";
+import { fireEvent, waitFor, withDrawinkDimensions } from "../tests/test-utils";
 
 import {
   assertDrawinkWithSidebar,
@@ -43,7 +39,7 @@ describe("DefaultSidebar", () => {
 
   it("when `docked={undefined}` & `onDock`, should allow docking", async () => {
     await assertDrawinkWithSidebar(
-      <DefaultSidebar onDock={() => { }} />,
+      <DefaultSidebar onDock={() => {}} />,
       DEFAULT_SIDEBAR.name,
       async () => {
         expect(h.state.defaultSidebarDockedPreference).toBe(false);
@@ -67,7 +63,7 @@ describe("DefaultSidebar", () => {
 
   it("when `docked={true}` & `onDock`, should allow docking", async () => {
     await assertDrawinkWithSidebar(
-      <DefaultSidebar onDock={() => { }} />,
+      <DefaultSidebar onDock={() => {}} />,
       DEFAULT_SIDEBAR.name,
       async () => {
         expect(h.state.defaultSidebarDockedPreference).toBe(false);
@@ -94,14 +90,11 @@ describe("DefaultSidebar", () => {
       <DefaultSidebar onDock={false} />,
       DEFAULT_SIDEBAR.name,
       async () => {
-        await withDrawinkDimensions(
-          { width: 1920, height: 1080 },
-          async () => {
-            expect(h.state.defaultSidebarDockedPreference).toBe(false);
+        await withDrawinkDimensions({ width: 1920, height: 1080 }, async () => {
+          expect(h.state.defaultSidebarDockedPreference).toBe(false);
 
-            await assertSidebarDockButton(false);
-          },
-        );
+          await assertSidebarDockButton(false);
+        });
       },
     );
   });

@@ -187,13 +187,7 @@ const ConvertElementTypePopup = ({ app }: { app: App }) => {
   return <Panel app={app} elements={selectedElements} />;
 };
 
-const Panel = ({
-  app,
-  elements,
-}: {
-  app: App;
-  elements: DrawinkElement[];
-}) => {
+const Panel = ({ app, elements }: { app: App; elements: DrawinkElement[] }) => {
   const conversionType = getConversionTypeFromElements(elements);
 
   const genericElements = useMemo(() => {
@@ -210,15 +204,15 @@ const Panel = ({
   const sameType =
     conversionType === "generic"
       ? genericElements.every(
-        (element) => element.type === genericElements[0].type,
-      )
+          (element) => element.type === genericElements[0].type,
+        )
       : conversionType === "linear"
-        ? linearElements.every(
+      ? linearElements.every(
           (element) =>
             getLinearElementSubType(element) ===
             getLinearElementSubType(linearElements[0]),
         )
-        : false;
+      : false;
 
   const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
   const positionRef = useRef("");
@@ -229,8 +223,9 @@ const Panel = ({
       a.id.localeCompare(b.id),
     );
     const newPositionRef = `
-      ${app.state.scrollX}${app.state.scrollY}${app.state.offsetTop}${app.state.offsetLeft
-      }${app.state.zoom.value}${elements.map((el) => el.id).join(",")}`;
+      ${app.state.scrollX}${app.state.scrollY}${app.state.offsetTop}${
+      app.state.offsetLeft
+    }${app.state.zoom.value}${elements.map((el) => el.id).join(",")}`;
 
     if (newPositionRef === positionRef.current) {
       return;
@@ -294,18 +289,18 @@ const Panel = ({
   const SHAPES: [string, ReactNode][] =
     conversionType === "linear"
       ? [
-        ["line", LineIcon],
-        ["sharpArrow", sharpArrowIcon],
-        ["curvedArrow", roundArrowIcon],
-        ["elbowArrow", elbowArrowIcon],
-      ]
+          ["line", LineIcon],
+          ["sharpArrow", sharpArrowIcon],
+          ["curvedArrow", roundArrowIcon],
+          ["elbowArrow", elbowArrowIcon],
+        ]
       : conversionType === "generic"
-        ? [
+      ? [
           ["rectangle", RectangleIcon],
           ["diamond", DiamondIcon],
           ["ellipse", EllipseIcon],
         ]
-        : [];
+      : [];
 
   return (
     <div
@@ -313,10 +308,11 @@ const Panel = ({
       tabIndex={-1}
       style={{
         position: "absolute",
-        top: `${panelPosition.y +
+        top: `${
+          panelPosition.y +
           (GAP_VERTICAL + 8) * app.state.zoom.value -
           app.state.offsetTop
-          }px`,
+        }px`,
         left: `${panelPosition.x - app.state.offsetLeft - GAP_HORIZONTAL}px`,
         zIndex: 2,
       }}
@@ -448,7 +444,7 @@ export const convertElementTypes = (
     nextType =
       nextType ??
       GENERIC_TYPES[
-      (index + GENERIC_TYPES.length + advancement) % GENERIC_TYPES.length
+        (index + GENERIC_TYPES.length + advancement) % GENERIC_TYPES.length
       ];
 
     if (nextType && isConvertibleGenericType(nextType)) {
@@ -518,7 +514,7 @@ export const convertElementTypes = (
       const index = commonSubType ? LINEAR_TYPES.indexOf(commonSubType) : -1;
       nextType =
         LINEAR_TYPES[
-        (index + LINEAR_TYPES.length + advancement) % LINEAR_TYPES.length
+          (index + LINEAR_TYPES.length + advancement) % LINEAR_TYPES.length
         ];
     }
 
@@ -614,9 +610,9 @@ export const convertElementTypes = (
       selectedLinearElement:
         convertedSelectedLinearElements.length === 1
           ? new LinearElementEditor(
-            convertedSelectedLinearElements[0],
-            app.scene.getNonDeletedElementsMap(),
-          )
+              convertedSelectedLinearElements[0],
+              app.scene.getNonDeletedElementsMap(),
+            )
           : null,
       activeTool: updateActiveTool(prevState, {
         type: "selection",
@@ -669,9 +665,7 @@ const toCacheKey = (
 
 const filterGenericConvetibleElements = (elements: DrawinkElement[]) =>
   elements.filter((element) => isConvertibleGenericType(element.type)) as Array<
-    | DrawinkRectangleElement
-    | DrawinkDiamondElement
-    | DrawinkEllipseElement
+    DrawinkRectangleElement | DrawinkDiamondElement | DrawinkEllipseElement
   >;
 
 const filterLinearConvertibleElements = (elements: DrawinkElement[]) =>
@@ -834,10 +828,10 @@ const convertElementType = <
         roundness:
           targetType === "diamond" && element.roundness
             ? {
-              type: isUsingAdaptiveRadius(targetType)
-                ? ROUNDNESS.ADAPTIVE_RADIUS
-                : ROUNDNESS.PROPORTIONAL_RADIUS,
-            }
+                type: isUsingAdaptiveRadius(targetType)
+                  ? ROUNDNESS.ADAPTIVE_RADIUS
+                  : ROUNDNESS.PROPORTIONAL_RADIUS,
+              }
             : element.roundness,
       }),
     ) as typeof element;

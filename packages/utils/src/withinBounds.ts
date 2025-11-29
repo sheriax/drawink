@@ -30,16 +30,13 @@ type Points = readonly LocalPoint[];
 
 /** @returns vertices relative to element's top-left [0,0] position  */
 const getNonLinearElementRelativePoints = (
-  element: Exclude<
-    Element,
-    DrawinkLinearElement | DrawinkFreeDrawElement
-  >,
+  element: Exclude<Element, DrawinkLinearElement | DrawinkFreeDrawElement>,
 ): [
-    TopLeft: LocalPoint,
-    TopRight: LocalPoint,
-    BottomRight: LocalPoint,
-    BottomLeft: LocalPoint,
-  ] => {
+  TopLeft: LocalPoint,
+  TopRight: LocalPoint,
+  BottomRight: LocalPoint,
+  BottomLeft: LocalPoint,
+] => {
   if (element.type === "diamond") {
     return [
       pointFrom(element.width / 2, 0),
@@ -197,8 +194,8 @@ export const elementsOverlappingBBox = ({
       type === "overlap"
         ? elementPartiallyOverlapsWithOrContainsBBox(element, adjustedBBox)
         : type === "inside"
-          ? isElementInsideBBox(element, adjustedBBox)
-          : isElementInsideBBox(element, adjustedBBox, true);
+        ? isElementInsideBBox(element, adjustedBBox)
+        : isElementInsideBBox(element, adjustedBBox, true);
 
     if (isOverlaping) {
       includedElementSet.add(element.id);

@@ -69,9 +69,9 @@ export const getElementsInAtomicUnit = (
       latest: elementsMap.get(id),
     }))
     .filter((el) => el.original !== undefined && el.latest !== undefined) as {
-      original: NonDeletedDrawinkElement;
-      latest: NonDeletedDrawinkElement;
-    }[];
+    original: NonDeletedDrawinkElement;
+    latest: NonDeletedDrawinkElement;
+  }[];
 };
 
 export const newOrigin = (

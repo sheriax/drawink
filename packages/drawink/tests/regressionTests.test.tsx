@@ -746,8 +746,8 @@ describe("regression tests", () => {
 
   it(
     "given selected element A with lower z-index than unselected element B and given B is partially over A " +
-    "when clicking intersection between A and B " +
-    "B should be selected on pointer up",
+      "when clicking intersection between A and B " +
+      "B should be selected on pointer up",
     () => {
       // set background color since default is transparent
       // and transparent elements can't be selected by clicking inside of them
@@ -784,8 +784,8 @@ describe("regression tests", () => {
 
   it(
     "given selected element A with lower z-index than unselected element B and given B is partially over A " +
-    "when dragging on intersection between A and B " +
-    "A should be dragged and keep being selected",
+      "when dragging on intersection between A and B " +
+      "A should be dragged and keep being selected",
     () => {
       const rect1 = API.createElement({
         type: "rectangle",
@@ -939,8 +939,8 @@ describe("regression tests", () => {
 
   it(
     "given a group of selected elements with an element that is not selected inside the group common bounding box " +
-    "when element that is not selected is clicked " +
-    "should switch selection to not selected element on pointer up",
+      "when element that is not selected is clicked " +
+      "should switch selection to not selected element on pointer up",
     () => {
       UI.clickTool("rectangle");
       mouse.down();
@@ -972,8 +972,8 @@ describe("regression tests", () => {
 
   it(
     "given a selected element A and a not selected element B with higher z-index than A " +
-    "and given B partially overlaps A " +
-    "when there's a shift-click on the overlapped section B is added to the selection",
+      "and given B partially overlaps A " +
+      "when there's a shift-click on the overlapped section B is added to the selection",
     () => {
       UI.clickTool("rectangle");
       // change background color since default is transparent
@@ -1114,8 +1114,8 @@ describe("regression tests", () => {
 
 it(
   "given element A and group of elements B and given both are selected " +
-  "when user clicks on B, on pointer up " +
-  "only elements from B should be selected",
+    "when user clicks on B, on pointer up " +
+    "only elements from B should be selected",
   () => {
     const rect1 = UI.createElement("rectangle", { y: 0 });
     const rect2 = UI.createElement("rectangle", { y: 30 });
@@ -1142,8 +1142,8 @@ it(
 
 it(
   "given element A and group of elements B and given both are selected " +
-  "when user shift-clicks on B, on pointer up " +
-  "only element A should be selected",
+    "when user shift-clicks on B, on pointer up " +
+    "only element A should be selected",
   () => {
     UI.clickTool("rectangle");
     mouse.down();

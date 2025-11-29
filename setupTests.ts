@@ -69,30 +69,27 @@ Object.defineProperty(window, "EXCALIDRAW_ASSET_PATH", {
 });
 
 // mock the font fetch only, so that everything else, as font subsetting, can run inside of the (snapshot) tests
-vi.mock(
-  "./packages/drawink/fonts/DrawinkFontFace",
-  async (importOriginal) => {
-    const mod = await importOriginal<
-      typeof import("./packages/drawink/fonts/DrawinkFontFace")
-    >();
-    const DrawinkFontFaceImpl = mod.DrawinkFontFace;
+vi.mock("./packages/drawink/fonts/DrawinkFontFace", async (importOriginal) => {
+  const mod = await importOriginal<
+    typeof import("./packages/drawink/fonts/DrawinkFontFace")
+  >();
+  const DrawinkFontFaceImpl = mod.DrawinkFontFace;
 
-    return {
-      ...mod,
-      DrawinkFontFace: class extends DrawinkFontFaceImpl {
-        public async fetchFont(url: URL): Promise<ArrayBuffer> {
-          if (!url.toString().startsWith("file://")) {
-            return super.fetchFont(url);
-          }
-
-          // read local assets directly, without running a server
-          const content = await fs.promises.readFile(url);
-          return content.buffer;
+  return {
+    ...mod,
+    DrawinkFontFace: class extends DrawinkFontFaceImpl {
+      public async fetchFont(url: URL): Promise<ArrayBuffer> {
+        if (!url.toString().startsWith("file://")) {
+          return super.fetchFont(url);
         }
-      },
-    };
-  },
-);
+
+        // read local assets directly, without running a server
+        const content = await fs.promises.readFile(url);
+        return content.buffer;
+      }
+    },
+  };
+});
 
 // ReactDOM is located inside index.tsx file
 // as a result, we need a place for it to render into
@@ -108,7 +105,8 @@ console.error = (...args) => {
   if (args[0]?.includes?.("act(")) {
     _consoleError(
       yellow(
-        `<<< WARNING: test "${expect.getState().currentTestName
+        `<<< WARNING: test "${
+          expect.getState().currentTestName
         }" does not wrap some state update in act() >>>`,
       ),
     );

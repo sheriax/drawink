@@ -3,9 +3,8 @@ import React, { useEffect } from "react";
 import "./Tooltip.scss";
 
 export const getTooltipDiv = () => {
-  const existingDiv = document.querySelector<HTMLDivElement>(
-    ".drawink-tooltip",
-  );
+  const existingDiv =
+    document.querySelector<HTMLDivElement>(".drawink-tooltip");
   if (existingDiv) {
     return existingDiv;
   }
@@ -91,8 +90,7 @@ export const Tooltip = ({
   disabled,
 }: TooltipProps) => {
   useEffect(() => {
-    return () =>
-      getTooltipDiv().classList.remove("drawink-tooltip--visible");
+    return () => getTooltipDiv().classList.remove("drawink-tooltip--visible");
   }, []);
   if (disabled) {
     return null;

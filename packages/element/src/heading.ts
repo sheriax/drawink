@@ -12,12 +12,7 @@ import {
   vectorScale,
 } from "@drawink/math";
 
-import type {
-  LocalPoint,
-  GlobalPoint,
-  Triangle,
-  Vector,
-} from "@drawink/math";
+import type { LocalPoint, GlobalPoint, Triangle, Vector } from "@drawink/math";
 
 import { getCenterForBounds, type Bounds } from "./bounds";
 
@@ -146,7 +141,7 @@ const headingForPointFromDiamondElement = (
   // Corners
   if (
     vectorCross(vectorFromPoint(point, top), vectorFromPoint(top, right)) <=
-    0 &&
+      0 &&
     vectorCross(vectorFromPoint(point, top), vectorFromPoint(top, left)) > 0
   ) {
     return headingForPoint(top, midPoint);
@@ -171,7 +166,7 @@ const headingForPointFromDiamondElement = (
     return headingForPoint(bottom, midPoint);
   } else if (
     vectorCross(vectorFromPoint(point, left), vectorFromPoint(left, top)) <=
-    0 &&
+      0 &&
     vectorCross(vectorFromPoint(point, left), vectorFromPoint(left, bottom)) > 0
   ) {
     return headingForPoint(left, midPoint);
@@ -263,16 +258,16 @@ export const headingForPointFromElement = <Point extends GlobalPoint>(
   )
     ? HEADING_UP
     : triangleIncludesPoint<Point>(
-      [topRight, bottomRight, midPoint] as Triangle<Point>,
-      p,
-    )
-      ? HEADING_RIGHT
-      : triangleIncludesPoint<Point>(
+        [topRight, bottomRight, midPoint] as Triangle<Point>,
+        p,
+      )
+    ? HEADING_RIGHT
+    : triangleIncludesPoint<Point>(
         [bottomRight, bottomLeft, midPoint] as Triangle<Point>,
         p,
       )
-        ? HEADING_DOWN
-        : HEADING_LEFT;
+    ? HEADING_DOWN
+    : HEADING_LEFT;
 };
 
 export const flipHeading = (h: Heading): Heading =>

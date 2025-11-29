@@ -222,10 +222,10 @@ export const renderRemoteCursors = ({
         username,
         offsetX + paddingHorizontal + 1,
         offsetY +
-        paddingVertical +
-        measure.actualBoundingBoxAscent +
-        Math.floor((finalHeight - measureHeight) / 2) +
-        2,
+          paddingVertical +
+          measure.actualBoundingBoxAscent +
+          Math.floor((finalHeight - measureHeight) / 2) +
+          2,
       );
 
       // draw three vertical bars signalling someone is speaking

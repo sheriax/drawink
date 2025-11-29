@@ -98,7 +98,7 @@ export const parseElementLinkFromURL = (url: string) => {
       const id = searchParams.get(ELEMENT_LINK_KEY);
       return id;
     }
-  } catch { }
+  } catch {}
 
   return null;
 };

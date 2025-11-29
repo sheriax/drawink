@@ -64,8 +64,8 @@ export const Picker = React.forwardRef(
       ? type === "elementStroke"
         ? t("labels.stroke")
         : type === "elementBackground"
-          ? t("labels.background")
-          : null
+        ? t("labels.background")
+        : null
       : null;
 
     const [customColors] = React.useState(() => {
@@ -93,10 +93,10 @@ export const Picker = React.forwardRef(
           isCustomButNotInList
             ? null
             : isCustom
-              ? "custom"
-              : colorObj?.shade != null
-                ? "shades"
-                : "baseColors",
+            ? "custom"
+            : colorObj?.shade != null
+            ? "shades"
+            : "baseColors",
         );
       }
     }, [
@@ -110,9 +110,9 @@ export const Picker = React.forwardRef(
 
     const [activeShade, setActiveShade] = useState(
       colorObj?.shade ??
-      (type === "elementBackground"
-        ? DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX
-        : DEFAULT_ELEMENT_STROKE_COLOR_INDEX),
+        (type === "elementBackground"
+          ? DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX
+          : DEFAULT_ELEMENT_STROKE_COLOR_INDEX),
     );
 
     useEffect(() => {

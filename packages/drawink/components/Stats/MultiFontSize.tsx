@@ -1,7 +1,4 @@
-import {
-  getBoundTextElement,
-  redrawTextBoundingBox,
-} from "@drawink/element";
+import { getBoundTextElement, redrawTextBoundingBox } from "@drawink/element";
 import { hasBoundTextElement, isTextElement } from "@drawink/element";
 
 import { isInGroup } from "@drawink/element";
@@ -70,59 +67,59 @@ const handleFontSizeChange: DragInputCallbackType<
   nextValue,
   scene,
 }) => {
-    const elementsMap = scene.getNonDeletedElementsMap();
-    const latestTextElements = originalElements.map((el) =>
-      elementsMap.get(el.id),
-    ) as DrawinkTextElement[];
+  const elementsMap = scene.getNonDeletedElementsMap();
+  const latestTextElements = originalElements.map((el) =>
+    elementsMap.get(el.id),
+  ) as DrawinkTextElement[];
 
-    let nextFontSize;
+  let nextFontSize;
 
-    if (nextValue) {
-      nextFontSize = Math.max(Math.round(nextValue), MIN_FONT_SIZE);
+  if (nextValue) {
+    nextFontSize = Math.max(Math.round(nextValue), MIN_FONT_SIZE);
 
-      for (const textElement of latestTextElements) {
-        scene.mutateElement(textElement, {
-          fontSize: nextFontSize,
-        });
+    for (const textElement of latestTextElements) {
+      scene.mutateElement(textElement, {
+        fontSize: nextFontSize,
+      });
 
-        redrawTextBoundingBox(
-          textElement,
-          scene.getContainerElement(textElement),
-          scene,
-        );
-      }
-
-      scene.triggerUpdate();
-    } else {
-      const originalTextElements = originalElements as DrawinkTextElement[];
-
-      for (let i = 0; i < latestTextElements.length; i++) {
-        const latestElement = latestTextElements[i];
-        const originalElement = originalTextElements[i];
-
-        const originalFontSize = Math.round(originalElement.fontSize);
-        const changeInFontSize = Math.round(accumulatedChange);
-        let nextFontSize = Math.max(
-          originalFontSize + changeInFontSize,
-          MIN_FONT_SIZE,
-        );
-        if (shouldChangeByStepSize) {
-          nextFontSize = getStepSizedValue(nextFontSize, STEP_SIZE);
-        }
-        scene.mutateElement(latestElement, {
-          fontSize: nextFontSize,
-        });
-
-        redrawTextBoundingBox(
-          latestElement,
-          scene.getContainerElement(latestElement),
-          scene,
-        );
-      }
-
-      scene.triggerUpdate();
+      redrawTextBoundingBox(
+        textElement,
+        scene.getContainerElement(textElement),
+        scene,
+      );
     }
-  };
+
+    scene.triggerUpdate();
+  } else {
+    const originalTextElements = originalElements as DrawinkTextElement[];
+
+    for (let i = 0; i < latestTextElements.length; i++) {
+      const latestElement = latestTextElements[i];
+      const originalElement = originalTextElements[i];
+
+      const originalFontSize = Math.round(originalElement.fontSize);
+      const changeInFontSize = Math.round(accumulatedChange);
+      let nextFontSize = Math.max(
+        originalFontSize + changeInFontSize,
+        MIN_FONT_SIZE,
+      );
+      if (shouldChangeByStepSize) {
+        nextFontSize = getStepSizedValue(nextFontSize, STEP_SIZE);
+      }
+      scene.mutateElement(latestElement, {
+        fontSize: nextFontSize,
+      });
+
+      redrawTextBoundingBox(
+        latestElement,
+        scene.getContainerElement(latestElement),
+        scene,
+      );
+    }
+
+    scene.triggerUpdate();
+  }
+};
 
 const MultiFontSize = ({
   elements,

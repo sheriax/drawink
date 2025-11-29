@@ -60,10 +60,7 @@ const AUTO_HIDE_TIMEOUT = 500;
 
 let IS_HYPERLINK_TOOLTIP_VISIBLE = false;
 
-const embeddableLinkCache = new Map<
-  DrawinkEmbeddableElement["id"],
-  string
->();
+const embeddableLinkCache = new Map<DrawinkEmbeddableElement["id"], string>();
 
 export const Hyperlink = ({
   element,
@@ -145,19 +142,19 @@ export const Hyperlink = ({
         scene.mutateElement(element, {
           ...(hasLinkChanged
             ? {
-              width:
-                embedLink?.type === "video"
-                  ? width > height
-                    ? width
-                    : height * ar
-                  : width,
-              height:
-                embedLink?.type === "video"
-                  ? width > height
-                    ? width / ar
-                    : height
-                  : height,
-            }
+                width:
+                  embedLink?.type === "video"
+                    ? width > height
+                      ? width
+                      : height * ar
+                    : width,
+                height:
+                  embedLink?.type === "video"
+                    ? width > height
+                      ? width / ar
+                      : height
+                    : height,
+              }
             : {}),
           link,
         });
@@ -376,8 +373,8 @@ export const getContextMenuLabel = (
   const label = isEmbeddableElement(selectedElements[0])
     ? "labels.link.editEmbed"
     : selectedElements[0]?.link
-      ? "labels.link.edit"
-      : "labels.link.create";
+    ? "labels.link.edit"
+    : "labels.link.create";
   return label;
 };
 

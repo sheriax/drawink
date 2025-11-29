@@ -18,9 +18,7 @@ export const updateOriginalContainerCache = (
   return data;
 };
 
-export const resetOriginalContainerCache = (
-  id: DrawinkTextContainer["id"],
-) => {
+export const resetOriginalContainerCache = (id: DrawinkTextContainer["id"]) => {
   if (originalContainerCache[id]) {
     delete originalContainerCache[id];
   }

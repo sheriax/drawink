@@ -160,7 +160,8 @@ const renderElementToSvg = (
       node.setAttribute("stroke-linecap", "round");
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${offsetY || 0
+        `translate(${offsetX || 0} ${
+          offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
 
@@ -192,13 +193,13 @@ const renderElementToSvg = (
       node.setAttribute("stroke-linecap", "round");
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${offsetY || 0
+        `translate(${offsetX || 0} ${
+          offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       addToRoot(node, element);
 
-      const label: DrawinkElement =
-        createPlaceholderEmbeddableLabel(element);
+      const label: DrawinkElement = createPlaceholderEmbeddableLabel(element);
       renderElementToSvg(
         label,
         elementsMap,
@@ -219,7 +220,8 @@ const renderElementToSvg = (
       embeddableNode.setAttribute("stroke-linecap", "round");
       embeddableNode.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${offsetY || 0
+        `translate(${offsetX || 0} ${
+          offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       while (embeddableNode.firstChild) {
@@ -340,7 +342,8 @@ const renderElementToSvg = (
         }
         node.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${offsetY || 0
+          `translate(${offsetX || 0} ${
+            offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
         if (
@@ -376,10 +379,10 @@ const renderElementToSvg = (
       );
       const node = backgroundFillShape
         ? roughSVGDrawWithPrecision(
-          rsvg,
-          backgroundFillShape,
-          MAX_DECIMALS_FOR_SVG_EXPORT,
-        )
+            rsvg,
+            backgroundFillShape,
+            MAX_DECIMALS_FOR_SVG_EXPORT,
+          )
         : svgRoot.ownerDocument!.createElementNS(SVG_NS, "g");
       if (opacity !== 1) {
         node.setAttribute("stroke-opacity", `${opacity}`);
@@ -387,7 +390,8 @@ const renderElementToSvg = (
       }
       node.setAttribute(
         "transform",
-        `translate(${offsetX || 0} ${offsetY || 0
+        `translate(${offsetX || 0} ${
+          offsetY || 0
         }) rotate(${degree} ${cx} ${cy})`,
       );
       node.setAttribute("stroke", "none");
@@ -493,8 +497,10 @@ const renderElementToSvg = (
         if (element.scale[0] !== 1 || element.scale[1] !== 1) {
           use.setAttribute(
             "transform",
-            `translate(${adjustedCenterX} ${adjustedCenterY}) scale(${element.scale[0]
-            } ${element.scale[1]
+            `translate(${adjustedCenterX} ${adjustedCenterY}) scale(${
+              element.scale[0]
+            } ${
+              element.scale[1]
             }) translate(${-adjustedCenterX} ${-adjustedCenterY})`,
           );
         }
@@ -523,7 +529,8 @@ const renderElementToSvg = (
         g.appendChild(use);
         g.setAttribute(
           "transform",
-          `translate(${offsetX - normalizedCropX} ${offsetY - normalizedCropY
+          `translate(${offsetX - normalizedCropX} ${
+            offsetY - normalizedCropY
           }) rotate(${degree} ${adjustedCenterX} ${adjustedCenterY})`,
         );
 
@@ -578,7 +585,8 @@ const renderElementToSvg = (
 
         rect.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${offsetY || 0
+          `translate(${offsetX || 0} ${
+            offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
 
@@ -606,7 +614,8 @@ const renderElementToSvg = (
 
         node.setAttribute(
           "transform",
-          `translate(${offsetX || 0} ${offsetY || 0
+          `translate(${offsetX || 0} ${
+            offsetY || 0
           }) rotate(${degree} ${cx} ${cy})`,
         );
         const lines = element.text.replace(/\r\n?/g, "\n").split("\n");
@@ -618,8 +627,8 @@ const renderElementToSvg = (
           element.textAlign === "center"
             ? element.width / 2
             : element.textAlign === "right"
-              ? element.width
-              : 0;
+            ? element.width
+            : 0;
         const verticalOffset = getVerticalOffset(
           element.fontFamily,
           element.fontSize,
@@ -630,8 +639,8 @@ const renderElementToSvg = (
           element.textAlign === "center"
             ? "middle"
             : element.textAlign === "right" || direction === "rtl"
-              ? "end"
-              : "start";
+            ? "end"
+            : "start";
         for (let i = 0; i < lines.length; i++) {
           const text = svgRoot.ownerDocument!.createElementNS(SVG_NS, "text");
           text.textContent = lines[i];

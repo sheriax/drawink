@@ -1,8 +1,4 @@
-import {
-  type GlobalPoint,
-  type LineSegment,
-  pointFrom,
-} from "@drawink/math";
+import { type GlobalPoint, type LineSegment, pointFrom } from "@drawink/math";
 
 import { getElementLineSegments } from "@drawink/element";
 import { LinearElementEditor } from "@drawink/element";
@@ -150,14 +146,14 @@ export class LassoTrail extends AnimatedTrail {
         selectedGroupIds: nextSelection.selectedGroupIds,
         selectedLinearElement:
           selectedIds.length === 1 &&
-            !selectedGroupIds.length &&
-            isLinearElement(this.app.scene.getNonDeletedElement(selectedIds[0]))
+          !selectedGroupIds.length &&
+          isLinearElement(this.app.scene.getNonDeletedElement(selectedIds[0]))
             ? new LinearElementEditor(
-              this.app.scene.getNonDeletedElement(
-                selectedIds[0],
-              ) as NonDeleted<DrawinkLinearElement>,
-              this.app.scene.getNonDeletedElementsMap(),
-            )
+                this.app.scene.getNonDeletedElement(
+                  selectedIds[0],
+                ) as NonDeleted<DrawinkLinearElement>,
+                this.app.scene.getNonDeletedElementsMap(),
+              )
             : null,
       };
     });

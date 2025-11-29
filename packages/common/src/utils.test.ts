@@ -1,8 +1,4 @@
-import {
-  isTransparent,
-  mapFind,
-  reduceToCommonValue,
-} from "@drawink/common";
+import { isTransparent, mapFind, reduceToCommonValue } from "@drawink/common";
 
 describe("@drawink/common/utils", () => {
   describe("isTransparent()", () => {

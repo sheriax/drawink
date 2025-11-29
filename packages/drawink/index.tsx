@@ -268,11 +268,7 @@ export {
   getFormFactor,
 } from "@drawink/common";
 
-export {
-  mutateElement,
-  newElementWith,
-  bumpVersion,
-} from "@drawink/element";
+export { mutateElement, newElementWith, bumpVersion } from "@drawink/element";
 
 export { CaptureUpdateAction } from "@drawink/element";
 

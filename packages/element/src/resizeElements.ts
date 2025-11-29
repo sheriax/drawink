@@ -273,13 +273,13 @@ export const rescalePointsInElement = (
 ) =>
   isLinearElement(element) || isFreeDrawElement(element)
     ? {
-      points: rescalePoints(
-        0,
-        width,
-        rescalePoints(1, height, element.points, normalizePoints),
-        normalizePoints,
-      ),
-    }
+        points: rescalePoints(
+          0,
+          width,
+          rescalePoints(1, height, element.points, normalizePoints),
+          normalizePoints,
+        ),
+      }
     : {};
 
 export const measureFontSizeFromWidth = (
@@ -439,14 +439,14 @@ const rotateMultipleElements = (
 
       const updates = isElbowArrow(element)
         ? {
-          // Needed to re-route the arrow
-          points: getArrowLocalFixedPoints(element, elementsMap),
-        }
+            // Needed to re-route the arrow
+            points: getArrowLocalFixedPoints(element, elementsMap),
+          }
         : {
-          x: element.x + (rotatedCX - cx),
-          y: element.y + (rotatedCY - cy),
-          angle: normalizeRadians((centerAngle + origAngle) as Radians),
-        };
+            x: element.x + (rotatedCX - cx),
+            y: element.y + (rotatedCY - cy),
+            angle: normalizeRadians((centerAngle + origAngle) as Radians),
+          };
 
       scene.mutateElement(element, updates);
 

@@ -118,10 +118,10 @@ export const ColorInput = ({
                 s
                   ? null
                   : {
-                    keepOpenOnAlt: false,
-                    onSelect: (color) => onChange(color),
-                    colorPickerType,
-                  },
+                      keepOpenOnAlt: false,
+                      onSelect: (color) => onChange(color),
+                      colorPickerType,
+                    },
               )
             }
             title={`${t(

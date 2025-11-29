@@ -8,10 +8,11 @@ export class DrawinkFontFace {
   public readonly urls: URL[] | DataURL[];
   public readonly fontFace: FontFace;
 
-  private static readonly ASSETS_FALLBACK_URL = `https://esm.sh/${import.meta.env.PKG_NAME
-    ? `${import.meta.env.PKG_NAME}@${import.meta.env.PKG_VERSION}` // is provided during package build
-    : "@drawink/drawink" // fallback to the latest package version (i.e. for app)
-    }/dist/prod/`;
+  private static readonly ASSETS_FALLBACK_URL = `https://esm.sh/${
+    import.meta.env.PKG_NAME
+      ? `${import.meta.env.PKG_NAME}@${import.meta.env.PKG_VERSION}` // is provided during package build
+      : "@drawink/drawink" // fallback to the latest package version (i.e. for app)
+  }/dist/prod/`;
 
   constructor(family: string, uri: string, descriptors?: FontFaceDescriptors) {
     this.urls = DrawinkFontFace.createUrls(uri);

@@ -36,10 +36,7 @@ import { LinearElementEditor } from "@drawink/element";
 
 import { newElementWith } from "@drawink/element";
 
-import {
-  getBoundTextElement,
-  redrawTextBoundingBox,
-} from "@drawink/element";
+import { getBoundTextElement, redrawTextBoundingBox } from "@drawink/element";
 
 import {
   isArrowElement,
@@ -235,8 +232,8 @@ const offsetElementAfterFontResize = (
       prevElement.textAlign === "left"
         ? prevElement.x
         : prevElement.x +
-        (prevElement.width - nextElement.width) /
-        (prevElement.textAlign === "center" ? 2 : 1),
+          (prevElement.width - nextElement.width) /
+            (prevElement.textAlign === "center" ? 2 : 1),
     // centering vertically is non-standard, but for Drawink I think
     // it makes sense
     y: prevElement.y + (prevElement.height - nextElement.height) / 2,
@@ -323,8 +320,8 @@ export const actionChangeStrokeColor = register<
           (el) => {
             return hasStrokeColor(el.type)
               ? newElementWith(el, {
-                strokeColor: value.currentItemStrokeColor,
-              })
+                  strokeColor: value.currentItemStrokeColor,
+                })
               : el;
           },
           true,
@@ -465,7 +462,8 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
     trackEvent(
       "element",
       "changeFillStyle",
-      `${value} (${app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
+      `${value} (${
+        app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
       })`,
     );
     return {
@@ -493,8 +491,9 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
             options={[
               {
                 value: "hachure",
-                text: `${allElementsZigZag ? t("labels.zigzag") : t("labels.hachure")
-                  } (${getShortcutKey("Alt-Click")})`,
+                text: `${
+                  allElementsZigZag ? t("labels.zigzag") : t("labels.hachure")
+                } (${getShortcutKey("Alt-Click")})`,
                 icon: allElementsZigZag ? FillZigZagIcon : FillHachureIcon,
                 active: allElementsZigZag ? true : undefined,
                 testId: `fill-hachure`,
@@ -523,8 +522,8 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
             onClick={(value, event) => {
               const nextValue =
                 event.altKey &&
-                  value === "hachure" &&
-                  selectedElements.every((el) => el.fillStyle === "hachure")
+                value === "hachure" &&
+                selectedElements.every((el) => el.fillStyle === "hachure")
                   ? "zigzag"
                   : value;
 
@@ -537,9 +536,7 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
   },
 });
 
-export const actionChangeStrokeWidth = register<
-  DrawinkElement["strokeWidth"]
->({
+export const actionChangeStrokeWidth = register<DrawinkElement["strokeWidth"]>({
   name: "changeStrokeWidth",
   label: "labels.strokeWidth",
   trackEvent: false,
@@ -649,9 +646,7 @@ export const actionChangeSloppiness = register<DrawinkElement["roughness"]>({
   ),
 });
 
-export const actionChangeStrokeStyle = register<
-  DrawinkElement["strokeStyle"]
->({
+export const actionChangeStrokeStyle = register<DrawinkElement["strokeStyle"]>({
   name: "changeStrokeStyle",
   label: "labels.strokeStyle",
   trackEvent: false,
@@ -728,100 +723,98 @@ export const actionChangeOpacity = register<DrawinkElement["opacity"]>({
   ),
 });
 
-export const actionChangeFontSize = register<DrawinkTextElement["fontSize"]>(
-  {
-    name: "changeFontSize",
-    label: "labels.fontSize",
-    trackEvent: false,
-    perform: (elements, appState, value, app) => {
-      return changeFontSize(
-        elements,
-        appState,
-        app,
-        () => {
-          invariant(value, "actionChangeFontSize: Expected a font size value");
-          return value;
-        },
-        value,
-      );
-    },
-    PanelComponent: ({ elements, appState, updateData, app, data }) => {
-      const { isCompact } = getStylesPanelInfo(app);
-
-      return (
-        <fieldset>
-          <legend>{t("labels.fontSize")}</legend>
-          <div className="buttonList">
-            <RadioSelection
-              group="font-size"
-              options={[
-                {
-                  value: 16,
-                  text: t("labels.small"),
-                  icon: FontSizeSmallIcon,
-                  testId: "fontSize-small",
-                },
-                {
-                  value: 20,
-                  text: t("labels.medium"),
-                  icon: FontSizeMediumIcon,
-                  testId: "fontSize-medium",
-                },
-                {
-                  value: 28,
-                  text: t("labels.large"),
-                  icon: FontSizeLargeIcon,
-                  testId: "fontSize-large",
-                },
-                {
-                  value: 36,
-                  text: t("labels.veryLarge"),
-                  icon: FontSizeExtraLargeIcon,
-                  testId: "fontSize-veryLarge",
-                },
-              ]}
-              value={getFormValue(
-                elements,
-                app,
-                (element) => {
-                  if (isTextElement(element)) {
-                    return element.fontSize;
-                  }
-                  const boundTextElement = getBoundTextElement(
-                    element,
-                    app.scene.getNonDeletedElementsMap(),
-                  );
-                  if (boundTextElement) {
-                    return boundTextElement.fontSize;
-                  }
-                  return null;
-                },
-                (element) =>
-                  isTextElement(element) ||
-                  getBoundTextElement(
-                    element,
-                    app.scene.getNonDeletedElementsMap(),
-                  ) !== null,
-                (hasSelection) =>
-                  hasSelection
-                    ? null
-                    : appState.currentItemFontSize || DEFAULT_FONT_SIZE,
-              )}
-              onChange={(value) => {
-                withCaretPositionPreservation(
-                  () => updateData(value),
-                  isCompact,
-                  !!appState.editingTextElement,
-                  data?.onPreventClose,
-                );
-              }}
-            />
-          </div>
-        </fieldset>
-      );
-    },
+export const actionChangeFontSize = register<DrawinkTextElement["fontSize"]>({
+  name: "changeFontSize",
+  label: "labels.fontSize",
+  trackEvent: false,
+  perform: (elements, appState, value, app) => {
+    return changeFontSize(
+      elements,
+      appState,
+      app,
+      () => {
+        invariant(value, "actionChangeFontSize: Expected a font size value");
+        return value;
+      },
+      value,
+    );
   },
-);
+  PanelComponent: ({ elements, appState, updateData, app, data }) => {
+    const { isCompact } = getStylesPanelInfo(app);
+
+    return (
+      <fieldset>
+        <legend>{t("labels.fontSize")}</legend>
+        <div className="buttonList">
+          <RadioSelection
+            group="font-size"
+            options={[
+              {
+                value: 16,
+                text: t("labels.small"),
+                icon: FontSizeSmallIcon,
+                testId: "fontSize-small",
+              },
+              {
+                value: 20,
+                text: t("labels.medium"),
+                icon: FontSizeMediumIcon,
+                testId: "fontSize-medium",
+              },
+              {
+                value: 28,
+                text: t("labels.large"),
+                icon: FontSizeLargeIcon,
+                testId: "fontSize-large",
+              },
+              {
+                value: 36,
+                text: t("labels.veryLarge"),
+                icon: FontSizeExtraLargeIcon,
+                testId: "fontSize-veryLarge",
+              },
+            ]}
+            value={getFormValue(
+              elements,
+              app,
+              (element) => {
+                if (isTextElement(element)) {
+                  return element.fontSize;
+                }
+                const boundTextElement = getBoundTextElement(
+                  element,
+                  app.scene.getNonDeletedElementsMap(),
+                );
+                if (boundTextElement) {
+                  return boundTextElement.fontSize;
+                }
+                return null;
+              },
+              (element) =>
+                isTextElement(element) ||
+                getBoundTextElement(
+                  element,
+                  app.scene.getNonDeletedElementsMap(),
+                ) !== null,
+              (hasSelection) =>
+                hasSelection
+                  ? null
+                  : appState.currentItemFontSize || DEFAULT_FONT_SIZE,
+            )}
+            onChange={(value) => {
+              withCaretPositionPreservation(
+                () => updateData(value),
+                isCompact,
+                !!appState.editingTextElement,
+                data?.onPreventClose,
+              );
+            }}
+          />
+        </div>
+      </fieldset>
+    );
+  },
+});
 
 export const actionDecreaseFontSize = register({
   name: "decreaseFontSize",
@@ -1276,10 +1269,9 @@ export const actionChangeTextAlign = register<TextAlign>({
         appState,
         (oldElement) => {
           if (isTextElement(oldElement)) {
-            const newElement: DrawinkTextElement = newElementWith(
-              oldElement,
-              { textAlign: value },
-            );
+            const newElement: DrawinkTextElement = newElementWith(oldElement, {
+              textAlign: value,
+            });
             redrawTextBoundingBox(
               newElement,
               app.scene.getContainerElement(oldElement),
@@ -1377,10 +1369,9 @@ export const actionChangeVerticalAlign = register<VerticalAlign>({
         appState,
         (oldElement) => {
           if (isTextElement(oldElement)) {
-            const newElement: DrawinkTextElement = newElementWith(
-              oldElement,
-              { verticalAlign: value },
-            );
+            const newElement: DrawinkTextElement = newElementWith(oldElement, {
+              verticalAlign: value,
+            });
 
             redrawTextBoundingBox(
               newElement,
@@ -1481,10 +1472,10 @@ export const actionChangeRoundness = register<"sharp" | "round">({
           roundness:
             value === "round"
               ? {
-                type: isUsingAdaptiveRadius(el.type)
-                  ? ROUNDNESS.ADAPTIVE_RADIUS
-                  : ROUNDNESS.PROPORTIONAL_RADIUS,
-              }
+                  type: isUsingAdaptiveRadius(el.type)
+                    ? ROUNDNESS.ADAPTIVE_RADIUS
+                    : ROUNDNESS.PROPORTIONAL_RADIUS,
+                }
               : null,
         });
       }),
@@ -1530,8 +1521,8 @@ export const actionChangeRoundness = register<"sharp" | "round">({
                 hasLegacyRoundness
                   ? null
                   : element.roundness
-                    ? "round"
-                    : "sharp",
+                  ? "round"
+                  : "sharp",
               (element) =>
                 !isArrowElement(element) && element.hasOwnProperty("roundness"),
               (hasSelection) =>
@@ -1753,35 +1744,35 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
         roundness:
           value === ARROW_TYPE.round
             ? {
-              type: ROUNDNESS.PROPORTIONAL_RADIUS,
-            }
+                type: ROUNDNESS.PROPORTIONAL_RADIUS,
+              }
             : null,
         elbowed: value === ARROW_TYPE.elbow,
         angle: value === ARROW_TYPE.elbow ? (0 as Radians) : el.angle,
         points:
           value === ARROW_TYPE.elbow || el.elbowed
             ? [
-              LinearElementEditor.pointFromAbsoluteCoords(
-                {
-                  ...el,
-                  x: startPoint[0],
-                  y: startPoint[1],
-                  angle: 0 as Radians,
-                },
-                startPoint,
-                elementsMap,
-              ),
-              LinearElementEditor.pointFromAbsoluteCoords(
-                {
-                  ...el,
-                  x: startPoint[0],
-                  y: startPoint[1],
-                  angle: 0 as Radians,
-                },
-                endPoint,
-                elementsMap,
-              ),
-            ]
+                LinearElementEditor.pointFromAbsoluteCoords(
+                  {
+                    ...el,
+                    x: startPoint[0],
+                    y: startPoint[1],
+                    angle: 0 as Radians,
+                  },
+                  startPoint,
+                  elementsMap,
+                ),
+                LinearElementEditor.pointFromAbsoluteCoords(
+                  {
+                    ...el,
+                    x: startPoint[0],
+                    y: startPoint[1],
+                    angle: 0 as Radians,
+                  },
+                  endPoint,
+                  elementsMap,
+                ),
+              ]
             : el.points,
       });
 
@@ -1818,28 +1809,28 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
         const startBinding =
           startElement && newElement.startBinding
             ? {
-              // @ts-ignore TS cannot discern check above
-              ...newElement.startBinding!,
-              ...calculateFixedPointForElbowArrowBinding(
-                newElement,
-                startElement,
-                "start",
-                elementsMap,
-              ),
-            }
+                // @ts-ignore TS cannot discern check above
+                ...newElement.startBinding!,
+                ...calculateFixedPointForElbowArrowBinding(
+                  newElement,
+                  startElement,
+                  "start",
+                  elementsMap,
+                ),
+              }
             : null;
         const endBinding =
           endElement && newElement.endBinding
             ? {
-              // @ts-ignore TS cannot discern check above
-              ...newElement.endBinding,
-              ...calculateFixedPointForElbowArrowBinding(
-                newElement,
-                endElement,
-                "end",
-                elementsMap,
-              ),
-            }
+                // @ts-ignore TS cannot discern check above
+                ...newElement.endBinding,
+                ...calculateFixedPointForElbowArrowBinding(
+                  newElement,
+                  endElement,
+                  "end",
+                  elementsMap,
+                ),
+              }
             : null;
 
         newElement = {
@@ -1950,8 +1941,8 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
                   return element.elbowed
                     ? ARROW_TYPE.elbow
                     : element.roundness
-                      ? ARROW_TYPE.round
-                      : ARROW_TYPE.sharp;
+                    ? ARROW_TYPE.round
+                    : ARROW_TYPE.sharp;
                 }
 
                 return null;

@@ -20,9 +20,7 @@ describe("event callbacks", () => {
   beforeEach(async () => {
     const drawinkAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
     await render(
-      <Drawink
-        drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)}
-      />,
+      <Drawink drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)} />,
     );
     drawinkAPI = await drawinkAPIPromise;
   });

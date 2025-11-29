@@ -3,11 +3,7 @@ import { vi } from "vitest";
 
 import { KEYS, cloneJSON } from "@drawink/common";
 
-import {
-  Drawink,
-  exportToCanvas,
-  exportToSvg,
-} from "@drawink/drawink";
+import { Drawink, exportToCanvas, exportToSvg } from "@drawink/drawink";
 import {
   actionFlipHorizontal,
   actionFlipVertical,

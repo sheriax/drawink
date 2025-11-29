@@ -1,7 +1,4 @@
-import type {
-  DrawinkElement,
-  FontFamilyValues,
-} from "@drawink/element/types";
+import type { DrawinkElement, FontFamilyValues } from "@drawink/element/types";
 import type { AppProps, AppState } from "@drawink/drawink/types";
 
 import { COLOR_PALETTE } from "./colors";

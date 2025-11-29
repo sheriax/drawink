@@ -1,11 +1,6 @@
 import { pointFrom } from "@drawink/math";
 
-import {
-  FONT_FAMILY,
-  ORIG_ID,
-  ROUNDNESS,
-  isPrimitive,
-} from "@drawink/common";
+import { FONT_FAMILY, ORIG_ID, ROUNDNESS, isPrimitive } from "@drawink/common";
 
 import { Drawink, mutateElement } from "@drawink/drawink";
 

@@ -41,9 +41,9 @@ const CanvasGrid = ({
           } else if (instantChange) {
             nextGridStep = shouldChangeByStepSize
               ? getStepSizedValue(
-                state.gridStep + STEP_SIZE * Math.sign(instantChange),
-                STEP_SIZE,
-              )
+                  state.gridStep + STEP_SIZE * Math.sign(instantChange),
+                  STEP_SIZE,
+                )
               : state.gridStep + instantChange;
           }
 

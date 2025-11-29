@@ -13,17 +13,9 @@ import {
   vectorScale,
 } from "@drawink/math";
 
-import {
-  ellipse,
-  ellipseSegmentInterceptPoints,
-} from "@drawink/math/ellipse";
+import { ellipse, ellipseSegmentInterceptPoints } from "@drawink/math/ellipse";
 
-import type {
-  Curve,
-  GlobalPoint,
-  LineSegment,
-  Radians,
-} from "@drawink/math";
+import type { Curve, GlobalPoint, LineSegment, Radians } from "@drawink/math";
 
 import type { FrameNameBounds } from "@drawink/drawink/types";
 
@@ -117,13 +109,13 @@ export const hitElementItself = ({
   // Hit test against a frame's name
   const hitFrameName = frameNameBound
     ? isPointWithinBounds(
-      pointFrom(frameNameBound.x - threshold, frameNameBound.y - threshold),
-      point,
-      pointFrom(
-        frameNameBound.x + frameNameBound.width + threshold,
-        frameNameBound.y + frameNameBound.height + threshold,
-      ),
-    )
+        pointFrom(frameNameBound.x - threshold, frameNameBound.y - threshold),
+        point,
+        pointFrom(
+          frameNameBound.x + frameNameBound.width + threshold,
+          frameNameBound.y + frameNameBound.height + threshold,
+        ),
+      )
     : false;
 
   // Hit test against the extended, rotated bounding box of the element first
@@ -149,9 +141,9 @@ export const hitElementItself = ({
     overrideShouldTestInside ? true : shouldTestInside(element)
   )
     ? // Since `inShape` tests STRICTLY againt the insides of a shape
-    // we would need `onShape` as well to include the "borders"
-    isPointInElement(point, element, elementsMap) ||
-    isPointOnElementOutline(point, element, elementsMap, threshold)
+      // we would need `onShape` as well to include the "borders"
+      isPointInElement(point, element, elementsMap) ||
+      isPointOnElementOutline(point, element, elementsMap, threshold)
     : isPointOnElementOutline(point, element, elementsMap, threshold);
 
   return hitElement || hitFrameName;
@@ -192,15 +184,15 @@ export const hitElementBoundText = (
   }
   const boundTextElement = isLinearElement(element)
     ? {
-      ...boundTextElementCandidate,
-      // arrow's bound text accurate position is not stored in the element's property
-      // but rather calculated and returned from the following static method
-      ...LinearElementEditor.getBoundTextElementPosition(
-        element,
-        boundTextElementCandidate,
-        elementsMap,
-      ),
-    }
+        ...boundTextElementCandidate,
+        // arrow's bound text accurate position is not stored in the element's property
+        // but rather calculated and returned from the following static method
+        ...LinearElementEditor.getBoundTextElementPosition(
+          element,
+          boundTextElementCandidate,
+          elementsMap,
+        ),
+      }
     : boundTextElementCandidate;
 
   return isPointInElement(point, boundTextElement, elementsMap);

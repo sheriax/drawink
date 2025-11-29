@@ -2,10 +2,7 @@ import { base64urlToString } from "@drawink/drawink/data/encode";
 import { DrawinkError } from "@drawink/drawink/errors";
 import { useLayoutEffect, useRef } from "react";
 
-import type {
-  FileId,
-  OrderedDrawinkElement,
-} from "@drawink/element/types";
+import type { FileId, OrderedDrawinkElement } from "@drawink/element/types";
 import type { AppState, BinaryFileData } from "@drawink/drawink/types";
 
 import { STORAGE_KEYS } from "./app_constants";
@@ -51,9 +48,7 @@ const parseSceneData = async ({
   }
 
   try {
-    const elements = JSON.parse(
-      rawElementsString,
-    ) as OrderedDrawinkElement[];
+    const elements = JSON.parse(rawElementsString) as OrderedDrawinkElement[];
 
     if (!elements.length) {
       throw new DrawinkError("Scene is empty, nothing to export.");

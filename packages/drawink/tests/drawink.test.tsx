@@ -110,9 +110,7 @@ describe("<Drawink/>", () => {
     });
 
     it('should not show grid mode in context menu when gridModeEnabled is not "undefined"', async () => {
-      const { container } = await render(
-        <Drawink gridModeEnabled={false} />,
-      );
+      const { container } = await render(<Drawink gridModeEnabled={false} />);
       expect(h.state.gridModeEnabled).toBe(false);
 
       expect(
@@ -132,9 +130,7 @@ describe("<Drawink/>", () => {
   describe("Test UIOptions prop", () => {
     describe("Test canvasActions", () => {
       it('should render menu with default items when "UIOPtions" is "undefined"', async () => {
-        const { container } = await render(
-          <Drawink UIOptions={undefined} />,
-        );
+        const { container } = await render(<Drawink UIOptions={undefined} />);
         //open menu
         toggleMenu(container);
         expect(queryByTestId(container, "dropdown-menu")).toMatchSnapshot();

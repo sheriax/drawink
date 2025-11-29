@@ -101,9 +101,7 @@ const _renderBinding = (
     return;
   }
 
-  const bindable = elementsMap.get(
-    binding.elementId,
-  ) as DrawinkBindableElement;
+  const bindable = elementsMap.get(binding.elementId) as DrawinkBindableElement;
   const [x, y] = getGlobalFixedPointForBindableElement(
     binding.fixedPoint,
     bindable,
@@ -136,9 +134,7 @@ const _renderBindableBinding = (
   height: number,
   color: string,
 ) => {
-  const bindable = elementsMap.get(
-    binding.elementId,
-  ) as DrawinkBindableElement;
+  const bindable = elementsMap.get(binding.elementId) as DrawinkBindableElement;
   if (!binding.fixedPoint) {
     console.warn("Binding must have a fixedPoint");
     return;
@@ -226,9 +222,7 @@ const renderBindings = (
           return;
         }
 
-        const arrow = elementsMap.get(
-          boundElement.id,
-        ) as DrawinkArrowElement;
+        const arrow = elementsMap.get(boundElement.id) as DrawinkArrowElement;
 
         if (arrow && arrow.startBinding?.elementId === element.id) {
           _renderBindableBinding(

@@ -285,15 +285,12 @@ export const actionUngroup = register({
     // remove binded text elements from selection
     updateAppState.selectedElementIds = Object.entries(
       updateAppState.selectedElementIds,
-    ).reduce(
-      (acc: { [key: DrawinkElement["id"]]: true }, [id, selected]) => {
-        if (selected && !boundTextElementIds.includes(id)) {
-          acc[id] = true;
-        }
-        return acc;
-      },
-      {},
-    );
+    ).reduce((acc: { [key: DrawinkElement["id"]]: true }, [id, selected]) => {
+      if (selected && !boundTextElementIds.includes(id)) {
+        acc[id] = true;
+      }
+      return acc;
+    }, {});
 
     return {
       appState: { ...appState, ...updateAppState },

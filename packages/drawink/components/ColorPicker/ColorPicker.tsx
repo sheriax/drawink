@@ -55,8 +55,8 @@ export const getColor = (color: string): string | null => {
   return isValidColor(`#${color}`)
     ? `#${color}`
     : isValidColor(color)
-      ? color
-      : null;
+    ? color
+    : null;
 };
 
 interface ColorPickerProps {
@@ -201,10 +201,10 @@ const ColorPickerPopupContent = ({
               return force === false || state
                 ? null
                 : {
-                  keepOpenOnAlt: false,
-                  onSelect: onChange,
-                  colorPickerType: type,
-                };
+                    keepOpenOnAlt: false,
+                    onSelect: onChange,
+                    colorPickerType: type,
+                  };
             });
           }}
           onEscape={(event) => {

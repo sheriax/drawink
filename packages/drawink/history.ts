@@ -1,10 +1,6 @@
 import { Emitter } from "@drawink/common";
 
-import {
-  CaptureUpdateAction,
-  StoreChange,
-  StoreDelta,
-} from "@drawink/element";
+import { CaptureUpdateAction, StoreChange, StoreDelta } from "@drawink/element";
 
 import type { StoreSnapshot, Store } from "@drawink/element";
 
@@ -84,7 +80,7 @@ export class HistoryChangedEvent {
   constructor(
     public readonly isUndoStackEmpty: boolean = true,
     public readonly isRedoStackEmpty: boolean = true,
-  ) { }
+  ) {}
 }
 
 export class History {
@@ -103,7 +99,7 @@ export class History {
     return this.redoStack.length === 0;
   }
 
-  constructor(private readonly store: Store) { }
+  constructor(private readonly store: Store) {}
 
   public clear() {
     this.undoStack.length = 0;

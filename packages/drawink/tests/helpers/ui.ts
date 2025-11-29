@@ -156,7 +156,7 @@ const getElementPointForSelection = (
   const { x, y, width, angle } = element;
   const target = pointFrom<GlobalPoint>(
     x +
-    (isLinearElement(element) || isFreeDrawElement(element) ? 0 : width / 2),
+      (isLinearElement(element) || isFreeDrawElement(element) ? 0 : width / 2),
     y,
   );
   let center: GlobalPoint;
@@ -550,9 +550,10 @@ export class UI {
     return proxy(origElement);
   }
 
-  static async editText<
-    T extends DrawinkTextElement | DrawinkTextContainer,
-  >(element: T, text: string) {
+  static async editText<T extends DrawinkTextElement | DrawinkTextContainer>(
+    element: T,
+    text: string,
+  ) {
     const openedEditor =
       document.querySelector<HTMLTextAreaElement>(TEXT_EDITOR_SELECTOR);
 
@@ -574,10 +575,8 @@ export class UI {
     return isTextElement(element)
       ? element
       : proxy(
-        h.elements[
-        h.elements.length - 1
-        ] as DrawinkTextElementWithContainer,
-      );
+          h.elements[h.elements.length - 1] as DrawinkTextElementWithContainer,
+        );
   }
 
   static updateInput = (input: HTMLInputElement, value: string | number) => {

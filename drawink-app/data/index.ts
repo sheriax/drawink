@@ -1,7 +1,4 @@
-import {
-  compressData,
-  decompressData,
-} from "@drawink/drawink/data/encode";
+import { compressData, decompressData } from "@drawink/drawink/data/encode";
 import {
   decryptData,
   generateEncryptionKey,

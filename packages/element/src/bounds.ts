@@ -1,11 +1,6 @@
 import rough from "roughjs/bin/rough";
 
-import {
-  arrayToMap,
-  invariant,
-  rescalePoints,
-  sizeOf,
-} from "@drawink/common";
+import { arrayToMap, invariant, rescalePoints, sizeOf } from "@drawink/common";
 
 import {
   degreesToRadians,
@@ -1070,9 +1065,9 @@ export const getResizedElementAbsoluteCoords = (
     const gen = rough.generator();
     const curve = !element.roundness
       ? gen.linearPath(
-        points as [number, number][],
-        generateRoughOptions(element),
-      )
+          points as [number, number][],
+          generateRoughOptions(element),
+        )
       : gen.curve(points as [number, number][], generateRoughOptions(element));
 
     const ops = getCurvePathOps(curve);
@@ -1097,9 +1092,9 @@ export const getElementPointsCoords = (
   const curve =
     element.roundness == null
       ? gen.linearPath(
-        points as [number, number][],
-        generateRoughOptions(element),
-      )
+          points as [number, number][],
+          generateRoughOptions(element),
+        )
       : gen.curve(points as [number, number][], generateRoughOptions(element));
   const ops = getCurvePathOps(curve);
   const [minX, minY, maxX, maxY] = getMinMaxXYFromCurvePathOps(ops);
@@ -1150,9 +1145,7 @@ export interface BoundingBox {
 }
 
 export const getCommonBoundingBox = (
-  elements:
-    | readonly DrawinkElement[]
-    | readonly NonDeleted<DrawinkElement>[],
+  elements: readonly DrawinkElement[] | readonly NonDeleted<DrawinkElement>[],
 ): BoundingBox => {
   const [minX, minY, maxX, maxY] = getCommonBounds(elements);
   return {

@@ -6,10 +6,7 @@ const drawinkDir = `${__dirname}/../packages/drawink`;
 const drawinkPackage = `${drawinkDir}/package.json`;
 const pkg = require(drawinkPackage);
 const lastVersion = pkg.version;
-const existingChangeLog = fs.readFileSync(
-  `${drawinkDir}/CHANGELOG.md`,
-  "utf8",
-);
+const existingChangeLog = fs.readFileSync(`${drawinkDir}/CHANGELOG.md`, "utf8");
 
 const supportedTypes = ["feat", "fix", "style", "refactor", "perf", "build"];
 const headerForType = {

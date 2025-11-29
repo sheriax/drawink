@@ -19,16 +19,11 @@ describe("Test Transform", () => {
         id: "rect-1",
       },
     ];
-    let data = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-    );
+    let data = convertToDrawinkElements(elements as DrawinkElementSkeleton[]);
     expect(data.length).toBe(1);
     expect(data[0].id).toBe("id0");
 
-    data = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    );
+    data = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
     expect(data[0].id).toBe("rect-1");
   });
 
@@ -344,10 +339,7 @@ describe("Test Transform", () => {
           name: "My frame",
         },
       ];
-      const drawinkElements = convertToDrawinkElements(
-        elementsSkeleton,
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elementsSkeleton, opts);
       expect(drawinkElements.length).toBe(4);
 
       drawinkElements.forEach((ele) => {
@@ -370,10 +362,7 @@ describe("Test Transform", () => {
           height: 100,
         },
       ];
-      const drawinkElements = convertToDrawinkElements(
-        elementsSkeleton,
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elementsSkeleton, opts);
       const frame = drawinkElements.find((ele) => ele.type === "frame")!;
       expect(frame.width).toBe(800);
       expect(frame.height).toBe(100);
@@ -390,10 +379,7 @@ describe("Test Transform", () => {
           y: 300,
         },
       ];
-      const drawinkElements = convertToDrawinkElements(
-        elementsSkeleton,
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elementsSkeleton, opts);
       const frame = drawinkElements.find((ele) => ele.type === "frame")!;
       expect(frame.x).toBe(100);
       expect(frame.y).toBe(300);

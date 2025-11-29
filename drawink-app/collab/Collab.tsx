@@ -87,10 +87,7 @@ import { resetBrowserStateVersions } from "../data/tabSync";
 import { collabErrorIndicatorAtom } from "./CollabError";
 import Portal from "./Portal";
 
-import type {
-  SocketUpdateDataSource,
-  SyncableDrawinkElement,
-} from "../data";
+import type { SocketUpdateDataSource, SyncableDrawinkElement } from "../data";
 
 export const collabAPIAtom = atom<CollabAPI | null>(null);
 export const isCollaboratingAtom = atom(false);
@@ -356,9 +353,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     this.resetErrorIndicator(true);
 
     this.saveCollabRoomToFirebase(
-      getSyncableElements(
-        this.drawinkAPI.getSceneElementsIncludingDeleted(),
-      ),
+      getSyncableElements(this.drawinkAPI.getSceneElementsIncludingDeleted()),
     );
 
     if (this.portal.socket && this.fallbackInitializationHandler) {
@@ -431,7 +426,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
           !element.isDeleted &&
           (opts.forceFetchFiles
             ? element.status !== "pending" ||
-            Date.now() - element.updated > 10000
+              Date.now() - element.updated > 10000
             : element.status === "saved")
         );
       })
@@ -699,9 +694,9 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     roomLinkData,
   }:
     | {
-      fetchScene: true;
-      roomLinkData: { roomId: string; roomKey: string } | null;
-    }
+        fetchScene: true;
+        roomLinkData: { roomId: string; roomKey: string } | null;
+      }
     | { fetchScene: false; roomLinkData?: null }) => {
     clearTimeout(this.socketInitializationTimer!);
     if (this.portal.socket && this.fallbackInitializationHandler) {
@@ -779,9 +774,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     });
   }, LOAD_IMAGES_TIMEOUT);
 
-  private handleRemoteSceneUpdate = (
-    elements: ReconciledDrawinkElement[],
-  ) => {
+  private handleRemoteSceneUpdate = (elements: ReconciledDrawinkElement[]) => {
     this.drawinkAPI.updateScene({
       elements,
       captureUpdate: CaptureUpdateAction.NEVER,

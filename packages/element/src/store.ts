@@ -96,7 +96,7 @@ export class Store {
     this._snapshot = snapshot;
   }
 
-  constructor(private readonly app: App) { }
+  constructor(private readonly app: App) {}
 
   public scheduleAction(action: CaptureUpdateActionType) {
     this.scheduledMacroActions.add(action);
@@ -117,21 +117,21 @@ export class Store {
   public scheduleMicroAction(
     params:
       | {
-        action: CaptureUpdateActionType;
-        elements: readonly DrawinkElement[] | undefined;
-        appState: AppState | ObservedAppState | undefined;
-      }
+          action: CaptureUpdateActionType;
+          elements: readonly DrawinkElement[] | undefined;
+          appState: AppState | ObservedAppState | undefined;
+        }
       | {
-        action: typeof CaptureUpdateAction.IMMEDIATELY;
-        change: StoreChange;
-        delta: StoreDelta;
-      }
+          action: typeof CaptureUpdateAction.IMMEDIATELY;
+          change: StoreChange;
+          delta: StoreDelta;
+        }
       | {
-        action:
-        | typeof CaptureUpdateAction.NEVER
-        | typeof CaptureUpdateAction.EVENTUALLY;
-        change: StoreChange;
-      },
+          action:
+            | typeof CaptureUpdateAction.NEVER
+            | typeof CaptureUpdateAction.EVENTUALLY;
+          change: StoreChange;
+        },
   ) {
     const { action } = params;
 
@@ -317,15 +317,15 @@ export class Store {
   private processAction(
     params:
       | {
-        action: CaptureUpdateActionType;
-        elements: SceneElementsMap | undefined;
-        appState: AppState | ObservedAppState | undefined;
-      }
+          action: CaptureUpdateActionType;
+          elements: SceneElementsMap | undefined;
+          appState: AppState | ObservedAppState | undefined;
+        }
       | {
-        action: CaptureUpdateActionType;
-        change: StoreChange;
-        delta: StoreDelta | undefined;
-      },
+          action: CaptureUpdateActionType;
+          change: StoreChange;
+          delta: StoreDelta | undefined;
+        },
   ) {
     const { action } = params;
 
@@ -413,7 +413,7 @@ export class Store {
       !(
         this.scheduledMacroActions.size >= 0 &&
         this.scheduledMacroActions.size <=
-        Object.keys(CaptureUpdateAction).length
+          Object.keys(CaptureUpdateAction).length
       )
     ) {
       const message = `There can be at most three store actions scheduled at the same time, but there are "${this.scheduledMacroActions.size}".`;
@@ -435,7 +435,7 @@ export class StoreChange {
   private constructor(
     public readonly elements: Record<string, OrderedDrawinkElement>,
     public readonly appState: Partial<ObservedAppState>,
-  ) { }
+  ) {}
 
   public static create(
     prevSnapshot: StoreSnapshot,
@@ -455,7 +455,7 @@ export abstract class StoreIncrement {
   protected constructor(
     public readonly type: "durable" | "ephemeral",
     public readonly change: StoreChange,
-  ) { }
+  ) {}
 
   public static isDurable(
     increment: StoreIncrement,
@@ -499,7 +499,7 @@ export class StoreDelta {
     public readonly id: string,
     public readonly elements: ElementsDelta,
     public readonly appState: AppStateDelta,
-  ) { }
+  ) {}
 
   /**
    * Create a new instance of `StoreDelta`.
@@ -510,8 +510,8 @@ export class StoreDelta {
     opts: {
       id: string;
     } = {
-        id: randomId(),
-      },
+      id: randomId(),
+    },
   ) {
     return new this(opts.id, elements, appState);
   }
@@ -652,11 +652,11 @@ export class StoreSnapshot {
       didAppStateChange: boolean;
       isEmpty?: boolean;
     } = {
-        didElementsChange: false,
-        didAppStateChange: false,
-        isEmpty: false,
-      },
-  ) { }
+      didElementsChange: false,
+      didAppStateChange: false,
+      isEmpty: false,
+    },
+  ) {}
 
   public static create(
     elements: SceneElementsMap,
@@ -665,9 +665,9 @@ export class StoreSnapshot {
       didElementsChange: boolean;
       didAppStateChange: boolean;
     } = {
-        didElementsChange: false,
-        didAppStateChange: false,
-      },
+      didElementsChange: false,
+      didAppStateChange: false,
+    },
   ) {
     return new StoreSnapshot(
       elements,
@@ -815,8 +815,8 @@ export class StoreSnapshot {
     options: {
       shouldCompareHashes: boolean;
     } = {
-        shouldCompareHashes: false,
-      },
+      shouldCompareHashes: false,
+    },
   ): ObservedAppState {
     if (!appState) {
       return this.appState;
@@ -844,8 +844,8 @@ export class StoreSnapshot {
     options: {
       shouldCompareHashes: boolean;
     } = {
-        shouldCompareHashes: false,
-      },
+      shouldCompareHashes: false,
+    },
   ): SceneElementsMap {
     if (!elements) {
       return this.elements;
@@ -866,8 +866,8 @@ export class StoreSnapshot {
     options: {
       shouldCompareHashes: boolean;
     } = {
-        shouldCompareHashes: false,
-      },
+      shouldCompareHashes: false,
+    },
   ): boolean | undefined {
     if (this.appState === nextObservedAppState) {
       return;
@@ -906,8 +906,8 @@ export class StoreSnapshot {
     options: {
       shouldCompareHashes: boolean;
     } = {
-        shouldCompareHashes: false,
-      },
+      shouldCompareHashes: false,
+    },
   ): SceneElementsMap | undefined {
     if (this.elements === nextElements) {
       return;
@@ -1017,9 +1017,9 @@ export const getObservedAppState = (
     lockedMultiSelections: appState.lockedMultiSelections,
     selectedLinearElement: appState.selectedLinearElement
       ? {
-        elementId: appState.selectedLinearElement.elementId,
-        isEditing: !!appState.selectedLinearElement.isEditing,
-      }
+          elementId: appState.selectedLinearElement.elementId,
+          isEditing: !!appState.selectedLinearElement.isEditing,
+        }
       : null,
   };
 

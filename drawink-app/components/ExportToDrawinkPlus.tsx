@@ -15,10 +15,7 @@ import { serializeAsJSON } from "@drawink/drawink/data/json";
 import { isInitializedImageElement } from "@drawink/element";
 import { useI18n } from "@drawink/drawink/i18n";
 
-import type {
-  FileId,
-  NonDeletedDrawinkElement,
-} from "@drawink/element/types";
+import type { FileId, NonDeletedDrawinkElement } from "@drawink/element/types";
 import type {
   AppState,
   BinaryFileData,
@@ -81,7 +78,8 @@ export const exportToDrawinkPlus = async (
   }
 
   window.open(
-    `${import.meta.env.VITE_APP_PLUS_APP
+    `${
+      import.meta.env.VITE_APP_PLUS_APP
     }/import?drawink=${id},${encryptionKey}`,
   );
 };

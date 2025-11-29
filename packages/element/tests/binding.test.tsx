@@ -8,11 +8,7 @@ import { Drawink, isLinearElement } from "@drawink/drawink";
 
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { UI, Pointer, Keyboard } from "@drawink/drawink/tests/helpers/ui";
-import {
-  act,
-  fireEvent,
-  render,
-} from "@drawink/drawink/tests/test-utils";
+import { act, fireEvent, render } from "@drawink/drawink/tests/test-utils";
 
 import { defaultLang, setLanguage } from "@drawink/drawink/i18n";
 
@@ -323,7 +319,7 @@ describe("binding for simple arrows", () => {
 
     it(
       "editing arrow and moving its head to bind it to element A, finalizing the" +
-      "editing by clicking on element A should end up selecting A",
+        "editing by clicking on element A should end up selecting A",
       async () => {
         UI.createElement("rectangle", {
           y: 0,

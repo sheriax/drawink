@@ -52,7 +52,7 @@ export const actionSelectAll = register({
         selectedLinearElement:
           // single linear element selected
           Object.keys(selectedElementIds).length === 1 &&
-            isLinearElement(elements[0])
+          isLinearElement(elements[0])
             ? new LinearElementEditor(elements[0], arrayToMap(elements))
             : null,
       },

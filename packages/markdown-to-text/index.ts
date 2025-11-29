@@ -21,7 +21,7 @@ const removeMarkdown = (
   markdown: string,
   options: Options = {
     listUnicodeChar: "",
-  }
+  },
 ) => {
   options = options || {};
   options.listUnicodeChar = options.hasOwnProperty("listUnicodeChar")
@@ -45,12 +45,14 @@ const removeMarkdown = (
 
   try {
     if (options.stripListLeaders) {
-      if (options.listUnicodeChar)
+      if (options.listUnicodeChar) {
         output = output.replace(
           /^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm,
-          options.listUnicodeChar + " $1"
+          `${options.listUnicodeChar} $1`,
         );
-      else output = output.replace(/^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm, "$1");
+      } else {
+        output = output.replace(/^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm, "$1");
+      }
     }
     if (options.gfm) {
       output = output
@@ -87,7 +89,7 @@ const removeMarkdown = (
       // Remove atx-style headers
       .replace(
         /^(\n)?\s{0,}#{1,6}\s+| {0,}(\n)?\s{0,}#{0,} {0,}(\n)?\s{0,}$/gm,
-        "$1$2$3"
+        "$1$2$3",
       )
       // Remove emphasis (repeat the line to remove double emphasis)
       .replace(/([\*_]{1,3})(\S.*?\S{0,1})\1/g, "$2")

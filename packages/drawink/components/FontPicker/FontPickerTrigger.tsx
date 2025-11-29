@@ -25,10 +25,10 @@ export const FontPickerTrigger = ({
 
   const compactStyle = compactMode
     ? {
-      ...MOBILE_ACTION_BUTTON_BG,
-      width: "2rem",
-      height: "2rem",
-    }
+        ...MOBILE_ACTION_BUTTON_BG,
+        width: "2rem",
+        height: "2rem",
+      }
     : {};
 
   return (

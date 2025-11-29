@@ -1,14 +1,8 @@
-import {
-  convertToDrawinkElements,
-  Drawink,
-} from "@drawink/drawink";
+import { convertToDrawinkElements, Drawink } from "@drawink/drawink";
 
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
-import {
-  getCloneByOrigId,
-  render,
-} from "@drawink/drawink/tests/test-utils";
+import { getCloneByOrigId, render } from "@drawink/drawink/tests/test-utils";
 
 import type { DrawinkElement } from "../src/types";
 

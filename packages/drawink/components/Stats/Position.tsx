@@ -144,19 +144,19 @@ const handlePositionChange: DragInputCallbackType<"x" | "y"> = ({
   const newTopLeftX =
     property === "x"
       ? Math.round(
-        shouldChangeByStepSize
-          ? getStepSizedValue(origElement.x + changeInTopX, STEP_SIZE)
-          : topLeftX + changeInTopX,
-      )
+          shouldChangeByStepSize
+            ? getStepSizedValue(origElement.x + changeInTopX, STEP_SIZE)
+            : topLeftX + changeInTopX,
+        )
       : topLeftX;
 
   const newTopLeftY =
     property === "y"
       ? Math.round(
-        shouldChangeByStepSize
-          ? getStepSizedValue(origElement.y + changeInTopY, STEP_SIZE)
-          : topLeftY + changeInTopY,
-      )
+          shouldChangeByStepSize
+            ? getStepSizedValue(origElement.y + changeInTopY, STEP_SIZE)
+            : topLeftY + changeInTopY,
+        )
       : topLeftY;
 
   moveElement(

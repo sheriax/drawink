@@ -23,8 +23,8 @@ export const actionShortcuts = register({
           appState.openDialog?.name === "help"
             ? null
             : {
-              name: "help",
-            },
+                name: "help",
+              },
         openMenu: null,
         openPopup: null,
       },

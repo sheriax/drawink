@@ -6,10 +6,7 @@ import throttle from "lodash.throttle";
 
 import type { UserIdleState } from "@drawink/common";
 import type { OrderedDrawinkElement } from "@drawink/element/types";
-import type {
-  OnUserFollowedPayload,
-  SocketId,
-} from "@drawink/drawink/types";
+import type { OnUserFollowedPayload, SocketId } from "@drawink/drawink/types";
 
 import { WS_EVENTS, FILE_UPLOAD_TIMEOUT, WS_SUBTYPES } from "../app_constants";
 import { isSyncableElement } from "../data";
