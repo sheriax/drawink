@@ -55,18 +55,18 @@ type OnTestSubmitRetValue = {
   rateLimit?: number | null;
   rateLimitRemaining?: number | null;
 } & (
-  | { generatedResponse: string | undefined; error?: null | undefined }
-  | {
+    | { generatedResponse: string | undefined; error?: null | undefined }
+    | {
       error: Error;
       generatedResponse?: null | undefined;
     }
-);
+  );
 
 export const TTDDialog = (
   props:
     | {
-        onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
-      }
+      onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
+    }
     | { __fallback: true },
 ) => {
   const appState = useUIAppState();
@@ -89,11 +89,11 @@ export const TTDDialogBase = withInternalFallback(
   }: {
     tab: "text-to-diagram" | "mermaid";
   } & (
-    | {
+      | {
         onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
       }
-    | { __fallback: true }
-  )) => {
+      | { __fallback: true }
+    )) => {
     const app = useApp();
     const setAppState = useDrawinkSetAppState();
 
@@ -220,8 +220,13 @@ export const TTDDialogBase = withInternalFallback(
 
     useEffect(() => {
       const fn = async () => {
-        await mermaidToDrawinkLib.api;
-        setMermaidToDrawinkLib((prev) => ({ ...prev, loaded: true }));
+        try {
+          await mermaidToDrawinkLib.api;
+          setMermaidToDrawinkLib((prev) => ({ ...prev, loaded: true }));
+        } catch (error: any) {
+          console.error("Failed to load mermaid-to-drawink", error);
+          setError(new Error("Failed to load Mermaid library"));
+        }
       };
       fn();
     }, [mermaidToDrawinkLib.api]);

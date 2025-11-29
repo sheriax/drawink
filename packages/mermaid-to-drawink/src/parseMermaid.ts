@@ -57,14 +57,38 @@ export const parseMermaid = async (
   definition: string,
   config: MermaidConfig = MERMAID_CONFIG,
 ): Promise<Flowchart | GraphImage | Sequence | Class> => {
-  mermaid.initialize({ ...MERMAID_CONFIG, ...config });
+  console.log("[parseMermaid] Starting with config:", config);
+
+  try {
+    mermaid.initialize({ ...MERMAID_CONFIG, ...config });
+    console.log("[parseMermaid] Mermaid initialized successfully");
+  } catch (error: any) {
+    console.error("[parseMermaid] Failed to initialize mermaid:", error);
+    throw error;
+  }
+
   // Parse the diagram
-  const diagram = await mermaid.mermaidAPI.getDiagramFromText(
-    encodeEntities(definition),
-  );
+  let diagram;
+  try {
+    diagram = await mermaid.mermaidAPI.getDiagramFromText(
+      encodeEntities(definition),
+    );
+    console.log("[parseMermaid] Diagram parsed, type:", diagram.type);
+  } catch (error: any) {
+    console.error("[parseMermaid] Failed to parse diagram:", error);
+    throw error;
+  }
 
   // Render the SVG diagram
-  const { svg } = await mermaid.render("mermaid-to-drawink", definition);
+  let svg;
+  try {
+    const result = await mermaid.render("mermaid-to-drawink", definition);
+    svg = result.svg;
+    console.log("[parseMermaid] SVG rendered successfully");
+  } catch (error: any) {
+    console.error("[parseMermaid] Failed to render SVG:", error);
+    throw error;
+  }
 
   // Append Svg to DOM
   const svgContainer = document.createElement("div");
@@ -99,5 +123,6 @@ export const parseMermaid = async (
   }
   svgContainer.remove();
 
+  console.log("[parseMermaid] Successfully parsed diagram of type:", diagram.type);
   return data;
 };
