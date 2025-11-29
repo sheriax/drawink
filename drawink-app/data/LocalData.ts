@@ -10,7 +10,7 @@
  *   (localStorage, indexedDB).
  */
 
-import { clearAppStateForLocalStorage } from "@excalidraw/excalidraw/appState";
+import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
 import {
   CANVAS_SEARCH_TAB,
   DEFAULT_SIDEBAR,
@@ -29,14 +29,14 @@ import {
 import { appJotaiStore, atom } from "excalidraw-app/app-jotai";
 import { getNonDeletedElements } from "@excalidraw/element";
 
-import type { LibraryPersistedData } from "@excalidraw/excalidraw/data/library";
-import type { ImportedDataState } from "@excalidraw/excalidraw/data/types";
+import type { LibraryPersistedData } from "@drawink/drawink/data/library";
+import type { ImportedDataState } from "@drawink/drawink/data/types";
 import type { DrawinkElement, FileId } from "@excalidraw/element/types";
 import type {
   AppState,
   BinaryFileData,
   BinaryFiles,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 import type { MaybePromise } from "@excalidraw/common/utility-types";
 
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";

@@ -10,7 +10,7 @@ import type {
   NormalizedZoomValue,
   NullableGridSize,
   PointerDownState,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import type { NonDeletedDrawinkElement } from "@excalidraw/element/types";
 

@@ -10,19 +10,19 @@ import {
   arrayToMap,
 } from "@excalidraw/common";
 
-import { Drawink } from "@excalidraw/excalidraw";
-import * as InteractiveCanvas from "@excalidraw/excalidraw/renderer/interactiveScene";
-import * as StaticScene from "@excalidraw/excalidraw/renderer/staticScene";
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
+import { Drawink } from "@drawink/drawink";
+import * as InteractiveCanvas from "@drawink/drawink/renderer/interactiveScene";
+import * as StaticScene from "@drawink/drawink/renderer/staticScene";
+import { API } from "@drawink/drawink/tests/helpers/api";
 
-import { Keyboard, Pointer, UI } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { Keyboard, Pointer, UI } from "@drawink/drawink/tests/helpers/ui";
 import {
   screen,
   render,
   fireEvent,
   GlobalTestState,
   unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 import type { GlobalPoint, LocalPoint } from "@excalidraw/math";
 

@@ -1,8 +1,8 @@
-import { CaptureUpdateAction } from "@excalidraw/excalidraw";
-import { compressData } from "@excalidraw/excalidraw/data/encode";
+import { CaptureUpdateAction } from "@drawink/drawink";
+import { compressData } from "@drawink/drawink/data/encode";
 import { newElementWith } from "@excalidraw/element";
 import { isInitializedImageElement } from "@excalidraw/element";
-import { t } from "@excalidraw/excalidraw/i18n";
+import { t } from "@drawink/drawink/i18n";
 
 import type {
   DrawinkElement,
@@ -15,7 +15,7 @@ import type {
   BinaryFileMetadata,
   DrawinkImperativeAPI,
   BinaryFiles,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 type FileVersion = Required<BinaryFileData>["version"];
 

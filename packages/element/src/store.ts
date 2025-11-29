@@ -8,11 +8,11 @@ import {
   toIterable,
 } from "@excalidraw/common";
 
-import type App from "@excalidraw/excalidraw/components/App";
+import type App from "@drawink/drawink/components/App";
 
 import type { DTO, ValueOf } from "@excalidraw/common/utility-types";
 
-import type { AppState, ObservedAppState } from "@excalidraw/excalidraw/types";
+import type { AppState, ObservedAppState } from "@drawink/drawink/types";
 
 import { deepCopyElement } from "./duplicate";
 import { newElementWith } from "./mutateElement";

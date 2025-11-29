@@ -1,6 +1,6 @@
 @import "../../css/variables.module.scss";
 
-.excalidraw {
+.drawink {
   .dropdown-menu {
     position: absolute;
     top: 2.5rem;
@@ -220,7 +220,7 @@
 
     background-color: var(--background);
 
-    @at-root .excalidraw.theme--dark#{&} {
+    @at-root .drawink.theme--dark#{&} {
       --background: var(--color-surface-high);
       &:hover {
         --background: #363541;

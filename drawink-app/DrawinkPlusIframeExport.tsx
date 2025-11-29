@@ -1,12 +1,12 @@
-import { base64urlToString } from "@excalidraw/excalidraw/data/encode";
-import { DrawinkError } from "@excalidraw/excalidraw/errors";
+import { base64urlToString } from "@drawink/drawink/data/encode";
+import { DrawinkError } from "@drawink/drawink/errors";
 import { useLayoutEffect, useRef } from "react";
 
 import type {
   FileId,
   OrderedDrawinkElement,
 } from "@excalidraw/element/types";
-import type { AppState, BinaryFileData } from "@excalidraw/excalidraw/types";
+import type { AppState, BinaryFileData } from "@drawink/drawink/types";
 
 import { STORAGE_KEYS } from "./app_constants";
 import { LocalData } from "./data/LocalData";

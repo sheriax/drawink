@@ -1,5 +1,5 @@
-import Trans from "@excalidraw/excalidraw/components/Trans";
-import { t } from "@excalidraw/excalidraw/i18n";
+import Trans from "@drawink/drawink/components/Trans";
+import { t } from "@drawink/drawink/i18n";
 import * as Sentry from "@sentry/browser";
 import React from "react";
 

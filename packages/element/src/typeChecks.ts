@@ -2,7 +2,7 @@ import { ROUNDNESS, assertNever } from "@excalidraw/common";
 
 import { pointsEqual } from "@excalidraw/math";
 
-import type { ElementOrToolType } from "@excalidraw/excalidraw/types";
+import type { ElementOrToolType } from "@drawink/drawink/types";
 
 import type { MarkNonNullable } from "@excalidraw/common/utility-types";
 

@@ -5,19 +5,19 @@ import {
   CaptureUpdateAction,
   reconcileElements,
   useEditorInterface,
-} from "@excalidraw/excalidraw";
-import { trackEvent } from "@excalidraw/excalidraw/analytics";
-import { getDefaultAppState } from "@excalidraw/excalidraw/appState";
+} from "@drawink/drawink";
+import { trackEvent } from "@drawink/drawink/analytics";
+import { getDefaultAppState } from "@drawink/drawink/appState";
 import {
   CommandPalette,
   DEFAULT_CATEGORIES,
-} from "@excalidraw/excalidraw/components/CommandPalette/CommandPalette";
-import { ErrorDialog } from "@excalidraw/excalidraw/components/ErrorDialog";
-import { OverwriteConfirmDialog } from "@excalidraw/excalidraw/components/OverwriteConfirm/OverwriteConfirm";
-import { openConfirmModal } from "@excalidraw/excalidraw/components/OverwriteConfirm/OverwriteConfirmState";
-import { ShareableLinkDialog } from "@excalidraw/excalidraw/components/ShareableLinkDialog";
-import DropdownMenuItem from "@excalidraw/excalidraw/components/dropdownMenu/DropdownMenuItem";
-import Trans from "@excalidraw/excalidraw/components/Trans";
+} from "@drawink/drawink/components/CommandPalette/CommandPalette";
+import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
+import { OverwriteConfirmDialog } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirm";
+import { openConfirmModal } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirmState";
+import { ShareableLinkDialog } from "@drawink/drawink/components/ShareableLinkDialog";
+import DropdownMenuItem from "@drawink/drawink/components/dropdownMenu/DropdownMenuItem";
+import Trans from "@drawink/drawink/components/Trans";
 import {
   APP_NAME,
   EVENT,
@@ -32,11 +32,11 @@ import {
   // isRunningInIframe,
   isDevEnv,
 } from "@excalidraw/common";
-import polyfill from "@excalidraw/excalidraw/polyfill";
+import polyfill from "@drawink/drawink/polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { loadFromBlob } from "@excalidraw/excalidraw/data/blob";
-import { useCallbackRefState } from "@excalidraw/excalidraw/hooks/useCallbackRefState";
-import { t } from "@excalidraw/excalidraw/i18n";
+import { loadFromBlob } from "@drawink/drawink/data/blob";
+import { useCallbackRefState } from "@drawink/drawink/hooks/useCallbackRefState";
+import { t } from "@drawink/drawink/i18n";
 
 import {
   GithubIcon,
@@ -47,19 +47,19 @@ import {
   exportToPlus,
   share,
   youtubeIcon,
-} from "@excalidraw/excalidraw/components/icons";
+} from "@drawink/drawink/components/icons";
 import { isElementLink } from "@excalidraw/element";
-import { restore, restoreAppState } from "@excalidraw/excalidraw/data/restore";
+import { restore, restoreAppState } from "@drawink/drawink/data/restore";
 import { newElementWith } from "@excalidraw/element";
 import { isInitializedImageElement } from "@excalidraw/element";
 import clsx from "clsx";
 import {
   parseLibraryTokensFromUrl,
   useHandleLibrary,
-} from "@excalidraw/excalidraw/data/library";
+} from "@drawink/drawink/data/library";
 
-import type { RemoteDrawinkElement } from "@excalidraw/excalidraw/data/reconcile";
-import type { RestoredDataState } from "@excalidraw/excalidraw/data/restore";
+import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
+import type { RestoredDataState } from "@drawink/drawink/data/restore";
 import type {
   FileId,
   NonDeletedDrawinkElement,
@@ -71,7 +71,7 @@ import type {
   BinaryFiles,
   DrawinkInitialDataState,
   UIAppState,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 import type { ResolutionType } from "@excalidraw/common/utility-types";
 import type { ResolvablePromise } from "@excalidraw/common/utils";
 

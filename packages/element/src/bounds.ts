@@ -29,7 +29,7 @@ import type {
   Radians,
 } from "@excalidraw/math";
 
-import type { AppState } from "@excalidraw/excalidraw/types";
+import type { AppState } from "@drawink/drawink/types";
 
 import type { Mutable } from "@excalidraw/common/utility-types";
 

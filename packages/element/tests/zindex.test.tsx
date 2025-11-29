@@ -6,19 +6,19 @@ import {
   actionBringToFront,
   actionSendToBack,
   actionDuplicateSelection,
-} from "@excalidraw/excalidraw/actions";
+} from "@drawink/drawink/actions";
 
-import { Drawink } from "@excalidraw/excalidraw";
+import { Drawink } from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
+import { API } from "@drawink/drawink/tests/helpers/api";
 import {
   act,
   getCloneByOrigId,
   render,
   unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
-import type { AppState } from "@excalidraw/excalidraw/types";
+import type { AppState } from "@drawink/drawink/types";
 
 import { selectGroupsForSelectedElements } from "../src/groups";
 

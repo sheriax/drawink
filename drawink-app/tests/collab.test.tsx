@@ -1,11 +1,11 @@
-import { CaptureUpdateAction, newElementWith } from "@excalidraw/excalidraw";
+import { CaptureUpdateAction, newElementWith } from "@drawink/drawink";
 import {
   createRedoAction,
   createUndoAction,
-} from "@excalidraw/excalidraw/actions/actionHistory";
+} from "@drawink/drawink/actions/actionHistory";
 import { syncInvalidIndices } from "@excalidraw/element";
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { act, render, waitFor } from "@excalidraw/excalidraw/tests/test-utils";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { act, render, waitFor } from "@drawink/drawink/tests/test-utils";
 import { vi } from "vitest";
 
 import { StoreIncrement } from "@excalidraw/element";

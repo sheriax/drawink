@@ -7,22 +7,22 @@ import {
   Drawink,
   exportToCanvas,
   exportToSvg,
-} from "@excalidraw/excalidraw";
+} from "@drawink/drawink";
 import {
   actionFlipHorizontal,
   actionFlipVertical,
-} from "@excalidraw/excalidraw/actions";
+} from "@drawink/drawink/actions";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { Keyboard, Pointer, UI } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { Keyboard, Pointer, UI } from "@drawink/drawink/tests/helpers/ui";
 import {
   act,
   GlobalTestState,
   render,
   unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
-import type { NormalizedZoomValue } from "@excalidraw/excalidraw/types";
+import type { NormalizedZoomValue } from "@drawink/drawink/types";
 
 import { duplicateElement } from "../src/duplicate";
 

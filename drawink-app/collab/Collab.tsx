@@ -4,8 +4,8 @@ import {
   restoreElements,
   zoomToFitBounds,
   reconcileElements,
-} from "@excalidraw/excalidraw";
-import { ErrorDialog } from "@excalidraw/excalidraw/components/ErrorDialog";
+} from "@drawink/drawink";
+import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
 import { APP_NAME, EVENT } from "@excalidraw/common";
 import {
   IDLE_THRESHOLD,
@@ -18,13 +18,13 @@ import {
   resolvablePromise,
   throttleRAF,
 } from "@excalidraw/common";
-import { decryptData } from "@excalidraw/excalidraw/data/encryption";
+import { decryptData } from "@drawink/drawink/data/encryption";
 import { getVisibleSceneBounds } from "@excalidraw/element";
 import { newElementWith } from "@excalidraw/element";
 import { isImageElement, isInitializedImageElement } from "@excalidraw/element";
-import { AbortError } from "@excalidraw/excalidraw/errors";
-import { t } from "@excalidraw/excalidraw/i18n";
-import { withBatchedUpdates } from "@excalidraw/excalidraw/reactUtils";
+import { AbortError } from "@drawink/drawink/errors";
+import { t } from "@drawink/drawink/i18n";
+import { withBatchedUpdates } from "@drawink/drawink/reactUtils";
 
 import throttle from "lodash.throttle";
 import { PureComponent } from "react";
@@ -32,8 +32,8 @@ import { PureComponent } from "react";
 import type {
   ReconciledDrawinkElement,
   RemoteDrawinkElement,
-} from "@excalidraw/excalidraw/data/reconcile";
-import type { ImportedDataState } from "@excalidraw/excalidraw/data/types";
+} from "@drawink/drawink/data/reconcile";
+import type { ImportedDataState } from "@drawink/drawink/data/types";
 import type {
   DrawinkElement,
   FileId,
@@ -46,7 +46,7 @@ import type {
   SocketId,
   Collaborator,
   Gesture,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 import type { Mutable, ValueOf } from "@excalidraw/common/utility-types";
 
 import { appJotaiStore, atom } from "../app-jotai";

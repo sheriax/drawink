@@ -73,7 +73,7 @@ export const MobileMenu = ({
     }
 
     const topRightUI = (
-      <div className="excalidraw-ui-top-right">
+      <div className="drawink-ui-top-right">
         {renderTopRightUI?.(true, appState) ??
           (!appState.viewModeEnabled && (
             <>
@@ -94,7 +94,7 @@ export const MobileMenu = ({
     );
 
     const topLeftUI = (
-      <div className="excalidraw-ui-top-left">
+      <div className="drawink-ui-top-left">
         {renderTopLeftUI?.(true, appState)}
         <MainMenuTunnel.Out />
       </div>

@@ -1,11 +1,11 @@
-import { defaultLang } from "@excalidraw/excalidraw/i18n";
-import { UI } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { defaultLang } from "@drawink/drawink/i18n";
+import { UI } from "@drawink/drawink/tests/helpers/ui";
 import {
   screen,
   fireEvent,
   waitFor,
   render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 import DrawinkApp from "../App";
 

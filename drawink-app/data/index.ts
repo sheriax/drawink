@@ -1,21 +1,21 @@
 import {
   compressData,
   decompressData,
-} from "@excalidraw/excalidraw/data/encode";
+} from "@drawink/drawink/data/encode";
 import {
   decryptData,
   generateEncryptionKey,
   IV_LENGTH_BYTES,
-} from "@excalidraw/excalidraw/data/encryption";
-import { serializeAsJSON } from "@excalidraw/excalidraw/data/json";
-import { restore } from "@excalidraw/excalidraw/data/restore";
+} from "@drawink/drawink/data/encryption";
+import { serializeAsJSON } from "@drawink/drawink/data/json";
+import { restore } from "@drawink/drawink/data/restore";
 import { isInvisiblySmallElement } from "@excalidraw/element";
 import { isInitializedImageElement } from "@excalidraw/element";
-import { t } from "@excalidraw/excalidraw/i18n";
+import { t } from "@drawink/drawink/i18n";
 import { bytesToHexString } from "@excalidraw/common";
 
 import type { UserIdleState } from "@excalidraw/common";
-import type { ImportedDataState } from "@excalidraw/excalidraw/data/types";
+import type { ImportedDataState } from "@drawink/drawink/data/types";
 import type { SceneBounds } from "@excalidraw/element";
 import type {
   DrawinkElement,
@@ -27,7 +27,7 @@ import type {
   BinaryFileData,
   BinaryFiles,
   SocketId,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 import type { MakeBrand } from "@excalidraw/common/utility-types";
 
 import {

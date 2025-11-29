@@ -1,8 +1,8 @@
-import { trackEvent } from "@excalidraw/excalidraw/analytics";
-import { copyTextToSystemClipboard } from "@excalidraw/excalidraw/clipboard";
-import { Dialog } from "@excalidraw/excalidraw/components/Dialog";
-import { FilledButton } from "@excalidraw/excalidraw/components/FilledButton";
-import { TextField } from "@excalidraw/excalidraw/components/TextField";
+import { trackEvent } from "@drawink/drawink/analytics";
+import { copyTextToSystemClipboard } from "@drawink/drawink/clipboard";
+import { Dialog } from "@drawink/drawink/components/Dialog";
+import { FilledButton } from "@drawink/drawink/components/FilledButton";
+import { TextField } from "@drawink/drawink/components/TextField";
 import {
   copyIcon,
   LinkIcon,
@@ -11,10 +11,10 @@ import {
   share,
   shareIOS,
   shareWindows,
-} from "@excalidraw/excalidraw/components/icons";
-import { useUIAppState } from "@excalidraw/excalidraw/context/ui-appState";
-import { useCopyStatus } from "@excalidraw/excalidraw/hooks/useCopiedIndicator";
-import { useI18n } from "@excalidraw/excalidraw/i18n";
+} from "@drawink/drawink/components/icons";
+import { useUIAppState } from "@drawink/drawink/context/ui-appState";
+import { useCopyStatus } from "@drawink/drawink/hooks/useCopiedIndicator";
+import { useI18n } from "@drawink/drawink/i18n";
 import { KEYS, getFrame } from "@excalidraw/common";
 import { useEffect, useRef, useState } from "react";
 

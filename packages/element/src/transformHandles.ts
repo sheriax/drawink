@@ -10,7 +10,7 @@ import type { Radians } from "@excalidraw/math";
 import type {
   InteractiveCanvasAppState,
   Zoom,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import { getElementAbsoluteCoords } from "./bounds";
 import {

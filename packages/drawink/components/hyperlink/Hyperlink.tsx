@@ -250,7 +250,7 @@ export const Hyperlink = ({
 
   return (
     <div
-      className="excalidraw-hyperlinkContainer"
+      className="drawink-hyperlinkContainer"
       style={{
         top: `${y}px`,
         left: `${x}px`,
@@ -281,7 +281,7 @@ export const Hyperlink = ({
       ) : element.link ? (
         <a
           href={normalizeLink(element.link || "")}
-          className="excalidraw-hyperlinkContainer-link"
+          className="drawink-hyperlinkContainer-link"
           target={isLocalLink(element.link) ? "_self" : "_blank"}
           onClick={(event) => {
             if (element.link && onLinkOpen) {
@@ -306,11 +306,11 @@ export const Hyperlink = ({
           {element.link}
         </a>
       ) : (
-        <div className="excalidraw-hyperlinkContainer-link">
+        <div className="drawink-hyperlinkContainer-link">
           {t("labels.link.empty")}
         </div>
       )}
-      <div className="excalidraw-hyperlinkContainer__buttons">
+      <div className="drawink-hyperlinkContainer__buttons">
         {!isEditing && (
           <ToolButton
             type="button"
@@ -318,7 +318,7 @@ export const Hyperlink = ({
             aria-label={t("buttons.edit")}
             label={t("buttons.edit")}
             onClick={onEdit}
-            className="excalidraw-hyperlinkContainer--edit"
+            className="drawink-hyperlinkContainer--edit"
             icon={FreedrawIcon}
           />
         )}
@@ -344,7 +344,7 @@ export const Hyperlink = ({
             aria-label={t("buttons.remove")}
             label={t("buttons.remove")}
             onClick={handleRemove}
-            className="excalidraw-hyperlinkContainer--remove"
+            className="drawink-hyperlinkContainer--remove"
             icon={TrashIcon}
           />
         )}

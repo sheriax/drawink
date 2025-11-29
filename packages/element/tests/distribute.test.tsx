@@ -1,17 +1,17 @@
 import {
   distributeHorizontally,
   distributeVertically,
-} from "@excalidraw/excalidraw/actions";
-import { defaultLang, setLanguage } from "@excalidraw/excalidraw/i18n";
-import { Drawink } from "@excalidraw/excalidraw";
+} from "@drawink/drawink/actions";
+import { defaultLang, setLanguage } from "@drawink/drawink/i18n";
+import { Drawink } from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { UI, Pointer, Keyboard } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { UI, Pointer, Keyboard } from "@drawink/drawink/tests/helpers/ui";
 import {
   act,
   unmountComponent,
   render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 const mouse = new Pointer("mouse");
 

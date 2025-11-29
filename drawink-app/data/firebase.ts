@@ -1,11 +1,11 @@
-import { reconcileElements } from "@excalidraw/excalidraw";
+import { reconcileElements } from "@drawink/drawink";
 import { MIME_TYPES } from "@excalidraw/common";
-import { decompressData } from "@excalidraw/excalidraw/data/encode";
+import { decompressData } from "@drawink/drawink/data/encode";
 import {
   encryptData,
   decryptData,
-} from "@excalidraw/excalidraw/data/encryption";
-import { restoreElements } from "@excalidraw/excalidraw/data/restore";
+} from "@drawink/drawink/data/encryption";
+import { restoreElements } from "@drawink/drawink/data/restore";
 import { getSceneVersion } from "@excalidraw/element";
 import { initializeApp } from "firebase/app";
 import {
@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
-import type { RemoteDrawinkElement } from "@excalidraw/excalidraw/data/reconcile";
+import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
 import type {
   DrawinkElement,
   FileId,
@@ -28,7 +28,7 @@ import type {
   BinaryFileData,
   BinaryFileMetadata,
   DataURL,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import { FILE_CACHE_MAX_AGE_SEC } from "../app_constants";
 

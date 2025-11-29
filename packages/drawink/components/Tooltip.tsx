@@ -99,7 +99,7 @@ export const Tooltip = ({
   }
   return (
     <div
-      className="excalidraw-tooltip-wrapper"
+      className="drawink-tooltip-wrapper"
       onPointerEnter={(event) =>
         updateTooltip(
           event.currentTarget as HTMLDivElement,

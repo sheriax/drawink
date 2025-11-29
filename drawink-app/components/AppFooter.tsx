@@ -1,4 +1,4 @@
-import { Footer } from "@excalidraw/excalidraw/index";
+import { Footer } from "@drawink/drawink/index";
 import React from "react";
 
 import { isDrawinkPlusSignedUser } from "../app_constants";

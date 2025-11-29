@@ -28,13 +28,13 @@
   --sat: env(safe-area-inset-top);
 }
 
-body.excalidraw-cursor-resize,
-body.excalidraw-cursor-resize a:hover,
-body.excalidraw-cursor-resize * {
+body.drawink-cursor-resize,
+body.drawink-cursor-resize a:hover,
+body.drawink-cursor-resize * {
   cursor: ew-resize;
 }
 
-.excalidraw {
+.drawink {
   --ui-font: Assistant, system-ui, BlinkMacSystemFont, -apple-system, Segoe UI,
     Roboto, Helvetica, Arial, sans-serif;
   font-family: var(--ui-font);
@@ -76,7 +76,7 @@ body.excalidraw-cursor-resize * {
   //    component (e.g. if you select text in a sidebar)
   user-select: none;
 
-  .excalidraw-link,
+  .drawink-link,
   a {
     font-weight: 500;
     text-decoration: none;
@@ -298,8 +298,8 @@ body.excalidraw-cursor-resize * {
     }
   }
 
-  .excalidraw-ui-top-left,
-  .excalidraw-ui-top-right {
+  .drawink-ui-top-left,
+  .drawink-ui-top-right {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -565,7 +565,7 @@ body.excalidraw-cursor-resize * {
     pointer-events: none !important;
   }
 
-  &.excalidraw--view-mode {
+  &.drawink--view-mode {
     .App-menu {
       display: flex;
       justify-content: space-between;
@@ -579,7 +579,7 @@ body.excalidraw-cursor-resize * {
   }
 
   input[type="text"],
-  textarea:not(.excalidraw-wysiwyg) {
+  textarea:not(.drawink-wysiwyg) {
     color: var(--text-primary-color);
     border: 1.5px solid var(--input-border-color);
     padding: 0.75rem;
@@ -687,7 +687,7 @@ body.excalidraw-cursor-resize * {
     --button-bg: var(--color-surface-mid);
   }
 
-  @at-root .excalidraw.theme--dark#{&} {
+  @at-root .drawink.theme--dark#{&} {
     .App-mobile-menu,
     .App-menu__left {
       --button-hover-bg: #363541;
@@ -701,15 +701,15 @@ body.excalidraw-cursor-resize * {
     }
   }
 
-  .excalidraw__paragraph {
+  .drawink__paragraph {
     margin: 1rem 0;
   }
 
   .Modal__content {
-    .excalidraw__paragraph:first-child {
+    .drawink__paragraph:first-child {
       margin-top: 0;
     }
-    .excalidraw__paragraph + .excalidraw__paragraph {
+    .drawink__paragraph + .drawink__paragraph {
       margin-top: 0rem;
     }
   }
@@ -720,7 +720,7 @@ body.excalidraw-cursor-resize * {
   }
 }
 
-.ErrorSplash.excalidraw {
+.ErrorSplash.drawink {
   min-height: 100vh;
   padding: 20px 0;
   overflow: auto;
@@ -773,8 +773,8 @@ body.excalidraw-cursor-resize * {
   }
 }
 
-.excalidraw__embeddable-container {
-  .excalidraw__embeddable-container__inner {
+.drawink__embeddable-container {
+  .drawink__embeddable-container__inner {
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -782,7 +782,7 @@ body.excalidraw-cursor-resize * {
     border-radius: var(--embeddable-radius);
   }
 
-  .excalidraw__embeddable__outer {
+  .drawink__embeddable__outer {
     width: 100%;
     height: 100%;
     & > * {
@@ -790,7 +790,7 @@ body.excalidraw-cursor-resize * {
     }
   }
 
-  .excalidraw__embeddable-hint {
+  .drawink__embeddable-hint {
     position: absolute;
     z-index: 1;
     background: rgba(0, 0, 0, 0.5);

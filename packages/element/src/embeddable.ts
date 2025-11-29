@@ -5,7 +5,7 @@ import {
   getFontString,
 } from "@excalidraw/common";
 
-import type { DrawinkProps } from "@excalidraw/excalidraw/types";
+import type { DrawinkProps } from "@drawink/drawink/types";
 import type { MarkRequired } from "@excalidraw/common/utility-types";
 
 import { newTextElement } from "./newElement";

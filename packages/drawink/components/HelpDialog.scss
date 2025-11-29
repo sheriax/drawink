@@ -1,6 +1,6 @@
 @import "../css/variables.module.scss";
 
-.excalidraw {
+.drawink {
   .HelpDialog {
     .Modal__content {
       max-width: 960px;
@@ -33,7 +33,7 @@
       font-size: 0.75rem;
       letter-spacing: 0.4px;
 
-      @at-root .excalidraw.theme--dark#{&} {
+      @at-root .drawink.theme--dark#{&} {
         --background: var(--color-surface-high);
         &:hover {
           --background: #363541;

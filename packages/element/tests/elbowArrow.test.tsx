@@ -1,17 +1,17 @@
 import { ARROW_TYPE } from "@excalidraw/common";
 import { pointFrom } from "@excalidraw/math";
-import { Drawink } from "@excalidraw/excalidraw";
-import { actionSelectAll } from "@excalidraw/excalidraw/actions";
-import { actionDuplicateSelection } from "@excalidraw/excalidraw/actions/actionDuplicateSelection";
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { Pointer, UI } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { Drawink } from "@drawink/drawink";
+import { actionSelectAll } from "@drawink/drawink/actions";
+import { actionDuplicateSelection } from "@drawink/drawink/actions/actionDuplicateSelection";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { Pointer, UI } from "@drawink/drawink/tests/helpers/ui";
 import {
   act,
   fireEvent,
   GlobalTestState,
   queryByTestId,
   render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 import "@excalidraw/utils/test-utils";
 import { bindBindingElement } from "@excalidraw/element";
 

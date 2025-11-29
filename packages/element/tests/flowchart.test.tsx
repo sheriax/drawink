@@ -1,13 +1,13 @@
 import { KEYS, reseed } from "@excalidraw/common";
 
-import { Drawink } from "@excalidraw/excalidraw";
+import { Drawink } from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { UI, Keyboard, Pointer } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
 import {
   render,
   unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 unmountComponent();
 

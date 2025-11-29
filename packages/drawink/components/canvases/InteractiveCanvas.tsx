@@ -6,7 +6,7 @@ import {
   sceneCoordsToViewportCoords,
   type EditorInterface,
 } from "@excalidraw/common";
-import { AnimationController } from "@excalidraw/excalidraw/renderer/animation";
+import { AnimationController } from "@drawink/drawink/renderer/animation";
 
 import type {
   InteractiveCanvasRenderConfig,
@@ -14,7 +14,7 @@ import type {
   InteractiveSceneRenderConfig,
   RenderableElementsMap,
   RenderInteractiveSceneCallback,
-} from "@excalidraw/excalidraw/scene/types";
+} from "@drawink/drawink/scene/types";
 
 import type {
   NonDeletedDrawinkElement,
@@ -182,7 +182,7 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
             for (const key in nextAnimationState) {
               if (
                 nextAnimationState[
-                  key as keyof InteractiveSceneRenderAnimationState
+                key as keyof InteractiveSceneRenderAnimationState
                 ] !== undefined
               ) {
                 return nextAnimationState;
@@ -198,7 +198,7 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
 
   return (
     <canvas
-      className="excalidraw__canvas interactive"
+      className="drawink__canvas interactive"
       style={{
         width: props.appState.width,
         height: props.appState.height,

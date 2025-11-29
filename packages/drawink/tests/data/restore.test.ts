@@ -15,7 +15,7 @@ import type {
   DrawinkLinearElement,
   DrawinkTextElement,
 } from "@excalidraw/element/types";
-import type { NormalizedZoomValue } from "@excalidraw/excalidraw/types";
+import type { NormalizedZoomValue } from "@drawink/drawink/types";
 
 import { API } from "../helpers/api";
 import * as restore from "../../data/restore";

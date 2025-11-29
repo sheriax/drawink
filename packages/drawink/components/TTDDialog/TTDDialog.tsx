@@ -324,7 +324,7 @@ export const TTDDialogBase = withInternalFallback(
                     if (typeof ttdGeneration?.generatedResponse === "string") {
                       return (
                         <div
-                          className="excalidraw-link"
+                          className="drawink-link"
                           style={{ marginLeft: "auto", fontSize: 14 }}
                           onClick={() => {
                             if (

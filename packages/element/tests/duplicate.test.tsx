@@ -7,20 +7,20 @@ import {
   isPrimitive,
 } from "@excalidraw/common";
 
-import { Drawink, mutateElement } from "@excalidraw/excalidraw";
+import { Drawink, mutateElement } from "@drawink/drawink";
 
-import { actionDuplicateSelection } from "@excalidraw/excalidraw/actions";
+import { actionDuplicateSelection } from "@drawink/drawink/actions";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
+import { API } from "@drawink/drawink/tests/helpers/api";
 
-import { UI, Keyboard, Pointer } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
 
 import {
   act,
   assertElements,
   getCloneByOrigId,
   render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 import type { LocalPoint } from "@excalidraw/math";
 

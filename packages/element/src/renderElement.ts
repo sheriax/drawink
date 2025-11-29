@@ -32,13 +32,13 @@ import type {
   ElementsPendingErasure,
   PendingDrawinkElements,
   NormalizedZoomValue,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import type {
   StaticCanvasRenderConfig,
   RenderableElementsMap,
   InteractiveCanvasRenderConfig,
-} from "@excalidraw/excalidraw/scene/types";
+} from "@drawink/drawink/scene/types";
 
 import { getElementAbsoluteCoords, getElementBounds } from "./bounds";
 import { getUncroppedImageElement } from "./cropElement";

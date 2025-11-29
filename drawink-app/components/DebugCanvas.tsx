@@ -2,12 +2,12 @@ import {
   ArrowheadArrowIcon,
   CloseIcon,
   TrashIcon,
-} from "@excalidraw/excalidraw/components/icons";
+} from "@drawink/drawink/components/icons";
 import {
   bootstrapCanvas,
   getNormalizedCanvasDimensions,
-} from "@excalidraw/excalidraw/renderer/helpers";
-import { type AppState } from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/renderer/helpers";
+import { type AppState } from "@drawink/drawink/types";
 import { arrayToMap, throttleRAF } from "@excalidraw/common";
 import { useCallback } from "react";
 

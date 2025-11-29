@@ -8,7 +8,7 @@ import type {
   ToolType,
   UnsubscribeCallback,
   Zoom,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import { COLOR_PALETTE } from "./colors";
 import {

@@ -232,7 +232,7 @@ export const EyeDropper: React.FC<{
   }
 
   return createPortal(
-    <div ref={ref} className="excalidraw-eye-dropper-preview" />,
+    <div ref={ref} className="drawink-eye-dropper-preview" />,
     eyeDropperContainer,
   );
 };

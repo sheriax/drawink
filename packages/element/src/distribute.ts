@@ -1,4 +1,4 @@
-import type { AppState } from "@excalidraw/excalidraw/types";
+import type { AppState } from "@drawink/drawink/types";
 
 import { getCommonBoundingBox } from "./bounds";
 import { newElementWith } from "./mutateElement";

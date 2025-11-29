@@ -4,11 +4,11 @@ import {
   getTextFromElements,
   MIME_TYPES,
   TTDDialog,
-} from "@excalidraw/excalidraw";
-import { getDataURL } from "@excalidraw/excalidraw/data/blob";
+} from "@drawink/drawink";
+import { getDataURL } from "@drawink/drawink/data/blob";
 import { safelyParseJSON } from "@excalidraw/common";
 
-import type { DrawinkImperativeAPI } from "@excalidraw/excalidraw/types";
+import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
 
 export const AIComponents = ({
   excalidrawAPI,

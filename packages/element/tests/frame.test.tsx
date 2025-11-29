@@ -1,14 +1,14 @@
 import {
   convertToDrawinkElements,
   Drawink,
-} from "@excalidraw/excalidraw";
+} from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { Keyboard, Pointer } from "@excalidraw/excalidraw/tests/helpers/ui";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
 import {
   getCloneByOrigId,
   render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+} from "@drawink/drawink/tests/test-utils";
 
 import type { DrawinkElement } from "../src/types";
 

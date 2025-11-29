@@ -1,4 +1,4 @@
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
+import { API } from "@drawink/drawink/tests/helpers/api";
 
 import type { Bounds } from "@excalidraw/element";
 

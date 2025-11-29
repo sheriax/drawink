@@ -31,7 +31,7 @@ import type {
   ObservedAppState,
   ObservedElementsAppState,
   ObservedStandaloneAppState,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import { getObservedAppState } from "./store";
 

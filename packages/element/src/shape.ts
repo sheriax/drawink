@@ -32,11 +32,11 @@ import type { Mutable } from "@excalidraw/common/utility-types";
 import type {
   AppState,
   EmbedsValidationStatus,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 import type {
   ElementShape,
   ElementShapes,
-} from "@excalidraw/excalidraw/scene/types";
+} from "@drawink/drawink/scene/types";
 
 import { elementWithCanvasCache } from "./renderElement";
 
