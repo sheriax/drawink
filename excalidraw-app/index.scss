@@ -128,3 +128,30 @@
     }
   }
 }
+
+.share-button {
+  background-color: #5b53ff !important;
+  border-radius: 12px !important;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  border: none !important;
+
+  &:hover {
+    background-color: #4a43d0 !important;
+  }
+
+  .dropdown-menu-item__icon {
+    margin: 0 !important;
+    width: 20px;
+    height: 20px;
+    color: white !important;
+  }
+
+  .dropdown-menu-item__text {
+    display: none;
+  }
+}
