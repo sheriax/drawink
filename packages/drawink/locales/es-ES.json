@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "Enviar",
     "confirm": "Confirmar",
-    "embeddableInteractionButton": "Pulsa para interactuar"
+    "embeddableInteractionButton": "Pulsa para interactuar",
+    "createBoard": "Crear tablero"
   },
   "alerts": {
     "clearReset": "Esto limpiará todo el lienzo. Estás seguro?",
@@ -260,8 +261,9 @@
     "resetLibrary": "Esto borrará tu biblioteca. ¿Estás seguro?",
     "removeItemsFromsLibrary": "¿Eliminar {{count}} elemento(s) de la biblioteca?",
     "invalidEncryptionKey": "La clave de cifrado debe tener 22 caracteres. La colaboración en vivo está deshabilitada.",
-    "collabOfflineWarning": "No hay conexión a internet disponible.\n¡No se guardarán los cambios!",
-    "localStorageQuotaExceeded": ""
+    "collabOfflineWarning": "No hay conexión a internet.\n¡Tus cambios no se guardarán!",
+    "localStorageQuotaExceeded": "Se ha superado la cuota de almacenamiento del navegador. No se guardarán los cambios.",
+    "deleteBoard": "¿Estás seguro de que quieres eliminar este tablero?"
   },
   "errors": {
     "unsupportedFileType": "Tipo de archivo no admitido.",

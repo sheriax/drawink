@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "சமர்ப்பி",
     "confirm": "உறுதிசெய்",
-    "embeddableInteractionButton": "இடைவினைபுரிய சொடுக்கு"
+    "embeddableInteractionButton": "இடைவினைபுரிய சொடுக்கு",
+    "createBoard": "பலகையை உருவாக்கு"
   },
   "alerts": {
     "clearReset": "இது முழு கித்தானையும் துடைக்கும். நீங்கள் உறுதியா?",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "{{count}} உருப்படி(கள்)-ஐ உம் நூலகத்திலிருந்து அழிக்கவா?",
     "invalidEncryptionKey": "மறையாக்க விசை 22 வரியுருக்கள் கொண்டிருக்கவேண்டும். நேரடி கூட்டுப்பணி முடக்கப்பட்டது.",
     "collabOfflineWarning": "இணைய இணைப்பு இல்லை.\nஉமது மாற்றங்கள் சேமிக்கப்படா!",
-    "localStorageQuotaExceeded": ""
+    "localStorageQuotaExceeded": "உலாவியின் சேமிப்பு வரம்பு மீறப்பட்டது. மாற்றங்கள் சேமிக்கப்படாது.",
+    "deleteBoard": "இந்த பலகையை அழிக்க விரும்புகிறீர்களா?"
   },
   "errors": {
     "unsupportedFileType": "ஆதரிக்கப்படா கோப்பு வகை.",
@@ -650,15 +652,15 @@
     "shortcutHint": "கட்டளை பட்டை பயன்படுத்த {{shortcut}}"
   },
   "keys": {
-    "ctrl": "",
-    "option": "",
-    "cmd": "",
-    "alt": "",
-    "escape": "",
-    "enter": "",
-    "shift": "",
-    "spacebar": "",
-    "delete": "",
-    "mmb": ""
+    "ctrl": "Ctrl",
+    "option": "Option",
+    "cmd": "Cmd",
+    "alt": "Alt",
+    "escape": "Esc",
+    "enter": "Enter",
+    "shift": "Shift",
+    "spacebar": "Space",
+    "delete": "Delete",
+    "mmb": "Scroll wheel"
   }
 }

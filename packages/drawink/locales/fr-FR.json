@@ -237,7 +237,8 @@
     "publishLibrary": "Renommer ou publier",
     "submit": "Envoyer",
     "confirm": "Confirmer",
-    "embeddableInteractionButton": "Cliquez pour interagir"
+    "embeddableInteractionButton": "Cliquez pour interagir",
+    "createBoard": "Créer un tableau"
   },
   "alerts": {
     "clearReset": "L'intégralité du canevas va être effacée. Êtes-vous sûr ?",
@@ -260,8 +261,9 @@
     "resetLibrary": "Cela va effacer votre bibliothèque. Êtes-vous sûr·e ?",
     "removeItemsFromsLibrary": "Supprimer {{count}} élément(s) de la bibliothèque ?",
     "invalidEncryptionKey": "La clé de chiffrement doit comporter 22 caractères. La collaboration en direct est désactivée.",
-    "collabOfflineWarning": "Aucune connexion internet disponible.\nVos modifications ne seront pas enregistrées !",
-    "localStorageQuotaExceeded": "Quota de stockage du navigateur dépassé. Les modifications ne seront pas enregistrées."
+    "collabOfflineWarning": "Pas de connexion internet.\nVos changements ne seront pas sauvegardés !",
+    "localStorageQuotaExceeded": "Quota de stockage du navigateur dépassé. Les changements ne seront pas sauvegardés.",
+    "deleteBoard": "Êtes-vous sûr de vouloir supprimer ce tableau ?"
   },
   "errors": {
     "unsupportedFileType": "Type de fichier non supporté.",

@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "Enviar",
     "confirm": "Confirmar",
-    "embeddableInteractionButton": "Clique para interagir"
+    "embeddableInteractionButton": "Clique para interagir",
+    "createBoard": "Criar quadro"
   },
   "alerts": {
     "clearReset": "Isto irá limpar toda a tela. Você tem certeza?",
@@ -260,8 +261,9 @@
     "resetLibrary": "Isto limpará a sua biblioteca. Você tem certeza?",
     "removeItemsFromsLibrary": "Excluir {{count}} item(ns) da biblioteca?",
     "invalidEncryptionKey": "A chave de encriptação deve ter 22 caracteres. A colaboração ao vivo está desabilitada.",
-    "collabOfflineWarning": "Sem conexão com a internet disponível.\nSuas alterações não serão salvas!",
-    "localStorageQuotaExceeded": ""
+    "collabOfflineWarning": "Sem conexão com a internet.\nSuas alterações não serão salvas!",
+    "localStorageQuotaExceeded": "Cota de armazenamento do navegador excedida. As alterações não serão salvas.",
+    "deleteBoard": "Tem certeza de que deseja excluir este quadro?"
   },
   "errors": {
     "unsupportedFileType": "Tipo de arquivo não suportado.",

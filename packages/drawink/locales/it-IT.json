@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "Invia",
     "confirm": "Conferma",
-    "embeddableInteractionButton": "Clicca per interagire"
+    "embeddableInteractionButton": "Clicca per interagire",
+    "createBoard": "Crea lavagna"
   },
   "alerts": {
     "clearReset": "Questa azione cancellerà l'intera tela. Sei sicuro?",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "Eliminare {{count}} elementi dalla libreria?",
     "invalidEncryptionKey": "La chiave di cifratura deve essere composta da 22 caratteri. La collaborazione live è disabilitata.",
     "collabOfflineWarning": "Nessuna connessione internet disponibile.\nLe tue modifiche non verranno salvate!",
-    "localStorageQuotaExceeded": ""
+    "localStorageQuotaExceeded": "Quota di archiviazione del browser superata. Le modifiche non verranno salvate.",
+    "deleteBoard": "Sei sicuro di voler eliminare questa lavagna?"
   },
   "errors": {
     "unsupportedFileType": "Tipo di file non supportato.",

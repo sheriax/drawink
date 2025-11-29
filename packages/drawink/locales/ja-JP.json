@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "送信",
     "confirm": "確認",
-    "embeddableInteractionButton": "クリックして操作"
+    "embeddableInteractionButton": "クリックして操作",
+    "createBoard": "ボードを作成"
   },
   "alerts": {
     "clearReset": "この操作によってキャンバス全体が消えます。よろしいですか？",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "{{count}} 個のアイテムをライブラリから削除しますか？",
     "invalidEncryptionKey": "暗号化キーは22文字でなければなりません。共同編集は無効化されています。",
     "collabOfflineWarning": "インターネットに接続されていません。\n変更は保存されません！",
-    "localStorageQuotaExceeded": ""
+    "localStorageQuotaExceeded": "ブラウザのストレージ容量を超えました。変更は保存されません。",
+    "deleteBoard": "このボードを削除してもよろしいですか？"
   },
   "errors": {
     "unsupportedFileType": "サポートされていないファイル形式です。",

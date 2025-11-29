@@ -237,7 +237,8 @@
     "publishLibrary": "",
     "submit": "Absenden",
     "confirm": "Bestätigen",
-    "embeddableInteractionButton": "Klicken, um zu interagieren"
+    "embeddableInteractionButton": "Klicken zum Interagieren",
+    "createBoard": "Board erstellen"
   },
   "alerts": {
     "clearReset": "Dies wird die ganze Zeichenfläche löschen. Bist du dir sicher?",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "{{count}} Element(e) aus der Bibliothek löschen?",
     "invalidEncryptionKey": "Verschlüsselungsschlüssel muss 22 Zeichen lang sein. Die Live-Zusammenarbeit ist deaktiviert.",
     "collabOfflineWarning": "Keine Internetverbindung verfügbar.\nDeine Änderungen werden nicht gespeichert!",
-    "localStorageQuotaExceeded": ""
+    "localStorageQuotaExceeded": "Browserspeicher voll. Änderungen werden nicht gespeichert.",
+    "deleteBoard": "Sind Sie sicher, dass Sie dieses Board löschen möchten?"
   },
   "errors": {
     "unsupportedFileType": "Nicht unterstützter Dateityp.",

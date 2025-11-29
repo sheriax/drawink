@@ -237,7 +237,8 @@
     "publishLibrary": "重命名或发布",
     "submit": "提交",
     "confirm": "确定",
-    "embeddableInteractionButton": "点击以开始交互"
+    "embeddableInteractionButton": "点击以开始交互",
+    "createBoard": "创建画板"
   },
   "alerts": {
     "clearReset": "这将会清除整个画布。您是否要继续?",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "确定要从素材库中删除 {{count}} 个项目吗？",
     "invalidEncryptionKey": "密钥必须包含22个字符。实时协作已被禁用。",
     "collabOfflineWarning": "无网络连接。\n您的改动将不会被保存！",
-    "localStorageQuotaExceeded": "超过浏览器存储配额。更改将不会被保存。"
+    "localStorageQuotaExceeded": "超过浏览器存储配额。更改将不会被保存。",
+    "deleteBoard": "您确定要删除此画板吗？"
   },
   "errors": {
     "unsupportedFileType": "不支持的文件格式。",
