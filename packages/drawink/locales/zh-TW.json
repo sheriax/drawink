@@ -401,9 +401,9 @@
     "link_title": "可共享連結",
     "link_details": "匯出為唯讀連結",
     "link_button": "匯出為連結",
-    "drawinkplus_description": "將此場景儲存至你的 Drawink+ 工作區",
+    "drawinkplus_description": "將此場景儲存至你的 Drawink Pro 工作區",
     "drawinkplus_button": "輸出",
-    "drawinkplus_exportError": "目前無法輸出至 Drawink+"
+    "drawinkplus_exportError": "目前無法輸出至 Drawink Pro"
   },
   "helpDialog": {
     "blog": "閱讀部落格",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "所有資料皆已在瀏覽器中儲存於本機",
-      "center_heading_plus": "您是否是要前往 Drawink+ ？",
+      "center_heading_plus": "您是否是要前往 Drawink Pro ？",
       "menuHint": "輸出、偏好設定、語言..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "將場景匯出為可供匯入的檔案"
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "匯出至 Drawink+",
-        "description": "將此場景儲存至您的 Drawink+ 工作區"
+        "title": "Drawink Pro",
+        "button": "匯出至 Drawink Pro",
+        "description": "將此場景儲存至您的 Drawink Pro 工作區"
       }
     },
     "modal": {

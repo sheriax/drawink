@@ -401,9 +401,9 @@
     "link_title": "Deelbare link",
     "link_details": "Exporteren als een alleen-lezen link.",
     "link_button": "Exporteer naar link",
-    "drawinkplus_description": "Sla de scène op in je Drawink+ werkruimte.",
+    "drawinkplus_description": "Sla de scène op in je Drawink Pro werkruimte.",
     "drawinkplus_button": "Exporteer",
-    "drawinkplus_exportError": "Kan op dit moment niet exporteren naar Drawink+..."
+    "drawinkplus_exportError": "Kan op dit moment niet exporteren naar Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Lees onze blog",

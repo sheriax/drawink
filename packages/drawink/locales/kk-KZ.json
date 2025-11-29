@@ -401,9 +401,9 @@
     "link_title": "Ортақ сілтеме",
     "link_details": "Тек оқуға арналған сілтеме ретінде экспорттау.",
     "link_button": "Сілтемеге экспорттау",
-    "drawinkplus_description": "Сахнаны өзіңіздің Drawink+ жұмыс кеңістігінде сақтаңыз.",
+    "drawinkplus_description": "Сахнаны өзіңіздің Drawink Pro жұмыс кеңістігінде сақтаңыз.",
     "drawinkplus_button": "Экспорт",
-    "drawinkplus_exportError": "Қазіргі уақытта Drawink+ үшін экспорттау мүмкін емес..."
+    "drawinkplus_exportError": "Қазіргі уақытта Drawink Pro үшін экспорттау мүмкін емес..."
   },
   "helpDialog": {
     "blog": "Біздің блогты оқу",

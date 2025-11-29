@@ -401,9 +401,9 @@
     "link_title": "Teilbarer Link",
     "link_details": "Als schreibgeschützten Link exportieren.",
     "link_button": "Als Link exportieren",
-    "drawinkplus_description": "Speichere die Szene in deinem Drawink+ Arbeitsbereich.",
+    "drawinkplus_description": "Speichere die Szene in deinem Drawink Pro Arbeitsbereich.",
     "drawinkplus_button": "Exportieren",
-    "drawinkplus_exportError": "Konnte nicht nach Drawink+ exportieren..."
+    "drawinkplus_exportError": "Konnte nicht nach Drawink Pro exportieren..."
   },
   "helpDialog": {
     "blog": "Lies unseren Blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Alle Daten werden lokal in Deinem Browser gespeichert.",
-      "center_heading_plus": "Möchtest du stattdessen zu Drawink+ gehen?",
+      "center_heading_plus": "Möchtest du stattdessen zu Drawink Pro gehen?",
       "menuHint": "Exportieren, Einstellungen, Sprachen, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exportiere die Zeichnungsdaten in eine Datei, von der Du später importieren kannst."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Export nach Drawink+",
-        "description": "Speichere die Szene in deinem Drawink+-Arbeitsbereich."
+        "title": "Drawink Pro",
+        "button": "Export nach Drawink Pro",
+        "description": "Speichere die Szene in deinem Drawink Pro-Arbeitsbereich."
       }
     },
     "modal": {

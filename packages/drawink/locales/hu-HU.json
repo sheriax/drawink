@@ -401,9 +401,9 @@
     "link_title": "Megosztható hivatkozás",
     "link_details": "Exportálás csak olvasható hivatkozásként.",
     "link_button": "Exportálás hivatkozásba",
-    "drawinkplus_description": "Mentse el a jelenetet az Drawink+ munkaterületére.",
+    "drawinkplus_description": "Mentse el a jelenetet az Drawink Pro munkaterületére.",
     "drawinkplus_button": "Exportálás",
-    "drawinkplus_exportError": "Jelenleg nem lehet exportálni az Drawink+-ba..."
+    "drawinkplus_exportError": "Jelenleg nem lehet exportálni az Drawink Pro-ba..."
   },
   "helpDialog": {
     "blog": "Olvasd a blogunkat",

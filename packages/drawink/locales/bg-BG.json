@@ -588,9 +588,9 @@
         "description": ""
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Експортирай към Drawink+",
-        "description": "Запази сцената към Drawink+ работното място."
+        "title": "Drawink Pro",
+        "button": "Експортирай към Drawink Pro",
+        "description": "Запази сцената към Drawink Pro работното място."
       }
     },
     "modal": {

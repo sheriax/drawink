@@ -401,9 +401,9 @@
     "link_title": "Povezava za deljenje",
     "link_details": "Izvoz kot povezava samo za branje.",
     "link_button": "Izvoz kot povezava",
-    "drawinkplus_description": "Shrani sceno v svoj delovni prostor Drawink+.",
+    "drawinkplus_description": "Shrani sceno v svoj delovni prostor Drawink Pro.",
     "drawinkplus_button": "Izvoz",
-    "drawinkplus_exportError": "Trenutno ni bilo mogoče izvoziti v Drawink+..."
+    "drawinkplus_exportError": "Trenutno ni bilo mogoče izvoziti v Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Preberite naš blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Vsi vaši podatki so shranjeni lokalno v vašem brskalniku.",
-      "center_heading_plus": "Ste namesto tega želeli odpreti Drawink+?",
+      "center_heading_plus": "Ste namesto tega želeli odpreti Drawink Pro?",
       "menuHint": "Izvoz, nastavitve, jeziki, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Izvozite podatke scene v datoteko, iz katere jo lahko pozneje uvozite."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Izvozi v Drawink+",
-        "description": "Shrani sceno v svoj delovni prostor Drawink+."
+        "title": "Drawink Pro",
+        "button": "Izvozi v Drawink Pro",
+        "description": "Shrani sceno v svoj delovni prostor Drawink Pro."
       }
     },
     "modal": {

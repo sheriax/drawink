@@ -401,9 +401,9 @@
     "link_title": "Delbar länk",
     "link_details": "Exportera som en skrivskyddad länk.",
     "link_button": "Exportera till länk",
-    "drawinkplus_description": "Spara skissen till din Drawink+ arbetsyta.",
+    "drawinkplus_description": "Spara skissen till din Drawink Pro arbetsyta.",
     "drawinkplus_button": "Exportera",
-    "drawinkplus_exportError": "Det gick inte att exportera till Drawink+ just nu..."
+    "drawinkplus_exportError": "Det gick inte att exportera till Drawink Pro just nu..."
   },
   "helpDialog": {
     "blog": "Läs vår blogg",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "All data sparas lokalt i din webbläsare.",
-      "center_heading_plus": "Ville du gå till Drawink+ istället?",
+      "center_heading_plus": "Ville du gå till Drawink Pro istället?",
       "menuHint": "Exportera, inställningar, språk, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exportera scendata till en fil från vilken du kan importera senare."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exportera till Drawink+",
-        "description": "Spara skissen till din Drawink+ arbetsyta."
+        "title": "Drawink Pro",
+        "button": "Exportera till Drawink Pro",
+        "description": "Spara skissen till din Drawink Pro arbetsyta."
       }
     },
     "modal": {

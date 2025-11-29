@@ -401,9 +401,9 @@
     "link_title": "Odkaz pro sdílení",
     "link_details": "Exportovat jako odkaz pouze pro čtení.",
     "link_button": "Exportovat do odkazu",
-    "drawinkplus_description": "Uložit scénu do vašeho pracovního prostoru Drawink+.",
+    "drawinkplus_description": "Uložit scénu do vašeho pracovního prostoru Drawink Pro.",
     "drawinkplus_button": "Exportovat",
-    "drawinkplus_exportError": "Export do Drawink+ se v tuto chvíli nezdařil..."
+    "drawinkplus_exportError": "Export do Drawink Pro se v tuto chvíli nezdařil..."
   },
   "helpDialog": {
     "blog": "Přečtěte si náš blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Všechna vaše data jsou uložena lokálně ve vašem prohlížeči.",
-      "center_heading_plus": "Chcete místo toho přejít na Drawink+?",
+      "center_heading_plus": "Chcete místo toho přejít na Drawink Pro?",
       "menuHint": "Export, nastavení, jazyky, ..."
     },
     "defaults": {

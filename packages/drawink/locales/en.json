@@ -402,9 +402,9 @@
     "link_title": "Shareable link",
     "link_details": "Export as a read-only link.",
     "link_button": "Export to Link",
-    "drawinkplus_description": "Save the scene to your Drawink+ workspace.",
+    "drawinkplus_description": "Save the scene to your Drawink Pro workspace (coming soon).",
     "drawinkplus_button": "Export",
-    "drawinkplus_exportError": "Couldn't export to Drawink+ at this moment..."
+    "drawinkplus_exportError": "Couldn't export to Drawink Pro at this moment..."
   },
   "helpDialog": {
     "blog": "Read our blog",
@@ -558,7 +558,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "All your data is saved locally in your browser.",
-      "center_heading_plus": "Did you want to go to the Drawink+ instead?",
+      "center_heading_plus": "Did you want to go to Drawink Pro instead? (Coming soon)",
       "menuHint": "Export, preferences, languages, ..."
     },
     "defaults": {
@@ -589,9 +589,9 @@
         "description": "Export the scene data to a file from which you can import later."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Export to Drawink+",
-        "description": "Save the scene to your Drawink+ workspace."
+        "title": "Drawink Pro",
+        "button": "Export to Drawink Pro",
+        "description": "Save the scene to your Drawink Pro workspace (coming soon)."
       }
     },
     "modal": {

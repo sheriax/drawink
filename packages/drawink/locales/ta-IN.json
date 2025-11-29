@@ -556,8 +556,8 @@
   },
   "welcomeScreen": {
     "app": {
-      "center_heading": "",
-      "center_heading_plus": "நீங்கள் Drawink+க்கு செல்ல விரும்புகிறீர்களா?",
+      "center_heading": "Drawink Pro",
+      "center_heading_plus": "நீங்கள் Drawink Proக்கு செல்ல விரும்புகிறீர்களா?",
       "menuHint": "விருப்பத்தேர்வுகள், மொழிகள் போன்றனவை ஏற்றுமதிசெய்..."
     },
     "defaults": {

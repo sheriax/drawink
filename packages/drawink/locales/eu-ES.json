@@ -401,9 +401,9 @@
     "link_title": "Partekatzeko esteka",
     "link_details": "Esportatu irakurtzeko soilik moduko esteka.",
     "link_button": "Esportatu esteka",
-    "drawinkplus_description": "Gorde eszena zure Drawink+ laneko areara.",
+    "drawinkplus_description": "Gorde eszena zure Drawink Pro laneko areara.",
     "drawinkplus_button": "Esportatu",
-    "drawinkplus_exportError": "Une honetan ezin izan da esportatu Drawink+era..."
+    "drawinkplus_exportError": "Une honetan ezin izan da esportatu Drawink Proera..."
   },
   "helpDialog": {
     "blog": "Irakurri gure bloga",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Zure datu guztiak lokalean gordetzen dira zure nabigatzailean.",
-      "center_heading_plus": "Horren ordez Drawink+-era joan nahi al zenuen?",
+      "center_heading_plus": "Horren ordez Drawink Pro-era joan nahi al zenuen?",
       "menuHint": "Esportatu, hobespenak, hizkuntzak..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Esportatu eszenaren datuak geroago inportatu ahal izango duzun fitxategi batan."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Esportatu Drawink+ra",
-        "description": "Gorde eszena zure Drawink+ laneko areara."
+        "title": "Drawink Pro",
+        "button": "Esportatu Drawink Prora",
+        "description": "Gorde eszena zure Drawink Pro laneko areara."
       }
     },
     "modal": {

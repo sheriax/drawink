@@ -401,9 +401,9 @@
     "link_title": "Jaettava linkki",
     "link_details": "Vie vain luku -linkkinä.",
     "link_button": "Vie linkkinä",
-    "drawinkplus_description": "Tallenna teos Drawink+ tilaan.",
+    "drawinkplus_description": "Tallenna teos Drawink Pro tilaan.",
     "drawinkplus_button": "Vie",
-    "drawinkplus_exportError": "Ei voitu viedä Drawink+-palveluun tällä hetkellä..."
+    "drawinkplus_exportError": "Ei voitu viedä Drawink Pro-palveluun tällä hetkellä..."
   },
   "helpDialog": {
     "blog": "Lue blogiamme",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Kaikki tietosi on tallennettu paikallisesti selaimellesi.",
-      "center_heading_plus": "Haluatko sen sijaan mennä Drawink+:aan?",
+      "center_heading_plus": "Haluatko sen sijaan mennä Drawink Pro:aan?",
       "menuHint": "Vie, asetukset, kielet, ..."
     },
     "defaults": {
@@ -588,8 +588,8 @@
         "description": ""
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Vie Drawink+:aan",
+        "title": "Drawink Pro",
+        "button": "Vie Drawink Pro:aan",
         "description": ""
       }
     },

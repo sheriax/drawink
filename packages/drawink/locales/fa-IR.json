@@ -401,9 +401,9 @@
     "link_title": "لینک قابل اشتراک‌گذاری",
     "link_details": "خروجی به عنوان یک پیوند فقط خواندنی.",
     "link_button": "خروجی در فایل",
-    "drawinkplus_description": "صحنه را در فضای کاری Drawink+ خود ذخیره کنید.",
+    "drawinkplus_description": "صحنه را در فضای کاری Drawink Pro خود ذخیره کنید.",
     "drawinkplus_button": "خروجی گرفتن",
-    "drawinkplus_exportError": "در حال حاضر نمی‌توان به Drawink+ صادر کرد..."
+    "drawinkplus_exportError": "در حال حاضر نمی‌توان به Drawink Pro صادر کرد..."
   },
   "helpDialog": {
     "blog": "بلاگ ما را بخوانید",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "تمام داده های شما به صورت محلی در مرورگر شما ذخیره می شود.",
-      "center_heading_plus": "آیا می‌خواهید به جای آن به Drawink+ بروید؟",
+      "center_heading_plus": "آیا می‌خواهید به جای آن به Drawink Pro بروید؟",
       "menuHint": "خروجی، ترجیحات، زبان ها، ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "خروجی از داده های صحنه را به عنوان فایل که بعدا می توانید بیافزایید."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "خروجی به Drawink+",
-        "description": "ذخیره صفحه در میز کار Drawink+."
+        "title": "Drawink Pro",
+        "button": "خروجی به Drawink Pro",
+        "description": "ذخیره صفحه در میز کار Drawink Pro."
       }
     },
     "modal": {

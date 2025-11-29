@@ -401,9 +401,9 @@
     "link_title": "Ligazón para compartir",
     "link_details": "Exportar como unha ligazón de só lectura.",
     "link_button": "Exportar a unha ligazón",
-    "drawinkplus_description": "Garde a escena no seu espazo de traballo en Drawink+.",
+    "drawinkplus_description": "Garde a escena no seu espazo de traballo en Drawink Pro.",
     "drawinkplus_button": "Exportar",
-    "drawinkplus_exportError": "Non se puido exportar a Drawink+ neste momento..."
+    "drawinkplus_exportError": "Non se puido exportar a Drawink Pro neste momento..."
   },
   "helpDialog": {
     "blog": "Le o noso blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Toda a información é gardada de maneira local no seu navegador.",
-      "center_heading_plus": "Queres ir a Drawink+ no seu lugar?",
+      "center_heading_plus": "Queres ir a Drawink Pro no seu lugar?",
       "menuHint": "Exportar, preferencias, idiomas, ..."
     },
     "defaults": {
@@ -588,8 +588,8 @@
         "description": ""
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exportar a Drawink+",
+        "title": "Drawink Pro",
+        "button": "Exportar a Drawink Pro",
         "description": ""
       }
     },

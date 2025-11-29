@@ -401,9 +401,9 @@
     "link_title": "Tautan",
     "link_details": "Ekspor sebagai tautan yang hanya dibaca.",
     "link_button": "Ekspor ke tautan",
-    "drawinkplus_description": "Simpan pemandangan ke ruang kerja Drawink+ Anda.",
+    "drawinkplus_description": "Simpan pemandangan ke ruang kerja Drawink Pro Anda.",
     "drawinkplus_button": "Ekspor",
-    "drawinkplus_exportError": "Tidak dapat ekspor ke Drawink+ saat ini..."
+    "drawinkplus_exportError": "Tidak dapat ekspor ke Drawink Pro saat ini..."
   },
   "helpDialog": {
     "blog": "Baca blog kami",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Semua data Anda disimpan secara lokal di peramban Anda.",
-      "center_heading_plus": "Apa Anda ingin berpindah ke Drawink+?",
+      "center_heading_plus": "Apa Anda ingin berpindah ke Drawink Pro?",
       "menuHint": "Ekspor, preferensi, bahasa, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Ekspor data pemandangan ke file yang dapat Anda dapat impor nanti."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Ekspor ke Drawink+",
-        "description": "Simpan pemandangan ke ruang kerja Drawink+ Anda."
+        "title": "Drawink Pro",
+        "button": "Ekspor ke Drawink Pro",
+        "description": "Simpan pemandangan ke ruang kerja Drawink Pro Anda."
       }
     },
     "modal": {

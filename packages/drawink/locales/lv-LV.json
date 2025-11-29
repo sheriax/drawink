@@ -401,9 +401,9 @@
     "link_title": "Kopīgošanas saite",
     "link_details": "Eksportēt kā tikai lasāmu saiti.",
     "link_button": "Eksportēt kā saiti",
-    "drawinkplus_description": "Saglabāt ainu savā Drawink+ darbvietā.",
+    "drawinkplus_description": "Saglabāt ainu savā Drawink Pro darbvietā.",
     "drawinkplus_button": "Eksportēt",
-    "drawinkplus_exportError": "Pašreiz nevarēja eksportēt uz Drawink+..."
+    "drawinkplus_exportError": "Pašreiz nevarēja eksportēt uz Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Lasīt mūsu blogu",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Visi jūsu dati tiek glabāti uz vietas jūsu pārlūkā.",
-      "center_heading_plus": "Vai tā vietā vēlies doties uz Drawink+?",
+      "center_heading_plus": "Vai tā vietā vēlies doties uz Drawink Pro?",
       "menuHint": "Eksportēšana, iestatījumi, valodas..."
     },
     "defaults": {

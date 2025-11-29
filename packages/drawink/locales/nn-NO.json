@@ -401,9 +401,9 @@
     "link_title": "Deleleg lenke",
     "link_details": "Eksporter som skrivebeskytta lenke.",
     "link_button": "Eksporter til lenke",
-    "drawinkplus_description": "Lagre scena til Drawink+-arbeidsområdet ditt.",
+    "drawinkplus_description": "Lagre scena til Drawink Pro-arbeidsområdet ditt.",
     "drawinkplus_button": "Eksporter",
-    "drawinkplus_exportError": "Kunne ikkje eksportere til Drawink+ akkurat no..."
+    "drawinkplus_exportError": "Kunne ikkje eksportere til Drawink Pro akkurat no..."
   },
   "helpDialog": {
     "blog": "Les bloggen vår",

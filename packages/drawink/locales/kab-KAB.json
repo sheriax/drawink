@@ -401,9 +401,9 @@
     "link_title": "Aseɣwen n beṭṭu",
     "link_details": "Sifeḍ am useɣwen n tɣuri kan.",
     "link_button": "Sifeḍ deg useɣwen",
-    "drawinkplus_description": "Sekles asayes-inek•inem di tallunt n umahil Drawink+.",
+    "drawinkplus_description": "Sekles asayes-inek•inem di tallunt n umahil Drawink Pro.",
     "drawinkplus_button": "Sifeḍ",
-    "drawinkplus_exportError": "Ulamek asifeḍ ɣer Drawink+ akka tura..."
+    "drawinkplus_exportError": "Ulamek asifeḍ ɣer Drawink Pro akka tura..."
   },
   "helpDialog": {
     "blog": "Ɣeṛ ablug-nneɣ",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Akk isefka-inek•inem ttwakelsen s wudem adigan deg yiminig-inek•inem.",
-      "center_heading_plus": "Tebɣiḍ ad tedduḍ ɣer Drawink+ deg umḍiq?",
+      "center_heading_plus": "Tebɣiḍ ad tedduḍ ɣer Drawink Pro deg umḍiq?",
       "menuHint": "Asifeḍ, ismenyifen, tutlayin, ..."
     },
     "defaults": {
@@ -588,7 +588,7 @@
         "description": ""
       },
       "drawinkPlus": {
-        "title": "Drawink+",
+        "title": "Drawink Pro",
         "button": "",
         "description": ""
       }

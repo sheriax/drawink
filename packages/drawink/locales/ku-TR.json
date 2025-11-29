@@ -401,7 +401,7 @@
     "link_title": "بەستەری هاوبەشیپێکردن",
     "link_details": "ناردن وەک بەستەری تەنها-خوێندنەوە.",
     "link_button": "هەناردەکردن بۆ بەستەر",
-    "drawinkplus_description": "دیمەنەکە لە شوێنی کارکردنی Drawink+ هەڵبگرە.",
+    "drawinkplus_description": "دیمەنەکە لە شوێنی کارکردنی Drawink Pro هەڵبگرە.",
     "drawinkplus_button": "هەناردەکردن",
     "drawinkplus_exportError": "لەم ساتەدا نەتوانرا هەناردە بکرێت بۆ Excalidrow+..."
   },
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "هەموو داتاکانت لە ناوخۆی وێنگەڕەکەتدا پاشەکەوت کراوە.",
-      "center_heading_plus": "ویستت بڕۆیت بۆ Drawink+?",
+      "center_heading_plus": "ویستت بڕۆیت بۆ Drawink Pro?",
       "menuHint": "هەناردەکردن، ڕێکخستنەکان، زمانەکان، ..."
     },
     "defaults": {

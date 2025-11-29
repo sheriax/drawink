@@ -403,7 +403,7 @@
     "link_button": "ส่งออกไปยังไฟล์",
     "drawinkplus_description": "",
     "drawinkplus_button": "ส่งออก",
-    "drawinkplus_exportError": "ไม่สามารถส่งออกไปที่ Drawink+ ได้ในขณะนี้"
+    "drawinkplus_exportError": "ไม่สามารถส่งออกไปที่ Drawink Pro ได้ในขณะนี้"
   },
   "helpDialog": {
     "blog": "อ่านบล็อกของพวกเรา",
@@ -588,8 +588,8 @@
         "description": ""
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "นำออกไปยัง Drawink+",
+        "title": "Drawink Pro",
+        "button": "นำออกไปยัง Drawink Pro",
         "description": ""
       }
     },

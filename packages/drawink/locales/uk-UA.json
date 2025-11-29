@@ -401,9 +401,9 @@
     "link_title": "Доступ за посиланням",
     "link_details": "Експортувати як посилання тільки для читання.",
     "link_button": "Експортувати у посилання",
-    "drawinkplus_description": "Збережіть сцену у вашому обліковому записі Drawink+.",
+    "drawinkplus_description": "Збережіть сцену у вашому обліковому записі Drawink Pro.",
     "drawinkplus_button": "Експортувати",
-    "drawinkplus_exportError": "Не вдалося експортувати у Drawink+..."
+    "drawinkplus_exportError": "Не вдалося експортувати у Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Наш блог",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Всі ваші дані збережено локально у Вашому браузері.",
-      "center_heading_plus": "Чи бажаєте перейти до Drawink+?",
+      "center_heading_plus": "Чи бажаєте перейти до Drawink Pro?",
       "menuHint": "Експорт, налаштування, мови, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Експорт даних сцени в файл, з якого можна імпортувати пізніше."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Експортувати до Drawink+",
-        "description": "Зберегти сцену до робочого простору Drawink+."
+        "title": "Drawink Pro",
+        "button": "Експортувати до Drawink Pro",
+        "description": "Зберегти сцену до робочого простору Drawink Pro."
       }
     },
     "modal": {

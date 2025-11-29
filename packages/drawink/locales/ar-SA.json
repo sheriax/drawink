@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "جميع بياناتك محفوظة محليًا في المتصفح الخاص بك.",
-      "center_heading_plus": "هل تريد الانتقال إلى Drawink+ بدلاً من ذلك؟",
+      "center_heading_plus": "هل تريد الانتقال إلى Drawink Pro بدلاً من ذلك؟",
       "menuHint": "التصدير، التفضيلات، اللغات..."
     },
     "defaults": {
@@ -588,8 +588,8 @@
         "description": "تصدير بيانات المشهد إلى ملف يمكنك الاستيراد منه لاحقًا."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "تصدير إلى Drawink+",
+        "title": "Drawink Pro",
+        "button": "تصدير إلى Drawink Pro",
         "description": "حفظ المشهد إلى مساحة العمل +Drawink الخاصة بك."
       }
     },

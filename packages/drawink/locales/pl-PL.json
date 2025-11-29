@@ -401,9 +401,9 @@
     "link_title": "Link do udostępnienia",
     "link_details": "Eksportuj jako link tylko do odczytu.",
     "link_button": "Wygeneruj link",
-    "drawinkplus_description": "Zapisz scenę do swojego obszaru roboczego Drawink+.",
+    "drawinkplus_description": "Zapisz scenę do swojego obszaru roboczego Drawink Pro.",
     "drawinkplus_button": "Eksportuj",
-    "drawinkplus_exportError": "W tej chwili nie można wyeksportować do Drawink+..."
+    "drawinkplus_exportError": "W tej chwili nie można wyeksportować do Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Przeczytaj na naszym blogu",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Wszystkie dane są zapisywane lokalnie w przeglądarce.",
-      "center_heading_plus": "Czy zamiast tego chcesz przejść do Drawink+?",
+      "center_heading_plus": "Czy zamiast tego chcesz przejść do Drawink Pro?",
       "menuHint": "Eksportuj, preferencje, języki..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Eksportuj zawartość sceny jako plik z możliwością importowania."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Eksportuj do Drawink+",
-        "description": "Zapisz scenę do swojego obszaru roboczego Drawink+."
+        "title": "Drawink Pro",
+        "button": "Eksportuj do Drawink Pro",
+        "description": "Zapisz scenę do swojego obszaru roboczego Drawink Pro."
       }
     },
     "modal": {

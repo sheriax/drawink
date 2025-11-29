@@ -401,9 +401,9 @@
     "link_title": "URL partajabil",
     "link_details": "Exportă ca URL doar în citire.",
     "link_button": "Exportare în URL",
-    "drawinkplus_description": "Salvează scena în spațiul de lucru Drawink+.",
+    "drawinkplus_description": "Salvează scena în spațiul de lucru Drawink Pro.",
     "drawinkplus_button": "Exportare",
-    "drawinkplus_exportError": "Drawink+ nu a putut fi exportat în acest moment..."
+    "drawinkplus_exportError": "Drawink Pro nu a putut fi exportat în acest moment..."
   },
   "helpDialog": {
     "blog": "Citește blogul nostru",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Toate datele tale sunt salvate local în navigatorul tău.",
-      "center_heading_plus": "Ai vrut să mergi în schimb la Drawink+?",
+      "center_heading_plus": "Ai vrut să mergi în schimb la Drawink Pro?",
       "menuHint": "Exportare, preferințe, limbi, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exportă datele scenei pe un fișier din care poți importa mai târziu."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exportare în Drawink+",
-        "description": "Salvează scena în spațiul de lucru Drawink+."
+        "title": "Drawink Pro",
+        "button": "Exportare în Drawink Pro",
+        "description": "Salvează scena în spațiul de lucru Drawink Pro."
       }
     },
     "modal": {

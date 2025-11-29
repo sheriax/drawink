@@ -401,9 +401,9 @@
     "link_title": "Delbar lenke",
     "link_details": "Eksporter som en skrivebeskyttet lenke.",
     "link_button": "Eksporter til lenke",
-    "drawinkplus_description": "Lagre scenen til ditt Drawink+ arbeidsområde.",
+    "drawinkplus_description": "Lagre scenen til ditt Drawink Pro arbeidsområde.",
     "drawinkplus_button": "Eksporter",
-    "drawinkplus_exportError": "Kunne ikke eksportere til Drawink+ for øyeblikket..."
+    "drawinkplus_exportError": "Kunne ikke eksportere til Drawink Pro for øyeblikket..."
   },
   "helpDialog": {
     "blog": "Les bloggen vår",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Alle dine data lagres lokalt i din nettleser.",
-      "center_heading_plus": "Ønsker du å gå til Drawink+ i stedet?",
+      "center_heading_plus": "Ønsker du å gå til Drawink Pro i stedet?",
       "menuHint": "Eksporter, innstillinger, språk, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Eksporter scene-dataene til en fil som du kan importere fra senere."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Eksporter til Drawink+",
-        "description": "Lagre scenen til ditt Drawink+-arbeidsområde."
+        "title": "Drawink Pro",
+        "button": "Eksporter til Drawink Pro",
+        "description": "Lagre scenen til ditt Drawink Pro-arbeidsområde."
       }
     },
     "modal": {

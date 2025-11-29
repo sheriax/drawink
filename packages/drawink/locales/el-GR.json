@@ -401,9 +401,9 @@
     "link_title": "Κοινόχρηστος σύνδεσμος",
     "link_details": "Εξαγωγή ως σύνδεσμο μόνο για ανάγνωση.",
     "link_button": "Εξαγωγή σε Σύνδεση",
-    "drawinkplus_description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink+.",
+    "drawinkplus_description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink Pro.",
     "drawinkplus_button": "Εξαγωγή",
-    "drawinkplus_exportError": "Δεν ήταν δυνατή η εξαγωγή στο Drawink+ αυτή τη στιγμή..."
+    "drawinkplus_exportError": "Δεν ήταν δυνατή η εξαγωγή στο Drawink Pro αυτή τη στιγμή..."
   },
   "helpDialog": {
     "blog": "Διαβάστε το Blog μας",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Όλα τα δεδομένα σας αποθηκεύονται τοπικά στο πρόγραμμα περιήγησης.",
-      "center_heading_plus": "Μήπως θέλατε να πάτε στο Drawink+;",
+      "center_heading_plus": "Μήπως θέλατε να πάτε στο Drawink Pro;",
       "menuHint": "Εξαγωγή, προτιμήσεις, γλώσσες, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Εξαγωγή δεδομένων σκηνής σε ένα αρχείο από το οποίο μπορείτε να εισάγετε αργότερα."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Εξαγωγή σε Drawink+",
-        "description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink+."
+        "title": "Drawink Pro",
+        "button": "Εξαγωγή σε Drawink Pro",
+        "description": "Αποθηκεύστε τη σκηνή στο χώρο εργασίας σας Drawink Pro."
       }
     },
     "modal": {

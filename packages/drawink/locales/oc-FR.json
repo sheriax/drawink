@@ -401,9 +401,9 @@
     "link_title": "Ligam de partejar",
     "link_details": "Exportar coma un ligam de lectura sola.",
     "link_button": "Exportar en ligam",
-    "drawinkplus_description": "Enregistrar la scèna dins vòstre espaci de trabalh Drawink+.",
+    "drawinkplus_description": "Enregistrar la scèna dins vòstre espaci de trabalh Drawink Pro.",
     "drawinkplus_button": "Exportar",
-    "drawinkplus_exportError": "Export impossibla cap a Drawink+ pel moment..."
+    "drawinkplus_exportError": "Export impossibla cap a Drawink Pro pel moment..."
   },
   "helpDialog": {
     "blog": "Legir nòstre blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Totas las donadas son enregistradas dins vòstre navegador.",
-      "center_heading_plus": "Voliatz puslèu utilizar Drawink+ a la plaça ?",
+      "center_heading_plus": "Voliatz puslèu utilizar Drawink Pro a la plaça ?",
       "menuHint": "Exportar, preferéncias, lengas, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exportar las donadas de la scèna cap a un fichièr que podètz importar mai tard."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exportar dins Drawink+",
-        "description": "Enregistrar la scèna dins vòstre espaci de trabalh Drawink+."
+        "title": "Drawink Pro",
+        "button": "Exportar dins Drawink Pro",
+        "description": "Enregistrar la scèna dins vòstre espaci de trabalh Drawink Pro."
       }
     },
     "modal": {

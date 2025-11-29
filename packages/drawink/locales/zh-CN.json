@@ -401,9 +401,9 @@
     "link_title": "分享链接",
     "link_details": "导出为只读链接。",
     "link_button": "导出链接",
-    "drawinkplus_description": "将画布保存到您的 Drawink+ 工作区。",
+    "drawinkplus_description": "将画布保存到您的 Drawink Pro 工作区。",
     "drawinkplus_button": "导出",
-    "drawinkplus_exportError": "暂时无法导出到 Drawink+ ..."
+    "drawinkplus_exportError": "暂时无法导出到 Drawink Pro ..."
   },
   "helpDialog": {
     "blog": "浏览我们的博客",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "您的所有数据都储存在浏览器本地。",
-      "center_heading_plus": "是否前往 Drawink+ ？",
+      "center_heading_plus": "是否前往 Drawink Pro ？",
       "menuHint": "导出、首选项、语言……"
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "将画布数据导出为文件，以便以后导入。"
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "导出到 Drawink+",
-        "description": "将画布保存到您的 Drawink+ 工作区。"
+        "title": "Drawink Pro",
+        "button": "导出到 Drawink Pro",
+        "description": "将画布保存到您的 Drawink Pro 工作区。"
       }
     },
     "modal": {

@@ -401,9 +401,9 @@
     "link_title": "Liên kết có thể chia sẻ",
     "link_details": "Tạo liên kết chỉ xem",
     "link_button": "Tạo liên kết",
-    "drawinkplus_description": "Lưu bản vẽ vào không gian làm việc Drawink+ của bạn.",
+    "drawinkplus_description": "Lưu bản vẽ vào không gian làm việc Drawink Pro của bạn.",
     "drawinkplus_button": "Xuất",
-    "drawinkplus_exportError": "Hiện tại không thể xuất sang Drawink+..."
+    "drawinkplus_exportError": "Hiện tại không thể xuất sang Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Đọc blog của chúng tôi",

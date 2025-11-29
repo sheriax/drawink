@@ -401,9 +401,9 @@
     "link_title": "공유 가능한 링크 생성",
     "link_details": "읽기 전용 링크로 내보냅니다.",
     "link_button": "링크로 내보내기",
-    "drawinkplus_description": "화면을 당신의 Drawink+ 작업 공간으로 저장합니다.",
+    "drawinkplus_description": "화면을 당신의 Drawink Pro 작업 공간으로 저장합니다.",
     "drawinkplus_button": "내보내기",
-    "drawinkplus_exportError": "지금은 Drawink+로 내보낼 수 없습니다..."
+    "drawinkplus_exportError": "지금은 Drawink Pro로 내보낼 수 없습니다..."
   },
   "helpDialog": {
     "blog": "블로그 읽어보기",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "모든 데이터는 브라우저에 안전하게 저장됩니다.",
-      "center_heading_plus": "대신 Drawink+로 이동하시겠습니까?",
+      "center_heading_plus": "대신 Drawink Pro로 이동하시겠습니까?",
       "menuHint": "내보내기, 설정, 언어, ..."
     },
     "defaults": {
@@ -589,8 +589,8 @@
       },
       "drawinkPlus": {
         "title": "",
-        "button": "Drawink+로 내보내기",
-        "description": "화면을 당신의 Drawink+ 작업 공간으로 저장합니다."
+        "button": "Drawink Pro로 내보내기",
+        "description": "화면을 당신의 Drawink Pro 작업 공간으로 저장합니다."
       }
     },
     "modal": {

@@ -401,9 +401,9 @@
     "link_title": "Enllaç per a compartir",
     "link_details": "Exporta com a un enllaç de només lectura.",
     "link_button": "Exporta a un enllaç",
-    "drawinkplus_description": "Desa l'escena en el vostre espai de treball Drawink+.",
+    "drawinkplus_description": "Desa l'escena en el vostre espai de treball Drawink Pro.",
     "drawinkplus_button": "Exporta",
-    "drawinkplus_exportError": "No és possible exportar a Drawink+ ara mateix..."
+    "drawinkplus_exportError": "No és possible exportar a Drawink Pro ara mateix..."
   },
   "helpDialog": {
     "blog": "Llegiu el nostre blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Totes les vostres dades es guarden localment al vostre navegador.",
-      "center_heading_plus": "Vols anar a Drawink+ en comptes?",
+      "center_heading_plus": "Vols anar a Drawink Pro en comptes?",
       "menuHint": "Exportar, preferències, llenguatges..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exporta les dades de l'escena a un fitxer des del qual podràs importar-les més tard."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exporta a Drawink+",
-        "description": "Desa l'escena al teu espai de treball d'Drawink+."
+        "title": "Drawink Pro",
+        "button": "Exporta a Drawink Pro",
+        "description": "Desa l'escena al teu espai de treball d'Drawink Pro."
       }
     },
     "modal": {

@@ -401,9 +401,9 @@
     "link_title": "Odkaz na zdieľanie",
     "link_details": "Exportovať ako odkaz iba na čítanie.",
     "link_button": "Exportovať ako odkaz",
-    "drawinkplus_description": "Uložiť scénu do vášho Drawink+ pracovného priestoru.",
+    "drawinkplus_description": "Uložiť scénu do vášho Drawink Pro pracovného priestoru.",
     "drawinkplus_button": "Exportovať",
-    "drawinkplus_exportError": "Nepodarilo sa vykonať export do Drawink+..."
+    "drawinkplus_exportError": "Nepodarilo sa vykonať export do Drawink Pro..."
   },
   "helpDialog": {
     "blog": "Prečítajte si náš blog",
@@ -557,7 +557,7 @@
   "welcomeScreen": {
     "app": {
       "center_heading": "Všetky vaše dáta sú uložené lokálne vo vašom prehliadači.",
-      "center_heading_plus": "Chceli ste namiesto toho prejsť do Drawink+?",
+      "center_heading_plus": "Chceli ste namiesto toho prejsť do Drawink Pro?",
       "menuHint": "Exportovanie, nastavenia, jazyky, ..."
     },
     "defaults": {
@@ -588,9 +588,9 @@
         "description": "Exportovať údaje scény do súboru, z ktorého môžu byť neskôr importované."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Exportovať ako Drawink+",
-        "description": "Uložiť scénu do vášho Drawink+ pracovného priestoru."
+        "title": "Drawink Pro",
+        "button": "Exportovať ako Drawink Pro",
+        "description": "Uložiť scénu do vášho Drawink Pro pracovného priestoru."
       }
     },
     "modal": {

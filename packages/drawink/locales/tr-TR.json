@@ -401,9 +401,9 @@
     "link_title": "Paylaşılabilir bağlantı",
     "link_details": "Salt okunur bir bağlantı olarak dışa aktarın.",
     "link_button": "Bağlantı olarak dışa aktar",
-    "drawinkplus_description": "Sahneyi Drawink+ çalışma alanınıza kaydedin.",
+    "drawinkplus_description": "Sahneyi Drawink Pro çalışma alanınıza kaydedin.",
     "drawinkplus_button": "Dışa aktar",
-    "drawinkplus_exportError": "Şu anda Drawink+'a aktarılamadı..."
+    "drawinkplus_exportError": "Şu anda Drawink Pro'a aktarılamadı..."
   },
   "helpDialog": {
     "blog": "Blog'umuzu okuyun",
@@ -588,9 +588,9 @@
         "description": "Sahne verilerini daha sonra içe aktarabileceğiniz bir dosyaya aktarın."
       },
       "drawinkPlus": {
-        "title": "Drawink+",
-        "button": "Drawink+'a aktar",
-        "description": "Sahneyi Drawink+ çalışma alanınıza kaydedin."
+        "title": "Drawink Pro",
+        "button": "Drawink Pro'a aktar",
+        "description": "Sahneyi Drawink Pro çalışma alanınıza kaydedin."
       }
     },
     "modal": {
