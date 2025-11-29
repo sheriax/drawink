@@ -1,5 +1,5 @@
-import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
-import { BinaryFiles } from "@drawink/drawink/types";
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+import type { BinaryFiles } from "@drawink/drawink/types";
 
 export enum VERTEX_TYPE {
   ROUND = "round",

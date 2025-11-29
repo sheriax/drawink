@@ -1,9 +1,12 @@
-import { GraphConverter } from "../GraphConverter.js";
-import { FileId } from "@drawink/drawink/element/types";
-import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
-import { BinaryFiles } from "@drawink/drawink/types";
 import { nanoid } from "nanoid";
-import { GraphImage } from "../../interfaces.js";
+
+import type { FileId } from "@drawink/drawink/element/types";
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+import type { BinaryFiles } from "@drawink/drawink/types";
+
+import { GraphConverter } from "../GraphConverter.js";
+
+import type { GraphImage } from "../../interfaces.js";
 
 export const GraphImageConverter = new GraphConverter<GraphImage>({
   converter: (graph) => {

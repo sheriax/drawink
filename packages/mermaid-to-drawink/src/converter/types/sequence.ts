@@ -1,14 +1,17 @@
-import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
 import { nanoid } from "nanoid";
 
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+
 import { GraphConverter } from "../GraphConverter.js";
-import { Sequence } from "../../parser/sequence.js";
+
 import {
   transformToDrawinkLineSkeleton,
   transformToDrawinkTextSkeleton,
   transformToDrawinkContainerSkeleton,
   transformToDrawinkArrowSkeleton,
 } from "../transformToDrawinkSkeleton.js";
+
+import type { Sequence } from "../../parser/sequence.js";
 
 import type { DrawinkElement } from "../../types.js";
 
@@ -63,7 +66,7 @@ export const SequenceToDrawinkSkeletonConvertor = new GraphConverter({
       elements.push(transformToDrawinkArrowSkeleton(arrow));
       if (arrow.sequenceNumber) {
         elements.push(
-          transformToDrawinkContainerSkeleton(arrow.sequenceNumber)
+          transformToDrawinkContainerSkeleton(arrow.sequenceNumber),
         );
       }
     });

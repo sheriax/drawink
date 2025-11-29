@@ -1,5 +1,6 @@
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+
 import { GraphConverter } from "../GraphConverter.js";
-import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
 
 import {
   getText,
@@ -8,10 +9,11 @@ import {
   computeDrawinkArrowType,
 } from "../helpers.js";
 import { VERTEX_TYPE } from "../../interfaces.js";
-import { Flowchart } from "../../parser/flowchart.js";
+
+import type { Flowchart } from "../../parser/flowchart.js";
 
 const computeGroupIds = (
-  graph: Flowchart
+  graph: Flowchart,
 ): {
   getGroupIds: (elementId: string) => string[];
   getParentId: (elementId: string) => string | null;
@@ -62,7 +64,7 @@ const computeGroupIds = (
       }
 
       mapper[id] = groupIds;
-    }
+    },
   );
 
   return {
@@ -112,9 +114,7 @@ export const FlowchartToDrawinkSkeletonConverter = new GraphConverter({
       const groupIds = getGroupIds(vertex.id);
 
       // Compute custom style
-      const containerStyle = computeDrawinkVertexStyle(
-        vertex.containerStyle
-      );
+      const containerStyle = computeDrawinkVertexStyle(vertex.containerStyle);
       const labelStyle = computeDrawinkVertexLabelStyle(vertex.labelStyle);
 
       let containerElement: DrawinkElementSkeleton = {

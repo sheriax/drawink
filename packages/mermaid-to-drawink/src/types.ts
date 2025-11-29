@@ -1,5 +1,5 @@
-import { ImportedDataState } from "@drawink/drawink/data/types";
-import {
+import type { ImportedDataState } from "@drawink/drawink/data/types";
+import type {
   DrawinkRectangleElement,
   DrawinkDiamondElement,
   DrawinkEllipseElement,

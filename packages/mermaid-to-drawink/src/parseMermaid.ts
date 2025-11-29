@@ -1,10 +1,21 @@
-import mermaid, { MermaidConfig } from "mermaid";
-import { GraphImage } from "./interfaces.js";
+import mermaid from "mermaid";
+
 import { MERMAID_CONFIG } from "./constants.js";
 import { encodeEntities } from "./utils.js";
-import { Flowchart, parseMermaidFlowChartDiagram } from "./parser/flowchart.js";
-import { Sequence, parseMermaidSequenceDiagram } from "./parser/sequence.js";
-import { Class, parseMermaidClassDiagram } from "./parser/class.js";
+
+import { parseMermaidFlowChartDiagram } from "./parser/flowchart.js";
+
+import { parseMermaidSequenceDiagram } from "./parser/sequence.js";
+
+import { parseMermaidClassDiagram } from "./parser/class.js";
+
+import type { Flowchart } from "./parser/flowchart.js";
+import type { Sequence } from "./parser/sequence.js";
+
+import type { Class } from "./parser/class.js";
+
+import type { GraphImage } from "./interfaces.js";
+import type { MermaidConfig } from "mermaid";
 
 // Fallback to Svg
 const convertSvgToGraphImage = (svgContainer: HTMLDivElement) => {
@@ -44,12 +55,12 @@ const convertSvgToGraphImage = (svgContainer: HTMLDivElement) => {
 
 export const parseMermaid = async (
   definition: string,
-  config: MermaidConfig = MERMAID_CONFIG
+  config: MermaidConfig = MERMAID_CONFIG,
 ): Promise<Flowchart | GraphImage | Sequence | Class> => {
   mermaid.initialize({ ...MERMAID_CONFIG, ...config });
   // Parse the diagram
   const diagram = await mermaid.mermaidAPI.getDiagramFromText(
-    encodeEntities(definition)
+    encodeEntities(definition),
   );
 
   // Render the SVG diagram
@@ -59,7 +70,7 @@ export const parseMermaid = async (
   const svgContainer = document.createElement("div");
   svgContainer.setAttribute(
     "style",
-    `opacity: 0; position: relative; z-index: -1;`
+    `opacity: 0; position: relative; z-index: -1;`,
   );
   svgContainer.innerHTML = svg;
   svgContainer.id = "mermaid-diagram";

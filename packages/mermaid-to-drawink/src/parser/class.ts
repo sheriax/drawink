@@ -1,26 +1,25 @@
 import { nanoid } from "nanoid";
 
+import type { DrawinkLinearElement } from "@drawink/drawink/element/types";
+
 import { computeEdgePositions, getTransformAttr } from "../utils.js";
+
 import {
-  Arrow,
-  Container,
-  Line,
-  Node,
-  Text,
   createArrowSkeletion,
   createContainerSkeletonFromSVG,
   createLineSkeletonFromSVG,
   createTextSkeleton,
 } from "../elementSkeleton.js";
 
-import type { Diagram } from "mermaid/dist/Diagram";
+import type { Arrow, Container, Line, Node, Text } from "../elementSkeleton.js";
+
 import type {
+  Diagram,
   ClassNode,
   ClassNote,
   ClassRelation,
   NamespaceNode,
-} from "mermaid/dist/diagrams/class/classTypes";
-import type { DrawinkLinearElement } from "@drawink/drawink/element/types";
+} from "../mermaid-types.js";
 
 // Taken from mermaidParser.relationType
 const RELATION_TYPE = {
@@ -32,7 +31,7 @@ const RELATION_TYPE = {
 };
 
 type RELATION_TYPE_VALUES =
-  | (typeof RELATION_TYPE)[keyof typeof RELATION_TYPE]
+  | typeof RELATION_TYPE[keyof typeof RELATION_TYPE]
   | "none";
 // Taken from mermaidParser.lineType
 const LINE_TYPE = {
@@ -94,7 +93,7 @@ const getArrowhead = (type: RELATION_TYPE_VALUES) => {
 
 const parseClasses = (
   classes: { [key: string]: ClassNode },
-  containerEl: Element
+  containerEl: Element,
 ) => {
   const nodes: Container[] = [];
   const lines: Line[] = [];
@@ -112,7 +111,7 @@ const parseClasses = (
     const container = createContainerSkeletonFromSVG(
       domNode.firstChild as SVGRectElement,
       "rectangle",
-      { id: classId, groupId }
+      { id: classId, groupId },
     );
     container.x += transformX;
     container.y += transformY;
@@ -120,7 +119,7 @@ const parseClasses = (
     nodes.push(container);
 
     const lineNodes = Array.from(
-      domNode.querySelectorAll(".divider")
+      domNode.querySelectorAll(".divider"),
     ) as SVGLineElement[];
 
     lineNodes.forEach((lineNode) => {
@@ -137,7 +136,7 @@ const parseClasses = (
         {
           groupId,
           id: nanoid(),
-        }
+        },
       );
       line.startX += transformX;
       line.startY += transformY;
@@ -150,7 +149,7 @@ const parseClasses = (
     const labelNodes = domNode.querySelector(".label")?.children;
 
     if (!labelNodes) {
-      throw "label nodes not found";
+      throw new Error("label nodes not found");
     }
 
     Array.from(labelNodes).forEach((node) => {
@@ -175,7 +174,7 @@ const parseClasses = (
           id,
           groupId,
           metadata: { classId },
-        }
+        },
       );
 
       text.push(textElement);
@@ -231,7 +230,7 @@ const parseRelations = (
   relations: ClassRelation[],
   classNodes: Container[],
   containerEl: Element,
-  direction: "LR" | "RL" | "TB" | "BT"
+  direction: "LR" | "RL" | "TB" | "BT",
 ) => {
   const edges = containerEl.querySelector(".edgePaths")?.children;
 
@@ -251,7 +250,7 @@ const parseRelations = (
     const endArrowhead = getArrowhead(relation.type2);
 
     const edgePositionData = computeEdgePositions(
-      edges[index] as SVGPathElement
+      edges[index] as SVGPathElement,
     );
     const arrowSkeletion = createArrowSkeletion(
       edgePositionData.startX,
@@ -265,7 +264,7 @@ const parseRelations = (
         label: relationNode.title ? { text: relationNode.title } : undefined,
         start: { type: "rectangle", id: node1.id },
         end: { type: "rectangle", id: node2.id },
-      }
+      },
     );
 
     const arrow = adjustArrowPosition(direction, arrowSkeletion);
@@ -368,7 +367,7 @@ const parseRelations = (
 const parseNotes = (
   notes: ClassNote[],
   containerEl: Element,
-  classNodes: Container[]
+  classNodes: Container[],
 ) => {
   const noteContainers: Container[] = [];
   const connectors: Arrow[] = [];
@@ -414,7 +413,7 @@ const parseNotes = (
 
 export const parseMermaidClassDiagram = (
   diagram: Diagram,
-  containerEl: Element
+  containerEl: Element,
 ): Class => {
   diagram.parse();
   //@ts-ignore
@@ -441,13 +440,13 @@ export const parseMermaidClassDiagram = (
     relations,
     classNodes,
     containerEl,
-    direction
+    direction,
   );
 
   const { notes, connectors } = parseNotes(
     mermaidParser.getNotes(),
     containerEl,
-    classNodes
+    classNodes,
   );
   nodes.push(notes);
   arrows.push(...connectors);

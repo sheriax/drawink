@@ -1,6 +1,8 @@
-import { DrawinkTextElement } from "@drawink/drawink/element/types";
+import type { ValidLinearElement } from "@drawink/drawink/data/transform";
+
+import type { DrawinkTextElement } from "@drawink/drawink/element/types";
+
 import { entityCodesToText } from "./utils.js";
-import { ValidLinearElement } from "@drawink/drawink/data/transform";
 import { DEFAULT_FONT_SIZE } from "./constants.js";
 
 export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
@@ -77,7 +79,7 @@ export const createArrowSkeletonFromSVG = (
     strokeStyle?: ValidLinearElement["strokeStyle"];
     startArrowhead?: ValidLinearElement["startArrowhead"];
     endArrowhead?: ValidLinearElement["endArrowhead"];
-  }
+  },
 ) => {
   const arrow = {} as Arrow;
   if (opts?.label) {
@@ -158,7 +160,7 @@ export const createArrowSkeletion = (
     start?: Arrow["start"];
     end?: Arrow["end"];
     points?: Arrow["points"];
-  }
+  },
 ) => {
   const arrow = {} as Arrow;
   arrow.type = "arrow";
@@ -182,7 +184,7 @@ export const createTextSkeleton = (
     fontSize?: number;
     groupId?: string;
     metadata?: { [key: string]: any };
-  }
+  },
 ) => {
   const textElement: Text = {
     type: "text",
@@ -203,7 +205,7 @@ export const createTextSkeleton = (
 export const createTextSkeletonFromSVG = (
   textNode: SVGTextElement,
   text: string,
-  opts?: { groupId?: string; id?: string }
+  opts?: { groupId?: string; id?: string },
 ) => {
   const node = {} as Text;
   const x = Number(textNode.getAttribute("x"));
@@ -237,7 +239,7 @@ export const createContainerSkeletonFromSVG = (
     };
     subtype?: Container["subtype"];
     groupId?: string;
-  } = {}
+  } = {},
 ) => {
   const container = {} as Container;
   container.type = type;
@@ -280,7 +282,7 @@ export const createLineSkeletonFromSVG = (
   startY: number,
   endX: number,
   endY: number,
-  opts?: { groupId?: string; id?: string }
+  opts?: { groupId?: string; id?: string },
 ) => {
   const line = {} as Line;
   line.startX = startX;

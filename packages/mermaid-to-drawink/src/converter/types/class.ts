@@ -1,4 +1,7 @@
 import { nanoid } from "nanoid";
+
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+
 import {
   transformToDrawinkArrowSkeleton,
   transformToDrawinkContainerSkeleton,
@@ -7,7 +10,6 @@ import {
 } from "../transformToDrawinkSkeleton.js";
 import { GraphConverter } from "../GraphConverter.js";
 
-import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
 import type { Class } from "../../parser/class.js";
 
 export const classToDrawinkSkeletonConvertor = new GraphConverter({

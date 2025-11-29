@@ -41,7 +41,7 @@ export interface DrawinkConfig {
 
 const parseMermaidToDrawink = async (
   definition: string,
-  config?: MermaidConfig
+  config?: MermaidConfig,
 ) => {
   const mermaidConfig = config || {};
   const fontSize =

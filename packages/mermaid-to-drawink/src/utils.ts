@@ -1,4 +1,4 @@
-import { Position } from "./interfaces.js";
+import type { Position } from "./interfaces.js";
 
 // Convert mermaid entity codes to text e.g. "#9829;" to "♥"
 export const entityCodesToText = (input: string): string => {
@@ -19,7 +19,7 @@ export const entityCodesToText = (input: string): string => {
 export const getTransformAttr = (el: Element) => {
   const transformAttr = el.getAttribute("transform");
   const translateMatch = transformAttr?.match(
-    /translate\(([ \d.-]+),\s*([\d.-]+)\)/
+    /translate\(([ \d.-]+),\s*([\d.-]+)\)/,
   );
   let transformX = 0;
   let transformY = 0;
@@ -70,12 +70,12 @@ interface EdgePositionData {
 // Compute edge postion start, end and points (reflection points)
 export const computeEdgePositions = (
   pathElement: SVGPathElement,
-  offset: Position = { x: 0, y: 0 }
+  offset: Position = { x: 0, y: 0 },
 ): EdgePositionData => {
   // Check if the element is a path else throw an error
   if (pathElement.tagName.toLowerCase() !== "path") {
     throw new Error(
-      `Invalid input: Expected an HTMLElement of tag "path", got ${pathElement.tagName}`
+      `Invalid input: Expected an HTMLElement of tag "path", got ${pathElement.tagName}`,
     );
   }
 
@@ -132,7 +132,7 @@ export const computeEdgePositions = (
         // Get the distance between the last point and second last point using Euclidean distance formula
         const distance = Math.hypot(
           lastPoint.x - point.x,
-          lastPoint.y - point.y
+          lastPoint.y - point.y,
         );
         // Include the second last point if the distance between the
         // last point and second last point is > 20.

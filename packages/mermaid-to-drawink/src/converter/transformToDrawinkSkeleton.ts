@@ -1,5 +1,6 @@
-import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
-import { Arrow, Line, Node, Text } from "../elementSkeleton.js";
+import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
+
+import type { Arrow, Line, Node, Text } from "../elementSkeleton.js";
 
 export const normalizeText = (text: string) => {
   return text.replace(/\\n/g, "\n");
@@ -50,7 +51,7 @@ export const transformToDrawinkTextSkeleton = (element: Text) => {
 };
 
 export const transformToDrawinkContainerSkeleton = (
-  element: Exclude<Node, Line | Arrow | Text>
+  element: Exclude<Node, Line | Arrow | Text>,
 ) => {
   let extraProps = {};
   if (element.type === "rectangle" && element.subtype === "activation") {

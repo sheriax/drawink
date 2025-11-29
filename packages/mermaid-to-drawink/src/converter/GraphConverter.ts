@@ -1,8 +1,9 @@
-import { DrawinkConfig } from "../index.js";
 import { DEFAULT_FONT_SIZE } from "../constants.js";
-import { MermaidToDrawinkResult } from "../interfaces.js";
-import { Flowchart } from "../parser/flowchart.js";
-import { Sequence } from "../parser/sequence.js";
+
+import type { DrawinkConfig } from "../index.js";
+import type { MermaidToDrawinkResult } from "../interfaces.js";
+import type { Flowchart } from "../parser/flowchart.js";
+import type { Sequence } from "../parser/sequence.js";
 
 export class GraphConverter<T = Flowchart | Sequence> {
   private converter;
@@ -11,7 +12,7 @@ export class GraphConverter<T = Flowchart | Sequence> {
   }: {
     converter: (
       graph: T,
-      config: Required<DrawinkConfig>
+      config: Required<DrawinkConfig>,
     ) => MermaidToDrawinkResult;
   }) {
     this.converter = converter;

@@ -1,16 +1,19 @@
-import {
+import { removeMarkdown } from "@drawink/markdown-to-text";
+
+import type {
   Arrowhead,
   DrawinkTextElement,
 } from "@drawink/drawink/element/types";
+
 import {
   CONTAINER_STYLE_PROPERTY,
   LABEL_STYLE_PROPERTY,
-  SubGraph,
-  Vertex,
 } from "../interfaces.js";
-import { DrawinkVertexElement, Mutable } from "../types.js";
-import { removeMarkdown } from "@drawink/markdown-to-text";
-import { Edge } from "../parser/flowchart.js";
+
+import type { SubGraph, Vertex } from "../interfaces.js";
+import type { DrawinkVertexElement, Mutable } from "../types.js";
+
+import type { Edge } from "../parser/flowchart.js";
 
 /**
  * Compute groupIds for each element
@@ -48,7 +51,7 @@ const MERMAID_EDGE_TYPE_MAPPER: { [key: string]: ArrowType } = {
 };
 
 export const computeDrawinkArrowType = (
-  mermaidArrowType: string
+  mermaidArrowType: string,
 ): ArrowType => {
   return MERMAID_EDGE_TYPE_MAPPER[mermaidArrowType];
 };
@@ -75,7 +78,7 @@ const removeFontAwesomeIcons = (input: string): string => {
  * Compute style for vertex
  */
 export const computeDrawinkVertexStyle = (
-  style: Vertex["containerStyle"]
+  style: Vertex["containerStyle"],
 ): Partial<Mutable<DrawinkVertexElement>> => {
   const drawinkProperty: Partial<Mutable<DrawinkVertexElement>> = {};
   Object.keys(style).forEach((property) => {
@@ -90,9 +93,7 @@ export const computeDrawinkVertexStyle = (
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_WIDTH: {
-        drawinkProperty.strokeWidth = Number(
-          style[property]?.split("px")[0]
-        );
+        drawinkProperty.strokeWidth = Number(style[property]?.split("px")[0]);
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_DASHARRAY: {
@@ -108,7 +109,7 @@ export const computeDrawinkVertexStyle = (
  * Compute style for label
  */
 export const computeDrawinkVertexLabelStyle = (
-  style: Vertex["labelStyle"]
+  style: Vertex["labelStyle"],
 ): Partial<Mutable<DrawinkTextElement>> => {
   const drawinkProperty: Partial<Mutable<DrawinkTextElement>> = {};
   Object.keys(style).forEach((property) => {

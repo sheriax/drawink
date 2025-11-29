@@ -3,7 +3,8 @@ import {
   entityCodesToText,
   getTransformAttr,
 } from "../utils.js";
-import {
+
+import type {
   CONTAINER_STYLE_PROPERTY,
   LABEL_STYLE_PROPERTY,
   Position,
@@ -11,8 +12,7 @@ import {
   Vertex,
 } from "../interfaces.js";
 
-import type { Diagram } from "mermaid/dist/Diagram";
-import { DiagramStyleClassDef } from "mermaid/dist/diagram-api/types";
+import type { Diagram, DiagramStyleClassDef } from "../mermaid-types.js";
 
 export interface Flowchart {
   type: "flowchart";
@@ -48,7 +48,7 @@ const parseSubGraph = (data: any, containerEl: Element): SubGraph => {
 
   // Get position
   const el: SVGSVGElement | null = containerEl.querySelector(
-    `[id='${data.id}']`
+    `[id='${data.id}']`,
   );
   if (!el) {
     throw new Error("SubGraph element not found");
@@ -78,11 +78,11 @@ const parseSubGraph = (data: any, containerEl: Element): SubGraph => {
 const parseVertex = (
   data: any,
   containerEl: Element,
-  classes: { [key: string]: DiagramStyleClassDef }
+  classes: { [key: string]: DiagramStyleClassDef },
 ): Vertex | undefined => {
   // Find Vertex element
   const el: SVGSVGElement | null = containerEl.querySelector(
-    `[id*="flowchart-${data.id}-"]`
+    `[id*="flowchart-${data.id}-"]`,
   );
   if (!el) {
     return undefined;
@@ -97,7 +97,7 @@ const parseVertex = (
   // Get position
   const position = computeElementPosition(
     link ? el.parentElement : el,
-    containerEl
+    containerEl,
   );
   // Get dimension
   const boundingBox = el.getBBox();
@@ -137,11 +137,11 @@ const parseVertex = (
   if (data.classes) {
     const classDef = classes[data.classes];
     if (classDef) {
-      classDef.styles?.forEach((style) => {
+      classDef.styles?.forEach((style: string) => {
         const [key, value] = style.split(":");
         containerStyle[key.trim() as CONTAINER_STYLE_PROPERTY] = value.trim();
       });
-      classDef.textStyles?.forEach((style) => {
+      classDef.textStyles?.forEach((style: string) => {
         const [key, value] = style.split(":");
         labelStyle[key.trim() as LABEL_STYLE_PROPERTY] = value.trim();
       });
@@ -163,11 +163,11 @@ const parseVertex = (
 const parseEdge = (
   data: any,
   edgeIndex: number,
-  containerEl: Element
+  containerEl: Element,
 ): Edge => {
   // Find edge element
   const edge = containerEl.querySelector<SVGPathElement>(
-    `[id*="L-${data.start}-${data.end}-${edgeIndex}"]`
+    `[id*="L-${data.start}-${data.end}-${edgeIndex}"]`,
   );
 
   if (!edge) {
@@ -191,7 +191,7 @@ const parseEdge = (
 // Compute element position
 const computeElementPosition = (
   el: Element | null,
-  containerEl: Element
+  containerEl: Element,
 ): Position => {
   if (!el) {
     throw new Error("Element not found");
@@ -237,7 +237,7 @@ const computeElementPosition = (
 
 export const parseMermaidFlowChartDiagram = (
   diagram: Diagram,
-  containerEl: Element
+  containerEl: Element,
 ): Flowchart => {
   // This does some cleanup and initialization making sure
   // diagram is parsed correctly. Useful when multiple diagrams are
