@@ -10,7 +10,7 @@ export const MERMAID_CONFIG = {
   startOnLoad: false,
   flowchart: { curve: "linear" },
   themeVariables: {
-    // Multiplying by 1.25 to increase the font size by 25% and render correctly in Excalidraw
+    // Multiplying by 1.25 to increase the font size by 25% and render correctly in Drawink
     fontSize: `${DEFAULT_FONT_SIZE * 1.25}px`,
   },
   maxEdges: 500,

@@ -3,9 +3,9 @@ import { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
 
 import {
   getText,
-  computeExcalidrawVertexStyle,
-  computeExcalidrawVertexLabelStyle,
-  computeExcalidrawArrowType,
+  computeDrawinkVertexStyle,
+  computeDrawinkVertexLabelStyle,
+  computeDrawinkArrowType,
 } from "../helpers.js";
 import { VERTEX_TYPE } from "../../interfaces.js";
 import { Flowchart } from "../../parser/flowchart.js";
@@ -75,7 +75,7 @@ const computeGroupIds = (
   };
 };
 
-export const FlowchartToExcalidrawSkeletonConverter = new GraphConverter({
+export const FlowchartToDrawinkSkeletonConverter = new GraphConverter({
   converter: (graph: Flowchart, options) => {
     const elements: DrawinkElementSkeleton[] = [];
     const fontSize = options.fontSize;
@@ -112,10 +112,10 @@ export const FlowchartToExcalidrawSkeletonConverter = new GraphConverter({
       const groupIds = getGroupIds(vertex.id);
 
       // Compute custom style
-      const containerStyle = computeExcalidrawVertexStyle(
+      const containerStyle = computeDrawinkVertexStyle(
         vertex.containerStyle
       );
-      const labelStyle = computeExcalidrawVertexLabelStyle(vertex.labelStyle);
+      const labelStyle = computeDrawinkVertexLabelStyle(vertex.labelStyle);
 
       let containerElement: DrawinkElementSkeleton = {
         id: vertex.id,
@@ -194,14 +194,14 @@ export const FlowchartToExcalidrawSkeletonConverter = new GraphConverter({
       // Get arrow position data
       const { startX, startY, reflectionPoints } = edge;
 
-      // Calculate Excalidraw arrow's points
+      // Calculate Drawink arrow's points
       const points = reflectionPoints.map((point) => [
         point.x - reflectionPoints[0].x,
         point.y - reflectionPoints[0].y,
       ]);
 
       // Get supported arrow type
-      const arrowType = computeExcalidrawArrowType(edge.type);
+      const arrowType = computeDrawinkArrowType(edge.type);
 
       const arrowId = `${edge.start}_${edge.end}`;
       const containerElement: DrawinkElementSkeleton = {
@@ -210,8 +210,8 @@ export const FlowchartToExcalidrawSkeletonConverter = new GraphConverter({
         groupIds,
         x: startX,
         y: startY,
-        // 4 and 2 are the Excalidraw's stroke width of thick and thin respectively
-        // TODO: use constant exported from Excalidraw package
+        // 4 and 2 are the Drawink's stroke width of thick and thin respectively
+        // TODO: use constant exported from Drawink package
         strokeWidth: edge.stroke === "thick" ? 4 : 2,
         strokeStyle: edge.stroke === "dotted" ? "dashed" : undefined,
         points,

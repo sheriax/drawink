@@ -1,16 +1,16 @@
 import { nanoid } from "nanoid";
 import {
-  transformToExcalidrawArrowSkeleton,
-  transformToExcalidrawContainerSkeleton,
-  transformToExcalidrawLineSkeleton,
-  transformToExcalidrawTextSkeleton,
-} from "../transformToExcalidrawSkeleton.js";
+  transformToDrawinkArrowSkeleton,
+  transformToDrawinkContainerSkeleton,
+  transformToDrawinkLineSkeleton,
+  transformToDrawinkTextSkeleton,
+} from "../transformToDrawinkSkeleton.js";
 import { GraphConverter } from "../GraphConverter.js";
 
 import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
 import type { Class } from "../../parser/class.js";
 
-export const classToExcalidrawSkeletonConvertor = new GraphConverter({
+export const classToDrawinkSkeletonConvertor = new GraphConverter({
   converter: (chart: Class) => {
     const elements: DrawinkElementSkeleton[] = [];
 
@@ -19,26 +19,26 @@ export const classToExcalidrawSkeletonConvertor = new GraphConverter({
         return;
       }
       node.forEach((element) => {
-        let excalidrawElement: DrawinkElementSkeleton;
+        let drawinkElement: DrawinkElementSkeleton;
 
         switch (element.type) {
           case "line":
-            excalidrawElement = transformToExcalidrawLineSkeleton(element);
+            drawinkElement = transformToDrawinkLineSkeleton(element);
             break;
 
           case "rectangle":
           case "ellipse":
-            excalidrawElement = transformToExcalidrawContainerSkeleton(element);
+            drawinkElement = transformToDrawinkContainerSkeleton(element);
             break;
 
           case "text":
-            excalidrawElement = transformToExcalidrawTextSkeleton(element);
+            drawinkElement = transformToDrawinkTextSkeleton(element);
             break;
           default:
             throw `unknown type ${element.type}`;
             break;
         }
-        elements.push(excalidrawElement);
+        elements.push(drawinkElement);
       });
     });
 
@@ -46,21 +46,21 @@ export const classToExcalidrawSkeletonConvertor = new GraphConverter({
       if (!line) {
         return;
       }
-      elements.push(transformToExcalidrawLineSkeleton(line));
+      elements.push(transformToDrawinkLineSkeleton(line));
     });
 
     Object.values(chart.arrows).forEach((arrow) => {
       if (!arrow) {
         return;
       }
-      const excalidrawElement = transformToExcalidrawArrowSkeleton(arrow);
-      elements.push(excalidrawElement);
+      const drawinkElement = transformToDrawinkArrowSkeleton(arrow);
+      elements.push(drawinkElement);
     });
 
     Object.values(chart.text).forEach((ele) => {
-      const excalidrawElement = transformToExcalidrawTextSkeleton(ele);
+      const drawinkElement = transformToDrawinkTextSkeleton(ele);
 
-      elements.push(excalidrawElement);
+      elements.push(drawinkElement);
     });
 
     Object.values(chart.namespaces).forEach((namespace) => {

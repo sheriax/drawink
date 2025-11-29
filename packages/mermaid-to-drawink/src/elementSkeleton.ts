@@ -127,7 +127,7 @@ export const createArrowSkeletonFromSVG = (
     arrow.points = points;
   }
   if (opts?.label) {
-    // In mermaid the text is positioned above arrow but in Excalidraw
+    // In mermaid the text is positioned above arrow but in Drawink
     // its postioned on the arrow hence the elements below it might look cluttered so shifting the arrow by an offset of 10px
     const offset = 10;
     arrow.startY = arrow.startY - offset;

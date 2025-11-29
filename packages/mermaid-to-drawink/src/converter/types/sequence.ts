@@ -4,15 +4,15 @@ import { nanoid } from "nanoid";
 import { GraphConverter } from "../GraphConverter.js";
 import { Sequence } from "../../parser/sequence.js";
 import {
-  transformToExcalidrawLineSkeleton,
-  transformToExcalidrawTextSkeleton,
-  transformToExcalidrawContainerSkeleton,
-  transformToExcalidrawArrowSkeleton,
-} from "../transformToExcalidrawSkeleton.js";
+  transformToDrawinkLineSkeleton,
+  transformToDrawinkTextSkeleton,
+  transformToDrawinkContainerSkeleton,
+  transformToDrawinkArrowSkeleton,
+} from "../transformToDrawinkSkeleton.js";
 
 import type { DrawinkElement } from "../../types.js";
 
-export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
+export const SequenceToDrawinkSkeletonConvertor = new GraphConverter({
   converter: (chart: Sequence) => {
     const elements: DrawinkElementSkeleton[] = [];
     const activations: DrawinkElementSkeleton[] = [];
@@ -21,29 +21,29 @@ export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
         return;
       }
       node.forEach((element) => {
-        let excalidrawElement: DrawinkElementSkeleton;
+        let drawinkElement: DrawinkElementSkeleton;
 
         switch (element.type) {
           case "line":
-            excalidrawElement = transformToExcalidrawLineSkeleton(element);
+            drawinkElement = transformToDrawinkLineSkeleton(element);
             break;
 
           case "rectangle":
           case "ellipse":
-            excalidrawElement = transformToExcalidrawContainerSkeleton(element);
+            drawinkElement = transformToDrawinkContainerSkeleton(element);
             break;
 
           case "text":
-            excalidrawElement = transformToExcalidrawTextSkeleton(element);
+            drawinkElement = transformToDrawinkTextSkeleton(element);
             break;
           default:
             throw `unknown type ${element.type}`;
             break;
         }
         if (element.type === "rectangle" && element?.subtype === "activation") {
-          activations.push(excalidrawElement);
+          activations.push(drawinkElement);
         } else {
-          elements.push(excalidrawElement);
+          elements.push(drawinkElement);
         }
       });
     });
@@ -52,7 +52,7 @@ export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
       if (!line) {
         return;
       }
-      elements.push(transformToExcalidrawLineSkeleton(line));
+      elements.push(transformToDrawinkLineSkeleton(line));
     });
 
     Object.values(chart.arrows).forEach((arrow) => {
@@ -60,10 +60,10 @@ export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
         return;
       }
 
-      elements.push(transformToExcalidrawArrowSkeleton(arrow));
+      elements.push(transformToDrawinkArrowSkeleton(arrow));
       if (arrow.sequenceNumber) {
         elements.push(
-          transformToExcalidrawContainerSkeleton(arrow.sequenceNumber)
+          transformToDrawinkContainerSkeleton(arrow.sequenceNumber)
         );
       }
     });
@@ -73,13 +73,13 @@ export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
     if (chart.loops) {
       const { lines, texts, nodes } = chart.loops;
       lines.forEach((line) => {
-        elements.push(transformToExcalidrawLineSkeleton(line));
+        elements.push(transformToDrawinkLineSkeleton(line));
       });
       texts.forEach((text) => {
-        elements.push(transformToExcalidrawTextSkeleton(text));
+        elements.push(transformToDrawinkTextSkeleton(text));
       });
       nodes.forEach((node) => {
-        elements.push(transformToExcalidrawContainerSkeleton(node));
+        elements.push(transformToDrawinkContainerSkeleton(node));
       });
     }
 
@@ -121,7 +121,7 @@ export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
         const groupRectWidth = maxX - minX + PADDING * 2;
         const groupRectHeight = maxY - minY + PADDING * 2;
         const groupRectId = nanoid();
-        const groupRect = transformToExcalidrawContainerSkeleton({
+        const groupRect = transformToDrawinkContainerSkeleton({
           type: "rectangle",
           x: groupRectX,
           y: groupRectY,

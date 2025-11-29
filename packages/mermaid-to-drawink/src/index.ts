@@ -1,5 +1,5 @@
 import { DEFAULT_FONT_SIZE } from "./constants.js";
-import { graphToExcalidraw } from "./graphToExcalidraw.js";
+import { graphToDrawink } from "./graphToDrawink.js";
 import { parseMermaid } from "./parseMermaid.js";
 import { validateMermaid } from "./validateMermaid.js";
 
@@ -35,11 +35,11 @@ export interface MermaidConfig {
   maxTextSize?: number;
 }
 
-export interface ExcalidrawConfig {
+export interface DrawinkConfig {
   fontSize?: number;
 }
 
-const parseMermaidToExcalidraw = async (
+const parseMermaidToDrawink = async (
   definition: string,
   config?: MermaidConfig
 ) => {
@@ -50,15 +50,15 @@ const parseMermaidToExcalidraw = async (
     ...mermaidConfig,
     themeVariables: {
       ...mermaidConfig.themeVariables,
-      // Multiplying by 1.25 to increase the font size by 25% and render correctly in Excalidraw
+      // Multiplying by 1.25 to increase the font size by 25% and render correctly in Drawink
       fontSize: `${fontSize * 1.25}px`,
     },
   });
-  // Only font size supported for excalidraw elements
-  const excalidrawElements = graphToExcalidraw(parsedMermaidData, {
+  // Only font size supported for drawink elements
+  const drawinkElements = graphToDrawink(parsedMermaidData, {
     fontSize,
   });
-  return excalidrawElements;
+  return drawinkElements;
 };
 
-export { parseMermaidToExcalidraw, validateMermaid };
+export { parseMermaidToDrawink, validateMermaid };

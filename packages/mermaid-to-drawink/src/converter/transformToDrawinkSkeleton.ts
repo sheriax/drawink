@@ -5,7 +5,7 @@ export const normalizeText = (text: string) => {
   return text.replace(/\\n/g, "\n");
 };
 
-export const transformToExcalidrawLineSkeleton = (line: Line) => {
+export const transformToDrawinkLineSkeleton = (line: Line) => {
   const lineElement: DrawinkElementSkeleton = {
     type: "line",
     x: line.startX,
@@ -29,7 +29,7 @@ export const transformToExcalidrawLineSkeleton = (line: Line) => {
   return lineElement;
 };
 
-export const transformToExcalidrawTextSkeleton = (element: Text) => {
+export const transformToDrawinkTextSkeleton = (element: Text) => {
   const textElement: DrawinkElementSkeleton = {
     type: "text",
     x: element.x,
@@ -49,7 +49,7 @@ export const transformToExcalidrawTextSkeleton = (element: Text) => {
   return textElement;
 };
 
-export const transformToExcalidrawContainerSkeleton = (
+export const transformToDrawinkContainerSkeleton = (
   element: Exclude<Node, Line | Arrow | Text>
 ) => {
   let extraProps = {};
@@ -87,7 +87,7 @@ export const transformToExcalidrawContainerSkeleton = (
   return container;
 };
 
-export const transformToExcalidrawArrowSkeleton = (arrow: Arrow) => {
+export const transformToDrawinkArrowSkeleton = (arrow: Arrow) => {
   const arrowElement: DrawinkElementSkeleton = {
     type: "arrow",
     x: arrow.startX,

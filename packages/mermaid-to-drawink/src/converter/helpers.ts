@@ -20,7 +20,7 @@ export interface ArrowType {
   endArrowhead?: Arrowhead | null;
 }
 /**
- * Convert mermaid edge type to Excalidraw arrow type
+ * Convert mermaid edge type to Drawink arrow type
  */
 const MERMAID_EDGE_TYPE_MAPPER: { [key: string]: ArrowType } = {
   arrow_circle: {
@@ -47,7 +47,7 @@ const MERMAID_EDGE_TYPE_MAPPER: { [key: string]: ArrowType } = {
   },
 };
 
-export const computeExcalidrawArrowType = (
+export const computeDrawinkArrowType = (
   mermaidArrowType: string
 ): ArrowType => {
   return MERMAID_EDGE_TYPE_MAPPER[mermaidArrowType];
@@ -74,50 +74,50 @@ const removeFontAwesomeIcons = (input: string): string => {
 /**
  * Compute style for vertex
  */
-export const computeExcalidrawVertexStyle = (
+export const computeDrawinkVertexStyle = (
   style: Vertex["containerStyle"]
 ): Partial<Mutable<DrawinkVertexElement>> => {
-  const excalidrawProperty: Partial<Mutable<DrawinkVertexElement>> = {};
+  const drawinkProperty: Partial<Mutable<DrawinkVertexElement>> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case CONTAINER_STYLE_PROPERTY.FILL: {
-        excalidrawProperty.backgroundColor = style[property];
-        excalidrawProperty.fillStyle = "solid";
+        drawinkProperty.backgroundColor = style[property];
+        drawinkProperty.fillStyle = "solid";
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE: {
-        excalidrawProperty.strokeColor = style[property];
+        drawinkProperty.strokeColor = style[property];
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_WIDTH: {
-        excalidrawProperty.strokeWidth = Number(
+        drawinkProperty.strokeWidth = Number(
           style[property]?.split("px")[0]
         );
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_DASHARRAY: {
-        excalidrawProperty.strokeStyle = "dashed";
+        drawinkProperty.strokeStyle = "dashed";
         break;
       }
     }
   });
-  return excalidrawProperty;
+  return drawinkProperty;
 };
 
 /**
  * Compute style for label
  */
-export const computeExcalidrawVertexLabelStyle = (
+export const computeDrawinkVertexLabelStyle = (
   style: Vertex["labelStyle"]
 ): Partial<Mutable<DrawinkTextElement>> => {
-  const excalidrawProperty: Partial<Mutable<DrawinkTextElement>> = {};
+  const drawinkProperty: Partial<Mutable<DrawinkTextElement>> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case LABEL_STYLE_PROPERTY.COLOR: {
-        excalidrawProperty.strokeColor = style[property];
+        drawinkProperty.strokeColor = style[property];
         break;
       }
     }
   });
-  return excalidrawProperty;
+  return drawinkProperty;
 };

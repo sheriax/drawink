@@ -55,7 +55,7 @@ export interface GraphImage {
   height: number;
 }
 
-export interface MermaidToExcalidrawResult {
+export interface MermaidToDrawinkResult {
   elements: DrawinkElementSkeleton[];
   files?: BinaryFiles;
 }
