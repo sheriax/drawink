@@ -73,7 +73,6 @@ export const AppMainMenu: React.FC<{
             }
             props?.refresh();
           }}
-          disabled
         >
           Visual Debug
         </MainMenu.Item>
