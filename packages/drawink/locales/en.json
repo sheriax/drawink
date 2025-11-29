@@ -237,7 +237,8 @@
     "publishLibrary": "Rename or publish",
     "submit": "Submit",
     "confirm": "Confirm",
-    "embeddableInteractionButton": "Click to interact"
+    "embeddableInteractionButton": "Click to interact",
+    "createBoard": "Create Board"
   },
   "alerts": {
     "clearReset": "This will clear the whole canvas. Are you sure?",
@@ -261,7 +262,8 @@
     "removeItemsFromsLibrary": "Delete {{count}} item(s) from library?",
     "invalidEncryptionKey": "Encryption key must be of 22 characters. Live collaboration is disabled.",
     "collabOfflineWarning": "No internet connection available.\nYour changes will not be saved!",
-    "localStorageQuotaExceeded": "Browser storage quota exceeded. Changes will not be saved."
+    "localStorageQuotaExceeded": "Browser storage quota exceeded. Changes will not be saved.",
+    "deleteBoard": "Are you sure you want to delete this board?"
   },
   "errors": {
     "unsupportedFileType": "Unsupported file type.",

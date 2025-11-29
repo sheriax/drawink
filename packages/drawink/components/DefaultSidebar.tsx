@@ -4,6 +4,7 @@ import {
   CANVAS_SEARCH_TAB,
   DEFAULT_SIDEBAR,
   LIBRARY_SIDEBAR_TAB,
+  BOARDS_SIDEBAR_TAB,
   composeEventHandlers,
 } from "@drawink/common";
 
@@ -16,10 +17,11 @@ import "../components/dropdownMenu/DropdownMenu.scss";
 
 import { useDrawinkSetAppState } from "./App";
 import { LibraryMenu } from "./LibraryMenu";
+import { BoardsMenu } from "./BoardsMenu";
 import { SearchMenu } from "./SearchMenu";
 import { Sidebar } from "./Sidebar/Sidebar";
 import { withInternalFallback } from "./hoc/withInternalFallback";
-import { LibraryIcon, searchIcon } from "./icons";
+import { LibraryIcon, searchIcon, RectangleIcon } from "./icons";
 
 import type { SidebarProps, SidebarTriggerProps } from "./Sidebar/common";
 
@@ -91,9 +93,9 @@ export const DefaultSidebar = Object.assign(
             isForceDocked || onDock === false || (!onDock && docked != null)
               ? undefined
               : // compose to allow the host app to listen on default behavior
-                composeEventHandlers(onDock, (docked) => {
-                  setAppState({ defaultSidebarDockedPreference: docked });
-                })
+              composeEventHandlers(onDock, (docked) => {
+                setAppState({ defaultSidebarDockedPreference: docked });
+              })
           }
         >
           <Sidebar.Tabs>
@@ -101,6 +103,9 @@ export const DefaultSidebar = Object.assign(
               <Sidebar.TabTriggers>
                 <Sidebar.TabTrigger tab={CANVAS_SEARCH_TAB}>
                   {searchIcon}
+                </Sidebar.TabTrigger>
+                <Sidebar.TabTrigger tab={BOARDS_SIDEBAR_TAB}>
+                  {RectangleIcon}
                 </Sidebar.TabTrigger>
                 <Sidebar.TabTrigger tab={LIBRARY_SIDEBAR_TAB}>
                   {LibraryIcon}
@@ -110,6 +115,9 @@ export const DefaultSidebar = Object.assign(
             </Sidebar.Header>
             <Sidebar.Tab tab={LIBRARY_SIDEBAR_TAB}>
               <LibraryMenu />
+            </Sidebar.Tab>
+            <Sidebar.Tab tab={BOARDS_SIDEBAR_TAB}>
+              <BoardsMenu />
             </Sidebar.Tab>
             <Sidebar.Tab tab={CANVAS_SEARCH_TAB}>
               <SearchMenu />

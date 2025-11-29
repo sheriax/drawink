@@ -804,6 +804,7 @@ const DrawinkWrapper = () => {
       })}
     >
       <Drawink
+        boardsAPI={LocalData.boards}
         drawinkAPI={drawinkRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}

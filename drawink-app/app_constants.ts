@@ -44,6 +44,8 @@ export const STORAGE_KEYS = {
   LOCAL_STORAGE_DEBUG: "drawink-debug",
   VERSION_DATA_STATE: "version-dataState",
   VERSION_FILES: "version-files",
+  LOCAL_STORAGE_BOARDS: "drawink-boards",
+  LOCAL_STORAGE_CURRENT_BOARD_ID: "drawink-current-board-id",
 
   IDB_LIBRARY: "drawink-library",
 

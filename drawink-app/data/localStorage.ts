@@ -39,8 +39,50 @@ export const importFromLocalStorage = () => {
   let savedState = null;
 
   try {
-    savedElements = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS);
-    savedState = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_APP_STATE);
+    const currentBoardId = localStorage.getItem(
+      STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
+    );
+    const elementsKey = currentBoardId
+      ? `drawink-board-${currentBoardId}-elements`
+      : STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS;
+    const stateKey = currentBoardId
+      ? `drawink-board-${currentBoardId}-state`
+      : STORAGE_KEYS.LOCAL_STORAGE_APP_STATE;
+
+    savedElements = localStorage.getItem(elementsKey);
+    savedState = localStorage.getItem(stateKey);
+
+    // Migration: If no boards exist, create a default one with current data
+    const boards = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS);
+    if (!boards || JSON.parse(boards).length === 0) {
+      const defaultBoard = {
+        id: "default",
+        name: "Default Board",
+        createdAt: Date.now(),
+        lastModified: Date.now(),
+      };
+      localStorage.setItem(
+        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
+        JSON.stringify([defaultBoard]),
+      );
+      localStorage.setItem(
+        STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
+        defaultBoard.id,
+      );
+      // Save current data to default board keys
+      if (savedElements) {
+        localStorage.setItem(
+          `drawink-board-${defaultBoard.id}-elements`,
+          savedElements,
+        );
+      }
+      if (savedState) {
+        localStorage.setItem(
+          `drawink-board-${defaultBoard.id}-state`,
+          savedState,
+        );
+      }
+    }
   } catch (error: any) {
     // Unable to access localStorage
     console.error(error);

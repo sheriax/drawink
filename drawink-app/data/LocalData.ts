@@ -11,7 +11,7 @@
  */
 
 import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
-import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce } from "@drawink/common";
+import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@drawink/common";
 import {
   createStore,
   entries,
@@ -32,6 +32,7 @@ import type {
   AppState,
   BinaryFileData,
   BinaryFiles,
+  Board,
 } from "@drawink/drawink/types";
 import type { MaybePromise } from "@drawink/common/utility-types";
 
@@ -82,14 +83,21 @@ const saveDataStateToLocalStorage = (
       _appState.openSidebar = null;
     }
 
+    const currentBoardId = localStorage.getItem(
+      STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
+    );
+    const elementsKey = currentBoardId
+      ? `drawink-board-${currentBoardId}-elements`
+      : STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS;
+    const stateKey = currentBoardId
+      ? `drawink-board-${currentBoardId}-state`
+      : STORAGE_KEYS.LOCAL_STORAGE_APP_STATE;
+
     localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS,
+      elementsKey,
       JSON.stringify(getNonDeletedElements(elements)),
     );
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_APP_STATE,
-      JSON.stringify(_appState),
-    );
+    localStorage.setItem(stateKey, JSON.stringify(_appState));
     updateBrowserStateVersion(STORAGE_KEYS.VERSION_DATA_STATE);
     if (localStorageQuotaExceeded) {
       appJotaiStore.set(localStorageQuotaExceededAtom, false);
@@ -219,6 +227,59 @@ export class LocalData {
       return { savedFiles, erroredFiles };
     },
   });
+
+  static boards = {
+    getBoards: async (): Promise<Board[]> => {
+      try {
+        const boards = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS);
+        return boards ? JSON.parse(boards) : [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+    createBoard: async (name: string): Promise<string> => {
+      const boards = await LocalData.boards.getBoards();
+      const newBoard: Board = {
+        id: randomId(),
+        name,
+        createdAt: Date.now(),
+        lastModified: Date.now(),
+      };
+      boards.push(newBoard);
+      localStorage.setItem(
+        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
+        JSON.stringify(boards),
+      );
+      return newBoard.id;
+    },
+    switchBoard: async (id: string): Promise<void> => {
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID, id);
+    },
+    updateBoardName: async (id: string, name: string): Promise<void> => {
+      const boards = await LocalData.boards.getBoards();
+      const board = boards.find((b) => b.id === id);
+      if (board) {
+        board.name = name;
+        board.lastModified = Date.now();
+        localStorage.setItem(
+          STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
+          JSON.stringify(boards),
+        );
+      }
+    },
+    deleteBoard: async (id: string): Promise<void> => {
+      const boards = await LocalData.boards.getBoards();
+      const newBoards = boards.filter((b) => b.id !== id);
+      localStorage.setItem(
+        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
+        JSON.stringify(newBoards),
+      );
+    },
+    getCurrentBoardId: async (): Promise<string | null> => {
+      return localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
+    },
+  };
 }
 export class LibraryIndexedDBAdapter {
   /** IndexedDB database and store name */
