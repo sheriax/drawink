@@ -1,6 +1,11 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import svgrPlugin from "vite-plugin-svgr";
 import { ViteEjsPlugin } from "vite-plugin-ejs";
 import { VitePWA } from "vite-plugin-pwa";
@@ -115,7 +120,11 @@ export default defineConfig(({ mode }) => {
         generateRobotsTxt: false,
       }),
       woff2BrowserPlugin(),
-      react(),
+      react({
+        babel: {
+          compact: false,
+        },
+      }),
       checker({
         // Disabled TypeScript checker due to pre-existing @types/d3-dispatch compatibility errors
         // TypeScript 4.9.4 doesn't support 'const' type parameters used in newer d3-dispatch types
