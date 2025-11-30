@@ -254,7 +254,14 @@ export const TTDDialogBase = withInternalFallback(
             <p className="dialog-mermaid-title">{t("mermaid.title")}</p>
           ) : (
             <TTDDialogTabTriggers>
-              <TTDDialogTabTrigger tab="text-to-diagram">
+              <TTDDialogTabTrigger
+                tab="text-to-diagram"
+                style={{
+                  cursor: 'not-allowed',
+                  opacity: 0.5,
+                }}
+                disabled
+              >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   {t("labels.textToDiagram")}
                   <div
@@ -268,9 +275,10 @@ export const TTDDialogBase = withInternalFallback(
                       borderRadius: "12px",
                       background: "var(--color-promo)",
                       color: "var(--color-surface-lowest)",
+                      opacity: 0.5,
                     }}
                   >
-                    AI Beta
+                    coming soon
                   </div>
                 </div>
               </TTDDialogTabTrigger>
