@@ -1,7 +1,5 @@
 import { DEFAULT_EXPORT_PADDING, EDITOR_LS_KEYS } from "@drawink/common";
 
-import type { MermaidConfig } from "@drawink/mermaid-to-drawink";
-import type { MermaidToDrawinkResult } from "@drawink/mermaid-to-drawink/dist/interfaces";
 
 import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
@@ -11,6 +9,9 @@ import { t } from "../../i18n";
 import { convertToDrawinkElements, exportToCanvas } from "../../index";
 
 import type { AppClassProperties, BinaryFiles } from "../../types";
+import { MermaidConfig } from "@excalidraw/mermaid-to-excalidraw";
+import { MermaidToExcalidrawResult } from "@excalidraw/mermaid-to-excalidraw/dist/interfaces";
+
 
 const resetPreview = ({
   canvasRef,
@@ -36,10 +37,10 @@ const resetPreview = ({
 export interface MermaidToDrawinkLibProps {
   loaded: boolean;
   api: Promise<{
-    parseMermaidToDrawink: (
+    parseMermaidToExcalidraw: (
       definition: string,
       config?: MermaidConfig,
-    ) => Promise<MermaidToDrawinkResult>;
+    ) => Promise<MermaidToExcalidrawResult>;
   }>;
 }
 
@@ -78,9 +79,9 @@ export const convertMermaidToDrawink = async ({
 
     let ret;
     try {
-      ret = await api.parseMermaidToDrawink(mermaidDefinition);
+      ret = await api.parseMermaidToExcalidraw(mermaidDefinition);
     } catch (err: any) {
-      ret = await api.parseMermaidToDrawink(
+      ret = await api.parseMermaidToExcalidraw(
         mermaidDefinition.replace(/"/g, "'"),
       );
     }

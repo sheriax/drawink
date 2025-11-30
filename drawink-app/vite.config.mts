@@ -47,10 +47,7 @@ export default defineConfig(({ mode }) => {
         },
         {
           find: /^@drawink\/drawink$/,
-          replacement: path.resolve(
-            __dirname,
-            "../packages/drawink/index.tsx",
-          ),
+          replacement: path.resolve(__dirname, "../packages/drawink/index.tsx"),
         },
         {
           find: /^@drawink\/drawink\/(.*?)/,
@@ -144,6 +141,7 @@ export default defineConfig(({ mode }) => {
         },
 
         workbox: {
+          maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
           // don't precache fonts, locales and separate chunks
           globIgnores: [
             "fonts.css",

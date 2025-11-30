@@ -215,7 +215,7 @@ export const TTDDialogBase = withInternalFallback(
     const [mermaidToDrawinkLib, setMermaidToDrawinkLib] =
       useState<MermaidToDrawinkLibProps>({
         loaded: false,
-        api: import("@drawink/mermaid-to-drawink"),
+        api: import("@excalidraw/mermaid-to-excalidraw"),
       });
 
     useEffect(() => {
