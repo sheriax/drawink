@@ -24,7 +24,7 @@ COPY . .
 ARG NODE_ENV=production
 
 # Build the frontend app
-RUN bun run build:app:docker
+RUN cd drawink-app && VITE_APP_DISABLE_SENTRY=true VITE_APP_DISABLE_PWA=true bun x vite build
 
 # Build stage for json-backend
 FROM --platform=${BUILDPLATFORM} oven/bun:1 AS backend-build

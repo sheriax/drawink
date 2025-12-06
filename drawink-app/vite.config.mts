@@ -77,6 +77,11 @@ export default defineConfig(({ mode }) => {
           find: /^@drawink\/utils\/(.*?)/,
           replacement: path.resolve(__dirname, "../packages/utils/src/$1"),
         },
+        // Resolve drawink-app internal imports
+        {
+          find: /^drawink-app\/(.*?)/,
+          replacement: path.resolve(__dirname, "./$1"),
+        },
       ],
     },
     build: {
@@ -142,163 +147,168 @@ export default defineConfig(({ mode }) => {
       }),
       svgrPlugin(),
       ViteEjsPlugin(),
-      VitePWA({
-        registerType: "autoUpdate",
-        devOptions: {
-          /* set this flag to true to enable in Development mode */
-          enabled: envVars.VITE_APP_ENABLE_PWA === "true",
-        },
+      // Conditionally include PWA plugin (disabled in Docker builds)
+      ...(envVars.VITE_APP_DISABLE_PWA === "true"
+        ? []
+        : [
+          VitePWA({
+            registerType: "autoUpdate",
+            devOptions: {
+              /* set this flag to true to enable in Development mode */
+              enabled: envVars.VITE_APP_ENABLE_PWA === "true",
+            },
 
-        workbox: {
-          maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
-          // don't precache fonts, locales and separate chunks
-          globIgnores: [
-            "fonts.css",
-            "**/locales/**",
-            "service-worker.js",
-            "**/*.chunk-*.js",
-          ],
-          runtimeCaching: [
-            {
-              urlPattern: new RegExp(".+.woff2"),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "fonts",
-                expiration: {
-                  maxEntries: 1000,
-                  maxAgeSeconds: 60 * 60 * 24 * 90, // 90 days
-                },
-                cacheableResponse: {
-                  // 0 to cache "opaque" responses from cross-origin requests (i.e. CDN)
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
-              urlPattern: new RegExp("fonts.css"),
-              handler: "StaleWhileRevalidate",
-              options: {
-                cacheName: "fonts",
-                expiration: {
-                  maxEntries: 50,
-                },
-              },
-            },
-            {
-              urlPattern: new RegExp("locales/[^/]+.js"),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "locales",
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 * 30, // <== 30 days
-                },
-              },
-            },
-            {
-              urlPattern: new RegExp(".chunk-.+.js"),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "chunk",
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 * 90, // <== 90 days
-                },
-              },
-            },
-          ],
-        },
-        manifest: {
-          short_name: "Drawink",
-          name: "Drawink",
-          description:
-            "Drawink is a whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
-          icons: [
-            {
-              src: "android-chrome-192x192.png",
-              sizes: "192x192",
-              type: "image/png",
-            },
-            {
-              src: "apple-touch-icon.png",
-              type: "image/png",
-              sizes: "180x180",
-            },
-            {
-              src: "favicon-32x32.png",
-              sizes: "32x32",
-              type: "image/png",
-            },
-            {
-              src: "favicon-16x16.png",
-              sizes: "16x16",
-              type: "image/png",
-            },
-          ],
-          start_url: "/",
-          id: "drawink",
-          display: "standalone",
-          theme_color: "#121212",
-          background_color: "#ffffff",
-          file_handlers: [
-            {
-              action: "/",
-              accept: {
-                "application/vnd.drawink+json": [".drawink"],
-              },
-            },
-          ],
-          share_target: {
-            action: "/web-share-target",
-            method: "POST",
-            enctype: "multipart/form-data",
-            params: {
-              files: [
+            workbox: {
+              maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
+              // don't precache fonts, locales and separate chunks
+              globIgnores: [
+                "fonts.css",
+                "**/locales/**",
+                "service-worker.js",
+                "**/*.chunk-*.js",
+              ],
+              runtimeCaching: [
                 {
-                  name: "file",
-                  accept: [
-                    "application/vnd.drawink+json",
-                    "application/json",
-                    ".drawink",
-                  ],
+                  urlPattern: new RegExp(".+.woff2"),
+                  handler: "CacheFirst",
+                  options: {
+                    cacheName: "fonts",
+                    expiration: {
+                      maxEntries: 1000,
+                      maxAgeSeconds: 60 * 60 * 24 * 90, // 90 days
+                    },
+                    cacheableResponse: {
+                      // 0 to cache "opaque" responses from cross-origin requests (i.e. CDN)
+                      statuses: [0, 200],
+                    },
+                  },
+                },
+                {
+                  urlPattern: new RegExp("fonts.css"),
+                  handler: "StaleWhileRevalidate",
+                  options: {
+                    cacheName: "fonts",
+                    expiration: {
+                      maxEntries: 50,
+                    },
+                  },
+                },
+                {
+                  urlPattern: new RegExp("locales/[^/]+.js"),
+                  handler: "CacheFirst",
+                  options: {
+                    cacheName: "locales",
+                    expiration: {
+                      maxEntries: 50,
+                      maxAgeSeconds: 60 * 60 * 24 * 30, // <== 30 days
+                    },
+                  },
+                },
+                {
+                  urlPattern: new RegExp(".chunk-.+.js"),
+                  handler: "CacheFirst",
+                  options: {
+                    cacheName: "chunk",
+                    expiration: {
+                      maxEntries: 50,
+                      maxAgeSeconds: 60 * 60 * 24 * 90, // <== 90 days
+                    },
+                  },
                 },
               ],
             },
-          },
-          screenshots: [
-            {
-              src: "/screenshots/virtual-whiteboard.png",
-              type: "image/png",
-              sizes: "462x945",
+            manifest: {
+              short_name: "Drawink",
+              name: "Drawink",
+              description:
+                "Drawink is a whiteboard tool that lets you easily sketch diagrams that have a hand-drawn feel to them.",
+              icons: [
+                {
+                  src: "android-chrome-192x192.png",
+                  sizes: "192x192",
+                  type: "image/png",
+                },
+                {
+                  src: "apple-touch-icon.png",
+                  type: "image/png",
+                  sizes: "180x180",
+                },
+                {
+                  src: "favicon-32x32.png",
+                  sizes: "32x32",
+                  type: "image/png",
+                },
+                {
+                  src: "favicon-16x16.png",
+                  sizes: "16x16",
+                  type: "image/png",
+                },
+              ],
+              start_url: "/",
+              id: "drawink",
+              display: "standalone",
+              theme_color: "#121212",
+              background_color: "#ffffff",
+              file_handlers: [
+                {
+                  action: "/",
+                  accept: {
+                    "application/vnd.drawink+json": [".drawink"],
+                  },
+                },
+              ],
+              share_target: {
+                action: "/web-share-target",
+                method: "POST",
+                enctype: "multipart/form-data",
+                params: {
+                  files: [
+                    {
+                      name: "file",
+                      accept: [
+                        "application/vnd.drawink+json",
+                        "application/json",
+                        ".drawink",
+                      ],
+                    },
+                  ],
+                },
+              },
+              screenshots: [
+                {
+                  src: "/screenshots/virtual-whiteboard.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+                {
+                  src: "/screenshots/wireframe.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+                {
+                  src: "/screenshots/illustration.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+                {
+                  src: "/screenshots/shapes.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+                {
+                  src: "/screenshots/collaboration.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+                {
+                  src: "/screenshots/export.png",
+                  type: "image/png",
+                  sizes: "462x945",
+                },
+              ],
             },
-            {
-              src: "/screenshots/wireframe.png",
-              type: "image/png",
-              sizes: "462x945",
-            },
-            {
-              src: "/screenshots/illustration.png",
-              type: "image/png",
-              sizes: "462x945",
-            },
-            {
-              src: "/screenshots/shapes.png",
-              type: "image/png",
-              sizes: "462x945",
-            },
-            {
-              src: "/screenshots/collaboration.png",
-              type: "image/png",
-              sizes: "462x945",
-            },
-            {
-              src: "/screenshots/export.png",
-              type: "image/png",
-              sizes: "462x945",
-            },
-          ],
-        },
-      }),
+          }),
+        ]),
       createHtmlPlugin({
         minify: true,
       }),
