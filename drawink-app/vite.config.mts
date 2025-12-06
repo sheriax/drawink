@@ -16,6 +16,8 @@ import { woff2BrowserPlugin } from "../scripts/woff2/woff2-vite-plugins";
 export default defineConfig(({ mode }) => {
   // To load .env variables
   const envVars = loadEnv(mode, `../`);
+  // Also check process.env for Docker builds where env vars are set via shell
+  const disablePWA = process.env.VITE_APP_DISABLE_PWA === "true" || envVars.VITE_APP_DISABLE_PWA === "true";
   // https://vitejs.dev/config/
   return {
     server: {
@@ -84,6 +86,10 @@ export default defineConfig(({ mode }) => {
         },
       ],
     },
+    // Inject env vars from shell into client-side code for Docker builds
+    define: {
+      'import.meta.env.VITE_APP_DISABLE_PWA': JSON.stringify(disablePWA ? "true" : "false"),
+    },
     build: {
       outDir: "build",
       rollupOptions: {
@@ -148,7 +154,7 @@ export default defineConfig(({ mode }) => {
       svgrPlugin(),
       ViteEjsPlugin(),
       // Conditionally include PWA plugin (disabled in Docker builds)
-      ...(envVars.VITE_APP_DISABLE_PWA === "true"
+      ...(disablePWA
         ? []
         : [
           VitePWA({
