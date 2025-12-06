@@ -87,3 +87,18 @@ Currently uses in-memory storage (Map) for demonstration. For production, consid
 
 - **In-Memory Storage**: Data is lost on server restart (demo only)
 - **Image Storage**: This backend only handles scene data. Images still use Firebase Storage.
+
+## Docker Deployment
+
+The json-backend is included in the main Docker image and runs alongside the frontend via supervisor.
+
+```bash
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Or build the Docker image directly
+docker build -t sheriax-board .
+docker run -p 3000:80 -p 3001:3001 sheriax-board
+```
+
+In Docker, the nginx server proxies `/api/v2/*` requests to the json-backend, so both frontend and API are served from port 80.
