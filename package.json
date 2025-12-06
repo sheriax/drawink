@@ -5,7 +5,8 @@
   "workspaces": [
     "drawink-app",
     "packages/*",
-    "examples/*"
+    "examples/*",
+    "json-backend"
   ],
   "devDependencies": {
     "@babel/preset-env": "7.26.9",
