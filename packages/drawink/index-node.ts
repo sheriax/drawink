@@ -15,6 +15,8 @@
 (globalThis as any).navigator = { userAgent: "node" };
 (globalThis as any).matchMedia = () => ({ matches: false, addListener: () => { }, removeListener: () => { } });
 
+import { DEFAULT_FONT_FAMILY } from "@drawink/common";
+import type { Radians } from "@drawink/math";
 import { getDefaultAppState } from "./appState";
 import { exportToCanvas } from "./scene/export";
 import { createWriteStream } from "fs";
@@ -22,86 +24,122 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 // node-canvas 3.x is Bun compatible
-// @ts-ignore - canvas types not installed, install with: npm install @types/canvas if needed
-import { registerFont, createCanvas } from "canvas";
+// @ts-ignore - canvas types not installed
+import { createCanvas as nodeCreateCanvas } from "canvas";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const publicDir = resolve(__dirname, "../../public");
 
+// Base element structure matching current drawink API
+const elementBase = {
+  x: 100,
+  y: 100,
+  width: 100,
+  height: 100,
+  angle: 0 as Radians,
+  strokeColor: "#000000",
+  backgroundColor: "transparent",
+  fillStyle: "hachure" as const,
+  strokeWidth: 1,
+  strokeStyle: "solid" as const,
+  roughness: 1,
+  opacity: 100,
+  groupIds: [] as string[],
+  frameId: null,
+  roundness: null,
+  index: null,
+  seed: 1041657908,
+  version: 1,
+  versionNonce: 1188004276,
+  isDeleted: false,
+  boundElements: null,
+  updated: Date.now(),
+  link: null,
+  locked: false,
+};
+
+// Test elements with proper structure
 const elements = [
   {
-    id: "eVzaxG3YnHhqjEmD7NdYo",
-    type: "diamond",
-    x: 519,
-    y: 199,
-    width: 113,
-    height: 115,
-    strokeColor: "#000000",
-    backgroundColor: "transparent",
-    fillStyle: "hachure",
-    strokeWidth: 1,
-    roughness: 1,
-    opacity: 100,
+    ...elementBase,
+    id: "diamond-1",
+    type: "diamond" as const,
+    x: 50,
+    y: 50,
+    width: 100,
+    height: 100,
     seed: 749612521,
   },
   {
-    id: "7W-iw5pEBPTU3eaCaLtFo",
-    type: "ellipse",
-    x: 552,
-    y: 238,
-    width: 49,
-    height: 44,
-    strokeColor: "#000000",
-    backgroundColor: "transparent",
-    fillStyle: "hachure",
-    strokeWidth: 1,
-    roughness: 1,
-    opacity: 100,
+    ...elementBase,
+    id: "ellipse-1",
+    type: "ellipse" as const,
+    x: 200,
+    y: 50,
+    width: 80,
+    height: 80,
     seed: 952056308,
   },
   {
-    id: "kqKI231mvTrcsYo2DkUsR",
-    type: "text",
-    x: 557.5,
-    y: 317.5,
-    width: 43,
-    height: 31,
-    strokeColor: "#000000",
-    backgroundColor: "transparent",
-    fillStyle: "hachure",
-    strokeWidth: 1,
-    roughness: 1,
-    opacity: 100,
-    seed: 1683771448,
-    text: "test",
-    font: "20px Virgil",
-    baseline: 22,
+    ...elementBase,
+    id: "rectangle-1",
+    type: "rectangle" as const,
+    x: 350,
+    y: 50,
+    width: 120,
+    height: 80,
+    seed: 123456789,
   },
 ];
 
-registerFont(resolve(publicDir, "Virgil.woff2"), { family: "Virgil" });
-registerFont(resolve(publicDir, "Cascadia.woff2"), { family: "Cascadia" });
+// Custom createCanvas wrapper for node-canvas
+const createCanvas = (width: number, height: number) => {
+  const canvas = nodeCreateCanvas(width, height);
+  return { canvas: canvas as unknown as HTMLCanvasElement, scale: 1 };
+};
 
-const canvas = exportToCanvas(
-  elements as any,
-  {
+// Skip font loading in node environment  
+const loadFonts = async () => {
+  console.log("⚠️  Skipping font loading (node-canvas requires TTF fonts)");
+};
+
+async function main() {
+  console.log("🎨 Exporting test canvas...");
+
+  const appState = {
     ...getDefaultAppState(),
     offsetTop: 0,
     offsetLeft: 0,
-    width: 0,
-    height: 0,
-  },
-  {}, // files
-  {
-    exportBackground: true,
-    viewBackgroundColor: "#ffffff",
-  },
-  createCanvas,
-);
+    width: 600,
+    height: 400,
+    exportScale: 1,
+  };
 
-const out = createWriteStream("test.png");
-const stream = (canvas as any).createPNGStream();
-stream.pipe(out);
-out.on("finish", () => {
-  console.info("test.png was created.");
+  const canvas = await exportToCanvas(
+    elements as any,
+    appState,
+    {}, // files
+    {
+      exportBackground: true,
+      viewBackgroundColor: "#ffffff",
+      exportPadding: 20,
+    },
+    createCanvas,
+    loadFonts,
+  );
+
+  const out = createWriteStream("test.png");
+  const stream = (canvas as any).createPNGStream();
+  stream.pipe(out);
+
+  return new Promise<void>((resolve) => {
+    out.on("finish", () => {
+      console.info("✅ test.png was created.");
+      resolve();
+    });
+  });
+}
+
+main().catch((err) => {
+  console.error("❌ Export failed:", err);
+  process.exit(1);
 });
