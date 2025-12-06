@@ -11,9 +11,12 @@ COPY packages/drawink/package.json ./packages/drawink/
 COPY packages/element/package.json ./packages/element/
 COPY packages/math/package.json ./packages/math/
 COPY packages/utils/package.json ./packages/utils/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/prettier-config/package.json ./packages/prettier-config/
+COPY json-backend/package.json ./json-backend/
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy all source files
 COPY . .
@@ -29,7 +32,7 @@ FROM --platform=${BUILDPLATFORM} oven/bun:1 AS backend-build
 WORKDIR /app
 
 COPY json-backend/package.json json-backend/bun.lock* ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 COPY json-backend/ ./
 RUN bun build src/index.ts --outdir=./dist --target=bun
