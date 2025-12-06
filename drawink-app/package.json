@@ -42,10 +42,10 @@
   },
   "prettier": "@drawink/prettier-config",
   "scripts": {
-    "build-node": "node ./scripts/build-node.js",
+    "build-node": "bun ../scripts/build-node.ts",
     "build:app:docker": "cross-env VITE_APP_DISABLE_SENTRY=true vite build",
     "build:app": "cross-env VITE_APP_GIT_SHA=$VERCEL_GIT_COMMIT_SHA cross-env VITE_APP_ENABLE_TRACKING=true vite build",
-    "build:version": "node ../scripts/build-version.js",
+    "build:version": "bun ../scripts/build-version.ts",
     "build": "bun run build:app && bun run build:version",
     "start": "vite",
     "start:production": "bun run build && bun run serve",

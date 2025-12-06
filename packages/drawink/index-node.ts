@@ -1,9 +1,32 @@
+// Browser globals polyfills for Node/Bun environment
+// Must be defined BEFORE importing any drawink code
+(globalThis as any).devicePixelRatio = 1;
+(globalThis as any).window = globalThis;
+(globalThis as any).document = {
+  createElement: () => ({
+    getContext: () => null,
+    style: {},
+    setAttribute: () => { },
+    appendChild: () => { },
+  }),
+  body: { appendChild: () => { }, removeChild: () => { } },
+  head: { appendChild: () => { } },
+};
+(globalThis as any).navigator = { userAgent: "node" };
+(globalThis as any).matchMedia = () => ({ matches: false, addListener: () => { }, removeListener: () => { } });
+
 import { getDefaultAppState } from "./appState";
 import { exportToCanvas } from "./scene/export";
+import { createWriteStream } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const fs = require("fs");
+// node-canvas 3.x is Bun compatible
+// @ts-ignore - canvas types not installed, install with: npm install @types/canvas if needed
+import { registerFont, createCanvas } from "canvas";
 
-const { registerFont, createCanvas } = require("canvas");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const publicDir = resolve(__dirname, "../../public");
 
 const elements = [
   {
@@ -56,8 +79,8 @@ const elements = [
   },
 ];
 
-registerFont("./public/Virgil.woff2", { family: "Virgil" });
-registerFont("./public/Cascadia.woff2", { family: "Cascadia" });
+registerFont(resolve(publicDir, "Virgil.woff2"), { family: "Virgil" });
+registerFont(resolve(publicDir, "Cascadia.woff2"), { family: "Cascadia" });
 
 const canvas = exportToCanvas(
   elements as any,
@@ -76,7 +99,7 @@ const canvas = exportToCanvas(
   createCanvas,
 );
 
-const out = fs.createWriteStream("test.png");
+const out = createWriteStream("test.png");
 const stream = (canvas as any).createPNGStream();
 stream.pipe(out);
 out.on("finish", () => {

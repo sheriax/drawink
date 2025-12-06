@@ -1,15 +1,22 @@
-const fs = require("fs");
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+#!/usr/bin/env bun
 
-const drawinkDir = `${__dirname}/../packages/drawink`;
-const drawinkPackage = `${drawinkDir}/package.json`;
-const pkg = require(drawinkPackage);
+import { readFileSync, writeFileSync } from "fs";
+import { promisify } from "util";
+import { exec as execCallback } from "child_process";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const exec = promisify(execCallback);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const drawinkDir = resolve(__dirname, "../packages/drawink");
+const drawinkPackage = resolve(drawinkDir, "package.json");
+const pkg = JSON.parse(readFileSync(drawinkPackage, "utf-8"));
 const lastVersion = pkg.version;
-const existingChangeLog = fs.readFileSync(`${drawinkDir}/CHANGELOG.md`, "utf8");
+const existingChangeLog = readFileSync(resolve(drawinkDir, "CHANGELOG.md"), "utf8");
 
 const supportedTypes = ["feat", "fix", "style", "refactor", "perf", "build"];
-const headerForType = {
+const headerForType: Record<string, string> = {
   feat: "Features",
   fix: "Fixes",
   style: "Styles",
@@ -18,27 +25,28 @@ const headerForType = {
   build: "Build",
 };
 
-const badCommits = [];
-const getCommitHashForLastVersion = async () => {
+const badCommits: string[] = [];
+
+const getCommitHashForLastVersion = async (): Promise<string> => {
   try {
     const commitMessage = `"release @drawink/drawink"`;
     const { stdout } = await exec(
       `git log --format=format:"%H" --grep=${commitMessage}`,
     );
-    // take commit hash from latest release
     return stdout.split(/\r?\n/)[0];
   } catch (error) {
     console.error(error);
+    return "";
   }
 };
 
-const getLibraryCommitsSinceLastRelease = async () => {
+const getLibraryCommitsSinceLastRelease = async (): Promise<Record<string, string[]>> => {
   const commitHash = await getCommitHashForLastVersion();
   const { stdout } = await exec(
     `git log --pretty=format:%s ${commitHash}...master`,
   );
   const commitsSinceLastRelease = stdout.split("\n");
-  const commitList = {};
+  const commitList: Record<string, string[]> = {};
   supportedTypes.forEach((type) => {
     commitList[type] = [];
   });
@@ -46,20 +54,16 @@ const getLibraryCommitsSinceLastRelease = async () => {
   commitsSinceLastRelease.forEach((commit) => {
     const indexOfColon = commit.indexOf(":");
     const type = commit.slice(0, indexOfColon);
-    if (!supportedTypes.includes(type)) {
-      return;
-    }
+    if (!supportedTypes.includes(type)) return;
+
     const messageWithoutType = commit.slice(indexOfColon + 1).trim();
     const messageWithCapitalizeFirst =
       messageWithoutType.charAt(0).toUpperCase() + messageWithoutType.slice(1);
     const prMatch = commit.match(/\(#([0-9]*)\)/);
+
     if (prMatch) {
       const prNumber = prMatch[1];
-
-      // return if the changelog already contains the pr number which would happen for package updates
-      if (existingChangeLog.includes(prNumber)) {
-        return;
-      }
+      if (existingChangeLog.includes(prNumber)) return;
       const prMarkdown = `[#${prNumber}](https://github.com/drawink/drawink/pull/${prNumber})`;
       const messageWithPRLink = messageWithCapitalizeFirst.replace(
         /\(#[0-9]*\)/,
@@ -75,10 +79,11 @@ const getLibraryCommitsSinceLastRelease = async () => {
   return commitList;
 };
 
-const updateChangelog = async (nextVersion) => {
+const updateChangelog = async (nextVersion: string): Promise<void> => {
   const commitList = await getLibraryCommitsSinceLastRelease();
   let changelogForLibrary =
     "## Drawink Library\n\n**_This section lists the updates made to the drawink library and will not affect the integration._**\n\n";
+
   supportedTypes.forEach((type) => {
     if (commitList[type].length) {
       changelogForLibrary += `### ${headerForType[type]}\n\n`;
@@ -88,6 +93,7 @@ const updateChangelog = async (nextVersion) => {
       });
     }
   });
+
   changelogForLibrary += "---\n";
   const lastVersionIndex = existingChangeLog.indexOf(`## ${lastVersion}`);
   let updatedContent =
@@ -97,7 +103,7 @@ const updateChangelog = async (nextVersion) => {
   const currentDate = new Date().toISOString().slice(0, 10);
   const newVersion = `## ${nextVersion} (${currentDate})`;
   updatedContent = updatedContent.replace(`## Unreleased`, newVersion);
-  fs.writeFileSync(`${drawinkDir}/CHANGELOG.md`, updatedContent, "utf8");
+  writeFileSync(resolve(drawinkDir, "CHANGELOG.md"), updatedContent, "utf8");
 };
 
-module.exports = updateChangelog;
+export default updateChangelog;

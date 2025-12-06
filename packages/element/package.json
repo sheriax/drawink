@@ -49,7 +49,7 @@
   },
   "scripts": {
     "gen:types": "rimraf types && tsc",
-    "build:esm": "rimraf dist && node ../../scripts/buildBase.js && yarn gen:types"
+    "build:esm": "rimraf dist && bun ../../scripts/buildBase.ts && bun run gen:types"
   },
   "dependencies": {
     "@drawink/common": "0.18.0",
