@@ -1,13 +1,10 @@
-import { KEYS, reseed } from "@excalidraw/common";
+import { KEYS, reseed } from "@drawink/common";
 
-import { Excalidraw } from "@excalidraw/excalidraw";
+import { Drawink } from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { UI, Keyboard, Pointer } from "@excalidraw/excalidraw/tests/helpers/ui";
-import {
-  render,
-  unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
+import { render, unmountComponent } from "@drawink/drawink/tests/test-utils";
 
 unmountComponent();
 
@@ -19,7 +16,7 @@ beforeEach(async () => {
   reseed(7);
   mouse.reset();
 
-  await render(<Excalidraw handleKeyboardGlobally={true} />);
+  await render(<Drawink handleKeyboardGlobally={true} />);
   h.state.width = 1000;
   h.state.height = 1000;
 

@@ -1,21 +1,13 @@
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
-import { Excalidraw } from "@excalidraw/excalidraw";
-import {
-  KEYS,
-  getSizeFromPoints,
-  reseed,
-  arrayToMap,
-} from "@excalidraw/common";
+import { Drawink } from "@drawink/drawink";
+import { KEYS, getSizeFromPoints, reseed, arrayToMap } from "@drawink/common";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { UI, Keyboard, Pointer } from "@excalidraw/excalidraw/tests/helpers/ui";
-import {
-  render,
-  unmountComponent,
-} from "@excalidraw/excalidraw/tests/test-utils";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { UI, Keyboard, Pointer } from "@drawink/drawink/tests/helpers/ui";
+import { render, unmountComponent } from "@drawink/drawink/tests/test-utils";
 
-import type { LocalPoint } from "@excalidraw/math";
+import type { LocalPoint } from "@drawink/math";
 
 import { isLinearElement } from "../src/typeChecks";
 import { resizeSingleElement } from "../src/resizeElements";
@@ -24,9 +16,9 @@ import { getElementPointsCoords } from "../src/bounds";
 
 import type { Bounds } from "../src/bounds";
 import type {
-  ExcalidrawElbowArrowElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawLinearElement,
+  DrawinkElbowArrowElement,
+  DrawinkFreeDrawElement,
+  DrawinkLinearElement,
 } from "../src/types";
 
 unmountComponent();
@@ -35,7 +27,7 @@ const { h } = window;
 const mouse = new Pointer("mouse");
 
 const getBoundsFromPoints = (
-  element: ExcalidrawLinearElement | ExcalidrawFreeDrawElement,
+  element: DrawinkLinearElement | DrawinkFreeDrawElement,
 ): Bounds => {
   if (isLinearElement(element)) {
     return getElementPointsCoords(element, element.points);
@@ -58,7 +50,7 @@ beforeEach(async () => {
   reseed(7);
   mouse.reset();
 
-  await render(<Excalidraw handleKeyboardGlobally={true} />);
+  await render(<Drawink handleKeyboardGlobally={true} />);
   h.state.width = 1000;
   h.state.height = 1000;
 
@@ -315,7 +307,7 @@ describe("line element", () => {
   it("resizes", async () => {
     UI.createElement("line", { points });
 
-    const element = h.elements[0] as ExcalidrawLinearElement;
+    const element = h.elements[0] as DrawinkLinearElement;
 
     const {
       x: prevX,
@@ -352,7 +344,7 @@ describe("line element", () => {
 
   it("flips while resizing", async () => {
     UI.createElement("line", { points });
-    const element = h.elements[0] as ExcalidrawLinearElement;
+    const element = h.elements[0] as DrawinkLinearElement;
 
     const {
       width: prevWidth,
@@ -384,7 +376,7 @@ describe("line element", () => {
 
   it("resizes with locked aspect ratio", async () => {
     UI.createElement("line", { points });
-    const element = h.elements[0] as ExcalidrawLinearElement;
+    const element = h.elements[0] as DrawinkLinearElement;
 
     const { width: prevWidth, height: prevHeight } = element;
 
@@ -406,7 +398,7 @@ describe("line element", () => {
         pointFrom(-338.05644048727373, -180.4761618151104),
       ],
     });
-    const element = h.elements[0] as ExcalidrawLinearElement;
+    const element = h.elements[0] as DrawinkLinearElement;
 
     const {
       x: prevX,
@@ -508,7 +500,7 @@ describe("arrow element", () => {
 
     const arrow = h.scene.getSelectedElements(
       h.state,
-    )[0] as ExcalidrawElbowArrowElement;
+    )[0] as DrawinkElbowArrowElement;
 
     expect(arrow.startBinding?.fixedPoint?.[0]).toBeCloseTo(1.06);
     expect(arrow.startBinding?.fixedPoint?.[1]).toBeCloseTo(0.75);
@@ -536,7 +528,7 @@ describe("arrow element", () => {
 
     const arrow = h.scene.getSelectedElements(
       h.state,
-    )[0] as ExcalidrawElbowArrowElement;
+    )[0] as DrawinkElbowArrowElement;
 
     expect(arrow.startBinding?.fixedPoint?.[0]).toBeCloseTo(1.06);
     expect(arrow.startBinding?.fixedPoint?.[1]).toBeCloseTo(0.75);
@@ -639,7 +631,7 @@ describe("text element", () => {
   // text can be resized from sides
   it("can be resized from e", async () => {
     const text = UI.createElement("text");
-    await UI.editText(text, "Excalidraw\nEditor");
+    await UI.editText(text, "Drawink\nEditor");
 
     const width = text.width;
     const height = text.height;
@@ -655,7 +647,7 @@ describe("text element", () => {
 
   it("can be resized from w", async () => {
     const text = UI.createElement("text");
-    await UI.editText(text, "Excalidraw\nEditor");
+    await UI.editText(text, "Drawink\nEditor");
 
     const width = text.width;
     const height = text.height;
@@ -671,7 +663,7 @@ describe("text element", () => {
 
   it("wraps when width is narrower than texts inside", async () => {
     const text = UI.createElement("text");
-    await UI.editText(text, "Excalidraw\nEditor");
+    await UI.editText(text, "Drawink\nEditor");
 
     const prevWidth = text.width;
     const prevHeight = text.height;
@@ -704,7 +696,7 @@ describe("text element", () => {
 
   it("keeps properties when wrapped", async () => {
     const text = UI.createElement("text");
-    await UI.editText(text, "Excalidraw\nEditor");
+    await UI.editText(text, "Drawink\nEditor");
 
     const alignment = text.textAlign;
     const fontSize = text.fontSize;
@@ -725,7 +717,7 @@ describe("text element", () => {
 
   it("has a minimum width when wrapped", async () => {
     const text = UI.createElement("text");
-    await UI.editText(text, "Excalidraw\nEditor");
+    await UI.editText(text, "Drawink\nEditor");
 
     const width = text.width;
 

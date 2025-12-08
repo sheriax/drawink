@@ -1,17 +1,17 @@
-import { arrayToMapWithIndex } from "@excalidraw/common";
+import { arrayToMapWithIndex } from "@drawink/common";
 
-import type { ExcalidrawElement } from "./types";
+import type { DrawinkElement } from "./types";
 
-const normalizeGroupElementOrder = (elements: readonly ExcalidrawElement[]) => {
-  const origElements: ExcalidrawElement[] = elements.slice();
-  const sortedElements = new Set<ExcalidrawElement>();
+const normalizeGroupElementOrder = (elements: readonly DrawinkElement[]) => {
+  const origElements: DrawinkElement[] = elements.slice();
+  const sortedElements = new Set<DrawinkElement>();
 
   const orderInnerGroups = (
-    elements: readonly ExcalidrawElement[],
-  ): ExcalidrawElement[] => {
+    elements: readonly DrawinkElement[],
+  ): DrawinkElement[] => {
     const firstGroupSig = elements[0]?.groupIds?.join("");
-    const aGroup: ExcalidrawElement[] = [elements[0]];
-    const bGroup: ExcalidrawElement[] = [];
+    const aGroup: DrawinkElement[] = [elements[0]];
+    const bGroup: DrawinkElement[] = [];
     for (const element of elements.slice(1)) {
       if (element.groupIds?.join("") === firstGroupSig) {
         aGroup.push(element);
@@ -65,13 +65,11 @@ const normalizeGroupElementOrder = (elements: readonly ExcalidrawElement[]) => {
  * original z-index of container (i.e. it moves bound text elements after
  * containers).
  */
-const normalizeBoundElementsOrder = (
-  elements: readonly ExcalidrawElement[],
-) => {
+const normalizeBoundElementsOrder = (elements: readonly DrawinkElement[]) => {
   const elementsMap = arrayToMapWithIndex(elements);
 
-  const origElements: (ExcalidrawElement | null)[] = elements.slice();
-  const sortedElements = new Set<ExcalidrawElement>();
+  const origElements: (DrawinkElement | null)[] = elements.slice();
+  const sortedElements = new Set<DrawinkElement>();
 
   origElements.forEach((element, idx) => {
     if (!element) {
@@ -114,8 +112,6 @@ const normalizeBoundElementsOrder = (
   return [...sortedElements];
 };
 
-export const normalizeElementOrder = (
-  elements: readonly ExcalidrawElement[],
-) => {
+export const normalizeElementOrder = (elements: readonly DrawinkElement[]) => {
   return normalizeBoundElementsOrder(normalizeGroupElementOrder(elements));
 };

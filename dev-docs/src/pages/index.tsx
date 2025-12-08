@@ -26,7 +26,7 @@ function HomepageHeader() {
 
 export default function Home() {
   return (
-    <Layout description="For Excalidraw contributors or those integrating the Excalidraw editor">
+    <Layout description="For Drawink contributors or those integrating the Drawink editor">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

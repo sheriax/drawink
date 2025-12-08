@@ -4,7 +4,7 @@ import {
   invariant,
   LINE_CONFIRM_THRESHOLD,
   ROUNDNESS,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import {
   curve,
@@ -23,11 +23,11 @@ import {
   vectorNormalize,
   vectorScale,
   type GlobalPoint,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type { Curve, LineSegment, LocalPoint } from "@excalidraw/math";
+import type { Curve, LineSegment, LocalPoint } from "@drawink/math";
 
-import type { NormalizedZoomValue, Zoom } from "@excalidraw/excalidraw/types";
+import type { NormalizedZoomValue, Zoom } from "@drawink/drawink/types";
 
 import { elementCenterPoint, getDiamondPoints } from "./bounds";
 
@@ -39,22 +39,22 @@ import { isRectangularElement } from "./typeChecks";
 
 import type {
   ElementsMap,
-  ExcalidrawArrowElement,
-  ExcalidrawDiamondElement,
-  ExcalidrawElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawLinearElement,
-  ExcalidrawRectanguloidElement,
+  DrawinkArrowElement,
+  DrawinkDiamondElement,
+  DrawinkElement,
+  DrawinkFreeDrawElement,
+  DrawinkLinearElement,
+  DrawinkRectanguloidElement,
 } from "./types";
 
 type ElementShape = [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]];
 
 const ElementShapesCache = new WeakMap<
-  ExcalidrawElement,
-  { version: ExcalidrawElement["version"]; shapes: Map<number, ElementShape> }
+  DrawinkElement,
+  { version: DrawinkElement["version"]; shapes: Map<number, ElementShape> }
 >();
 
-const getElementShapesCacheEntry = <T extends ExcalidrawElement>(
+const getElementShapesCacheEntry = <T extends DrawinkElement>(
   element: T,
   offset: number,
 ): ElementShape | undefined => {
@@ -74,7 +74,7 @@ const getElementShapesCacheEntry = <T extends ExcalidrawElement>(
   return shapes.get(offset);
 };
 
-const setElementShapesCacheEntry = <T extends ExcalidrawElement>(
+const setElementShapesCacheEntry = <T extends DrawinkElement>(
   element: T,
   shape: ElementShape,
   offset: number,
@@ -111,7 +111,7 @@ const setElementShapesCacheEntry = <T extends ExcalidrawElement>(
  * @returns The rotated in components.
  */
 export function deconstructLinearOrFreeDrawElement(
-  element: ExcalidrawLinearElement | ExcalidrawFreeDrawElement,
+  element: DrawinkLinearElement | DrawinkFreeDrawElement,
 ): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
   const cachedShape = getElementShapesCacheEntry(element, 0);
 
@@ -198,7 +198,7 @@ export function deconstructLinearOrFreeDrawElement(
  * @returns Tuple of **unrotated** line segments (0) and curves (1)
  */
 export function deconstructRectanguloidElement(
-  element: ExcalidrawRectanguloidElement,
+  element: DrawinkRectanguloidElement,
   offset: number = 0,
 ): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
   const cachedShape = getElementShapesCacheEntry(element, offset);
@@ -338,7 +338,7 @@ export function deconstructRectanguloidElement(
  * @returns Tuple of line **unrotated** segments (0) and curves (1)
  */
 export function deconstructDiamondElement(
-  element: ExcalidrawDiamondElement,
+  element: DrawinkDiamondElement,
   offset: number = 0,
 ): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
   const cachedShape = getElementShapesCacheEntry(element, offset);
@@ -448,7 +448,7 @@ export function deconstructDiamondElement(
 // Checks if the first and last point are close enough
 // to be considered a loop
 export const isPathALoop = (
-  points: ExcalidrawLinearElement["points"],
+  points: DrawinkLinearElement["points"],
   /** supply if you want the loop detection to account for current zoom */
   zoomValue: Zoom["value"] = 1 as NormalizedZoomValue,
 ): boolean => {
@@ -463,7 +463,7 @@ export const isPathALoop = (
   return false;
 };
 
-export const getCornerRadius = (x: number, element: ExcalidrawElement) => {
+export const getCornerRadius = (x: number, element: DrawinkElement) => {
   if (
     element.roundness?.type === ROUNDNESS.PROPORTIONAL_RADIUS ||
     element.roundness?.type === ROUNDNESS.LEGACY
@@ -487,7 +487,7 @@ export const getCornerRadius = (x: number, element: ExcalidrawElement) => {
 };
 
 const getDiagonalsForBindableElement = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   elementsMap: ElementsMap,
 ) => {
   // for rectangles, shrink the diagonals a bit because there's something
@@ -571,9 +571,9 @@ const getDiagonalsForBindableElement = (
 };
 
 export const projectFixedPointOntoDiagonal = (
-  arrow: ExcalidrawArrowElement,
+  arrow: DrawinkArrowElement,
   point: GlobalPoint,
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   startOrEnd: "start" | "end",
   elementsMap: ElementsMap,
 ): GlobalPoint | null => {

@@ -1,30 +1,26 @@
-import { KEYS, arrayToMap } from "@excalidraw/common";
+import { KEYS, arrayToMap } from "@drawink/common";
 
-import { pointFrom } from "@excalidraw/math";
+import { pointFrom } from "@drawink/math";
 
-import { actionWrapTextInContainer } from "@excalidraw/excalidraw/actions/actionBoundText";
+import { actionWrapTextInContainer } from "@drawink/drawink/actions/actionBoundText";
 
-import { Excalidraw, isLinearElement } from "@excalidraw/excalidraw";
+import { Drawink, isLinearElement } from "@drawink/drawink";
 
-import { API } from "@excalidraw/excalidraw/tests/helpers/api";
-import { UI, Pointer, Keyboard } from "@excalidraw/excalidraw/tests/helpers/ui";
-import {
-  act,
-  fireEvent,
-  render,
-} from "@excalidraw/excalidraw/tests/test-utils";
+import { API } from "@drawink/drawink/tests/helpers/api";
+import { UI, Pointer, Keyboard } from "@drawink/drawink/tests/helpers/ui";
+import { act, fireEvent, render } from "@drawink/drawink/tests/test-utils";
 
-import { defaultLang, setLanguage } from "@excalidraw/excalidraw/i18n";
+import { defaultLang, setLanguage } from "@drawink/drawink/i18n";
 
 import { getTransformHandles } from "../src/transformHandles";
 import {
   getTextEditor,
   TEXT_EDITOR_SELECTOR,
-} from "../../excalidraw/tests/queries/dom";
+} from "../../drawink/tests/queries/dom";
 
 import type {
-  ExcalidrawArrowElement,
-  ExcalidrawLinearElement,
+  DrawinkArrowElement,
+  DrawinkLinearElement,
   FixedPointBinding,
 } from "../src/types";
 
@@ -40,7 +36,7 @@ describe("binding for simple arrows", () => {
       await act(() => {
         return setLanguage(defaultLang);
       });
-      await render(<Excalidraw handleKeyboardGlobally={true} />);
+      await render(<Drawink handleKeyboardGlobally={true} />);
     });
 
     it("should create an `inside` binding", () => {
@@ -59,7 +55,7 @@ describe("binding for simple arrows", () => {
       mouse.moveTo(160, 160);
       mouse.up();
 
-      const arrow = API.getSelectedElement() as ExcalidrawLinearElement;
+      const arrow = API.getSelectedElement() as DrawinkLinearElement;
       expect(arrow.x).toBe(110);
       expect(arrow.y).toBe(110);
 
@@ -185,7 +181,7 @@ describe("binding for simple arrows", () => {
       await act(() => {
         return setLanguage(defaultLang);
       });
-      await render(<Excalidraw handleKeyboardGlobally={true} />);
+      await render(<Drawink handleKeyboardGlobally={true} />);
     });
 
     it("should handle new arrow start point binding", () => {
@@ -203,7 +199,7 @@ describe("binding for simple arrows", () => {
       mouse.moveTo(250, 150); // End outside
       mouse.up();
 
-      const arrow = API.getSelectedElement() as ExcalidrawLinearElement;
+      const arrow = API.getSelectedElement() as DrawinkLinearElement;
 
       // Arrow should have start binding to rectangle
       expect(arrow.startBinding?.elementId).toBe(rectangle.id);
@@ -226,7 +222,7 @@ describe("binding for simple arrows", () => {
       mouse.moveTo(95, 95); // End near rectangle edge (should bind as orbit)
       mouse.up();
 
-      const arrow = API.getSelectedElement() as ExcalidrawLinearElement;
+      const arrow = API.getSelectedElement() as DrawinkLinearElement;
 
       // Arrow should have end binding to rectangle
       expect(arrow.endBinding?.elementId).toBe(rectangle.id);
@@ -254,7 +250,7 @@ describe("binding for simple arrows", () => {
       mouse.moveTo(160, 160);
       mouse.up();
 
-      const arrow = API.getSelectedElement() as ExcalidrawLinearElement;
+      const arrow = API.getSelectedElement() as DrawinkLinearElement;
       expect(arrow.x).toBe(10);
       expect(arrow.y).toBe(10);
       expect(arrow.width).toBeCloseTo(85.75985931287957);
@@ -318,7 +314,7 @@ describe("binding for simple arrows", () => {
       await act(() => {
         return setLanguage(defaultLang);
       });
-      await render(<Excalidraw handleKeyboardGlobally={true} />);
+      await render(<Drawink handleKeyboardGlobally={true} />);
     });
 
     it(
@@ -448,7 +444,7 @@ describe("binding for simple arrows", () => {
       mouse.moveTo(410, 251);
       mouse.clickAt(410, 251);
 
-      const arrow = API.getSelectedElement() as ExcalidrawArrowElement;
+      const arrow = API.getSelectedElement() as DrawinkArrowElement;
 
       expect(arrow.startBinding?.elementId).toBe(rectLeft.id);
       expect(arrow.endBinding?.elementId).toBe(rectRight.id);
@@ -524,7 +520,7 @@ describe("binding for simple arrows", () => {
       await act(() => {
         return setLanguage(defaultLang);
       });
-      await render(<Excalidraw handleKeyboardGlobally={true} />);
+      await render(<Drawink handleKeyboardGlobally={true} />);
     });
 
     it("should update binding when text containerized", async () => {

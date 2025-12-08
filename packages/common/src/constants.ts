@@ -1,15 +1,12 @@
-import type {
-  ExcalidrawElement,
-  FontFamilyValues,
-} from "@excalidraw/element/types";
-import type { AppProps, AppState } from "@excalidraw/excalidraw/types";
+import type { DrawinkElement, FontFamilyValues } from "@drawink/element/types";
+import type { AppProps, AppState } from "@drawink/drawink/types";
 
 import { COLOR_PALETTE } from "./colors";
 
 export const supportsResizeObserver =
   typeof window !== "undefined" && "ResizeObserver" in window;
 
-export const APP_NAME = "Excalidraw";
+export const APP_NAME = "Drawink";
 
 // distance when creating text before it's considered `autoResize: false`
 // we're using higher threshold so that clicks that end up being drags
@@ -77,7 +74,7 @@ export enum EVENT {
   VISIBILITY_CHANGE = "visibilitychange",
   SCROLL = "scroll",
   // custom events
-  EXCALIDRAW_LINK = "excalidraw-link",
+  EXCALIDRAW_LINK = "drawink-link",
   MENU_ITEM_SELECT = "menu.itemSelect",
   MESSAGE = "message",
   FULLSCREENCHANGE = "fullscreenchange",
@@ -184,13 +181,13 @@ export const THEME = {
 } as const;
 
 export const FRAME_STYLE = {
-  strokeColor: "#bbb" as ExcalidrawElement["strokeColor"],
-  strokeWidth: 2 as ExcalidrawElement["strokeWidth"],
-  strokeStyle: "solid" as ExcalidrawElement["strokeStyle"],
-  fillStyle: "solid" as ExcalidrawElement["fillStyle"],
-  roughness: 0 as ExcalidrawElement["roughness"],
-  roundness: null as ExcalidrawElement["roundness"],
-  backgroundColor: "transparent" as ExcalidrawElement["backgroundColor"],
+  strokeColor: "#bbb" as DrawinkElement["strokeColor"],
+  strokeWidth: 2 as DrawinkElement["strokeWidth"],
+  strokeStyle: "solid" as DrawinkElement["strokeStyle"],
+  fillStyle: "solid" as DrawinkElement["fillStyle"],
+  roughness: 0 as DrawinkElement["roughness"],
+  roundness: null as DrawinkElement["roundness"],
+  backgroundColor: "transparent" as DrawinkElement["backgroundColor"],
   radius: 8,
   nameOffsetY: 3,
   nameColorLightTheme: "#999999",
@@ -240,19 +237,19 @@ export const STRING_MIME_TYPES = {
   text: "text/plain",
   html: "text/html",
   json: "application/json",
-  // excalidraw data
-  excalidraw: "application/vnd.excalidraw+json",
+  // drawink data
+  drawink: "application/vnd.drawink+json",
   // LEGACY: fully-qualified library JSON data
-  excalidrawlib: "application/vnd.excalidrawlib+json",
-  // list of excalidraw library item ids
-  excalidrawlibIds: "application/vnd.excalidrawlib.ids+json",
+  drawinklib: "application/vnd.drawinklib+json",
+  // list of drawink library item ids
+  drawinklibIds: "application/vnd.drawinklib.ids+json",
 } as const;
 
 export const MIME_TYPES = {
   ...STRING_MIME_TYPES,
-  // image-encoded excalidraw data
-  "excalidraw.svg": "image/svg+xml",
-  "excalidraw.png": "image/png",
+  // image-encoded drawink data
+  "drawink.svg": "image/svg+xml",
+  "drawink.png": "image/png",
   // binary
   binary: "application/octet-stream",
   // image
@@ -272,10 +269,10 @@ export const EXPORT_IMAGE_TYPES = {
 } as const;
 
 export const EXPORT_DATA_TYPES = {
-  excalidraw: "excalidraw",
-  excalidrawClipboard: "excalidraw/clipboard",
-  excalidrawLibrary: "excalidrawlib",
-  excalidrawClipboardWithAPI: "excalidraw-api/clipboard",
+  drawink: "drawink",
+  drawinkClipboard: "drawink/clipboard",
+  drawinkLibrary: "drawinklib",
+  drawinkClipboardWithAPI: "drawink-api/clipboard",
 } as const;
 
 export const getExportSource = () =>
@@ -341,8 +338,8 @@ export const SVG_DOCUMENT_PREAMBLE = `<?xml version="1.0" standalone="no"?>
 export const ENCRYPTION_KEY_BITS = 128;
 
 export const VERSIONS = {
-  excalidraw: 2,
-  excalidrawLibrary: 2,
+  drawink: 2,
+  drawinkLibrary: 2,
 } as const;
 
 export const BOUND_TEXT_PADDING = 5;
@@ -402,14 +399,14 @@ export const STROKE_WIDTH = {
 } as const;
 
 export const DEFAULT_ELEMENT_PROPS: {
-  strokeColor: ExcalidrawElement["strokeColor"];
-  backgroundColor: ExcalidrawElement["backgroundColor"];
-  fillStyle: ExcalidrawElement["fillStyle"];
-  strokeWidth: ExcalidrawElement["strokeWidth"];
-  strokeStyle: ExcalidrawElement["strokeStyle"];
-  roughness: ExcalidrawElement["roughness"];
-  opacity: ExcalidrawElement["opacity"];
-  locked: ExcalidrawElement["locked"];
+  strokeColor: DrawinkElement["strokeColor"];
+  backgroundColor: DrawinkElement["backgroundColor"];
+  fillStyle: DrawinkElement["fillStyle"];
+  strokeWidth: DrawinkElement["strokeWidth"];
+  strokeStyle: DrawinkElement["strokeStyle"];
+  roughness: DrawinkElement["roughness"];
+  opacity: DrawinkElement["opacity"];
+  locked: DrawinkElement["locked"];
 } = {
   strokeColor: COLOR_PALETTE.black,
   backgroundColor: COLOR_PALETTE.transparent,
@@ -423,10 +420,11 @@ export const DEFAULT_ELEMENT_PROPS: {
 
 export const LIBRARY_SIDEBAR_TAB = "library";
 export const CANVAS_SEARCH_TAB = "search";
+export const BOARDS_SIDEBAR_TAB = "boards";
 
 export const DEFAULT_SIDEBAR = {
   name: "default",
-  defaultTab: LIBRARY_SIDEBAR_TAB,
+  defaultTab: BOARDS_SIDEBAR_TAB,
 } as const;
 
 export const LIBRARY_DISABLED_TYPES = new Set([
@@ -456,9 +454,9 @@ export const TOOL_TYPE = {
 } as const;
 
 export const EDITOR_LS_KEYS = {
-  OAI_API_KEY: "excalidraw-oai-api-key",
+  OAI_API_KEY: "drawink-oai-api-key",
   // legacy naming (non)scheme
-  MERMAID_TO_EXCALIDRAW: "mermaid-to-excalidraw",
+  MERMAID_TO_EXCALIDRAW: "mermaid-to-drawink",
   PUBLISH_LIBRARY: "publish-library-data",
 } as const;
 

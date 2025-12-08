@@ -6,43 +6,43 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: /^@excalidraw\/common$/,
+        find: /^@drawink\/common$/,
         replacement: path.resolve(__dirname, "./packages/common/src/index.ts"),
       },
       {
-        find: /^@excalidraw\/common\/(.*?)/,
+        find: /^@drawink\/common\/(.*?)/,
         replacement: path.resolve(__dirname, "./packages/common/src/$1"),
       },
       {
-        find: /^@excalidraw\/element$/,
+        find: /^@drawink\/element$/,
         replacement: path.resolve(__dirname, "./packages/element/src/index.ts"),
       },
       {
-        find: /^@excalidraw\/element\/(.*?)/,
+        find: /^@drawink\/element\/(.*?)/,
         replacement: path.resolve(__dirname, "./packages/element/src/$1"),
       },
       {
-        find: /^@excalidraw\/excalidraw$/,
-        replacement: path.resolve(__dirname, "./packages/excalidraw/index.tsx"),
+        find: /^@drawink\/drawink$/,
+        replacement: path.resolve(__dirname, "./packages/drawink/index.tsx"),
       },
       {
-        find: /^@excalidraw\/excalidraw\/(.*?)/,
-        replacement: path.resolve(__dirname, "./packages/excalidraw/$1"),
+        find: /^@drawink\/drawink\/(.*?)/,
+        replacement: path.resolve(__dirname, "./packages/drawink/$1"),
       },
       {
-        find: /^@excalidraw\/math$/,
+        find: /^@drawink\/math$/,
         replacement: path.resolve(__dirname, "./packages/math/src/index.ts"),
       },
       {
-        find: /^@excalidraw\/math\/(.*?)/,
+        find: /^@drawink\/math\/(.*?)/,
         replacement: path.resolve(__dirname, "./packages/math/src/$1"),
       },
       {
-        find: /^@excalidraw\/utils$/,
+        find: /^@drawink\/utils$/,
         replacement: path.resolve(__dirname, "./packages/utils/src/index.ts"),
       },
       {
-        find: /^@excalidraw\/utils\/(.*?)/,
+        find: /^@drawink\/utils\/(.*?)/,
         replacement: path.resolve(__dirname, "./packages/utils/src/$1"),
       },
     ],

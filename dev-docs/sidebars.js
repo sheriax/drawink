@@ -30,18 +30,18 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "@excalidraw/excalidraw",
+      label: "@drawink/drawink",
       collapsed: false,
       items: [
-        "@excalidraw/excalidraw/installation",
-        "@excalidraw/excalidraw/integration",
-        "@excalidraw/excalidraw/customizing-styles",
+        "@drawink/drawink/installation",
+        "@drawink/drawink/integration",
+        "@drawink/drawink/customizing-styles",
         {
           type: "category",
           label: "API",
           link: {
             type: "doc",
-            id: "@excalidraw/excalidraw/api/api-intro",
+            id: "@drawink/drawink/api/api-intro",
           },
           items: [
             {
@@ -49,13 +49,13 @@ const sidebars = {
               label: "Props",
               link: {
                 type: "doc",
-                id: "@excalidraw/excalidraw/api/props/props",
+                id: "@drawink/drawink/api/props/props",
               },
               items: [
-                "@excalidraw/excalidraw/api/props/initialdata",
-                "@excalidraw/excalidraw/api/props/excalidraw-api",
-                "@excalidraw/excalidraw/api/props/render-props",
-                "@excalidraw/excalidraw/api/props/ui-options",
+                "@drawink/drawink/api/props/initialdata",
+                "@drawink/drawink/api/props/drawink-api",
+                "@drawink/drawink/api/props/render-props",
+                "@drawink/drawink/api/props/ui-options",
               ],
             },
             {
@@ -63,14 +63,14 @@ const sidebars = {
               label: "Children Components",
               link: {
                 type: "doc",
-                id: "@excalidraw/excalidraw/api/children-components/children-components-intro",
+                id: "@drawink/drawink/api/children-components/children-components-intro",
               },
               items: [
-                "@excalidraw/excalidraw/api/children-components/main-menu",
-                "@excalidraw/excalidraw/api/children-components/welcome-screen",
-                "@excalidraw/excalidraw/api/children-components/sidebar",
-                "@excalidraw/excalidraw/api/children-components/footer",
-                "@excalidraw/excalidraw/api/children-components/live-collaboration-trigger",
+                "@drawink/drawink/api/children-components/main-menu",
+                "@drawink/drawink/api/children-components/welcome-screen",
+                "@drawink/drawink/api/children-components/sidebar",
+                "@drawink/drawink/api/children-components/footer",
+                "@drawink/drawink/api/children-components/live-collaboration-trigger",
               ],
             },
             {
@@ -78,37 +78,37 @@ const sidebars = {
               label: "Utils",
               link: {
                 type: "doc",
-                id: "@excalidraw/excalidraw/api/utils/utils-intro",
+                id: "@drawink/drawink/api/utils/utils-intro",
               },
               items: [
-                "@excalidraw/excalidraw/api/utils/export",
-                "@excalidraw/excalidraw/api/utils/restore",
+                "@drawink/drawink/api/utils/export",
+                "@drawink/drawink/api/utils/restore",
               ],
             },
-            "@excalidraw/excalidraw/api/constants",
-            "@excalidraw/excalidraw/api/excalidraw-element-skeleton",
+            "@drawink/drawink/api/constants",
+            "@drawink/drawink/api/drawink-element-skeleton",
           ],
         },
-        "@excalidraw/excalidraw/faq",
-        "@excalidraw/excalidraw/development",
+        "@drawink/drawink/faq",
+        "@drawink/drawink/development",
       ],
     },
     {
       type: "category",
-      label: "@excalidraw/mermaid-to-excalidraw",
+      label: "@drawink/mermaid-to-drawink",
       link: {
         type: "doc",
-        id: "@excalidraw/mermaid-to-excalidraw/installation",
+        id: "@drawink/mermaid-to-drawink/installation",
       },
       items: [
-        "@excalidraw/mermaid-to-excalidraw/api",
-        "@excalidraw/mermaid-to-excalidraw/development",
+        "@drawink/mermaid-to-drawink/api",
+        "@drawink/mermaid-to-drawink/development",
         {
           type: "category",
           label: "Codebase",
           link: {
             type: "doc",
-            id: "@excalidraw/mermaid-to-excalidraw/codebase/codebase",
+            id: "@drawink/mermaid-to-drawink/codebase/codebase",
           },
           items: [
             {
@@ -116,13 +116,11 @@ const sidebars = {
               label: "How Parser works under the hood?",
               link: {
                 type: "doc",
-                id: "@excalidraw/mermaid-to-excalidraw/codebase/parser/parser",
+                id: "@drawink/mermaid-to-drawink/codebase/parser/parser",
               },
-              items: [
-                "@excalidraw/mermaid-to-excalidraw/codebase/parser/flowchart",
-              ],
+              items: ["@drawink/mermaid-to-drawink/codebase/parser/flowchart"],
             },
-            "@excalidraw/mermaid-to-excalidraw/codebase/new-diagram-type",
+            "@drawink/mermaid-to-drawink/codebase/new-diagram-type",
           ],
         },
       ],

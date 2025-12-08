@@ -1,16 +1,13 @@
 import {
   DEFAULT_TRANSFORM_HANDLE_SPACING,
   type EditorInterface,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
-import { pointFrom, pointRotateRads } from "@excalidraw/math";
+import { pointFrom, pointRotateRads } from "@drawink/math";
 
-import type { Radians } from "@excalidraw/math";
+import type { Radians } from "@drawink/math";
 
-import type {
-  InteractiveCanvasAppState,
-  Zoom,
-} from "@excalidraw/excalidraw/types";
+import type { InteractiveCanvasAppState, Zoom } from "@drawink/drawink/types";
 
 import { getElementAbsoluteCoords } from "./bounds";
 import {
@@ -23,8 +20,8 @@ import {
 import type { Bounds } from "./bounds";
 import type {
   ElementsMap,
-  ExcalidrawElement,
-  NonDeletedExcalidrawElement,
+  DrawinkElement,
+  NonDeletedDrawinkElement,
   PointerType,
 } from "./types";
 
@@ -270,7 +267,7 @@ export const getTransformHandlesFromCoords = (
 };
 
 export const getTransformHandles = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   zoom: Zoom,
   elementsMap: ElementsMap,
   pointerType: PointerType = "mouse",
@@ -326,7 +323,7 @@ export const getTransformHandles = (
 };
 
 export const hasBoundingBox = (
-  elements: readonly NonDeletedExcalidrawElement[],
+  elements: readonly NonDeletedDrawinkElement[],
   appState: InteractiveCanvasAppState,
   editorInterface: EditorInterface,
 ) => {

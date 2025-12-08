@@ -4,7 +4,7 @@
 
 <pre>
   (isMobile: boolean, appState:
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L95">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L95">
     AppState
   </a>) => JSX | null
 </pre>
@@ -15,7 +15,7 @@ A function returning `JSX` to render `custom` UI in the top right corner of the 
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw
+      <Drawink
         renderTopRightUI={() => {
           return (
             <button
@@ -44,13 +44,13 @@ A function that can be used to render custom stats (returns JSX) in the `nerd st
 
 ![Nerd Stats](../../../../assets/nerd-stats.png)
 
-For example you can use this prop to render the size of the elements in the storage as do in [excalidraw.com](https://excalidraw.com).
+For example you can use this prop to render the size of the elements in the storage as do in [drawink.com](https://drawink.com).
 
 ```jsx live
 function App() {
   return (
     <div style={{ height: "500px" }}>
-      <Excalidraw
+      <Drawink
         renderCustomStats={() => (
           <p style={{ color: "#70b1ec", fontWeight: "bold" }}>
             Dummy stats will be shown here
@@ -65,8 +65,8 @@ function App() {
 ## renderEmbeddable
 
 <pre>
-  (element: NonDeleted&lt;ExcalidrawEmbeddableElement&gt;, appState:{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L95">
+  (element: NonDeleted&lt;DrawinkEmbeddableElement&gt;, appState:{" "}
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L95">
     AppState
   </a>
   ) => JSX.Element | null
@@ -76,5 +76,5 @@ Allows you to replace the renderer for embeddable elements (which renders `<ifra
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `element` | `NonDeleted<ExcalidrawEmbeddableElement>` | The embeddable element to be rendered. |
+| `element` | `NonDeleted<DrawinkEmbeddableElement>` | The embeddable element to be rendered. |
 | `appState` | `AppState` | The current state of the UI. |

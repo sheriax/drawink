@@ -1,39 +1,36 @@
-import { arrayToMap } from "@excalidraw/common";
-import { getElementBounds } from "@excalidraw/element";
+import { arrayToMap } from "@drawink/common";
+import { getElementBounds } from "@drawink/element";
 import {
   isArrowElement,
-  isExcalidrawElement,
+  isDrawinkElement,
   isFreeDrawElement,
   isLinearElement,
   isTextElement,
-} from "@excalidraw/element";
+} from "@drawink/element";
 import {
   rangeIncludesValue,
   pointFrom,
   pointRotateRads,
   rangeInclusive,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type { Bounds } from "@excalidraw/element";
+import type { Bounds } from "@drawink/element";
 import type {
-  ExcalidrawElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawLinearElement,
-  NonDeletedExcalidrawElement,
-} from "@excalidraw/element/types";
-import type { LocalPoint } from "@excalidraw/math";
+  DrawinkElement,
+  DrawinkFreeDrawElement,
+  DrawinkLinearElement,
+  NonDeletedDrawinkElement,
+} from "@drawink/element/types";
+import type { LocalPoint } from "@drawink/math";
 
-type Element = NonDeletedExcalidrawElement;
-type Elements = readonly NonDeletedExcalidrawElement[];
+type Element = NonDeletedDrawinkElement;
+type Elements = readonly NonDeletedDrawinkElement[];
 
 type Points = readonly LocalPoint[];
 
 /** @returns vertices relative to element's top-left [0,0] position  */
 const getNonLinearElementRelativePoints = (
-  element: Exclude<
-    Element,
-    ExcalidrawLinearElement | ExcalidrawFreeDrawElement
-  >,
+  element: Exclude<Element, DrawinkLinearElement | DrawinkFreeDrawElement>,
 ): [
   TopLeft: LocalPoint,
   TopRight: LocalPoint,
@@ -57,7 +54,7 @@ const getNonLinearElementRelativePoints = (
 };
 
 /** @returns vertices relative to element's top-left [0,0] position  */
-const getElementRelativePoints = (element: ExcalidrawElement): Points => {
+const getElementRelativePoints = (element: DrawinkElement): Points => {
   if (isLinearElement(element) || isFreeDrawElement(element)) {
     return element.points;
   }
@@ -166,7 +163,7 @@ export const elementsOverlappingBBox = ({
   errorMargin = 0,
 }: {
   elements: Elements;
-  bounds: Bounds | ExcalidrawElement;
+  bounds: Bounds | DrawinkElement;
   /** safety offset. Defaults to 0. */
   errorMargin?: number;
   /**
@@ -176,7 +173,7 @@ export const elementsOverlappingBBox = ({
    **/
   type: "overlap" | "contain" | "inside";
 }) => {
-  if (isExcalidrawElement(bounds)) {
+  if (isDrawinkElement(bounds)) {
     bounds = getElementBounds(bounds, arrayToMap(elements));
   }
   const adjustedBBox: Bounds = [

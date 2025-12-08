@@ -1,6 +1,6 @@
-import { average } from "@excalidraw/math";
+import { average } from "@drawink/math";
 
-import type { FontFamilyValues, FontString } from "@excalidraw/element/types";
+import type { FontFamilyValues, FontString } from "@drawink/element/types";
 
 import type {
   ActiveTool,
@@ -8,7 +8,7 @@ import type {
   ToolType,
   UnsubscribeCallback,
   Zoom,
-} from "@excalidraw/excalidraw/types";
+} from "@drawink/drawink/types";
 
 import { COLOR_PALETTE } from "./colors";
 import {
@@ -478,7 +478,7 @@ const RE_RTL_CHECK = new RegExp(`^[^${RS_LTR_CHARS}]*[${RS_RTL_CHARS}]`);
  * Checks whether first directional character is RTL. Meaning whether it starts
  *  with RTL characters, or indeterminate (numbers etc.) characters followed by
  *  RTL.
- * See https://github.com/excalidraw/excalidraw/pull/1722#discussion_r436340171
+ * See https://github.com/drawink/drawink/pull/1722#discussion_r436340171
  */
 export const isRTL = (text: string) => RE_RTL_CHECK.test(text);
 
@@ -1272,7 +1272,7 @@ type FEATURE_FLAGS = {
   COMPLEX_BINDINGS: boolean;
 };
 
-const FEATURE_FLAGS_STORAGE_KEY = "excalidraw-feature-flags";
+const FEATURE_FLAGS_STORAGE_KEY = "drawink-feature-flags";
 const DEFAULT_FEATURE_FLAGS: FEATURE_FLAGS = {
   COMPLEX_BINDINGS: false,
 };

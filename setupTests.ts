@@ -5,9 +5,9 @@ import "vitest-canvas-mock";
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
-import polyfill from "./packages/excalidraw/polyfill";
-import { yellow } from "./packages/excalidraw/tests/helpers/colorize";
-import { testPolyfills } from "./packages/excalidraw/tests/helpers/polyfills";
+import polyfill from "./packages/drawink/polyfill";
+import { yellow } from "./packages/drawink/tests/helpers/colorize";
+import { testPolyfills } from "./packages/drawink/tests/helpers/polyfills";
 
 // mock for pep.js not working with setPointerCapture()
 HTMLElement.prototype.setPointerCapture = vi.fn();
@@ -69,30 +69,27 @@ Object.defineProperty(window, "EXCALIDRAW_ASSET_PATH", {
 });
 
 // mock the font fetch only, so that everything else, as font subsetting, can run inside of the (snapshot) tests
-vi.mock(
-  "./packages/excalidraw/fonts/ExcalidrawFontFace",
-  async (importOriginal) => {
-    const mod = await importOriginal<
-      typeof import("./packages/excalidraw/fonts/ExcalidrawFontFace")
-    >();
-    const ExcalidrawFontFaceImpl = mod.ExcalidrawFontFace;
+vi.mock("./packages/drawink/fonts/DrawinkFontFace", async (importOriginal) => {
+  const mod = await importOriginal<
+    typeof import("./packages/drawink/fonts/DrawinkFontFace")
+  >();
+  const DrawinkFontFaceImpl = mod.DrawinkFontFace;
 
-    return {
-      ...mod,
-      ExcalidrawFontFace: class extends ExcalidrawFontFaceImpl {
-        public async fetchFont(url: URL): Promise<ArrayBuffer> {
-          if (!url.toString().startsWith("file://")) {
-            return super.fetchFont(url);
-          }
-
-          // read local assets directly, without running a server
-          const content = await fs.promises.readFile(url);
-          return content.buffer;
+  return {
+    ...mod,
+    DrawinkFontFace: class extends DrawinkFontFaceImpl {
+      public async fetchFont(url: URL): Promise<ArrayBuffer> {
+        if (!url.toString().startsWith("file://")) {
+          return super.fetchFont(url);
         }
-      },
-    };
-  },
-);
+
+        // read local assets directly, without running a server
+        const content = await fs.promises.readFile(url);
+        return content.buffer;
+      }
+    },
+  };
+});
 
 // ReactDOM is located inside index.tsx file
 // as a result, we need a place for it to render into

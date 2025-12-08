@@ -7,36 +7,30 @@ import {
   getEllipseShape,
   getFreedrawShape,
   getPolygonShape,
-} from "@excalidraw/utils/shape";
+} from "@drawink/utils/shape";
 
 import {
   pointFrom,
   pointDistance,
   type LocalPoint,
   pointRotateRads,
-} from "@excalidraw/math";
+} from "@drawink/math";
 import {
   ROUGHNESS,
   isTransparent,
   assertNever,
   COLOR_PALETTE,
   LINE_POLYGON_POINT_MERGE_DISTANCE,
-} from "@excalidraw/common";
+} from "@drawink/common";
 
 import { RoughGenerator } from "roughjs/bin/generator";
 
-import type { GlobalPoint } from "@excalidraw/math";
+import type { GlobalPoint } from "@drawink/math";
 
-import type { Mutable } from "@excalidraw/common/utility-types";
+import type { Mutable } from "@drawink/common/utility-types";
 
-import type {
-  AppState,
-  EmbedsValidationStatus,
-} from "@excalidraw/excalidraw/types";
-import type {
-  ElementShape,
-  ElementShapes,
-} from "@excalidraw/excalidraw/scene/types";
+import type { AppState, EmbedsValidationStatus } from "@drawink/drawink/types";
+import type { ElementShape, ElementShapes } from "@drawink/drawink/scene/types";
 
 import { elementWithCanvasCache } from "./renderElement";
 
@@ -62,14 +56,14 @@ import {
 import { shouldTestInside } from "./collision";
 
 import type {
-  ExcalidrawElement,
-  NonDeletedExcalidrawElement,
-  ExcalidrawSelectionElement,
-  ExcalidrawLinearElement,
+  DrawinkElement,
+  NonDeletedDrawinkElement,
+  DrawinkSelectionElement,
+  DrawinkLinearElement,
   Arrowhead,
-  ExcalidrawFreeDrawElement,
+  DrawinkFreeDrawElement,
   ElementsMap,
-  ExcalidrawLineElement,
+  DrawinkLineElement,
 } from "./types";
 
 import type { Drawable, Options } from "roughjs/bin/core";
@@ -77,13 +71,13 @@ import type { Point as RoughPoint } from "roughjs/bin/geometry";
 
 export class ShapeCache {
   private static rg = new RoughGenerator();
-  private static cache = new WeakMap<ExcalidrawElement, ElementShape>();
+  private static cache = new WeakMap<DrawinkElement, ElementShape>();
 
   /**
    * Retrieves shape from cache if available. Use this only if shape
    * is optional and you have a fallback in case it's not cached.
    */
-  public static get = <T extends ExcalidrawElement>(element: T) => {
+  public static get = <T extends DrawinkElement>(element: T) => {
     return ShapeCache.cache.get(
       element,
     ) as T["type"] extends keyof ElementShapes
@@ -91,14 +85,14 @@ export class ShapeCache {
       : ElementShape | undefined;
   };
 
-  public static set = <T extends ExcalidrawElement>(
+  public static set = <T extends DrawinkElement>(
     element: T,
     shape: T["type"] extends keyof ElementShapes
       ? ElementShapes[T["type"]]
       : Drawable,
   ) => ShapeCache.cache.set(element, shape);
 
-  public static delete = (element: ExcalidrawElement) =>
+  public static delete = (element: DrawinkElement) =>
     ShapeCache.cache.delete(element);
 
   public static destroy = () => {
@@ -110,7 +104,7 @@ export class ShapeCache {
    * returns cached shape.
    */
   public static generateElementShape = <
-    T extends Exclude<ExcalidrawElement, ExcalidrawSelectionElement>,
+    T extends Exclude<DrawinkElement, DrawinkSelectionElement>,
   >(
     element: T,
     renderConfig: {
@@ -154,7 +148,7 @@ const getDashArrayDashed = (strokeWidth: number) => [8, 8 + strokeWidth];
 
 const getDashArrayDotted = (strokeWidth: number) => [1.5, 6 + strokeWidth];
 
-function adjustRoughness(element: ExcalidrawElement): number {
+function adjustRoughness(element: DrawinkElement): number {
   const roughness = element.roughness;
 
   const maxSize = Math.max(element.width, element.height);
@@ -178,7 +172,7 @@ function adjustRoughness(element: ExcalidrawElement): number {
 }
 
 export const generateRoughOptions = (
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   continuousPath = false,
 ): Options => {
   const options: Options = {
@@ -244,7 +238,7 @@ export const generateRoughOptions = (
 };
 
 const modifyIframeLikeForRoughOptions = (
-  element: NonDeletedExcalidrawElement,
+  element: NonDeletedDrawinkElement,
   isExporting: boolean,
   embedsValidationStatus: EmbedsValidationStatus | null,
 ) => {
@@ -277,7 +271,7 @@ const modifyIframeLikeForRoughOptions = (
 };
 
 const getArrowheadShapes = (
-  element: ExcalidrawLinearElement,
+  element: DrawinkLinearElement,
   shape: Drawable[],
   position: "start" | "end",
   arrowhead: Arrowhead,
@@ -420,7 +414,7 @@ const getArrowheadShapes = (
 };
 
 export const generateLinearCollisionShape = (
-  element: ExcalidrawLinearElement | ExcalidrawFreeDrawElement,
+  element: DrawinkLinearElement | DrawinkFreeDrawElement,
 ) => {
   const generator = new RoughGenerator();
   const options: Options = {
@@ -603,7 +597,7 @@ export const generateLinearCollisionShape = (
  * @private
  */
 const generateElementShape = (
-  element: Exclude<NonDeletedExcalidrawElement, ExcalidrawSelectionElement>,
+  element: Exclude<NonDeletedDrawinkElement, DrawinkSelectionElement>,
   generator: RoughGenerator,
   {
     isExporting,
@@ -905,11 +899,11 @@ const generateElbowArrowShape = (
 };
 
 /**
- * get the pure geometric shape of an excalidraw elementw
+ * get the pure geometric shape of an drawink elementw
  * which is then used for hit detection
  */
 export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
-  element: ExcalidrawElement,
+  element: DrawinkElement,
   elementsMap: ElementsMap,
 ): GeometricShape<Point> => {
   switch (element.type) {
@@ -961,11 +955,11 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
 };
 
 export const toggleLinePolygonState = (
-  element: ExcalidrawLineElement,
+  element: DrawinkLineElement,
   nextPolygonState: boolean,
 ): {
-  polygon: ExcalidrawLineElement["polygon"];
-  points: ExcalidrawLineElement["points"];
+  polygon: DrawinkLineElement["polygon"];
+  points: DrawinkLineElement["points"];
 } | null => {
   const updatedPoints = [...element.points];
 
@@ -995,7 +989,7 @@ export const toggleLinePolygonState = (
     }
   }
 
-  // TODO: satisfies ElementUpdate<ExcalidrawLineElement>
+  // TODO: satisfies ElementUpdate<DrawinkLineElement>
   const ret = {
     polygon: nextPolygonState,
     points: updatedPoints,

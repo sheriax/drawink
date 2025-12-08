@@ -2,17 +2,17 @@
 
 ## Project Structure
 
-Excalidraw is a **monorepo** with a clear separation between the core library and the application:
+Drawink is a **monorepo** with a clear separation between the core library and the application:
 
-- **`packages/excalidraw/`** - Main React component library published to npm as `@excalidraw/excalidraw`
-- **`excalidraw-app/`** - Full-featured web application (excalidraw.com) that uses the library
-- **`packages/`** - Core packages: `@excalidraw/common`, `@excalidraw/element`, `@excalidraw/math`, `@excalidraw/utils`
+- **`packages/drawink/`** - Main React component library published to npm as `@drawink/drawink`
+- **`drawink-app/`** - Full-featured web application (drawink.com) that uses the library
+- **`packages/`** - Core packages: `@drawink/common`, `@drawink/element`, `@drawink/math`, `@drawink/utils`
 - **`examples/`** - Integration examples (NextJS, browser script)
 
 ## Development Workflow
 
 1. **Package Development**: Work in `packages/*` for editor features
-2. **App Development**: Work in `excalidraw-app/` for app-specific features
+2. **App Development**: Work in `drawink-app/` for app-specific features
 3. **Testing**: Always run `yarn test:update` before committing
 4. **Type Safety**: Use `yarn test:typecheck` to verify TypeScript
 

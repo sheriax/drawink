@@ -6,14 +6,9 @@ import {
   pointOnPolygon,
   polygonIncludesPoint,
   segmentsIntersectAt,
-} from "@excalidraw/math";
+} from "@drawink/math";
 
-import type {
-  GlobalPoint,
-  LineSegment,
-  Polygon,
-  Radians,
-} from "@excalidraw/math";
+import type { GlobalPoint, LineSegment, Polygon, Radians } from "@drawink/math";
 
 import { pointInEllipse, pointOnEllipse, type Ellipse } from "../src/shape";
 

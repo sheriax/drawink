@@ -1,56 +1,56 @@
-# @excalidraw/utils
+# @drawink/utils
 
 ## Install
 
 ```bash
-npm install @excalidraw/utils
+npm install @drawink/utils
 ```
 
-If you prefer Yarn over npm, use this command to install the Excalidraw utils package:
+If you prefer Yarn over npm, use this command to install the Drawink utils package:
 
 ```bash
-yarn add @excalidraw/utils
+yarn add @drawink/utils
 ```
 
 ## API
 
 ### `serializeAsJSON`
 
-See [`serializeAsJSON`](https://github.com/excalidraw/excalidraw/blob/master/src/packages/excalidraw/README.md#serializeAsJSON) for API and description.
+See [`serializeAsJSON`](https://github.com/drawink/drawink/blob/master/src/packages/drawink/README.md#serializeAsJSON) for API and description.
 
 ### `exportToBlob` (async)
 
-Export an Excalidraw diagram to a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Export an Drawink diagram to a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
 ### `exportToSvg`
 
-Export an Excalidraw diagram to a [SVGElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGElement).
+Export an Drawink diagram to a [SVGElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGElement).
 
 ## Usage
 
-Excalidraw utils is published as a UMD (Universal Module Definition). If you are using a module bundler (for instance, Webpack), you can import it as an ES6 module:
+Drawink utils is published as a UMD (Universal Module Definition). If you are using a module bundler (for instance, Webpack), you can import it as an ES6 module:
 
 ```js
-import { exportToSvg, exportToBlob } from "@excalidraw/utils";
+import { exportToSvg, exportToBlob } from "@drawink/utils";
 ```
 
 To use it in a browser directly:
 
 ```html
-<script src="https://unpkg.com/@excalidraw/utils@0.1.0/dist/excalidraw-utils.min.js"></script>
+<script src="https://unpkg.com/@drawink/utils@0.1.0/dist/drawink-utils.min.js"></script>
 <script>
-  // ExcalidrawUtils is a global variable defined by excalidraw.min.js
-  const { exportToSvg, exportToBlob } = ExcalidrawUtils;
+  // DrawinkUtils is a global variable defined by drawink.min.js
+  const { exportToSvg, exportToBlob } = DrawinkUtils;
 </script>
 ```
 
 Here's the `exportToBlob` and `exportToSvg` functions in action:
 
 ```js
-const excalidrawDiagram = {
-  type: "excalidraw",
+const drawinkDiagram = {
+  type: "drawink",
   version: 2,
-  source: "https://excalidraw.com",
+  source: "https://drawink.com",
   elements: [
     {
       id: "vWrqOAfkind2qcm7LDAGZ",
@@ -82,14 +82,14 @@ const excalidrawDiagram = {
   },
 };
 
-// Export the Excalidraw diagram as SVG string
-const svg = exportToSvg(excalidrawDiagram);
+// Export the Drawink diagram as SVG string
+const svg = exportToSvg(drawinkDiagram);
 console.log(svg.outerHTML);
 
-// Export the Excalidraw diagram as PNG Blob URL
+// Export the Drawink diagram as PNG Blob URL
 (async () => {
   const blob = await exportToBlob({
-    ...excalidrawDiagram,
+    ...drawinkDiagram,
     mimeType: "image/png",
   });
 

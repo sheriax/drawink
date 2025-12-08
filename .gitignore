@@ -21,7 +21,7 @@ npm-debug.log*
 package-lock.json
 yarn-debug.log*
 yarn-error.log*
-packages/excalidraw/types
+packages/drawink/types
 coverage
 dev-dist
 html

@@ -11,16 +11,36 @@
     "jsx": "react-jsx",
     "emitDeclarationOnly": true,
     "paths": {
-      "@excalidraw/common": ["./common/src/index.ts"],
-      "@excalidraw/common/*": ["./common/src/*"],
-      "@excalidraw/element": ["./element/src/index.ts"],
-      "@excalidraw/element/*": ["./element/src/*"],
-      "@excalidraw/excalidraw": ["./excalidraw/index.tsx"],
-      "@excalidraw/excalidraw/*": ["./excalidraw/*"],
-      "@excalidraw/math": ["./math/src/index.ts"],
-      "@excalidraw/math/*": ["./math/src/*"],
-      "@excalidraw/utils": ["./utils/src/index.ts"],
-      "@excalidraw/utils/*": ["./utils/src/*"]
+      "@drawink/common": [
+        "./common/src/index.ts"
+      ],
+      "@drawink/common/*": [
+        "./common/src/*"
+      ],
+      "@drawink/element": [
+        "./element/src/index.ts"
+      ],
+      "@drawink/element/*": [
+        "./element/src/*"
+      ],
+      "@drawink/drawink": [
+        "./drawink/index.tsx"
+      ],
+      "@drawink/drawink/*": [
+        "./drawink/*"
+      ],
+      "@drawink/math": [
+        "./math/src/index.ts"
+      ],
+      "@drawink/math/*": [
+        "./math/src/*"
+      ],
+      "@drawink/utils": [
+        "./utils/src/index.ts"
+      ],
+      "@drawink/utils/*": [
+        "./utils/src/*"
+      ]
     }
   }
 }

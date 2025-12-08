@@ -1,9 +1,9 @@
-# excalidrawAPI
+# drawinkAPI
 
 <pre>
   (api:{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L616">
-    ExcalidrawAPI
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L616">
+    DrawinkAPI
   </a>
   ) => void;
 </pre>
@@ -12,12 +12,12 @@ Once the callback is triggered, you will need to store the api in state to acces
 
 ```jsx showLineNumbers
 export default function App() {
-  const [excalidrawAPI, setExcalidrawAPI] = useState(null);
-  return <Excalidraw excalidrawAPI={(api)=> setExcalidrawAPI(api)} />;
+  const [drawinkAPI, setDrawinkAPI] = useState(null);
+  return <Drawink drawinkAPI={(api)=> setDrawinkAPI(api)} />;
 }
 ```
 
-You can use this prop when you want to access some [Excalidraw APIs](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L616). We expose the below APIs :point_down:
+You can use this prop when you want to access some [Drawink APIs](https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L616). We expose the below APIs :point_down:
 
 | API | Signature | Usage |
 | --- | --- | --- |
@@ -30,9 +30,9 @@ You can use this prop when you want to access some [Excalidraw APIs](https://git
 | [getAppState](#getappstate) | `function` | Returns current appState |
 | [history](#history) | `object` | This is the history API. `history.clear()` will clear the history |
 | [scrollToContent](#scrolltocontent) | `function` | Scroll the nearest element out of the elements supplied to the center. Defaults to the elements on the scene. |
-| [refresh](#refresh) | `function` | Updates the offsets for the Excalidraw component so that the coordinates are computed correctly (for example the cursor position). |
+| [refresh](#refresh) | `function` | Updates the offsets for the Drawink component so that the coordinates are computed correctly (for example the cursor position). |
 | [setToast](#settoast) | `function` | This API can be used to show the toast with custom message. |
-| [id](#id) | `string` | Unique ID for the excalidraw component. |
+| [id](#id) | `string` | Unique ID for the drawink component. |
 | [getFiles](#getfiles) | `function` | This API can be used to get the files present in the scene. |
 | [setActiveTool](#setactivetool) | `function` | This API can be used to set the active tool |
 | [setCursor](#setcursor) | `function` | This API can be used to set customise the mouse cursor on the canvas |
@@ -42,7 +42,7 @@ You can use this prop when you want to access some [Excalidraw APIs](https://git
 | [onPointerDown](#onPointerDown) | `function` | Subscribes to `pointerdown` events |
 | [onPointerUp](#onPointerUp) | `function` | Subscribes to `pointerup` events |
 
-:::info The `Ref` support has been removed in v0.17.0 so if you are using refs, please update the integration to use the `excalidrawAPI`.
+:::info The `Ref` support has been removed in v0.17.0 so if you are using refs, please update the integration to use the `drawinkAPI`.
 
 Additionally `ready` and `readyPromise` from the API have been discontinued. These APIs were found to be superfluous, and as part of the effort to streamline the APIs and maintain simplicity, they were removed in version v0.17.0.
 
@@ -52,7 +52,7 @@ Additionally `ready` and `readyPromise` from the API have been discontinued. The
 
 <pre>
   (scene:{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L339">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L339">
     sceneData
   </a>
   ) => void
@@ -62,10 +62,10 @@ You can use this function to update the scene with the sceneData. It accepts the
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `elements` | [`ImportedDataState["elements"]`](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/data/types.ts#L38) | The `elements` to be updated in the scene |
-| `appState` | [`ImportedDataState["appState"]`](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/data/types.ts#L39) | The `appState` to be updated in the scene. |
-| `collaborators` | <code>Map<string, <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L37">Collaborator></a></code> | The list of collaborators to be updated in the scene. |
-| `captureUpdate` | [`CaptureUpdateAction`](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/store.ts#L40) | Controls which updates should be captured by the `Store`. Captured updates are emmitted and listened to by other components, such as `History` for undo / redo purposes. |
+| `elements` | [`ImportedDataState["elements"]`](https://github.com/drawink/drawink/blob/master/packages/drawink/data/types.ts#L38) | The `elements` to be updated in the scene |
+| `appState` | [`ImportedDataState["appState"]`](https://github.com/drawink/drawink/blob/master/packages/drawink/data/types.ts#L39) | The `appState` to be updated in the scene. |
+| `collaborators` | <code>Map<string, <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L37">Collaborator></a></code> | The list of collaborators to be updated in the scene. |
+| `captureUpdate` | [`CaptureUpdateAction`](https://github.com/drawink/drawink/blob/master/packages/drawink/store.ts#L40) | Controls which updates should be captured by the `Store`. Captured updates are emmitted and listened to by other components, such as `History` for undo / redo purposes. |
 
 ```jsx live
 function App() {
@@ -107,16 +107,16 @@ function App() {
       },
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
-    excalidrawAPI.updateScene(sceneData);
+    drawinkAPI.updateScene(sceneData);
   };
-  const [excalidrawAPI, setExcalidrawAPI] = useState(null);
+  const [drawinkAPI, setDrawinkAPI] = useState(null);
   return (
     <div style={{ height: "500px" }}>
       <p style={{ fontSize: "16px" }}> Click to update the scene</p>
       <button className="custom-button" onClick={updateScene}>
         Update Scene
       </button>
-      <Excalidraw excalidrawAPI={(api) => setExcalidrawAPI(api)} />
+      <Drawink drawinkAPI={(api) => setDrawinkAPI(api)} />
     </div>
   );
 }
@@ -138,13 +138,13 @@ You can use the `captureUpdate` to influence undo / redo behaviour.
 
 <pre>
   (opts: &#123; <br /> libraryItems:{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L249">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L249">
     LibraryItemsSource
   </a>
   ;<br /> merge?: boolean; <br /> prompt?: boolean;
   <br /> openLibraryMenu?: boolean;
   <br /> defaultStatus?: "unpublished" | "published"; <br /> &#125;) => Promise&lt;
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L246">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L246">
     LibraryItems
   </a>
   &gt;
@@ -154,7 +154,7 @@ You can use this function to update the library. It accepts the below attributes
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `libraryItems` | [LibraryItemsSource](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L249) | \_ | The `libraryItems` to be replaced/merged with current library |
+| `libraryItems` | [LibraryItemsSource](https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L249) | \_ | The `libraryItems` to be replaced/merged with current library |
 | `merge` | boolean | `false` | Whether to merge with existing library items. |
 | `prompt` | boolean | `false` | Whether to prompt user for confirmation. |
 | `openLibraryMenu` | boolean | `false` | Keep the library menu open after library is updated. |
@@ -162,15 +162,15 @@ You can use this function to update the library. It accepts the below attributes
 
 ```tsx live
 function App() {
-  const [excalidrawAPI, setExcalidrawAPI] = useState(null);
+  const [drawinkAPI, setDrawinkAPI] = useState(null);
 
   useEffect(() => {
-    if (!excalidrawAPI) {
+    if (!drawinkAPI) {
       return;
     }
     // to open the library sidebar
-    excalidrawAPI.updateScene({ appState: { openSidebar: "library" } });
-  }, [excalidrawAPI]);
+    drawinkAPI.updateScene({ appState: { openSidebar: "library" } });
+  }, [drawinkAPI]);
 
   return (
     <div style={{ height: "500px" }}>
@@ -192,7 +192,7 @@ function App() {
               elements: initialData.libraryItems[1],
             },
           ];
-          excalidrawAPI.updateLibrary({
+          drawinkAPI.updateLibrary({
             libraryItems,
             openLibraryMenu: true,
           });
@@ -200,9 +200,9 @@ function App() {
       >
         Update Library
       </button>
-      <Excalidraw
-        excalidrawAPI={(api) => setExcalidrawAPI(api)}
-        // initial data retrieved from https://github.com/excalidraw/excalidraw/blob/master/dev-docs/packages/excalidraw/initialData.js
+      <Drawink
+        drawinkAPI={(api) => setDrawinkAPI(api)}
+        // initial data retrieved from https://github.com/drawink/drawink/blob/master/dev-docs/packages/drawink/initialData.js
         initialData={{
           libraryItems: initialData.libraryItems,
           appState: { openSidebar: "library" },
@@ -217,7 +217,7 @@ function App() {
 
 <pre>
   (files:{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L59">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L59">
     BinaryFileData
   </a>
   ) => void
@@ -237,8 +237,8 @@ Resets the scene. If `resetLoadingState` is passed as true then it will also for
 
 <pre>
   () =>{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/element/types.ts#L115">
-    ExcalidrawElement[]
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/element/types.ts#L115">
+    DrawinkElement[]
   </a>
 </pre>
 
@@ -248,8 +248,8 @@ Returns all the elements including the deleted in the scene.
 
 <pre>
   () => NonDeleted&#60;
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/element/types.ts#L115">
-    ExcalidrawElement
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/element/types.ts#L115">
+    DrawinkElement
   </a>
   []&#62;
 </pre>
@@ -260,7 +260,7 @@ Returns all the elements excluding the deleted in the scene
 
 <pre>
   () =>{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L95">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L95">
     AppState
   </a>
 </pre>
@@ -281,7 +281,7 @@ This is the history API. history.clear() will clear the history.
 
 ```tsx
 (
-  target?: ExcalidrawElement | ExcalidrawElement[],
+  target?: DrawinkElement | DrawinkElement[],
   opts?:
       | {
           fitToContent?: boolean;
@@ -301,7 +301,7 @@ Scroll the nearest element out of the elements supplied to the center of the vie
 
 | Attribute | type | default | Description |
 | --- | --- | --- | --- |
-| target | [ExcalidrawElement](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/element/types.ts#L115) &#124; [ExcalidrawElement[]](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/element/types.ts#L115) | All scene elements | The element(s) to scroll to. |
+| target | [DrawinkElement](https://github.com/drawink/drawink/blob/master/packages/drawink/element/types.ts#L115) &#124; [DrawinkElement[]](https://github.com/drawink/drawink/blob/master/packages/drawink/element/types.ts#L115) | All scene elements | The element(s) to scroll to. |
 | opts.fitToContent | boolean | false | Whether to fit the elements to viewport by automatically changing zoom as needed. Note that the zoom range is between 10%-100%. |
 | opts.fitToViewport | boolean | false | Similar to fitToContent but the zoom range is not limited. If elements are smaller than the viewport, zoom will go above 100%. |
 | opts.viewportZoomFactor | number | 0.7 | when fitToViewport=true, how much screen should the content cover, between 0.1 (10%) and 1 (100%) |
@@ -314,11 +314,11 @@ Scroll the nearest element out of the elements supplied to the center of the vie
 () => void
 ```
 
-Updates the `offsets` for the `Excalidraw` component so that the coordinates are computed correctly (for example the cursor position).
+Updates the `offsets` for the `Drawink` component so that the coordinates are computed correctly (for example the cursor position).
 
-You don't have to call this when the position is changed on page scroll or when the excalidraw container resizes (we handle that ourselves).
+You don't have to call this when the position is changed on page scroll or when the drawink container resizes (we handle that ourselves).
 
-For any other cases if the position of excalidraw is updated (example due to scroll on parent container and not page scroll) you should call this API.
+For any other cases if the position of drawink is updated (example due to scroll on parent container and not page scroll) you should call this API.
 
 ## setToast
 
@@ -343,13 +343,13 @@ setToast(null);
 
 ## id
 
-The unique id of the excalidraw component. This can be used to identify the excalidraw component, for example importing the library items to the excalidraw component from where it was initiated when you have multiple excalidraw components rendered on the same page as shown in [multiple excalidraw demo](https://codesandbox.io/s/multiple-excalidraw-k1xx5).
+The unique id of the drawink component. This can be used to identify the drawink component, for example importing the library items to the drawink component from where it was initiated when you have multiple drawink components rendered on the same page as shown in [multiple drawink demo](https://codesandbox.io/s/multiple-drawink-k1xx5).
 
 ## getFiles
 
 <pre>
   () =>{" "}
-  <a href="https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L82">
+  <a href="https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L82">
     files
   </a>
 </pre>
@@ -371,7 +371,7 @@ This API has the below signature. It sets the `tool` passed in param as the acti
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `type` | [ToolType](https://github.com/excalidraw/excalidraw/blob/master/packages/excalidraw/types.ts#L91) | `selection` | The tool type which should be set as active tool |
+| `type` | [ToolType](https://github.com/drawink/drawink/blob/master/packages/drawink/types.ts#L91) | `selection` | The tool type which should be set as active tool |
 | `locked` | `boolean` | `false` | Indicates whether the the active tool should be locked. It behaves the same way when using the `lock` tool in the editor interface |
 
 ## setCursor
@@ -390,7 +390,7 @@ This API can be used to customise the mouse cursor on the canvas and has the bel
 
 This API can be used to toggle sidebar, optionally opening a specific sidebar tab. It returns whether the sidebar was toggled on or off. If the `force` flag passed, it will force the sidebar to be toggled either on/off.
 
-This API is especially useful when you render a custom [`<Sidebar/>`](/docs/@excalidraw/excalidraw/api/children-components/sidebar), and you want to toggle it from your app based on a user action.
+This API is especially useful when you render a custom [`<Sidebar/>`](/docs/@drawink/drawink/api/children-components/sidebar), and you want to toggle it from your app based on a user action.
 
 ## resetCursor
 
@@ -405,14 +405,14 @@ This API can be used to reset to default mouse cursor.
 ```tsx
 (
   callback: (
-    elements: readonly ExcalidrawElement[],
+    elements: readonly DrawinkElement[],
     appState: AppState,
     files: BinaryFiles,
   ) => void
 ) => () => void
 ```
 
-Subscribes to change events, similar to [`props.onChange`](/docs/@excalidraw/excalidraw/api/props#onchange).
+Subscribes to change events, similar to [`props.onChange`](/docs/@drawink/drawink/api/props#onchange).
 
 Returns an unsubscribe function.
 
