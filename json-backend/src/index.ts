@@ -77,7 +77,7 @@ app.post("/api/v2/post", async (c) => {
 });
 
 // Start server
-const port = parseInt(process.env.PORT || "3000", 10);
+const port = parseInt(process.env.JSON_BACKEND_PORT || process.env.PORT || "3001", 10);
 
 console.log(`🚀 JSON Backend server running at http://localhost:${port}`);
 console.log(`   GET  /api/v2/:id   - Fetch scene data`);
