@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { uploadBytes, ref } from "firebase/storage";
 import { nanoid } from "nanoid";
 
@@ -25,6 +25,10 @@ import type {
 import { FILE_UPLOAD_MAX_BYTES } from "../app_constants";
 import { encodeFilesForUpload } from "../data/FileManager";
 import { loadFirebaseStorage, saveFilesToFirebase } from "../data/firebase";
+import { useAuth } from "../auth";
+import { useWorkspace } from "../workspace";
+
+import "./ExportToDrawinkPlus.scss";
 
 export const exportToDrawinkPlus = async (
   elements: readonly NonDeletedDrawinkElement[],
@@ -92,6 +96,95 @@ export const ExportToDrawinkPlus: React.FC<{
   onSuccess: () => void;
 }> = ({ elements, appState, files, name, onError, onSuccess }) => {
   const { t } = useI18n();
+  const { isAuthenticated, openAuthDialog } = useAuth();
+  const {
+    workspaces,
+    loading,
+    loadWorkspaces,
+    createWorkspace,
+    createBoard,
+    getBoardsForWorkspace,
+  } = useWorkspace();
+
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
+  const [boardName, setBoardName] = useState(name || "Untitled Board");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadWorkspaces();
+    }
+  }, [isAuthenticated, loadWorkspaces]);
+
+  useEffect(() => {
+    if (workspaces.length > 0 && !selectedWorkspaceId) {
+      setSelectedWorkspaceId(workspaces[0].id);
+    }
+  }, [workspaces, selectedWorkspaceId]);
+
+  const handleSaveToWorkspace = async () => {
+    if (!selectedWorkspaceId || !boardName.trim()) return;
+
+    setSaving(true);
+    try {
+      await createBoard(selectedWorkspaceId, boardName.trim());
+      setSaved(true);
+      trackEvent("export", "workspace", `ui (${getFrame()})`);
+
+      setTimeout(() => {
+        onSuccess();
+      }, 1000);
+    } catch (error: any) {
+      console.error("Failed to save to workspace:", error);
+      onError(new Error("Failed to save to workspace"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCreateNewWorkspace = async () => {
+    const workspaceName = window.prompt("Enter workspace name:");
+    if (workspaceName?.trim()) {
+      const workspace = await createWorkspace(workspaceName.trim());
+      if (workspace) {
+        setSelectedWorkspaceId(workspace.id);
+      }
+    }
+  };
+
+  // Not logged in - show sign in prompt
+  if (!isAuthenticated) {
+    return (
+      <Card color="primary">
+        <div className="Card-icon">
+          <DrawinkLogo
+            style={{
+              [`--color-logo-icon` as any]: "#fff",
+              width: "2.8rem",
+              height: "2.8rem",
+            }}
+          />
+        </div>
+        <h2>Drawink Pro</h2>
+        <div className="Card-details">
+          Sign in to save your boards to the cloud and access them from anywhere.
+        </div>
+        <ToolButton
+          className="Card-button"
+          type="button"
+          title="Sign in"
+          aria-label="Sign in"
+          showAriaLabel={true}
+          onClick={() => {
+            openAuthDialog();
+          }}
+        />
+      </Card>
+    );
+  }
+
+  // Logged in - show workspace save form
   return (
     <Card color="primary">
       <div className="Card-icon">
@@ -104,28 +197,56 @@ export const ExportToDrawinkPlus: React.FC<{
         />
       </div>
       <h2>Drawink Pro</h2>
-      <div className="Card-details">
-        {t("exportDialog.drawinkplus_description")}
+      <div className="Card-details export-workspace-form">
+        <div className="export-workspace-row">
+          <label>Workspace</label>
+          <div className="export-workspace-select-row">
+            <select
+              value={selectedWorkspaceId}
+              onChange={(e) => setSelectedWorkspaceId(e.target.value)}
+              disabled={loading || saving}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              {workspaces.length === 0 && (
+                <option value="">No workspaces</option>
+              )}
+              {workspaces.map((workspace) => (
+                <option key={workspace.id} value={workspace.id}>
+                  {workspace.name} ({getBoardsForWorkspace(workspace.id).length})
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="export-workspace-new-btn"
+              onClick={handleCreateNewWorkspace}
+              disabled={loading || saving}
+            >
+              + New
+            </button>
+          </div>
+        </div>
+
+        <div className="export-workspace-row">
+          <label>Board Name</label>
+          <input
+            type="text"
+            value={boardName}
+            onChange={(e) => setBoardName(e.target.value)}
+            placeholder="Enter board name..."
+            onKeyDown={(e) => e.stopPropagation()}
+            disabled={saving}
+          />
+        </div>
       </div>
-      {/* <ToolButton
+      <ToolButton
         className="Card-button"
         type="button"
-        title={t("exportDialog.drawinkplus_button")}
-        aria-label={t("exportDialog.drawinkplus_button")}
+        title={saved ? "✓ Saved!" : saving ? "Saving..." : "Save to Workspace"}
+        aria-label={saved ? "Saved" : saving ? "Saving" : "Save to Workspace"}
         showAriaLabel={true}
-        onClick={async () => {
-          try {
-            trackEvent("export", "eplus", `ui (${getFrame()})`);
-            await exportToDrawinkPlus(elements, appState, files, name);
-            onSuccess();
-          } catch (error: any) {
-            console.error(error);
-            if (error.name !== "AbortError") {
-              onError(new Error(t("exportDialog.drawinkplus_exportError")));
-            }
-          }
-        }}
-      /> */}
+        onClick={handleSaveToWorkspace}
+      />
     </Card>
   );
 };
