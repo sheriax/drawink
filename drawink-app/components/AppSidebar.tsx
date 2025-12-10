@@ -2,11 +2,15 @@ import { DefaultSidebar, Sidebar, THEME } from "@drawink/drawink";
 import {
   messageCircleIcon,
   presentationIcon,
+  RectangleIcon,
 } from "@drawink/drawink/components/icons";
 // import { LinkButton } from "@drawink/drawink/components/LinkButton";
 import { useUIAppState } from "@drawink/drawink/context/ui-appState";
 
 import "./AppSidebar.scss";
+import { BoardsMenu } from "./BoardsMenu";
+
+const BOARDS_SIDEBAR_TAB = "boards"
 
 export const AppSidebar = () => {
   const { theme, openSidebar } = useUIAppState();
@@ -14,6 +18,9 @@ export const AppSidebar = () => {
   return (
     <DefaultSidebar>
       <DefaultSidebar.TabTriggers>
+        <Sidebar.TabTrigger tab={BOARDS_SIDEBAR_TAB}>
+          {RectangleIcon}
+        </Sidebar.TabTrigger>
         <Sidebar.TabTrigger
           tab="comments"
           style={{ opacity: openSidebar?.tab === "comments" ? 1 : 0.4 }}
@@ -27,6 +34,9 @@ export const AppSidebar = () => {
           {presentationIcon}
         </Sidebar.TabTrigger>
       </DefaultSidebar.TabTriggers>
+      <Sidebar.Tab tab={BOARDS_SIDEBAR_TAB}>
+        <BoardsMenu />
+      </Sidebar.Tab>
       <Sidebar.Tab tab="comments">
         <div className="app-sidebar-promo-container">
           <div
@@ -72,6 +82,6 @@ export const AppSidebar = () => {
           </LinkButton> */}
         </div>
       </Sidebar.Tab>
-    </DefaultSidebar>
+    </DefaultSidebar >
   );
 };

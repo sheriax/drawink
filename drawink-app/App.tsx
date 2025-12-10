@@ -147,7 +147,7 @@ import { UserAvatar } from "./components/UserAvatar";
 import { ProfilePage } from "./components/ProfilePage";
 import { SyncDialog } from "./components/SyncDialog";
 import { WorkspaceName } from "./components/WorkspaceName";
-import { useWorkspaceBoardsAPI, useWorkspace } from "./workspace";
+import { useWorkspace } from "./workspace";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -397,11 +397,8 @@ const DrawinkWrapper = () => {
 
   const [, forceRefresh] = useState(false);
 
-  // Workspace-aware boards API for BoardsMenu
-  const workspaceBoardsAPI = useWorkspaceBoardsAPI();
-  const { loadWorkspaces } = useWorkspace();
-
   // Load workspaces on mount
+  const { loadWorkspaces } = useWorkspace();
   useEffect(() => {
     loadWorkspaces();
   }, [loadWorkspaces]);
@@ -821,7 +818,6 @@ const DrawinkWrapper = () => {
       })}
     >
       <Drawink
-        boardsAPI={workspaceBoardsAPI || LocalData.boards}
         drawinkAPI={drawinkRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}

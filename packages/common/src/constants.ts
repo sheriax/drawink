@@ -420,11 +420,10 @@ export const DEFAULT_ELEMENT_PROPS: {
 
 export const LIBRARY_SIDEBAR_TAB = "library";
 export const CANVAS_SEARCH_TAB = "search";
-export const BOARDS_SIDEBAR_TAB = "boards";
 
 export const DEFAULT_SIDEBAR = {
   name: "default",
-  defaultTab: BOARDS_SIDEBAR_TAB,
+  defaultTab: "boards",
 } as const;
 
 export const LIBRARY_DISABLED_TYPES = new Set([

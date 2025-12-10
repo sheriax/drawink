@@ -10,7 +10,6 @@ import MainMenu from "./components/main-menu/MainMenu";
 import WelcomeScreen from "./components/welcome-screen/WelcomeScreen";
 import { defaultLang } from "./i18n";
 import { EditorJotaiProvider, editorJotaiStore } from "./editor-jotai";
-import { BoardsContext } from "./context/boards";
 import polyfill from "./polyfill";
 
 import "./css/app.scss";
@@ -57,7 +56,6 @@ const DrawinkBase = (props: DrawinkProps) => {
     aiEnabled,
     showDeprecatedFonts,
     renderScrollbars,
-    boardsAPI,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -115,48 +113,46 @@ const DrawinkBase = (props: DrawinkProps) => {
 
   return (
     <EditorJotaiProvider store={editorJotaiStore}>
-      <BoardsContext.Provider value={boardsAPI}>
-        <InitializeApp langCode={langCode} theme={theme}>
-          <App
-            onChange={onChange}
-            onIncrement={onIncrement}
-            initialData={initialData}
-            drawinkAPI={drawinkAPI}
-            isCollaborating={isCollaborating}
-            onPointerUpdate={onPointerUpdate}
-            renderTopLeftUI={renderTopLeftUI}
-            renderTopRightUI={renderTopRightUI}
-            langCode={langCode}
-            viewModeEnabled={viewModeEnabled}
-            zenModeEnabled={zenModeEnabled}
-            gridModeEnabled={gridModeEnabled}
-            libraryReturnUrl={libraryReturnUrl}
-            theme={theme}
-            name={name}
-            renderCustomStats={renderCustomStats}
-            UIOptions={UIOptions}
-            onPaste={onPaste}
-            detectScroll={detectScroll}
-            handleKeyboardGlobally={handleKeyboardGlobally}
-            onLibraryChange={onLibraryChange}
-            autoFocus={autoFocus}
-            generateIdForFile={generateIdForFile}
-            onLinkOpen={onLinkOpen}
-            generateLinkForSelection={generateLinkForSelection}
-            onPointerDown={onPointerDown}
-            onPointerUp={onPointerUp}
-            onScrollChange={onScrollChange}
-            onDuplicate={onDuplicate}
-            validateEmbeddable={validateEmbeddable}
-            renderEmbeddable={renderEmbeddable}
-            aiEnabled={aiEnabled !== false}
-            showDeprecatedFonts={showDeprecatedFonts}
-            renderScrollbars={renderScrollbars}
-          >
-            {children}
-          </App>
-        </InitializeApp>
-      </BoardsContext.Provider>
+      <InitializeApp langCode={langCode} theme={theme}>
+        <App
+          onChange={onChange}
+          onIncrement={onIncrement}
+          initialData={initialData}
+          drawinkAPI={drawinkAPI}
+          isCollaborating={isCollaborating}
+          onPointerUpdate={onPointerUpdate}
+          renderTopLeftUI={renderTopLeftUI}
+          renderTopRightUI={renderTopRightUI}
+          langCode={langCode}
+          viewModeEnabled={viewModeEnabled}
+          zenModeEnabled={zenModeEnabled}
+          gridModeEnabled={gridModeEnabled}
+          libraryReturnUrl={libraryReturnUrl}
+          theme={theme}
+          name={name}
+          renderCustomStats={renderCustomStats}
+          UIOptions={UIOptions}
+          onPaste={onPaste}
+          detectScroll={detectScroll}
+          handleKeyboardGlobally={handleKeyboardGlobally}
+          onLibraryChange={onLibraryChange}
+          autoFocus={autoFocus}
+          generateIdForFile={generateIdForFile}
+          onLinkOpen={onLinkOpen}
+          generateLinkForSelection={generateLinkForSelection}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onScrollChange={onScrollChange}
+          onDuplicate={onDuplicate}
+          validateEmbeddable={validateEmbeddable}
+          renderEmbeddable={renderEmbeddable}
+          aiEnabled={aiEnabled !== false}
+          showDeprecatedFonts={showDeprecatedFonts}
+          renderScrollbars={renderScrollbars}
+        >
+          {children}
+        </App>
+      </InitializeApp>
     </EditorJotaiProvider>
   );
 };

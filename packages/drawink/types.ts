@@ -75,15 +75,6 @@ export interface Board {
   size?: number;
 }
 
-export interface BoardsAPI {
-  getBoards: () => Promise<Board[]>;
-  createBoard: (name: string) => Promise<string>;
-  switchBoard: (id: string) => Promise<void>;
-  updateBoardName: (id: string, name: string) => Promise<void>;
-  deleteBoard: (id: string) => Promise<void>;
-  getCurrentBoardId: () => Promise<string | null>;
-}
-
 export type Collaborator = Readonly<{
   pointer?: CollaboratorPointer;
   button?: "up" | "down";
@@ -653,7 +644,6 @@ export interface DrawinkProps {
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
-  boardsAPI?: BoardsAPI;
 }
 
 export type SceneData = {
