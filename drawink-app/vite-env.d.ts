@@ -47,3 +47,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface Window {
+  __DRAWINK_SHA__: string | undefined;
+}

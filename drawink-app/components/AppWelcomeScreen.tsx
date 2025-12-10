@@ -44,7 +44,7 @@ export const AppWelcomeScreen: React.FC<{
               href="#"
               shortcut={null}
               icon={loginIcon}
-              onSelect={(e: React.MouseEvent) => {
+              onClick={(e) => {
                 e.preventDefault();
                 openAuthDialog();
               }}

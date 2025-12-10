@@ -75,9 +75,8 @@ const PickerColorList = ({
               onChange(color);
               setActiveColorPickerSection("baseColors");
             }}
-            title={`${label}${
-              color.startsWith("#") ? ` ${color}` : ""
-            } — ${keybinding}`}
+            title={`${label}${color.startsWith("#") ? ` ${color}` : ""
+              } — ${keybinding}`}
             aria-label={`${label} — ${keybinding}`}
             style={color ? { "--swatch-color": color } : undefined}
             data-testid={`color-${key}`}
