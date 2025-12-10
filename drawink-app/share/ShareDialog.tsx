@@ -21,7 +21,8 @@ import { useEffect, useRef, useState } from "react";
 import { atom, useAtom, useAtomValue } from "../app-jotai";
 import { activeRoomLinkAtom } from "../collab/Collab";
 import { useAuth } from "../auth";
-import { useWorkspace } from "../workspace";
+import { WorkspaceSaveDialog } from "./WorkspaceSaveDialog";
+
 
 import "./ShareDialog.scss";
 
@@ -185,139 +186,10 @@ const ActiveRoomDialog = ({
   );
 };
 
-const WorkspaceSaveSection = ({ handleClose }: { handleClose: () => void }) => {
-  const { isAuthenticated } = useAuth();
-  const {
-    workspaces,
-    loading,
-    loadWorkspaces,
-    createWorkspace,
-    createBoard,
-    getBoardsForWorkspace,
-  } = useWorkspace();
-
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
-  const [boardName, setBoardName] = useState("Untitled Board");
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadWorkspaces();
-    }
-  }, [isAuthenticated, loadWorkspaces]);
-
-  useEffect(() => {
-    if (workspaces.length > 0 && !selectedWorkspaceId) {
-      setSelectedWorkspaceId(workspaces[0].id);
-    }
-  }, [workspaces, selectedWorkspaceId]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  const handleSaveToWorkspace = async () => {
-    if (!selectedWorkspaceId || !boardName.trim()) return;
-
-    setSaving(true);
-    try {
-      await createBoard(selectedWorkspaceId, boardName.trim());
-      setSaved(true);
-      trackEvent("share", "saved to workspace");
-
-      setTimeout(() => {
-        handleClose();
-      }, 1500);
-    } catch (error) {
-      console.error("Failed to save to workspace:", error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCreateNewWorkspace = async () => {
-    const name = window.prompt("Enter workspace name:");
-    if (name?.trim()) {
-      const workspace = await createWorkspace(name.trim());
-      if (workspace) {
-        setSelectedWorkspaceId(workspace.id);
-      }
-    }
-  };
-
-  return (
-    <>
-      <div className="ShareDialog__separator">
-        <span>or</span>
-      </div>
-
-      <div className="ShareDialog__picker__header">
-        ☁️ Save to Workspace
-      </div>
-      <div className="ShareDialog__picker__description">
-        Save this board to your cloud workspace for easy access across devices.
-      </div>
-
-      <div className="ShareDialog__workspace-form">
-        <div className="ShareDialog__workspace-row">
-          <label>Workspace</label>
-          <div className="ShareDialog__workspace-select-row">
-            <select
-              value={selectedWorkspaceId}
-              onChange={(e) => setSelectedWorkspaceId(e.target.value)}
-              disabled={loading || saving}
-            >
-              {workspaces.length === 0 && (
-                <option value="">No workspaces</option>
-              )}
-              {workspaces.map((workspace) => (
-                <option key={workspace.id} value={workspace.id}>
-                  {workspace.name} ({getBoardsForWorkspace(workspace.id).length} boards)
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              className="ShareDialog__workspace-new-btn"
-              onClick={handleCreateNewWorkspace}
-              disabled={loading || saving}
-            >
-              + New
-            </button>
-          </div>
-        </div>
-
-        <div className="ShareDialog__workspace-row">
-          <label>Board Name</label>
-          <input
-            type="text"
-            value={boardName}
-            onChange={(e) => setBoardName(e.target.value)}
-            placeholder="Enter board name..."
-            onKeyDown={(e) => e.stopPropagation()}
-            disabled={saving}
-          />
-        </div>
-      </div>
-
-      <div className="ShareDialog__picker__button">
-        <button
-          className="ShareDialog__workspace-save-btn"
-          onClick={handleSaveToWorkspace}
-          disabled={saving || saved || !selectedWorkspaceId || !boardName.trim()}
-        >
-          {cloudSaveIcon}
-          {saved ? "✓ Saved!" : saving ? "Saving..." : "Save to Workspace"}
-        </button>
-      </div>
-    </>
-  );
-};
-
 const ShareDialogPicker = (props: ShareDialogProps) => {
   const { t } = useI18n();
   const { isAuthenticated } = useAuth();
+  const [isWorkspaceDialogOpen, setIsWorkspaceDialogOpen] = useState(false);
 
   const { collabAPI } = props;
 
@@ -379,7 +251,31 @@ const ShareDialogPicker = (props: ShareDialogProps) => {
 
           {/* Workspace save section for logged-in users */}
           {isAuthenticated && (
-            <WorkspaceSaveSection handleClose={props.handleClose} />
+            <>
+              <div className="ShareDialog__separator">
+                <span>or</span>
+              </div>
+              <div className="ShareDialog__picker__header">
+                ☁️ Save to Workspace
+              </div>
+              <div className="ShareDialog__picker__description">
+                Save this board to your cloud workspace for easy access across devices.
+              </div>
+              <div className="ShareDialog__picker__button">
+                <FilledButton
+                  size="large"
+                  label="Save to Workspace"
+                  icon={null}
+                  onClick={() => setIsWorkspaceDialogOpen(true)}
+                />
+              </div>
+
+              <WorkspaceSaveDialog
+                isOpen={isWorkspaceDialogOpen}
+                onClose={() => setIsWorkspaceDialogOpen(false)}
+                onSuccess={props.handleClose}
+              />
+            </>
           )}
         </>
       )}
