@@ -6,7 +6,8 @@
     "drawink-app",
     "packages/*",
     "examples/*",
-    "json-backend"
+    "json-server",
+    "websocket-server"
   ],
   "devDependencies": {
     "@babel/preset-env": "7.26.9",
@@ -84,7 +85,7 @@
     "start": "cd ./drawink-app && bun run start",
     "start:production": "cd ./drawink-app && bun run start:production",
     "start:example": "bun run build:packages && cd ./examples/with-script-in-browser && bun run start",
-    "start:backend": "cd ./json-backend && bun run dev",
+    "start:backend": "cd ./json-server && bun run dev",
     "test:all": "bun run test:typecheck && bun run test:code && bun run test:other && bun run test:app --watch=false",
     "test:app": "vitest",
     "test:code": "eslint --max-warnings=0 --ext .js,.ts,.tsx .",
