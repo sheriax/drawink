@@ -457,6 +457,10 @@ export interface FirestoreBoard {
   name: string;
   createdAt: number;
   lastModified: number;
+  size?: number; // Size in bytes
+  sceneVersion?: number;
+  ciphertext?: Bytes;
+  iv?: Bytes;
 }
 
 // -----------------------------------------------------------------------------
@@ -654,6 +658,7 @@ export const saveBoardContentToFirestore = async (
     sceneVersion: hashElementsVersion(elements),
     ciphertext: Bytes.fromUint8Array(new Uint8Array(ciphertext)),
     iv: Bytes.fromUint8Array(iv),
+    size: ciphertext.byteLength + iv.byteLength,
     lastModified: Date.now(),
   });
 };

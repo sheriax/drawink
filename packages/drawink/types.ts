@@ -72,6 +72,7 @@ export interface Board {
   lastModified: number;
   /** If set, this board has been synced to a Firestore workspace */
   syncedWorkspaceId?: string;
+  size?: number;
 }
 
 export interface BoardsAPI {

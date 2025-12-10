@@ -146,12 +146,15 @@ import { AuthDialog } from "./components/AuthDialog";
 import { UserAvatar } from "./components/UserAvatar";
 import { ProfilePage } from "./components/ProfilePage";
 import { SyncDialog } from "./components/SyncDialog";
+import { WorkspaceName } from "./components/WorkspaceName";
+import { useWorkspaceBoardsAPI, useWorkspace } from "./workspace";
 
 import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 
 window.DRAWINK_THROTTLE_RENDER = true;
+
 
 declare global {
   interface BeforeInstallPromptEventChoiceResult {
@@ -393,6 +396,15 @@ const DrawinkWrapper = () => {
   });
 
   const [, forceRefresh] = useState(false);
+
+  // Workspace-aware boards API for BoardsMenu
+  const workspaceBoardsAPI = useWorkspaceBoardsAPI();
+  const { loadWorkspaces } = useWorkspace();
+
+  // Load workspaces on mount
+  useEffect(() => {
+    loadWorkspaces();
+  }, [loadWorkspaces]);
 
   useEffect(() => {
     if (isDevEnv()) {
@@ -809,7 +821,7 @@ const DrawinkWrapper = () => {
       })}
     >
       <Drawink
-        boardsAPI={LocalData.boards}
+        boardsAPI={workspaceBoardsAPI || LocalData.boards}
         drawinkAPI={drawinkRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}
@@ -853,6 +865,7 @@ const DrawinkWrapper = () => {
         handleKeyboardGlobally={true}
         autoFocus={true}
         theme={editorTheme}
+        renderTopLeftUI={() => <WorkspaceName />}
         renderTopRightUI={(isMobile) => {
           return (
             <div className="drawink-ui-top-right">

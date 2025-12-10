@@ -71,6 +71,7 @@ export const ProfilePage: React.FC = () => {
     renameBoard,
     removeBoard,
     getBoardsForWorkspace,
+    selectWorkspace,
   } = useWorkspace();
 
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
@@ -247,6 +248,18 @@ export const ProfilePage: React.FC = () => {
                       </span>
 
                       <div className="profile-page__workspace-actions">
+                        <button
+                          className={isEditing ? "hidden" : "profile-page__workspace-select"}
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await selectWorkspace(workspace.id);
+                            // Note: Page may reload for cloud workspaces with boards
+                            // For empty workspaces or local workspace, close dialog
+                            handleClose();
+                          }}
+                        >
+                          Select
+                        </button>
                         <button
                           title="Rename"
                           onClick={() => handleStartEdit("workspace", workspace.id, workspace.name)}

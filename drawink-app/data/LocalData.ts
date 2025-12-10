@@ -98,6 +98,28 @@ const saveDataStateToLocalStorage = (
       JSON.stringify(getNonDeletedElements(elements)),
     );
     localStorage.setItem(stateKey, JSON.stringify(_appState));
+
+    // Update board size in metadata if we are on a specific board
+    if (currentBoardId) {
+      try {
+        const boardsStr = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS);
+        if (boardsStr) {
+          const boards = JSON.parse(boardsStr);
+          const boardIndex = boards.findIndex((b: any) => b.id === currentBoardId);
+          if (boardIndex !== -1) {
+            const elementsSize = new TextEncoder().encode(JSON.stringify(getNonDeletedElements(elements))).length;
+            // We can roughly estimate, or just sum elements + state size
+            // For now just elements size is a good proxy or strict size
+            boards[boardIndex].size = elementsSize;
+            boards[boardIndex].lastModified = Date.now();
+            localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to update board size", e);
+      }
+    }
+
     updateBrowserStateVersion(STORAGE_KEYS.VERSION_DATA_STATE);
     if (localStorageQuotaExceeded) {
       appJotaiStore.set(localStorageQuotaExceededAtom, false);

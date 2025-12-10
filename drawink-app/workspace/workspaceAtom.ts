@@ -2,6 +2,8 @@ import { atom } from "jotai";
 
 import type { Workspace, FirestoreBoard } from "../data/firebase";
 
+export const LOCAL_WORKSPACE_ID = "local";
+
 /**
  * Current workspace - the workspace currently being viewed/edited
  */
