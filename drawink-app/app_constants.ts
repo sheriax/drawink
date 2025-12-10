@@ -57,6 +57,9 @@ export const COOKIES = {
   AUTH_STATE_COOKIE: "excplus-auth",
 } as const;
 
+// Note: Auth is now handled via Firebase Auth
+// Use useAuth() hook or isAuthenticatedAtom from auth/ directory
+// Legacy cookie detection kept for backward compatibility
 export const isDrawinkPlusSignedUser = document.cookie.includes(
   COOKIES.AUTH_STATE_COOKIE,
 );

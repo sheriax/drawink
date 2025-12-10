@@ -141,6 +141,9 @@ import "./index.scss";
 
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { AppSidebar } from "./components/AppSidebar";
+import { AuthProvider } from "./auth";
+import { AuthDialog } from "./components/AuthDialog";
+import { UserAvatar } from "./components/UserAvatar";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -149,10 +152,6 @@ polyfill();
 window.DRAWINK_THROTTLE_RENDER = true;
 
 declare global {
-  interface Window {
-    DRAWINK_THROTTLE_RENDER?: boolean;
-  }
-
   interface BeforeInstallPromptEventChoiceResult {
     outcome: "accepted" | "dismissed";
   }
@@ -1173,7 +1172,10 @@ const DrawinkApp = () => {
   return (
     <TopErrorBoundary>
       <Provider store={appJotaiStore}>
-        <DrawinkWrapper />
+        <AuthProvider>
+          <DrawinkWrapper />
+          <AuthDialog />
+        </AuthProvider>
       </Provider>
     </TopErrorBoundary>
   );

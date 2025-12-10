@@ -1,7 +1,8 @@
 import {
-  // loginIcon,
+  loginIcon,
   // ExcalLogo,
   eyeIcon,
+  ExternalLinkIcon,
 } from "@drawink/drawink/components/icons";
 import { MainMenu } from "@drawink/drawink/index";
 import React from "react";
@@ -11,7 +12,7 @@ import { isDevEnv } from "@drawink/common";
 import type { Theme } from "@drawink/element/types";
 
 import { LanguageList } from "../app-language/LanguageList";
-// import { isDrawinkPlusSignedUser } from "../app_constants";
+import { useAuth } from "../auth";
 
 import { saveDebugState } from "./DebugCanvas";
 
@@ -23,6 +24,8 @@ export const AppMainMenu: React.FC<{
   setTheme: (theme: Theme | "system") => void;
   refresh: () => void;
 }> = React.memo((props) => {
+  const { isAuthenticated, openAuthDialog, signOut, displayName } = useAuth();
+
   return (
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
@@ -40,25 +43,28 @@ export const AppMainMenu: React.FC<{
       <MainMenu.DefaultItems.Help />
       <MainMenu.DefaultItems.ClearCanvas />
       <MainMenu.Separator />
-      {/* <MainMenu.ItemLink
-        icon={ExcalLogo}
-        href={`${
-          import.meta.env.VITE_APP_PLUS_LP
-        }/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger`}
-        className=""
-      >
-        Drawink Pro
-      </MainMenu.ItemLink> */}
       <MainMenu.DefaultItems.Socials disabled />
-      {/* <MainMenu.ItemLink
-        icon={loginIcon}
-        href={`${import.meta.env.VITE_APP_PLUS_APP}${
-          isDrawinkPlusSignedUser ? "" : "/sign-up"
-        }?utm_source=signin&utm_medium=app&utm_content=hamburger`}
-        className="highlighted"
-      >
-        {isDrawinkPlusSignedUser ? "Sign in" : "Sign up"}
-      </MainMenu.ItemLink> */}
+
+      {/* Auth Menu Items */}
+      {isAuthenticated ? (
+        <>
+          <MainMenu.Item icon={loginIcon} onSelect={() => { }}>
+            {displayName || "Signed in"}
+          </MainMenu.Item>
+          <MainMenu.Item icon={ExternalLinkIcon} onSelect={signOut}>
+            Sign out
+          </MainMenu.Item>
+        </>
+      ) : (
+        <MainMenu.Item
+          icon={loginIcon}
+          onSelect={openAuthDialog}
+          className="highlighted"
+        >
+          Sign in
+        </MainMenu.Item>
+      )}
+
       {isDevEnv() && (
         <MainMenu.Item
           icon={eyeIcon}

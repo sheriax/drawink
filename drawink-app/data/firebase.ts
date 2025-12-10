@@ -6,6 +6,19 @@ import { restoreElements } from "@drawink/drawink/data/restore";
 import { getSceneVersion } from "@drawink/element";
 import { initializeApp } from "firebase/app";
 import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  type User,
+  type Auth,
+} from "firebase/auth";
+import {
   getFirestore,
   doc,
   getDoc,
@@ -43,8 +56,7 @@ try {
   FIREBASE_CONFIG = JSON.parse(import.meta.env.VITE_APP_FIREBASE_CONFIG);
 } catch (error: any) {
   console.warn(
-    `Error JSON parsing firebase config. Supplied value: ${
-      import.meta.env.VITE_APP_FIREBASE_CONFIG
+    `Error JSON parsing firebase config. Supplied value: ${import.meta.env.VITE_APP_FIREBASE_CONFIG
     }`,
   );
   FIREBASE_CONFIG = {};
@@ -53,6 +65,7 @@ try {
 let firebaseApp: ReturnType<typeof initializeApp> | null = null;
 let firestore: ReturnType<typeof getFirestore> | null = null;
 let firebaseStorage: ReturnType<typeof getStorage> | null = null;
+let firebaseAuth: Auth | null = null;
 
 const _initializeFirebase = () => {
   if (!firebaseApp) {
@@ -73,6 +86,13 @@ const _getStorage = () => {
     firebaseStorage = getStorage(_initializeFirebase());
   }
   return firebaseStorage;
+};
+
+export const _getAuth = (): Auth => {
+  if (!firebaseAuth) {
+    firebaseAuth = getAuth(_initializeFirebase());
+  }
+  return firebaseAuth;
 };
 
 // -----------------------------------------------------------------------------
@@ -279,9 +299,8 @@ export const loadFilesFromFirebase = async (
   await Promise.all(
     [...new Set(filesIds)].map(async (id) => {
       try {
-        const url = `https://firebasestorage.googleapis.com/v0/b/${
-          FIREBASE_CONFIG.storageBucket
-        }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
+        const url = `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_CONFIG.storageBucket
+          }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
         const response = await fetch(`${url}?alt=media`);
         if (response.status < 400) {
           const arrayBuffer = await response.arrayBuffer();
@@ -314,3 +333,100 @@ export const loadFilesFromFirebase = async (
 
   return { loadedFiles, erroredFiles };
 };
+
+// -----------------------------------------------------------------------------
+// Firebase Auth Functions
+// -----------------------------------------------------------------------------
+
+const EMAIL_LINK_STORAGE_KEY = "emailForSignIn";
+
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+/**
+ * Sign in with Google popup
+ */
+export const signInWithGoogle = async () => {
+  const auth = _getAuth();
+  return signInWithPopup(auth, googleProvider);
+};
+
+/**
+ * Sign in with GitHub popup
+ */
+export const signInWithGithub = async () => {
+  const auth = _getAuth();
+  return signInWithPopup(auth, githubProvider);
+};
+
+/**
+ * Send passwordless email sign-in link
+ */
+export const sendEmailSignInLink = async (email: string) => {
+  const auth = _getAuth();
+  const actionCodeSettings = {
+    url: window.location.origin + window.location.pathname,
+    handleCodeInApp: true,
+  };
+  await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+  // Store email for sign-in completion
+  window.localStorage.setItem(EMAIL_LINK_STORAGE_KEY, email);
+};
+
+/**
+ * Complete email sign-in from link
+ */
+export const completeEmailSignIn = async () => {
+  const auth = _getAuth();
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    let email = window.localStorage.getItem(EMAIL_LINK_STORAGE_KEY);
+    if (!email) {
+      // User opened the link on a different device, ask for email
+      email = window.prompt("Please provide your email for confirmation");
+    }
+    if (email) {
+      const result = await signInWithEmailLink(auth, email, window.location.href);
+      // Clear stored email
+      window.localStorage.removeItem(EMAIL_LINK_STORAGE_KEY);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return result;
+    }
+  }
+  return null;
+};
+
+/**
+ * Check if current URL is an email sign-in link
+ */
+export const isEmailSignInLink = () => {
+  const auth = _getAuth();
+  return isSignInWithEmailLink(auth, window.location.href);
+};
+
+/**
+ * Sign out the current user
+ */
+export const signOut = async () => {
+  const auth = _getAuth();
+  return firebaseSignOut(auth);
+};
+
+/**
+ * Subscribe to auth state changes
+ */
+export const onAuthChange = (callback: (user: User | null) => void) => {
+  const auth = _getAuth();
+  return onAuthStateChanged(auth, callback);
+};
+
+/**
+ * Get current user (synchronous, may be null if auth not initialized)
+ */
+export const getCurrentUser = (): User | null => {
+  const auth = _getAuth();
+  return auth.currentUser;
+};
+
+// Re-export User type for consumers
+export type { User };
