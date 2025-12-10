@@ -144,6 +144,8 @@ import { AppSidebar } from "./components/AppSidebar";
 import { AuthProvider } from "./auth";
 import { AuthDialog } from "./components/AuthDialog";
 import { UserAvatar } from "./components/UserAvatar";
+import { ProfilePage } from "./components/ProfilePage";
+import { SyncDialog } from "./components/SyncDialog";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -1175,6 +1177,8 @@ const DrawinkApp = () => {
         <AuthProvider>
           <DrawinkWrapper />
           <AuthDialog />
+          <ProfilePage />
+          <SyncDialog />
         </AuthProvider>
       </Provider>
     </TopErrorBoundary>

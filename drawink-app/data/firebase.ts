@@ -1,9 +1,8 @@
-import { reconcileElements } from "@drawink/drawink";
+import { hashElementsVersion, reconcileElements } from "@drawink/drawink";
 import { MIME_TYPES } from "@drawink/common";
 import { decompressData } from "@drawink/drawink/data/encode";
 import { encryptData, decryptData } from "@drawink/drawink/data/encryption";
 import { restoreElements } from "@drawink/drawink/data/restore";
-import { getSceneVersion } from "@drawink/element";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -22,6 +21,14 @@ import {
   getFirestore,
   doc,
   getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  orderBy,
   runTransaction,
   Bytes,
 } from "firebase/firestore";
@@ -141,7 +148,7 @@ class FirebaseSceneVersionCache {
     socket: Socket,
     elements: readonly SyncableDrawinkElement[],
   ) => {
-    FirebaseSceneVersionCache.cache.set(socket, getSceneVersion(elements));
+    FirebaseSceneVersionCache.cache.set(socket, hashElementsVersion(elements));
   };
 }
 
@@ -150,7 +157,7 @@ export const isSavedToFirebase = (
   elements: readonly DrawinkElement[],
 ): boolean => {
   if (portal.socket && portal.roomId && portal.roomKey) {
-    const sceneVersion = getSceneVersion(elements);
+    const sceneVersion = hashElementsVersion(elements);
 
     return FirebaseSceneVersionCache.get(portal.socket) === sceneVersion;
   }
@@ -192,7 +199,7 @@ const createFirebaseSceneDocument = async (
   elements: readonly SyncableDrawinkElement[],
   roomKey: string,
 ) => {
-  const sceneVersion = getSceneVersion(elements);
+  const sceneVersion = hashElementsVersion(elements);
   const { ciphertext, iv } = await encryptElements(roomKey, elements);
   return {
     sceneVersion,
@@ -430,3 +437,252 @@ export const getCurrentUser = (): User | null => {
 
 // Re-export User type for consumers
 export type { User };
+
+// -----------------------------------------------------------------------------
+// Workspace and Board Types
+// -----------------------------------------------------------------------------
+
+export interface Workspace {
+  id: string;
+  userId: string;
+  name: string;
+  createdAt: number;
+  lastModified: number;
+}
+
+export interface FirestoreBoard {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  name: string;
+  createdAt: number;
+  lastModified: number;
+}
+
+// -----------------------------------------------------------------------------
+// Workspace CRUD Functions
+// -----------------------------------------------------------------------------
+
+/**
+ * Create a new workspace for a user
+ */
+export const createWorkspace = async (
+  userId: string,
+  name: string,
+  workspaceId?: string,
+): Promise<Workspace> => {
+  const firestore = _getFirestore();
+  const id = workspaceId || crypto.randomUUID();
+  const workspace: Workspace = {
+    id,
+    userId,
+    name,
+    createdAt: Date.now(),
+    lastModified: Date.now(),
+  };
+
+  await setDoc(doc(firestore, "workspaces", id), workspace);
+  return workspace;
+};
+
+/**
+ * Get all workspaces for a user
+ */
+export const getWorkspaces = async (userId: string): Promise<Workspace[]> => {
+  const firestore = _getFirestore();
+  const workspacesRef = collection(firestore, "workspaces");
+  const q = query(
+    workspacesRef,
+    where("userId", "==", userId),
+    orderBy("lastModified", "desc"),
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => doc.data() as Workspace);
+};
+
+/**
+ * Update a workspace
+ */
+export const updateWorkspace = async (
+  workspaceId: string,
+  data: Partial<Pick<Workspace, "name">>,
+): Promise<void> => {
+  const firestore = _getFirestore();
+  await updateDoc(doc(firestore, "workspaces", workspaceId), {
+    ...data,
+    lastModified: Date.now(),
+  });
+};
+
+/**
+ * Delete a workspace and all its boards
+ */
+export const deleteWorkspace = async (workspaceId: string): Promise<void> => {
+  const firestore = _getFirestore();
+
+  // First delete all boards in the workspace
+  const boardsRef = collection(firestore, "boards");
+  const q = query(boardsRef, where("workspaceId", "==", workspaceId));
+  const snapshot = await getDocs(q);
+
+  await Promise.all(
+    snapshot.docs.map((boardDoc) => deleteDoc(boardDoc.ref)),
+  );
+
+  // Then delete the workspace
+  await deleteDoc(doc(firestore, "workspaces", workspaceId));
+};
+
+// -----------------------------------------------------------------------------
+// Board CRUD Functions
+// -----------------------------------------------------------------------------
+
+/**
+ * Create a new board in a workspace (preserves existing ID if provided)
+ */
+export const createFirestoreBoard = async (
+  workspaceId: string,
+  userId: string,
+  name: string,
+  boardId?: string,
+): Promise<FirestoreBoard> => {
+  const firestore = _getFirestore();
+  // Preserve existing board ID if provided, otherwise generate new one
+  const id = boardId || crypto.randomUUID();
+  const board: FirestoreBoard = {
+    id,
+    workspaceId,
+    userId,
+    name,
+    createdAt: Date.now(),
+    lastModified: Date.now(),
+  };
+
+  await setDoc(doc(firestore, "boards", id), board);
+  return board;
+};
+
+/**
+ * Get all boards in a workspace
+ */
+export const getFirestoreBoards = async (
+  workspaceId: string,
+): Promise<FirestoreBoard[]> => {
+  const firestore = _getFirestore();
+  const boardsRef = collection(firestore, "boards");
+  const q = query(
+    boardsRef,
+    where("workspaceId", "==", workspaceId),
+    orderBy("lastModified", "desc"),
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => doc.data() as FirestoreBoard);
+};
+
+/**
+ * Get all boards for a user (across all workspaces)
+ */
+export const getUserFirestoreBoards = async (
+  userId: string,
+): Promise<FirestoreBoard[]> => {
+  const firestore = _getFirestore();
+  const boardsRef = collection(firestore, "boards");
+  const q = query(
+    boardsRef,
+    where("userId", "==", userId),
+    orderBy("lastModified", "desc"),
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => doc.data() as FirestoreBoard);
+};
+
+/**
+ * Get a single board by ID
+ */
+export const getFirestoreBoard = async (
+  boardId: string,
+): Promise<FirestoreBoard | null> => {
+  const firestore = _getFirestore();
+  const docSnap = await getDoc(doc(firestore, "boards", boardId));
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap.data() as FirestoreBoard;
+};
+
+/**
+ * Update a board's metadata
+ */
+export const updateFirestoreBoard = async (
+  boardId: string,
+  data: Partial<Pick<FirestoreBoard, "name" | "workspaceId">>,
+): Promise<void> => {
+  const firestore = _getFirestore();
+  await updateDoc(doc(firestore, "boards", boardId), {
+    ...data,
+    lastModified: Date.now(),
+  });
+};
+
+/**
+ * Delete a board
+ */
+export const deleteFirestoreBoard = async (boardId: string): Promise<void> => {
+  const firestore = _getFirestore();
+  await deleteDoc(doc(firestore, "boards", boardId));
+};
+
+/**
+ * Save board content (elements) to Firestore
+ * Uses the same encryption as collaboration rooms
+ */
+export const saveBoardContentToFirestore = async (
+  boardId: string,
+  elements: readonly DrawinkElement[],
+  encryptionKey: string,
+): Promise<void> => {
+  const firestore = _getFirestore();
+
+  const { ciphertext, iv } = await encryptElements(encryptionKey, elements);
+
+  await updateDoc(doc(firestore, "boards", boardId), {
+    sceneVersion: hashElementsVersion(elements),
+    ciphertext: Bytes.fromUint8Array(new Uint8Array(ciphertext)),
+    iv: Bytes.fromUint8Array(iv),
+    lastModified: Date.now(),
+  });
+};
+
+/**
+ * Load board content (elements) from Firestore
+ */
+export const loadBoardContentFromFirestore = async (
+  boardId: string,
+  encryptionKey: string,
+): Promise<readonly DrawinkElement[] | null> => {
+  const firestore = _getFirestore();
+  const docSnap = await getDoc(doc(firestore, "boards", boardId));
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  const data = docSnap.data();
+  if (!data.ciphertext || !data.iv) {
+    return [];
+  }
+
+  return decryptElements(
+    {
+      sceneVersion: data.sceneVersion,
+      ciphertext: data.ciphertext,
+      iv: data.iv,
+    },
+    encryptionKey,
+  );
+};

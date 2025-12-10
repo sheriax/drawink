@@ -6,6 +6,7 @@ import {
 } from "@drawink/drawink/components/icons";
 import { MainMenu } from "@drawink/drawink/index";
 import React from "react";
+import { useSetAtom } from "jotai";
 
 import { isDevEnv } from "@drawink/common";
 
@@ -15,6 +16,7 @@ import { LanguageList } from "../app-language/LanguageList";
 import { useAuth } from "../auth";
 
 import { saveDebugState } from "./DebugCanvas";
+import { profilePageOpenAtom } from "./profileAtom";
 
 export const AppMainMenu: React.FC<{
   onCollabDialogOpen: () => any;
@@ -25,6 +27,11 @@ export const AppMainMenu: React.FC<{
   refresh: () => void;
 }> = React.memo((props) => {
   const { isAuthenticated, openAuthDialog, signOut, displayName } = useAuth();
+  const setProfilePageOpen = useSetAtom(profilePageOpenAtom);
+
+  const openProfilePage = () => {
+    setProfilePageOpen(true);
+  };
 
   return (
     <MainMenu>
@@ -48,7 +55,7 @@ export const AppMainMenu: React.FC<{
       {/* Auth Menu Items */}
       {isAuthenticated ? (
         <>
-          <MainMenu.Item icon={loginIcon} onSelect={() => { }}>
+          <MainMenu.Item icon={loginIcon} onSelect={openProfilePage}>
             {displayName || "Signed in"}
           </MainMenu.Item>
           <MainMenu.Item icon={ExternalLinkIcon} onSelect={signOut}>
