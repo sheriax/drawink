@@ -72,6 +72,9 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 # Copy supervisor config
 COPY docker/supervisord.conf /etc/supervisord.conf
 
+# Copy Firebase service account for json-server
+COPY firebase-project/drawink-2026-firebase-adminsdk.json /app/firebase-project/drawink-2026-firebase-adminsdk.json
+
 # Expose ports (nginx serves on 3000)
 EXPOSE 3000
 

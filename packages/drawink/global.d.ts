@@ -2,7 +2,7 @@ interface Window {
   ClipboardItem: any;
   __EXCALIDRAW_SHA__: string | undefined;
   EXCALIDRAW_ASSET_PATH: string | string[] | undefined;
-  EXCALIDRAW_THROTTLE_RENDER: boolean | undefined;
+  DRAWINK_THROTTLE_RENDER: boolean | undefined;
   DEBUG_FRACTIONAL_INDICES: boolean | undefined;
   EXCALIDRAW_EXPORT_SOURCE: string;
   gtag: Function;
@@ -86,7 +86,7 @@ declare module "image-blob-reduce" {
     }
 
     interface ImageBlobReduceStatic {
-      new (options?: any): ImageBlobReduce;
+      new(options?: any): ImageBlobReduce;
 
       (options?: any): ImageBlobReduce;
     }
@@ -108,6 +108,6 @@ interface CustomMatchers {
 }
 
 declare namespace jest {
-  interface Expect extends CustomMatchers {}
-  interface Matchers extends CustomMatchers {}
+  interface Expect extends CustomMatchers { }
+  interface Matchers extends CustomMatchers { }
 }

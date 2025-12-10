@@ -33,7 +33,6 @@ export const AppMainMenu: React.FC<{
         <MainMenu.DefaultItems.LiveCollaborationTrigger
           isCollaborating={props.isCollaborating}
           onSelect={() => props.onCollabDialogOpen()}
-          disabled
         />
       )}
       <MainMenu.DefaultItems.CommandPalette className="highlighted" />

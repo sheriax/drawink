@@ -13,6 +13,7 @@
 !public/
 !packages/
 !scripts/
+!firebase-project/drawink-2026-firebase-adminsdk.json
 !tsconfig.json
 
 # keep (sub)sub directories at the end to exclude from explicit included

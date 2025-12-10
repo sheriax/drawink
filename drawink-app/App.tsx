@@ -146,9 +146,13 @@ import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 
-window.EXCALIDRAW_THROTTLE_RENDER = true;
+window.DRAWINK_THROTTLE_RENDER = true;
 
 declare global {
+  interface Window {
+    DRAWINK_THROTTLE_RENDER?: boolean;
+  }
+
   interface BeforeInstallPromptEventChoiceResult {
     outcome: "accepted" | "dismissed";
   }
@@ -341,7 +345,7 @@ const initializeScene = async (opts: {
 
 const DrawinkWrapper = () => {
   const [errorMessage, setErrorMessage] = useState("");
-  const isCollabDisabled = true;
+  const isCollabDisabled = false;
 
   const { editorTheme, appTheme, setAppTheme } = useHandleAppTheme();
 
