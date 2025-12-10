@@ -70,6 +70,8 @@ export interface Board {
   name: string;
   createdAt: number;
   lastModified: number;
+  /** If set, this board has been synced to a Firestore workspace */
+  syncedWorkspaceId?: string;
 }
 
 export interface BoardsAPI {

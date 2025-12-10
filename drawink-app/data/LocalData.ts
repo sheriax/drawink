@@ -279,6 +279,28 @@ export class LocalData {
     getCurrentBoardId: async (): Promise<string | null> => {
       return localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
     },
+    /**
+     * Mark a local board as synced to a Firestore workspace
+     */
+    markBoardAsSynced: async (boardId: string, workspaceId: string): Promise<void> => {
+      const boards = await LocalData.boards.getBoards();
+      const board = boards.find((b) => b.id === boardId);
+      if (board) {
+        board.syncedWorkspaceId = workspaceId;
+        board.lastModified = Date.now();
+        localStorage.setItem(
+          STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
+          JSON.stringify(boards),
+        );
+      }
+    },
+    /**
+     * Get all local boards that haven't been synced to Firestore
+     */
+    getUnsyncedBoards: async (): Promise<Board[]> => {
+      const boards = await LocalData.boards.getBoards();
+      return boards.filter((b) => !b.syncedWorkspaceId);
+    },
   };
 }
 export class LibraryIndexedDBAdapter {
