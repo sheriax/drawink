@@ -31,7 +31,7 @@ For local development, you need to set up Firebase credentials:
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account-key.json"
 ```
 
-Or create a `.env` file in the json-backend directory:
+Or create a `.env` file in the json-server directory:
 
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
@@ -136,7 +136,7 @@ service cloud.firestore {
 
 ## Docker Deployment
 
-The json-backend is included in the main Docker image and runs alongside the frontend via supervisor.
+The json-server is included in the main Docker image and runs alongside the frontend via supervisor.
 
 ```bash
 # Build and run with Docker Compose
@@ -147,5 +147,5 @@ docker build -t sheriax-board .
 docker run -p 3000:80 -p 3001:3001 sheriax-board
 ```
 
-In Docker, the nginx server proxies `/api/v2/*` requests to the json-backend, so both frontend and API are served from port 80.
+In Docker, the nginx server proxies `/api/v2/*` requests to the json-server, so both frontend and API are served from port 80.
 

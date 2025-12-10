@@ -466,7 +466,7 @@ curl -I https://drawink.sheriax.com/
 ## Notes
 
 - The Docker image is built for `linux/amd64` platform (required by Cloud Run)
-- The container runs **nginx** (port 80) for the frontend and **json-backend** (port 3001) for the API
+- The container runs **nginx** (port 80) for the frontend and **json-server** (port 3001) for the API
 - Both services are managed by **supervisord** inside the container
 - SSL certificate provisioning can take 5-30 minutes after DNS configuration
 - The Load Balancer automatically handles HTTP to HTTPS redirects
