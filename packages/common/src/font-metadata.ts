@@ -40,6 +40,7 @@ export const FONT_METADATA: Record<number, FontMetadata> = {
       descender: -374,
       lineHeight: 1.25,
     },
+    deprecated: true,
   },
   [FONT_FAMILY.Nunito]: {
     metrics: {
@@ -72,7 +73,6 @@ export const FONT_METADATA: Record<number, FontMetadata> = {
       descender: -374,
       lineHeight: 1.25,
     },
-    deprecated: true,
   },
   [FONT_FAMILY.Helvetica]: {
     metrics: {
@@ -159,7 +159,7 @@ export const getVerticalOffset = (
 ) => {
   const { unitsPerEm, ascender, descender } =
     FONT_METADATA[fontFamily]?.metrics ||
-    FONT_METADATA[FONT_FAMILY.Excalifont].metrics;
+    FONT_METADATA[FONT_FAMILY.Virgil].metrics;
 
   const fontSizeEm = fontSize / unitsPerEm;
   const lineGap =
@@ -175,7 +175,7 @@ export const getVerticalOffset = (
 export const getLineHeight = (fontFamily: FontFamilyValues) => {
   const { lineHeight } =
     FONT_METADATA[fontFamily]?.metrics ||
-    FONT_METADATA[FONT_FAMILY.Excalifont].metrics;
+    FONT_METADATA[FONT_FAMILY.Virgil].metrics;
 
   return lineHeight as DrawinkTextElement["lineHeight"];
 };

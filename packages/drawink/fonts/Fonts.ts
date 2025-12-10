@@ -49,12 +49,12 @@ export class Fonts {
 
   private static _registered:
     | Map<
-        number,
-        {
-          metadata: FontMetadata;
-          fontFaces: DrawinkFontFace[];
-        }
-      >
+      number,
+      {
+        metadata: FontMetadata;
+        fontFaces: DrawinkFontFace[];
+      }
+    >
     | undefined;
 
   private static _initialized: boolean = false;
@@ -326,11 +326,11 @@ export class Fonts {
     this:
       | Fonts
       | {
-          registered: Map<
-            number,
-            { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
-          >;
-        },
+        registered: Map<
+          number,
+          { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
+        >;
+      },
     family: string,
     metadata: FontMetadata,
     ...fontFacesDecriptors: DrawinkFontFaceDescriptor[]
@@ -374,9 +374,9 @@ export class Fonts {
         FONT_FAMILY[family as keyof typeof FONT_FAMILY] ??
         FONT_FAMILY_FALLBACKS[family as keyof typeof FONT_FAMILY_FALLBACKS];
 
-      // default to Excalifont metrics
+      // default to Virgil metrics
       const metadata =
-        FONT_METADATA[fontFamily] ?? FONT_METADATA[FONT_FAMILY.Excalifont];
+        FONT_METADATA[fontFamily] ?? FONT_METADATA[FONT_FAMILY.Virgil];
 
       Fonts.register.call(fonts, family, metadata, ...fontFacesDescriptors);
     };

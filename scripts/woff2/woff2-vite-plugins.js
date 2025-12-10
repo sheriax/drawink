@@ -1,5 +1,6 @@
 // define `EXCALIDRAW_ASSET_PATH` as a SSOT
-const OSS_FONTS_CDN = "https://drawink.nyc3.cdn.digitaloceanspaces.com/oss/";
+// Using local paths for self-hosted deployment - CDN not set up
+const OSS_FONTS_CDN = "/";
 const OSS_FONTS_FALLBACK = "/";
 
 /**

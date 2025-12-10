@@ -1,129 +1,151 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
-import type { ServerWebSocket } from "bun";
+import type { Socket } from "socket.io";
+import { Server as SocketIO } from "socket.io";
 
-const app = new Hono();
+type UserToFollow = {
+  socketId: string;
+  username: string;
+};
 
-// Store connected clients by room
-const rooms = new Map<string, Set<ServerWebSocket<{ roomId: string }>>>();
+type OnUserFollowedPayload = {
+  userToFollow: UserToFollow;
+  action: "FOLLOW" | "UNFOLLOW";
+};
 
-// Middleware
-app.use("*", logger());
-app.use("*", cors());
-
-// Health check endpoint
-app.get("/health", (c) => {
-  return c.json({
-    status: "ok",
-    service: "websocket-server",
-    rooms: rooms.size,
-    connections: Array.from(rooms.values()).reduce(
-      (acc, set) => acc + set.size,
-      0
-    ),
-  });
-});
-
-// WebSocket info endpoint
-app.get("/ws/info", (c) => {
-  return c.json({
-    message: "WebSocket server is running",
-    wsEndpoint: "/ws/:roomId",
-    activeRooms: Array.from(rooms.keys()),
-  });
-});
-
-// Start server with WebSocket support
 const port = parseInt(
   process.env.WEBSOCKET_SERVER_PORT || process.env.PORT || "3003",
   10
 );
 
-console.log(`🔌 WebSocket server running at http://localhost:${port}`);
-console.log(`   WS  /ws/:roomId  - Join a collaboration room`);
-console.log(`   GET /health      - Health check`);
-console.log(`   GET /ws/info     - WebSocket info`);
+const corsOrigin = process.env.CORS_ORIGIN || "*";
 
-export default {
-  port,
-  fetch: app.fetch,
-  websocket: {
-    open(ws: ServerWebSocket<{ roomId: string }>) {
-      const roomId = ws.data.roomId;
+console.log(`🔌 Drawink WebSocket Server starting on port ${port}...`);
 
-      // Add client to room
-      if (!rooms.has(roomId)) {
-        rooms.set(roomId, new Set());
+// Create socket.io server with Bun's native HTTP server
+const io = new SocketIO(port, {
+  transports: ["websocket", "polling"],
+  cors: {
+    origin: corsOrigin,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  },
+  allowEIO3: true,
+});
+
+io.on("connection", (socket: Socket) => {
+  console.log(`[Socket] New connection: ${socket.id}`);
+
+  // Notify client that room is ready
+  io.to(`${socket.id}`).emit("init-room");
+
+  socket.on("join-room", async (roomID: string) => {
+    console.log(`[Room] ${socket.id} joining room: ${roomID}`);
+    await socket.join(roomID);
+
+    const sockets = await io.in(roomID).fetchSockets();
+
+    if (sockets.length <= 1) {
+      // First user in room
+      io.to(`${socket.id}`).emit("first-in-room");
+    } else {
+      // Notify existing users of new user
+      console.log(`[Room] Notifying room ${roomID} of new user ${socket.id}`);
+      socket.broadcast.to(roomID).emit("new-user", socket.id);
+    }
+
+    // Broadcast updated user list to room
+    io.in(roomID).emit(
+      "room-user-change",
+      sockets.map((s: { id: string }) => s.id)
+    );
+  });
+
+  // Handle scene broadcasts (reliable)
+  socket.on(
+    "server-broadcast",
+    (roomID: string, encryptedData: ArrayBuffer, iv: Uint8Array) => {
+      console.log(`[Broadcast] ${socket.id} -> room ${roomID}`);
+      socket.broadcast.to(roomID).emit("client-broadcast", encryptedData, iv);
+    }
+  );
+
+  // Handle volatile broadcasts (cursor position, etc - can be dropped)
+  socket.on(
+    "server-volatile-broadcast",
+    (roomID: string, encryptedData: ArrayBuffer, iv: Uint8Array) => {
+      socket.volatile.broadcast
+        .to(roomID)
+        .emit("client-broadcast", encryptedData, iv);
+    }
+  );
+
+  // Handle user follow/unfollow
+  socket.on("user-follow", async (payload: OnUserFollowedPayload) => {
+    const roomID = `follow@${payload.userToFollow.socketId}`;
+
+    switch (payload.action) {
+      case "FOLLOW": {
+        await socket.join(roomID);
+
+        const sockets = await io.in(roomID).fetchSockets();
+        const followedBy = sockets.map((s: { id: string }) => s.id);
+
+        io.to(payload.userToFollow.socketId).emit(
+          "user-follow-room-change",
+          followedBy
+        );
+        break;
       }
-      rooms.get(roomId)!.add(ws);
+      case "UNFOLLOW": {
+        await socket.leave(roomID);
 
-      console.log(
-        `[Room ${roomId}] Client connected. Total in room: ${rooms.get(roomId)!.size}`
+        const sockets = await io.in(roomID).fetchSockets();
+        const followedBy = sockets.map((s: { id: string }) => s.id);
+
+        io.to(payload.userToFollow.socketId).emit(
+          "user-follow-room-change",
+          followedBy
+        );
+        break;
+      }
+    }
+  });
+
+  // Handle disconnecting (before fully disconnected)
+  socket.on("disconnecting", async () => {
+    console.log(`[Socket] ${socket.id} disconnecting...`);
+
+    for (const roomID of Array.from(socket.rooms) as string[]) {
+      if (roomID === socket.id) continue; // Skip the default room
+
+      const otherClients = (await io.in(roomID).fetchSockets()).filter(
+        (s: { id: string }) => s.id !== socket.id
       );
 
-      // Notify others in the room
-      const joinMessage = JSON.stringify({
-        type: "user_joined",
-        roomId,
-        timestamp: Date.now(),
-      });
+      const isFollowRoom = roomID.startsWith("follow@");
 
-      rooms.get(roomId)!.forEach((client) => {
-        if (client !== ws && client.readyState === 1) {
-          client.send(joinMessage);
-        }
-      });
-    },
-
-    message(ws: ServerWebSocket<{ roomId: string }>, message: string | Buffer) {
-      const roomId = ws.data.roomId;
-      const room = rooms.get(roomId);
-
-      if (!room) return;
-
-      // Broadcast message to all other clients in the same room
-      room.forEach((client) => {
-        if (client !== ws && client.readyState === 1) {
-          client.send(message);
-        }
-      });
-    },
-
-    close(ws: ServerWebSocket<{ roomId: string }>) {
-      const roomId = ws.data.roomId;
-      const room = rooms.get(roomId);
-
-      if (room) {
-        room.delete(ws);
-
-        console.log(
-          `[Room ${roomId}] Client disconnected. Total in room: ${room.size}`
+      if (!isFollowRoom && otherClients.length > 0) {
+        // Notify remaining users
+        socket.broadcast.to(roomID).emit(
+          "room-user-change",
+          otherClients.map((s: { id: string }) => s.id)
         );
-
-        // Clean up empty rooms
-        if (room.size === 0) {
-          rooms.delete(roomId);
-          console.log(`[Room ${roomId}] Room closed (no clients)`);
-        } else {
-          // Notify others in the room
-          const leaveMessage = JSON.stringify({
-            type: "user_left",
-            roomId,
-            timestamp: Date.now(),
-          });
-
-          room.forEach((client) => {
-            if (client.readyState === 1) {
-              client.send(leaveMessage);
-            }
-          });
-        }
       }
-    },
 
-    error(ws: ServerWebSocket<{ roomId: string }>, error: Error) {
-      console.error(`[WebSocket Error] ${error.message}`);
-    },
-  },
-};
+      if (isFollowRoom && otherClients.length === 0) {
+        const socketId = roomID.replace("follow@", "");
+        io.to(socketId).emit("broadcast-unfollow");
+      }
+    }
+  });
+
+  // Handle full disconnect
+  socket.on("disconnect", () => {
+    console.log(`[Socket] ${socket.id} disconnected`);
+    socket.removeAllListeners();
+  });
+});
+
+console.log(`✅ Drawink WebSocket Server running on port ${port}`);
+console.log(`   CORS: ${corsOrigin}`);
+console.log(`   Transports: websocket, polling`);
