@@ -68,7 +68,7 @@ app.post("/api/v2/post", async (c) => {
 
     // Check size limit before reading the body
     if (contentLength > MAX_BODY_SIZE) {
-      return c.json({ error: "RequestTooLargeError" }, 413);
+      return c.json({ error_class: "RequestTooLargeError" }, 413);
     }
 
     const buffer = await c.req.arrayBuffer();
@@ -79,7 +79,7 @@ app.post("/api/v2/post", async (c) => {
 
     // Additional check after reading
     if (buffer.byteLength > MAX_BODY_SIZE) {
-      return c.json({ error: "RequestTooLargeError" }, 413);
+      return c.json({ error_class: "RequestTooLargeError" }, 413);
     }
 
     const id = generateId();
