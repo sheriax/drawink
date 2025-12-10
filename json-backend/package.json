@@ -1,6 +1,6 @@
 {
   "name": "json-backend",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -10,6 +10,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "firebase-admin": "13.6.0",
     "hono": "^4.10.7"
   },
   "devDependencies": {

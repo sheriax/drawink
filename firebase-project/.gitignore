@@ -64,3 +64,4 @@ node_modules/
 
 # dotenv environment variables file
 .env
+drawink-2026-firebase-adminsdk.json
