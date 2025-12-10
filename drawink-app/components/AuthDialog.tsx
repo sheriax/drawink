@@ -164,6 +164,12 @@ export const AuthDialog: React.FC = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Escape") {
+                  closeAuthDialog();
+                }
+              }}
               disabled={isSubmitting || loading}
               required
             />
