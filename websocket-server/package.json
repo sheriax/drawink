@@ -10,13 +10,11 @@
     "test": "bun test"
   },
   "dependencies": {
-    "hono": "^4.10.7"
+    "socket.io": "^4.8.1",
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.0.0"
-  },
-  "peerDependencies": {
     "typescript": "^5.0.0"
   }
 }

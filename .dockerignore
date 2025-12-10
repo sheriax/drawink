@@ -7,7 +7,8 @@
 !bun.lock
 !docker/
 !drawink-app/
-!json-backend/
+!json-server/
+!websocket-server/
 !package.json
 !public/
 !packages/
