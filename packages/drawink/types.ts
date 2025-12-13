@@ -650,7 +650,6 @@ export interface DrawinkProps {
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
-  boardsAPI?: BoardsAPI;
 }
 
 export type SceneData = {

@@ -275,9 +275,43 @@ export class LocalData {
         STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
         JSON.stringify(newBoards),
       );
+      // Clean up orphan data
+      localStorage.removeItem(`drawink-board-${id}-elements`);
+      localStorage.removeItem(`drawink-board-${id}-state`);
     },
     getCurrentBoardId: async (): Promise<string | null> => {
       return localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
+    },
+    /**
+     * Load a specific board's data from localStorage.
+     * Used when switching boards without page reload.
+     */
+    loadBoardData: (boardId: string) => {
+      const elementsKey = `drawink-board-${boardId}-elements`;
+      const stateKey = `drawink-board-${boardId}-state`;
+
+      let elements: DrawinkElement[] = [];
+      let appState = null;
+
+      try {
+        const savedElements = localStorage.getItem(elementsKey);
+        if (savedElements) {
+          elements = JSON.parse(savedElements);
+        }
+      } catch (error) {
+        console.error("Failed to load board elements", error);
+      }
+
+      try {
+        const savedState = localStorage.getItem(stateKey);
+        if (savedState) {
+          appState = JSON.parse(savedState);
+        }
+      } catch (error) {
+        console.error("Failed to load board state", error);
+      }
+
+      return { elements, appState };
     },
   };
 }
