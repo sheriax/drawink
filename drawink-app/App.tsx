@@ -125,6 +125,7 @@ import {
 } from "./data/LocalData";
 import { isBrowserStorageStateNewer } from "./data/tabSync";
 import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
+import { AuthDialog } from "./components/AuthDialog";
 import CollabError, { collabErrorIndicatorAtom } from "./collab/CollabError";
 import { useHandleAppTheme } from "./useHandleAppTheme";
 import { getPreferredLanguage } from "./app-language/language-detector";
@@ -143,6 +144,13 @@ import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { AppSidebar } from "./components/AppSidebar";
 import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
 import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
+import {
+  authStateAtom,
+  cloudEnabledAtom,
+  type AuthUser,
+} from "@drawink/drawink/atoms/auth";
+import { firebaseAuth } from "./data/firebase";
+import { hybridStorageAdapter } from "./data/HybridStorageAdapter";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -408,6 +416,53 @@ const DrawinkWrapper = () => {
       forceRefresh((prev) => !prev);
     }
   }, [drawinkAPI]);
+
+  // Firebase auth state listener
+  useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in
+        const authUser: AuthUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          providerId: user.providerData[0]?.providerId || "unknown",
+        };
+
+        editorJotaiStore.set(authStateAtom, {
+          isAuthenticated: true,
+          user: authUser,
+          isLoading: false,
+          error: null,
+        });
+
+        // Enable cloud sync
+        hybridStorageAdapter.enableCloudSync(user.uid);
+        editorJotaiStore.set(cloudEnabledAtom, true);
+
+        console.log("[Auth] User signed in:", user.email);
+      } else {
+        // User is signed out
+        editorJotaiStore.set(authStateAtom, {
+          isAuthenticated: false,
+          user: null,
+          isLoading: false,
+          error: null,
+        });
+
+        // Disable cloud sync
+        hybridStorageAdapter.disableCloudSync();
+        editorJotaiStore.set(cloudEnabledAtom, false);
+
+        console.log("[Auth] User signed out");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (!drawinkAPI || (!isCollabDisabled && !collabAPI)) {
@@ -1006,6 +1061,8 @@ const DrawinkWrapper = () => {
             }
           }}
         />
+
+        <AuthDialog />
 
         <AppSidebar />
 

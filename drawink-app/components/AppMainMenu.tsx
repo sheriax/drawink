@@ -14,6 +14,7 @@ import { LanguageList } from "../app-language/LanguageList";
 // import { isDrawinkPlusSignedUser } from "../app_constants";
 
 import { saveDebugState } from "./DebugCanvas";
+import { CloudSyncMenuItem } from "./CloudSyncMenuItem";
 
 export const AppMainMenu: React.FC<{
   onCollabDialogOpen: () => any;
@@ -39,6 +40,9 @@ export const AppMainMenu: React.FC<{
       <MainMenu.DefaultItems.SearchMenu />
       <MainMenu.DefaultItems.Help />
       <MainMenu.DefaultItems.ClearCanvas />
+      <MainMenu.Separator />
+      {/* Cloud Sync Login/Logout */}
+      <CloudSyncMenuItem />
       <MainMenu.Separator />
       {/* <MainMenu.ItemLink
         icon={ExcalLogo}

@@ -13,6 +13,16 @@ import {
   Bytes,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signOut as firebaseSignOut,
+  onAuthStateChanged as firebaseOnAuthStateChanged,
+  type User as FirebaseUser,
+  type Unsubscribe,
+} from "firebase/auth";
 
 import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
 import type {
@@ -35,6 +45,9 @@ import type { SyncableDrawinkElement } from ".";
 import type Portal from "../collab/Portal";
 import type { Socket } from "socket.io-client";
 
+// Re-export FirebaseUser type for use in other files
+export type { FirebaseUser };
+
 // private
 // -----------------------------------------------------------------------------
 
@@ -43,8 +56,7 @@ try {
   FIREBASE_CONFIG = JSON.parse(import.meta.env.VITE_APP_FIREBASE_CONFIG);
 } catch (error: any) {
   console.warn(
-    `Error JSON parsing firebase config. Supplied value: ${
-      import.meta.env.VITE_APP_FIREBASE_CONFIG
+    `Error JSON parsing firebase config. Supplied value: ${import.meta.env.VITE_APP_FIREBASE_CONFIG
     }`,
   );
   FIREBASE_CONFIG = {};
@@ -53,6 +65,7 @@ try {
 let firebaseApp: ReturnType<typeof initializeApp> | null = null;
 let firestore: ReturnType<typeof getFirestore> | null = null;
 let firebaseStorage: ReturnType<typeof getStorage> | null = null;
+let auth: ReturnType<typeof getAuth> | null = null;
 
 const _initializeFirebase = () => {
   if (!firebaseApp) {
@@ -73,6 +86,76 @@ const _getStorage = () => {
     firebaseStorage = getStorage(_initializeFirebase());
   }
   return firebaseStorage;
+};
+
+const _getAuth = () => {
+  if (!auth) {
+    auth = getAuth(_initializeFirebase());
+  }
+  return auth;
+};
+
+// -----------------------------------------------------------------------------
+// Firebase Auth API
+// -----------------------------------------------------------------------------
+
+/**
+ * Firebase Authentication API
+ * Provides methods for user authentication with Google and GitHub
+ */
+export const firebaseAuth = {
+  /**
+   * Get the Firebase Auth instance
+   */
+  getAuth: _getAuth,
+
+  /**
+   * Sign in with Google using a popup
+   */
+  signInWithGoogle: async (): Promise<FirebaseUser> => {
+    const authInstance = _getAuth();
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(authInstance, provider);
+    return result.user;
+  },
+
+  /**
+   * Sign in with GitHub using a popup
+   */
+  signInWithGithub: async (): Promise<FirebaseUser> => {
+    const authInstance = _getAuth();
+    const provider = new GithubAuthProvider();
+    const result = await signInWithPopup(authInstance, provider);
+    return result.user;
+  },
+
+  /**
+   * Sign out the current user
+   */
+  signOut: async (): Promise<void> => {
+    const authInstance = _getAuth();
+    await firebaseSignOut(authInstance);
+  },
+
+  /**
+   * Subscribe to auth state changes
+   * @param callback - Function called when auth state changes
+   * @returns Unsubscribe function
+   */
+  onAuthStateChanged: (
+    callback: (user: FirebaseUser | null) => void,
+  ): Unsubscribe => {
+    const authInstance = _getAuth();
+    return firebaseOnAuthStateChanged(authInstance, callback);
+  },
+
+  /**
+   * Get the currently signed-in user
+   */
+  getCurrentUser: (): FirebaseUser | null => {
+    const authInstance = _getAuth();
+    return authInstance.currentUser;
+  },
 };
 
 // -----------------------------------------------------------------------------
@@ -279,9 +362,8 @@ export const loadFilesFromFirebase = async (
   await Promise.all(
     [...new Set(filesIds)].map(async (id) => {
       try {
-        const url = `https://firebasestorage.googleapis.com/v0/b/${
-          FIREBASE_CONFIG.storageBucket
-        }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
+        const url = `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_CONFIG.storageBucket
+          }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
         const response = await fetch(`${url}?alt=media`);
         if (response.status < 400) {
           const arrayBuffer = await response.arrayBuffer();
