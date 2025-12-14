@@ -4,6 +4,8 @@
  * The main storage interface for Drawink that orchestrates local and cloud storage.
  * Follows a local-first approach: always reads from local first for instant response,
  * then syncs with cloud in the background when authenticated.
+ * 
+ * This is the ONLY file that calls LocalStorageAdapter and CloudStorageAdapter.
  */
 
 import type {
@@ -12,7 +14,8 @@ import type {
   Workspace,
   SyncStatus,
 } from "@drawink/drawink/storage/types";
-import type { Board, BoardsAPI } from "@drawink/drawink/types";
+import type { Board, BoardsAPI, AppState, BinaryFiles } from "@drawink/drawink/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
 import { CloudStorageAdapter } from "./CloudStorageAdapter";
@@ -38,6 +41,73 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   constructor(localAdapter?: LocalStorageAdapter) {
     this.localAdapter = localAdapter || localStorageAdapter;
   }
+
+  // =========================================================================
+  // Passthrough to LocalStorageAdapter
+  // =========================================================================
+
+  /**
+   * Get the local file storage manager
+   */
+  get fileStorage() {
+    return this.localAdapter.fileStorage;
+  }
+
+  /**
+   * Save scene state. Calls local first, then syncs to cloud.
+   */
+  save = (
+    elements: readonly DrawinkElement[],
+    appState: AppState,
+    files: BinaryFiles,
+    onFilesSaved: () => void,
+  ) => {
+    // Save locally
+    this.localAdapter.save(elements, appState, files, () => {
+      onFilesSaved();
+
+      // Trigger cloud sync for current board content
+      if (this.cloudAdapter && this.syncEngine) {
+        this.localAdapter.getCurrentBoardId().then((boardId) => {
+          if (boardId) {
+            this.syncEngine!.scheduleBoardContentSync(boardId);
+          }
+        });
+      }
+    });
+  };
+
+  /**
+   * Flush pending saves immediately
+   */
+  flushSave = () => {
+    this.localAdapter.flushSave();
+  };
+
+  /**
+   * Pause saving (used during collaboration)
+   */
+  pauseSave = (lockType: "collaboration") => {
+    this.localAdapter.pauseSave(lockType);
+  };
+
+  /**
+   * Resume saving
+   */
+  resumeSave = (lockType: "collaboration") => {
+    this.localAdapter.resumeSave(lockType);
+  };
+
+  /**
+   * Check if saving is paused
+   */
+  isSavePaused = () => {
+    return this.localAdapter.isSavePaused();
+  };
+
+  // =========================================================================
+  // Cloud Sync Methods
+  // =========================================================================
 
   /**
    * Enable cloud sync for an authenticated user.
@@ -103,13 +173,11 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   }
 
   /**
-   * Set a callback for sync status changes.
+   * Register callback for sync status changes.
    */
   onSyncStatusChange(callback: (status: SyncStatus) => void): void {
     this._onSyncStatusChange = callback;
   }
-
-
 
   // =========================================================================
   // StorageAdapter Implementation
@@ -119,7 +187,6 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    * Get all boards. Always reads from local first for instant response.
    */
   async getBoards(): Promise<Board[]> {
-    // Always read from local for instant response
     return this.localAdapter.getBoards();
   }
 
@@ -127,7 +194,6 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    * Create a new board. Creates locally first, then syncs to cloud.
    */
   async createBoard(name: string): Promise<string> {
-    // Create locally first for instant feedback
     const boardId = await this.localAdapter.createBoard(name);
 
     // Sync to cloud directly
@@ -206,40 +272,26 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    * Get board content. Reads local first for instant display.
    */
   async getBoardContent(boardId: string): Promise<BoardContent> {
-    // Load local first for instant display
-    const localContent = await this.localAdapter.getBoardContent(boardId);
-
-    // Sync with cloud in background
-    if (this.syncEngine) {
-      this.syncEngine.syncBoardContent(boardId).catch(console.error);
-    }
-
-    return localContent;
+    return this.localAdapter.getBoardContent(boardId);
   }
 
   /**
-   * Save board content. Saves locally first, then syncs to cloud.
+   * Save board content to local (and optionally cloud).
    */
   async saveBoardContent(boardId: string, content: BoardContent): Promise<void> {
-    // Save locally first (instant)
     await this.localAdapter.saveBoardContent(boardId, content);
 
-    // Sync to cloud in background (debounced)
-    if (this.syncEngine) {
-      this.syncEngine.scheduleBoardContentSync(boardId);
+    // Sync to cloud
+    if (this.cloudAdapter) {
+      this.cloudAdapter.saveBoardContent(boardId, content).catch(console.error);
     }
   }
 
-  // =========================================================================
-  // Workspace Operations (Cloud Only)
-  // =========================================================================
-
   /**
-   * Get workspaces. Returns a single "Local" workspace for anonymous users.
+   * Get available workspaces (cloud only).
    */
   async getWorkspaces(): Promise<Workspace[]> {
-    if (!this._cloudEnabled || !this.cloudAdapter) {
-      // Return a single "Local" workspace for non-authenticated users
+    if (!this.cloudAdapter) {
       return [
         {
           id: "local",
@@ -265,3 +317,6 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
 
 // Export a singleton instance
 export const hybridStorageAdapter = new HybridStorageAdapter();
+
+// Re-export localStorageQuotaExceededAtom for backwards compatibility
+export { localStorageQuotaExceededAtom } from "./LocalStorageAdapter";

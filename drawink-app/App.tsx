@@ -120,9 +120,11 @@ import { loadFilesFromFirebase } from "./data/firebase";
 import {
   LibraryIndexedDBAdapter,
   LibraryLocalStorageMigrationAdapter,
-  LocalData,
+} from "./data/LocalStorageAdapter";
+import {
+  hybridStorageAdapter,
   localStorageQuotaExceededAtom,
-} from "./data/LocalData";
+} from "./data/HybridStorageAdapter";
 import { isBrowserStorageStateNewer } from "./data/tabSync";
 import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
 import { AuthDialog } from "./components/AuthDialog";
@@ -151,7 +153,6 @@ import {
   type AuthUser,
 } from "@drawink/drawink/atoms/auth";
 import { firebaseAuth } from "./data/firebase";
-import { hybridStorageAdapter } from "./data/HybridStorageAdapter";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -522,7 +523,7 @@ const DrawinkWrapper = () => {
           });
         } else if (isInitialLoad) {
           if (fileIds.length) {
-            LocalData.fileStorage
+            hybridStorageAdapter.fileStorage
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
@@ -537,7 +538,7 @@ const DrawinkWrapper = () => {
           }
           // on fresh load, clear unused files from IDB (from previous
           // session)
-          LocalData.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds });
+          hybridStorageAdapter.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds });
         }
       }
     };
@@ -614,7 +615,7 @@ const DrawinkWrapper = () => {
               return acc;
             }, [] as FileId[]) || [];
           if (fileIds.length) {
-            LocalData.fileStorage
+            hybridStorageAdapter.fileStorage
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
@@ -632,12 +633,12 @@ const DrawinkWrapper = () => {
     }, SYNC_BROWSER_TABS_TIMEOUT);
 
     const onUnload = () => {
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
     };
 
     const visibilityChange = (event: FocusEvent | Event) => {
       if (event.type === EVENT.BLUR || document.hidden) {
-        LocalData.flushSave();
+        hybridStorageAdapter.flushSave();
       }
       if (
         event.type === EVENT.VISIBILITY_CHANGE ||
@@ -667,11 +668,11 @@ const DrawinkWrapper = () => {
 
   useEffect(() => {
     const unloadHandler = (event: BeforeUnloadEvent) => {
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
 
       if (
         drawinkAPI &&
-        LocalData.fileStorage.shouldPreventUnload(drawinkAPI.getSceneElements())
+        hybridStorageAdapter.fileStorage.shouldPreventUnload(drawinkAPI.getSceneElements())
       ) {
         if (import.meta.env.VITE_APP_DISABLE_PREVENT_UNLOAD !== "true") {
           preventUnload(event);
@@ -699,7 +700,7 @@ const DrawinkWrapper = () => {
       const { boardId } = customEvent.detail;
 
       // Flush current board's data before loading new one
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
 
       // Load new board's data
       const { elements, appState } = hybridStorageAdapter.loadBoardData(boardId);
@@ -720,7 +721,7 @@ const DrawinkWrapper = () => {
         .map((el: any) => el.fileId);
 
       if (fileIds.length > 0) {
-        LocalData.fileStorage
+        hybridStorageAdapter.fileStorage
           .getFiles(fileIds)
           .then(({ loadedFiles, erroredFiles }) => {
             if (loadedFiles.length) {
@@ -752,8 +753,8 @@ const DrawinkWrapper = () => {
 
     // this check is redundant, but since this is a hot path, it's best
     // not to evaludate the nested expression every time
-    if (!LocalData.isSavePaused()) {
-      LocalData.save(elements, appState, files, () => {
+    if (!hybridStorageAdapter.isSavePaused()) {
+      hybridStorageAdapter.save(elements, appState, files, () => {
         if (drawinkAPI) {
           let didChange = false;
 
@@ -761,7 +762,7 @@ const DrawinkWrapper = () => {
             .getSceneElementsIncludingDeleted()
             .map((element) => {
               if (
-                LocalData.fileStorage.shouldUpdateImageElementStatus(element)
+                hybridStorageAdapter.fileStorage.shouldUpdateImageElementStatus(element)
               ) {
                 const newElement = newElementWith(element, { status: "saved" });
                 if (newElement !== element) {
