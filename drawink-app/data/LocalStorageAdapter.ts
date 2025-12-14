@@ -149,7 +149,11 @@ export class LocalStorageAdapter implements StorageAdapter {
       console.error("Failed to load board state", error);
     }
 
-    return { elements, appState };
+    // Get version from metadata
+    const versionKey = `drawink-board-${boardId}-version`;
+    const version = parseInt(localStorage.getItem(versionKey) || "0", 10);
+
+    return { elements, appState, version, updatedAt: Date.now() };
   }
 
   /**
@@ -158,10 +162,16 @@ export class LocalStorageAdapter implements StorageAdapter {
   async saveBoardContent(boardId: string, content: BoardContent): Promise<void> {
     const elementsKey = `drawink-board-${boardId}-elements`;
     const stateKey = `drawink-board-${boardId}-state`;
+    const versionKey = `drawink-board-${boardId}-version`;
 
     try {
       localStorage.setItem(elementsKey, JSON.stringify(content.elements));
       localStorage.setItem(stateKey, JSON.stringify(content.appState));
+
+      // Update version - use provided version or increment
+      const currentVersion = parseInt(localStorage.getItem(versionKey) || "0", 10);
+      const newVersion = content.version !== undefined ? content.version : currentVersion + 1;
+      localStorage.setItem(versionKey, String(newVersion));
 
       // Update the board's lastModified timestamp
       const boards = await this.getBoards();

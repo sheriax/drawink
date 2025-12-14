@@ -147,6 +147,7 @@ import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
 import {
   authStateAtom,
   cloudEnabledAtom,
+  syncStatusAtom,
   type AuthUser,
 } from "@drawink/drawink/atoms/auth";
 import { firebaseAuth } from "./data/firebase";
@@ -440,6 +441,11 @@ const DrawinkWrapper = () => {
         // Enable cloud sync
         hybridStorageAdapter.enableCloudSync(user.uid);
         editorJotaiStore.set(cloudEnabledAtom, true);
+
+        // Wire up sync status updates
+        hybridStorageAdapter.onSyncStatusChange((status) => {
+          editorJotaiStore.set(syncStatusAtom, status);
+        });
 
         console.log("[Auth] User signed in:", user.email);
       } else {
