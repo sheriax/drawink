@@ -141,18 +141,19 @@ import "./index.scss";
 
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { AppSidebar } from "./components/AppSidebar";
+import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
+import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
 
 import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 
+// Initialize boards API atom
+editorJotaiStore.set(boardsAPIAtom, LocalData.boards);
+
 window.DRAWINK_THROTTLE_RENDER = true;
 
 declare global {
-  interface Window {
-    DRAWINK_THROTTLE_RENDER?: boolean;
-  }
-
   interface BeforeInstallPromptEventChoiceResult {
     outcome: "accepted" | "dismissed";
   }
@@ -626,6 +627,59 @@ const DrawinkWrapper = () => {
     };
   }, [drawinkAPI]);
 
+  // Handle board switching without page reload
+  useEffect(() => {
+    if (!drawinkAPI) {
+      return;
+    }
+
+    const handleBoardSwitch = (event: Event) => {
+      const customEvent = event as CustomEvent<{ boardId: string }>;
+      const { boardId } = customEvent.detail;
+
+      // Flush current board's data before loading new one
+      LocalData.flushSave();
+
+      // Load new board's data
+      const { elements, appState } = LocalData.boards.loadBoardData(boardId);
+
+      // Update scene with new board's data
+      drawinkAPI.updateScene({
+        elements: elements || [],
+        appState: {
+          ...appState,
+          isLoading: false,
+        },
+        captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+      });
+
+      // Load images for the new board
+      const fileIds = (elements || [])
+        .filter((el: any) => el.type === "image" && el.fileId)
+        .map((el: any) => el.fileId);
+
+      if (fileIds.length > 0) {
+        LocalData.fileStorage
+          .getFiles(fileIds)
+          .then(({ loadedFiles, erroredFiles }) => {
+            if (loadedFiles.length) {
+              drawinkAPI.addFiles(loadedFiles);
+            }
+            updateStaleImageStatuses({
+              drawinkAPI,
+              erroredFiles,
+              elements: drawinkAPI.getSceneElementsIncludingDeleted(),
+            });
+          });
+      }
+    };
+
+    window.addEventListener("drawink-board-switch", handleBoardSwitch);
+    return () => {
+      window.removeEventListener("drawink-board-switch", handleBoardSwitch);
+    };
+  }, [drawinkAPI]);
+
   const onChange = (
     elements: readonly OrderedDrawinkElement[],
     appState: AppState,
@@ -808,7 +862,6 @@ const DrawinkWrapper = () => {
       })}
     >
       <Drawink
-        boardsAPI={LocalData.boards}
         drawinkAPI={drawinkRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}
