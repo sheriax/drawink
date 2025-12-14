@@ -109,14 +109,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     this._onSyncStatusChange = callback;
   }
 
-  /**
-   * Trigger a full sync manually.
-   */
-  async triggerSync(): Promise<void> {
-    if (this.syncEngine) {
-      await this.syncEngine.fullSync();
-    }
-  }
+
 
   // =========================================================================
   // StorageAdapter Implementation
@@ -127,14 +120,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    */
   async getBoards(): Promise<Board[]> {
     // Always read from local for instant response
-    const localBoards = await this.localAdapter.getBoards();
-
-    // If cloud sync is enabled, trigger background sync
-    if (this.syncEngine) {
-      this.syncEngine.syncBoards().catch(console.error);
-    }
-
-    return localBoards;
+    return this.localAdapter.getBoards();
   }
 
   /**
@@ -144,9 +130,9 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     // Create locally first for instant feedback
     const boardId = await this.localAdapter.createBoard(name);
 
-    // Sync to cloud in background
-    if (this.syncEngine) {
-      this.syncEngine.syncNewBoard(boardId).catch(console.error);
+    // Sync to cloud directly
+    if (this.cloudAdapter) {
+      this.cloudAdapter.createBoardWithId(boardId, name).catch(console.error);
     }
 
     return boardId;
@@ -182,9 +168,9 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   async deleteBoard(id: string): Promise<void> {
     await this.localAdapter.deleteBoard(id);
 
-    // Sync deletion to cloud
-    if (this.syncEngine) {
-      this.syncEngine.syncBoardDeletion(id).catch(console.error);
+    // Sync deletion to cloud directly
+    if (this.cloudAdapter) {
+      this.cloudAdapter.deleteBoard(id).catch(console.error);
     }
   }
 
