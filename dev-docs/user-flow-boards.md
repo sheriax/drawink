@@ -433,16 +433,23 @@ The `BoardsMenu` component (`packages/drawink/components/BoardsMenu.tsx`) provid
 
 | Limitation | Impact | Priority |
 |------------|--------|----------|
-| **No Board Export/Import** | Can't backup/restore individual boards | 🟢 Low |
 | **Cannot Delete Last Board** | UX constraint (intentional) | ⚪ N/A |
 
 ### Existing Capabilities (NOT Limitations)
 
 The following features **already exist** in Drawink:
 
-1. **✅ Sharing via Link** - Export current scene to backend and generate shareable links (`exportToBackend`)
-2. **✅ Live Collaboration** - Start real-time collaboration sessions with room links (`ShareDialog`, `Collab`)
-3. **✅ File Sharing** - Files are encrypted and uploaded to Firebase for sharing
+1. **✅ Board Export/Import (`.drawink` files)** - Save/open board content using:
+   - **Save to file**: `Ctrl+S` or Menu → Save (saves **current board** to `.drawink` JSON file)
+   - **Save As**: `Ctrl+Shift+S` or Menu → Export → Save to disk  
+   - **Open file**: `Ctrl+O` or Menu → Open (loads `.drawink` file, **replaces current board content**)
+   - Implementation: `saveAsJSON()`, `loadFromJSON()` in `packages/drawink/data/json.ts`
+   - MIME type: `application/vnd.drawink+json`
+2. **✅ Library Export/Import** - Save/load element libraries (`.drawinklib` files)
+3. **✅ Image Export** - Export scene as PNG/SVG with optional embedded scene data
+4. **✅ Sharing via Link** - Export current scene to backend and generate shareable links (`exportToBackend`)
+5. **✅ Live Collaboration** - Start real-time collaboration sessions with room links (`ShareDialog`, `Collab`)
+6. **✅ File Sharing** - Files are encrypted and uploaded to Firebase for sharing
 
 ---
 
@@ -475,55 +482,15 @@ deleteBoard: async (id: string): Promise<void> => {
 
 ---
 
-### 3. Add Board Export/Import (Low Priority) - TODO
+### ~~3. Add Per-Board Export/Import~~ ✅ COMPLETED
 
 **Use Case:** Users want to backup/share specific boards.
 
-**Recommended Solution:**
+**Implementation:** The existing `.drawink` file export/import already handles this:
+- **Export**: `Ctrl+S` or Menu → Save exports the **current board** to a `.drawink` file
+- **Import**: `Ctrl+O` or Menu → Open loads a `.drawink` file into the **current board**
 
-Leverage existing `serializeAsJSON` and `loadFromBlob` functions:
-
-```typescript
-// BoardsMenu.tsx - Add export button
-const handleExportBoard = async (boardId: string) => {
-    const boardData = LocalData.loadBoardData(boardId);
-    const boards = await boardsAPI.getBoards();
-    const boardMeta = boards.find(b => b.id === boardId);
-    
-    const exportData = {
-        type: 'drawink-board',
-        version: 1,
-        board: boardMeta,
-        elements: boardData.elements,
-        appState: boardData.appState,
-    };
-    
-    // Use existing export utilities
-    const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${boardMeta?.name || 'board'}.drawinkboard`;
-    a.click();
-};
-
-const handleImportBoard = async (file: File) => {
-    const text = await file.text();
-    const data = JSON.parse(text);
-    
-    if (data.type !== 'drawink-board') throw new Error('Invalid board file');
-    
-    // Create new board with imported data
-    const newBoardId = await boardsAPI.createBoard(data.board.name);
-    
-    // Save the imported elements/state
-    localStorage.setItem(`drawink-board-${newBoardId}-elements`, JSON.stringify(data.elements));
-    localStorage.setItem(`drawink-board-${newBoardId}-state`, JSON.stringify(data.appState));
-    
-    await refreshBoards();
-};
-```
+The implementation uses `saveAsJSON()` and `loadFromJSON()` in `packages/drawink/data/json.ts`.
 
 ---
 
@@ -534,8 +501,7 @@ const handleImportBoard = async (file: File) => {
 | No-reload board switch | Medium | High | ✅ Done |
 | Orphan data cleanup | Low | Medium | ✅ Done |
 | Jotai atoms migration | Medium | High | ✅ Done |
-| Add export icon to board items | Low | Low | 🟢 TODO |
-| Add import board button | Low | Low | 🟢 TODO |
+| Board export/import (.drawink files) | N/A | N/A | ✅ Already Exists |
 
 ---
 
