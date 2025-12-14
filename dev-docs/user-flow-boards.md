@@ -181,19 +181,47 @@ createBoard: async (name: string): Promise<string> => {
 
 **Flow:**
 1. User clicks on a board item in the boards list
-2. The current board's data is automatically saved (via `LocalData.save()`)
+2. The current board's data is automatically flushed (via `LocalData.flushSave()`)
 3. The new board ID is set as the current board
-4. **The page reloads** to load the new board's data
+4. A `drawink-board-switch` custom event is dispatched
+5. App.tsx listens to this event and loads the new board's data
+6. The scene is updated with `drawinkAPI.updateScene()` - **NO page reload!**
 
 **Code Path:**
 ```
 BoardsMenu.handleSwitchBoard(id)
-  → boardsAPI.switchBoard(id)
-    → localStorage.setItem(LOCAL_STORAGE_CURRENT_BOARD_ID, id)
-  → window.location.reload()
+  → switchBoardAtom (atoms/boards.ts)
+    → boardsAPI.switchBoard(id)
+      → localStorage.setItem(LOCAL_STORAGE_CURRENT_BOARD_ID, id)
+    → window.dispatchEvent("drawink-board-switch", { boardId })
+  
+[App.tsx event listener]
+  → LocalData.flushSave()
+  → LocalData.boards.loadBoardData(boardId)
+  → drawinkAPI.updateScene({ elements, appState })
+  → Load images for new board
 ```
 
-**Important Note:** Currently, switching boards triggers a **full page reload**. This ensures all data is properly loaded but provides a less smooth user experience.
+**Board Switching Implementation:**
+```typescript
+// App.tsx - handleBoardSwitch event listener
+const handleBoardSwitch = (event: Event) => {
+    const { boardId } = (event as CustomEvent).detail;
+    
+    // Flush current board's data
+    LocalData.flushSave();
+    
+    // Load new board's data
+    const { elements, appState } = LocalData.boards.loadBoardData(boardId);
+    
+    // Update scene without reload
+    drawinkAPI.updateScene({
+        elements: elements || [],
+        appState: { ...appState, isLoading: false },
+        captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+};
+```
 
 **Data Isolation:**
 Each board stores its data in separate localStorage keys:
@@ -391,12 +419,20 @@ The `BoardsMenu` component (`packages/drawink/components/BoardsMenu.tsx`) provid
 
 ---
 
-## ⚠️ Known Limitations
+## ✅ Implemented Improvements
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **No-Reload Board Switch** | ✅ Implemented | Boards switch instantly via `drawinkAPI.updateScene()` |
+| **Orphan Data Cleanup** | ✅ Implemented | Board data is deleted when board is removed |
+| **Jotai Atoms** | ✅ Implemented | State managed via atoms instead of Context |
+
+---
+
+## ⚠️ Remaining Limitations
 
 | Limitation | Impact | Priority |
 |------------|--------|----------|
-| **Page Reload on Switch** | Poor UX - interrupts workflow | 🔴 High |
-| **Orphan Data on Delete** | Storage bloat over time | 🟡 Medium |
 | **No Board Export/Import** | Can't backup/restore individual boards | 🟢 Low |
 | **Cannot Delete Last Board** | UX constraint (intentional) | ⚪ N/A |
 
@@ -410,162 +446,36 @@ The following features **already exist** in Drawink:
 
 ---
 
-## 🔧 Improvement Recommendations
+## 🔧 Future Improvements
 
-### 1. Eliminate Page Reload on Board Switch (High Priority)
+### ~~1. Eliminate Page Reload on Board Switch~~ ✅ COMPLETED
 
-**Current Problem:**
-```typescript
-// BoardsMenu.tsx - Line 56
-window.location.reload(); // Forces full page reload
-```
-
-**Root Cause:**
-The application state (`elements`, `appState`) is loaded once during initialization via `initialStatePromiseRef`. Switching boards requires reloading this data, but the current architecture doesn't support dynamic scene replacement.
-
-**Recommended Solution:**
-
-#### Option A: Use `drawinkAPI.updateScene()` (Preferred)
-
-Modify `handleSwitchBoard` to load the new board's data and update the scene directly:
-
-```typescript
-// BoardsMenu.tsx
-const handleSwitchBoard = async (id: string) => {
-    if (!boardsAPI || id === currentBoardId) return;
-    
-    try {
-        // 1. Save current board's state first (already happens via onChange)
-        LocalData.flushSave();
-        
-        // 2. Switch the current board ID
-        await boardsAPI.switchBoard(id);
-        setCurrentBoardId(id);
-        
-        // 3. Load new board's data from localStorage
-        const newBoardData = await loadBoardData(id);
-        
-        // 4. Update scene without reload
-        drawinkAPI.updateScene({
-            elements: newBoardData.elements,
-            appState: {
-                ...newBoardData.appState,
-                isLoading: false,
-            },
-            captureUpdate: CaptureUpdateAction.IMMEDIATELY,
-        });
-        
-        // 5. Load associated files
-        if (newBoardData.fileIds.length > 0) {
-            const { loadedFiles } = await LocalData.fileStorage.getFiles(newBoardData.fileIds);
-            drawinkAPI.addFiles(loadedFiles);
-        }
-        
-    } catch (error) {
-        console.error("Failed to switch board", error);
-    }
-};
-```
-
-#### Required Changes:
-
-1. **Pass `drawinkAPI` to `BoardsMenu`**: Currently `BoardsMenu` only has access to `boardsAPI`. Need to also pass `drawinkAPI` via context or props.
-
-2. **Create `loadBoardData` helper in `LocalData.ts`**:
-```typescript
-static loadBoardData(boardId: string) {
-    const elementsKey = `drawink-board-${boardId}-elements`;
-    const stateKey = `drawink-board-${boardId}-state`;
-    
-    const elements = JSON.parse(localStorage.getItem(elementsKey) || '[]');
-    const appState = JSON.parse(localStorage.getItem(stateKey) || '{}');
-    
-    // Extract file IDs for loading
-    const fileIds = elements
-        .filter((el: any) => el.type === 'image' && el.fileId)
-        .map((el: any) => el.fileId);
-    
-    return { elements, appState, fileIds };
-}
-```
-
-3. **Ensure proper save before switch**: Call `LocalData.flushSave()` to ensure current data is persisted.
-
-#### Option B: Use Custom Event System
-
-Emit a custom event that App.tsx listens to for board changes:
-
-```typescript
-// BoardsMenu.tsx
-window.dispatchEvent(new CustomEvent('boardSwitch', { detail: { boardId: id } }));
-
-// App.tsx
-useEffect(() => {
-    const handleBoardSwitch = async (e: CustomEvent) => {
-        const { boardId } = e.detail;
-        // Load and update scene...
-    };
-    window.addEventListener('boardSwitch', handleBoardSwitch);
-    return () => window.removeEventListener('boardSwitch', handleBoardSwitch);
-}, []);
-```
+**Implementation:**
+- Added `drawink-board-switch` custom event in `switchBoardAtom`
+- Added event listener in `App.tsx` that handles scene updates
+- Added `LocalData.boards.loadBoardData(boardId)` helper function
 
 ---
 
-### 2. Clean Up Orphan Data on Board Delete (Medium Priority)
+### ~~2. Clean Up Orphan Data on Board Delete~~ ✅ COMPLETED
 
-**Current Problem:**
-When a board is deleted, only the board metadata is removed from `drawink-boards`. The actual board data (`drawink-board-{id}-elements` and `drawink-board-{id}-state`) remains in localStorage.
-
-**Recommended Solution:**
-
-Modify `LocalData.boards.deleteBoard`:
-
+**Implementation:**
 ```typescript
-// LocalData.ts
+// LocalData.ts - deleteBoard()
 deleteBoard: async (id: string): Promise<void> => {
     const boards = await LocalData.boards.getBoards();
     const newBoards = boards.filter((b) => b.id !== id);
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(newBoards));
     
-    // Remove board metadata
-    localStorage.setItem(
-        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-        JSON.stringify(newBoards),
-    );
-    
-    // 🆕 Clean up orphan data
+    // Clean up orphan data
     localStorage.removeItem(`drawink-board-${id}-elements`);
     localStorage.removeItem(`drawink-board-${id}-state`);
-    
-    // 🆕 Optional: Clean up associated files from IndexedDB
-    // This would require tracking which files belong to which board
 },
-```
-
-**Additional Consideration:**
-Add a cleanup utility for existing orphan data:
-
-```typescript
-static cleanupOrphanBoardData: async () => {
-    const boards = await LocalData.boards.getBoards();
-    const validBoardIds = new Set(boards.map(b => b.id));
-    
-    // Find all board-specific keys in localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key?.startsWith('drawink-board-')) {
-            const match = key.match(/drawink-board-([^-]+)/);
-            if (match && !validBoardIds.has(match[1])) {
-                localStorage.removeItem(key);
-            }
-        }
-    }
-}
 ```
 
 ---
 
-### 3. Add Board Export/Import (Low Priority)
+### 3. Add Board Export/Import (Low Priority) - TODO
 
 **Use Case:** Users want to backup/share specific boards.
 
@@ -619,12 +529,13 @@ const handleImportBoard = async (file: File) => {
 
 ## 📊 Implementation Priority Matrix
 
-| Feature | Effort | Impact | Priority |
-|---------|--------|--------|----------|
-| No-reload board switch | Medium | High | 🔴 P1 |
-| Orphan data cleanup | Low | Medium | 🟡 P2 |
-| Add export icon to board items | Low | Low | 🟢 P3 |
-| Add import board button | Low | Low | 🟢 P3 |
+| Feature | Effort | Impact | Status |
+|---------|--------|--------|--------|
+| No-reload board switch | Medium | High | ✅ Done |
+| Orphan data cleanup | Low | Medium | ✅ Done |
+| Jotai atoms migration | Medium | High | ✅ Done |
+| Add export icon to board items | Low | Low | 🟢 TODO |
+| Add import board button | Low | Low | 🟢 TODO |
 
 ---
 
