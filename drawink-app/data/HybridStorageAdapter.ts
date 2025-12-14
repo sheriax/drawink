@@ -12,7 +12,7 @@ import type {
   Workspace,
   SyncStatus,
 } from "@drawink/drawink/storage/types";
-import type { Board } from "@drawink/drawink/types";
+import type { Board, BoardsAPI } from "@drawink/drawink/types";
 
 import { LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
 import { CloudStorageAdapter } from "./CloudStorageAdapter";
@@ -22,8 +22,10 @@ import { SyncEngine } from "./SyncEngine";
  * HybridStorageAdapter orchestrates between local and cloud storage.
  * - For anonymous users: only local storage is used
  * - For authenticated users: local-first with background cloud sync
+ * 
+ * Also implements BoardsAPI for use as the boards atom provider.
  */
-export class HybridStorageAdapter implements StorageAdapter {
+export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   private localAdapter: LocalStorageAdapter;
   private cloudAdapter: CloudStorageAdapter | null = null;
   private syncEngine: SyncEngine | null = null;
@@ -168,9 +170,9 @@ export class HybridStorageAdapter implements StorageAdapter {
   async updateBoard(id: string, data: Partial<Board>): Promise<void> {
     await this.localAdapter.updateBoard(id, data);
 
-    // Sync update to cloud
-    if (this.syncEngine) {
-      this.syncEngine.scheduleBoardContentSync(id);
+    // Sync metadata to cloud directly
+    if (this.cloudAdapter) {
+      this.cloudAdapter.updateBoard(id, data).catch(console.error);
     }
   }
 
@@ -198,6 +200,20 @@ export class HybridStorageAdapter implements StorageAdapter {
    */
   async setCurrentBoardId(id: string): Promise<void> {
     await this.localAdapter.setCurrentBoardId(id);
+  }
+
+  /**
+   * Switch to a different board (BoardsAPI method).
+   */
+  async switchBoard(id: string): Promise<void> {
+    await this.setCurrentBoardId(id);
+  }
+
+  /**
+   * Update a board's name (BoardsAPI method).
+   */
+  async updateBoardName(id: string, name: string): Promise<void> {
+    await this.updateBoard(id, { name });
   }
 
   /**

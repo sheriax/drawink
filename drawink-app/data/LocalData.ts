@@ -39,7 +39,6 @@ import type { MaybePromise } from "@drawink/common/utility-types";
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
 
 import { FileManager } from "./FileManager";
-import { hybridStorageAdapter } from "./HybridStorageAdapter";
 import { Locker } from "./Locker";
 import { updateBrowserStateVersion } from "./tabSync";
 
@@ -252,12 +251,6 @@ export class LocalData {
         STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
         JSON.stringify(boards),
       );
-
-      // Sync new board to cloud with same ID
-      if (hybridStorageAdapter.isCloudSyncEnabled()) {
-        hybridStorageAdapter.createBoardWithId(newBoard.id, name).catch(console.error);
-      }
-
       return newBoard.id;
     },
     switchBoard: async (id: string): Promise<void> => {
@@ -273,11 +266,6 @@ export class LocalData {
           STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
           JSON.stringify(boards),
         );
-
-        // Sync rename to cloud
-        if (hybridStorageAdapter.isCloudSyncEnabled()) {
-          hybridStorageAdapter.updateBoard(id, { name }).catch(console.error);
-        }
       }
     },
     deleteBoard: async (id: string): Promise<void> => {
@@ -291,11 +279,6 @@ export class LocalData {
       localStorage.removeItem(`drawink-board-${id}-elements`);
       localStorage.removeItem(`drawink-board-${id}-state`);
       localStorage.removeItem(`drawink-board-${id}-version`);
-
-      // Sync deletion to cloud
-      if (hybridStorageAdapter.isCloudSyncEnabled()) {
-        hybridStorageAdapter.deleteBoard(id).catch(console.error);
-      }
     },
     getCurrentBoardId: async (): Promise<string | null> => {
       return localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);

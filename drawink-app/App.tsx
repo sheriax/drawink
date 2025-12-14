@@ -157,8 +157,8 @@ import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 
-// Initialize boards API atom
-editorJotaiStore.set(boardsAPIAtom, LocalData.boards);
+// Initialize boards API atom with HybridStorageAdapter
+editorJotaiStore.set(boardsAPIAtom, hybridStorageAdapter);
 
 window.DRAWINK_THROTTLE_RENDER = true;
 
@@ -702,7 +702,7 @@ const DrawinkWrapper = () => {
       LocalData.flushSave();
 
       // Load new board's data
-      const { elements, appState } = LocalData.boards.loadBoardData(boardId);
+      const { elements, appState } = hybridStorageAdapter.loadBoardData(boardId);
 
       // Update scene with new board's data
       drawinkAPI.updateScene({
