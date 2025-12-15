@@ -979,9 +979,7 @@ const DrawinkWrapper = () => {
                 data-testid="share-button"
                 className="share-button"
                 onSelect={() =>
-                  drawinkAPI?.updateScene({
-                    appState: { openDialog: { name: "jsonExport" } },
-                  })
+                  setShareDialogState({ isOpen: true, type: "share" })
                 }
                 icon={share}
               >
