@@ -91,6 +91,7 @@ docker push asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
 gcloud run deploy drawink \
   --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
   --region=asia-south1 \
+  --port=3000 \
   --project=drawink-2026
 ```
 
@@ -154,7 +155,7 @@ gcloud run deploy drawink \
   --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
   --platform=managed \
   --region=asia-south1 \
-  --port=80 \
+  --port=3000 \
   --allow-unauthenticated \
   --cpu=1 \
   --memory=512Mi \
