@@ -49,6 +49,13 @@ export const STORAGE_KEYS = {
 
   IDB_LIBRARY: "drawink-library",
 
+  // Cloud sync keys
+  LOCAL_STORAGE_USER: "drawink-user",
+  LOCAL_STORAGE_WORKSPACES: "drawink-workspaces",
+  LOCAL_STORAGE_CURRENT_WORKSPACE_ID: "drawink-current-workspace-id",
+  LOCAL_STORAGE_SYNC_STATE: "drawink-sync-state",
+  LOCAL_STORAGE_AUTH_STATE: "drawink-auth-state",
+
   // do not use apart from migrations
   __LEGACY_LOCAL_STORAGE_LIBRARY: "drawink-library",
 } as const;

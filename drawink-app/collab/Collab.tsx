@@ -70,7 +70,7 @@ import {
   FileManager,
   updateStaleImageStatuses,
 } from "../data/FileManager";
-import { LocalData } from "../data/LocalData";
+import { hybridStorageAdapter } from "../data/HybridStorageAdapter";
 import {
   isSavedToFirebase,
   loadFilesFromFirebase,
@@ -364,7 +364,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     }
 
     if (!keepRemoteState) {
-      LocalData.fileStorage.reset();
+      hybridStorageAdapter.fileStorage.reset();
       this.destroySocketClient();
     } else if (window.confirm(t("alerts.collabStopOverridePrompt"))) {
       // hack to ensure that we prefer we disregard any new browser state
@@ -374,7 +374,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       window.history.pushState({}, APP_NAME, window.location.origin);
       this.destroySocketClient();
 
-      LocalData.fileStorage.reset();
+      hybridStorageAdapter.fileStorage.reset();
 
       const elements = this.drawinkAPI
         .getSceneElementsIncludingDeleted()
@@ -403,7 +403,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       this.drawinkAPI.updateScene({
         collaborators: this.collaborators,
       });
-      LocalData.resumeSave("collaboration");
+      hybridStorageAdapter.resumeSave("collaboration");
     }
   };
 
@@ -426,7 +426,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
           !element.isDeleted &&
           (opts.forceFetchFiles
             ? element.status !== "pending" ||
-              Date.now() - element.updated > 10000
+            Date.now() - element.updated > 10000
             : element.status === "saved")
         );
       })
@@ -493,7 +493,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     >();
 
     this.setIsCollaborating(true);
-    LocalData.pauseSave("collaboration");
+    hybridStorageAdapter.pauseSave("collaboration");
 
     const { default: socketIOClient } = await import(
       /* webpackChunkName: "socketIoClient" */ "socket.io-client"
@@ -694,9 +694,9 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     roomLinkData,
   }:
     | {
-        fetchScene: true;
-        roomLinkData: { roomId: string; roomKey: string } | null;
-      }
+      fetchScene: true;
+      roomLinkData: { roomId: string; roomKey: string } | null;
+    }
     | { fetchScene: false; roomLinkData?: null }) => {
     clearTimeout(this.socketInitializationTimer!);
     if (this.portal.socket && this.fallbackInitializationHandler) {

@@ -6,7 +6,7 @@ import type { FileId, OrderedDrawinkElement } from "@drawink/element/types";
 import type { AppState, BinaryFileData } from "@drawink/drawink/types";
 
 import { STORAGE_KEYS } from "./app_constants";
-import { LocalData } from "./data/LocalData";
+import { hybridStorageAdapter } from "./data/HybridStorageAdapter";
 
 const EVENT_REQUEST_SCENE = "REQUEST_SCENE";
 
@@ -66,7 +66,7 @@ const parseSceneData = async ({
       return acc;
     }, [] as FileId[]);
 
-    const files = await LocalData.fileStorage.getFiles(fileIds);
+    const files = await hybridStorageAdapter.fileStorage.getFiles(fileIds);
 
     return {
       type: "SCENE_DATA",

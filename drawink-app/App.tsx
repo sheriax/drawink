@@ -120,11 +120,14 @@ import { loadFilesFromFirebase } from "./data/firebase";
 import {
   LibraryIndexedDBAdapter,
   LibraryLocalStorageMigrationAdapter,
-  LocalData,
+} from "./data/LocalStorageAdapter";
+import {
+  hybridStorageAdapter,
   localStorageQuotaExceededAtom,
-} from "./data/LocalData";
+} from "./data/HybridStorageAdapter";
 import { isBrowserStorageStateNewer } from "./data/tabSync";
 import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
+import { AuthDialog } from "./components/AuthDialog";
 import CollabError, { collabErrorIndicatorAtom } from "./collab/CollabError";
 import { useHandleAppTheme } from "./useHandleAppTheme";
 import { getPreferredLanguage } from "./app-language/language-detector";
@@ -143,13 +146,20 @@ import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { AppSidebar } from "./components/AppSidebar";
 import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
 import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
+import {
+  authStateAtom,
+  cloudEnabledAtom,
+  syncStatusAtom,
+  type AuthUser,
+} from "@drawink/drawink/atoms/auth";
+import { firebaseAuth } from "./data/firebase";
 
 import type { CollabAPI } from "./collab/Collab";
 
 polyfill();
 
-// Initialize boards API atom
-editorJotaiStore.set(boardsAPIAtom, LocalData.boards);
+// Initialize boards API atom with HybridStorageAdapter
+editorJotaiStore.set(boardsAPIAtom, hybridStorageAdapter);
 
 window.DRAWINK_THROTTLE_RENDER = true;
 
@@ -409,6 +419,58 @@ const DrawinkWrapper = () => {
     }
   }, [drawinkAPI]);
 
+  // Firebase auth state listener
+  useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in
+        const authUser: AuthUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          providerId: user.providerData[0]?.providerId || "unknown",
+        };
+
+        editorJotaiStore.set(authStateAtom, {
+          isAuthenticated: true,
+          user: authUser,
+          isLoading: false,
+          error: null,
+        });
+
+        // Enable cloud sync
+        hybridStorageAdapter.enableCloudSync(user.uid);
+        editorJotaiStore.set(cloudEnabledAtom, true);
+
+        // Wire up sync status updates
+        hybridStorageAdapter.onSyncStatusChange((status) => {
+          editorJotaiStore.set(syncStatusAtom, status);
+        });
+
+        console.log("[Auth] User signed in:", user.email);
+      } else {
+        // User is signed out
+        editorJotaiStore.set(authStateAtom, {
+          isAuthenticated: false,
+          user: null,
+          isLoading: false,
+          error: null,
+        });
+
+        // Disable cloud sync
+        hybridStorageAdapter.disableCloudSync();
+        editorJotaiStore.set(cloudEnabledAtom, false);
+
+        console.log("[Auth] User signed out");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   useEffect(() => {
     if (!drawinkAPI || (!isCollabDisabled && !collabAPI)) {
       return;
@@ -461,7 +523,7 @@ const DrawinkWrapper = () => {
           });
         } else if (isInitialLoad) {
           if (fileIds.length) {
-            LocalData.fileStorage
+            hybridStorageAdapter.fileStorage
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
@@ -476,7 +538,7 @@ const DrawinkWrapper = () => {
           }
           // on fresh load, clear unused files from IDB (from previous
           // session)
-          LocalData.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds });
+          hybridStorageAdapter.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds });
         }
       }
     };
@@ -553,7 +615,7 @@ const DrawinkWrapper = () => {
               return acc;
             }, [] as FileId[]) || [];
           if (fileIds.length) {
-            LocalData.fileStorage
+            hybridStorageAdapter.fileStorage
               .getFiles(fileIds)
               .then(({ loadedFiles, erroredFiles }) => {
                 if (loadedFiles.length) {
@@ -571,12 +633,12 @@ const DrawinkWrapper = () => {
     }, SYNC_BROWSER_TABS_TIMEOUT);
 
     const onUnload = () => {
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
     };
 
     const visibilityChange = (event: FocusEvent | Event) => {
       if (event.type === EVENT.BLUR || document.hidden) {
-        LocalData.flushSave();
+        hybridStorageAdapter.flushSave();
       }
       if (
         event.type === EVENT.VISIBILITY_CHANGE ||
@@ -606,11 +668,11 @@ const DrawinkWrapper = () => {
 
   useEffect(() => {
     const unloadHandler = (event: BeforeUnloadEvent) => {
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
 
       if (
         drawinkAPI &&
-        LocalData.fileStorage.shouldPreventUnload(drawinkAPI.getSceneElements())
+        hybridStorageAdapter.fileStorage.shouldPreventUnload(drawinkAPI.getSceneElements())
       ) {
         if (import.meta.env.VITE_APP_DISABLE_PREVENT_UNLOAD !== "true") {
           preventUnload(event);
@@ -638,10 +700,10 @@ const DrawinkWrapper = () => {
       const { boardId } = customEvent.detail;
 
       // Flush current board's data before loading new one
-      LocalData.flushSave();
+      hybridStorageAdapter.flushSave();
 
       // Load new board's data
-      const { elements, appState } = LocalData.boards.loadBoardData(boardId);
+      const { elements, appState } = hybridStorageAdapter.loadBoardData(boardId);
 
       // Update scene with new board's data
       drawinkAPI.updateScene({
@@ -659,7 +721,7 @@ const DrawinkWrapper = () => {
         .map((el: any) => el.fileId);
 
       if (fileIds.length > 0) {
-        LocalData.fileStorage
+        hybridStorageAdapter.fileStorage
           .getFiles(fileIds)
           .then(({ loadedFiles, erroredFiles }) => {
             if (loadedFiles.length) {
@@ -691,8 +753,8 @@ const DrawinkWrapper = () => {
 
     // this check is redundant, but since this is a hot path, it's best
     // not to evaludate the nested expression every time
-    if (!LocalData.isSavePaused()) {
-      LocalData.save(elements, appState, files, () => {
+    if (!hybridStorageAdapter.isSavePaused()) {
+      hybridStorageAdapter.save(elements, appState, files, () => {
         if (drawinkAPI) {
           let didChange = false;
 
@@ -700,7 +762,7 @@ const DrawinkWrapper = () => {
             .getSceneElementsIncludingDeleted()
             .map((element) => {
               if (
-                LocalData.fileStorage.shouldUpdateImageElementStatus(element)
+                hybridStorageAdapter.fileStorage.shouldUpdateImageElementStatus(element)
               ) {
                 const newElement = newElementWith(element, { status: "saved" });
                 if (newElement !== element) {
@@ -1006,6 +1068,8 @@ const DrawinkWrapper = () => {
             }
           }}
         />
+
+        <AuthDialog />
 
         <AppSidebar />
 
