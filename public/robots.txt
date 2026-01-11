@@ -10,4 +10,4 @@ Allow: /
 Allow: /sitemap.xml
 Disallow: /
 
-Sitemap: https://drawink.com/sitemap.xml
+Sitemap: https://drawink.app/sitemap.xml

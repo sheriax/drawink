@@ -5,11 +5,11 @@
     <style>
       @font-face {
         font-family: "Virgil";
-        src: url("https://drawink.com/Virgil.woff2");
+        src: url("https://drawink.app/Virgil.woff2");
       }
       @font-face {
         font-family: "Cascadia";
-        src: url("https://drawink.com/Cascadia.woff2");
+        src: url("https://drawink.app/Cascadia.woff2");
       }
     </style>
   </defs>

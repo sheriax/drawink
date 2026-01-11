@@ -68,7 +68,7 @@ module.exports.woff2BrowserPlugin = () => {
         return code.replace(
           "<!-- PLACEHOLDER:EXCALIDRAW_APP_FONTS -->",
           `<script>
-        // point into our CDN in prod, fallback to root (drawink.com) domain in case of issues
+        // point into our CDN in prod, fallback to root (drawink.app) domain in case of issues
         window.EXCALIDRAW_ASSET_PATH = [
           "${OSS_FONTS_CDN}",
           "${OSS_FONTS_FALLBACK}",

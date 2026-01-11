@@ -10,7 +10,7 @@ process.env.IS_PREACT = "false";
 const config = {
   title: "Drawink developer docs",
   tagline: "For Drawink contributors or those integrating the Drawink editor",
-  url: "https://docs.drawink.com",
+  url: "https://docs.drawink.app",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -64,7 +64,7 @@ const config = {
             label: "Docs",
           },
           {
-            to: "https://plus.drawink.com/blog",
+            to: "https://plus.drawink.app/blog",
             label: "Blog",
             position: "left",
           },
@@ -109,7 +109,7 @@ const config = {
             items: [
               {
                 label: "Blog",
-                to: "https://plus.drawink.com/blog",
+                to: "https://plus.drawink.app/blog",
               },
               {
                 label: "GitHub",

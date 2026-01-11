@@ -50,7 +50,7 @@ Here's the `exportToBlob` and `exportToSvg` functions in action:
 const drawinkDiagram = {
   type: "drawink",
   version: 2,
-  source: "https://drawink.com",
+  source: "https://drawink.app",
   elements: [
     {
       id: "vWrqOAfkind2qcm7LDAGZ",

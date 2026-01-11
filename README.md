@@ -1,4 +1,4 @@
-<a href="https://drawink.com/" target="_blank" rel="noopener">
+<a href="https://drawink.app/" target="_blank" rel="noopener">
   <picture>
     <source media="(prefers-color-scheme: dark)" alt="Drawink" srcset="https://drawink.nyc3.cdn.digitaloceanspaces.com/github/drawink_github_cover_2_dark.png" />
     <img alt="Drawink" src="https://drawink.nyc3.cdn.digitaloceanspaces.com/github/drawink_github_cover_2.png" />
@@ -6,10 +6,10 @@
 </a>
 
 <h4 align="center">
-  <a href="https://drawink.com">Drawink Editor</a> |
-  <a href="https://plus.drawink.com/blog">Blog</a> |
-  <a href="https://docs.drawink.com">Documentation</a> |
-  <a href="https://plus.drawink.com">Drawink Pro</a>
+  <a href="https://drawink.app">Drawink Editor</a> |
+  <a href="https://plus.drawink.app/blog">Blog</a> |
+  <a href="https://docs.drawink.app">Documentation</a> |
+  <a href="https://plus.drawink.app">Drawink Pro</a>
 </h4>
 
 <div align="center">
@@ -28,7 +28,7 @@
   <a href="https://www.npmjs.com/package/@drawink/drawink">
     <img alt="npm downloads/month" src="https://img.shields.io/npm/dm/@drawink/drawink"  />
   </a>
-  <a href="https://docs.drawink.com/docs/introduction/contributing">
+  <a href="https://docs.drawink.app/docs/introduction/contributing">
     <img alt="PRs welcome!" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"  />
   </a>
   <a href="https://discord.gg/UexuTaE">
@@ -44,7 +44,7 @@
 
 <div align="center">
   <figure>
-    <a href="https://drawink.com" target="_blank" rel="noopener">
+    <a href="https://drawink.app" target="_blank" rel="noopener">
       <img src="https://drawink.nyc3.cdn.digitaloceanspaces.com/github%2Fproduct_showcase.png" alt="Product showcase" />
     </a>
     <figcaption>
@@ -74,9 +74,9 @@ The Drawink editor (npm package) supports:
 - 🔙&nbsp;Undo / Redo.
 - 🔍&nbsp;Zoom and panning support.
 
-## Drawink.com
+## drawink.app
 
-The app hosted at [drawink.com](https://drawink.com) is a minimal showcase of what you can build with Drawink. Its [source code](https://github.com/drawink/drawink/tree/master/drawink-app) is part of this repository as well, and the app features:
+The app hosted at [drawink.app](https://drawink.app) is a minimal showcase of what you can build with Drawink. Its [source code](https://github.com/drawink/drawink/tree/master/drawink-app) is part of this repository as well, and the app features:
 
 - 📡&nbsp;PWA support (works offline).
 - 🤼&nbsp;Real-time collaboration.
@@ -88,7 +88,7 @@ We'll be adding these features as drop-in plugins for the npm package in the fut
 
 ## Quick start
 
-**Note:** following instructions are for installing the Drawink [npm package](https://www.npmjs.com/package/@drawink/drawink) when integrating Drawink into your own app. To run the repository locally for development, please refer to our [Development Guide](https://docs.drawink.com/docs/introduction/development).
+**Note:** following instructions are for installing the Drawink [npm package](https://www.npmjs.com/package/@drawink/drawink) when integrating Drawink into your own app. To run the repository locally for development, please refer to our [Development Guide](https://docs.drawink.app/docs/introduction/development).
 
 Use `npm` or `yarn` to install the package.
 
@@ -98,13 +98,13 @@ npm install react react-dom @drawink/drawink
 yarn add react react-dom @drawink/drawink
 ```
 
-Check out our [documentation](https://docs.drawink.com/docs/@drawink/drawink/installation) for more details!
+Check out our [documentation](https://docs.drawink.app/docs/@drawink/drawink/installation) for more details!
 
 ## Contributing
 
 - Missing something or found a bug? [Report here](https://github.com/drawink/drawink/issues).
-- Want to contribute? Check out our [contribution guide](https://docs.drawink.com/docs/introduction/contributing) or let us know on [Discord](https://discord.gg/UexuTaE).
-- Want to help with translations? See the [translation guide](https://docs.drawink.com/docs/introduction/contributing#translating).
+- Want to contribute? Check out our [contribution guide](https://docs.drawink.app/docs/introduction/contributing) or let us know on [Discord](https://discord.gg/UexuTaE).
+- Want to help with translations? See the [translation guide](https://docs.drawink.app/docs/introduction/contributing#translating).
 
 ## Integrations
 
@@ -117,7 +117,7 @@ Check out our [documentation](https://docs.drawink.com/docs/@drawink/drawink/ins
 
 ## Sponsors & support
 
-If you like the project, you can become a sponsor at [Open Collective](https://opencollective.com/drawink) or use [Drawink Pro](https://plus.drawink.com/).
+If you like the project, you can become a sponsor at [Open Collective](https://opencollective.com/drawink) or use [Drawink Pro](https://plus.drawink.app/).
 
 ## Thank you for supporting Drawink
 

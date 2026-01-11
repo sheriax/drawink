@@ -1556,7 +1556,7 @@ class App extends React.Component<AppProps, AppState> {
               }}
             >
               <div
-                //this is a hack that addresses isse with embedded drawink.com embeddable
+                //this is a hack that addresses isse with embedded drawink.app embeddable
                 //https://github.com/drawink/drawink/pull/6691#issuecomment-1607383938
                 /*ref={(ref) => {
                   if (!this.drawinkContainerRef.current) {
@@ -4271,7 +4271,7 @@ class App extends React.Component<AppProps, AppState> {
        *  - `CaptureUpdateAction.NEVER`: Updates never make it to undo/redo stack. Use for remote updates or scene initialization.
        *  - `CaptureUpdateAction.EVENTUALLY`: Updates will be eventually be captured as part of a future increment.
        *
-       * Check [API docs](https://docs.drawink.com/docs/@drawink/drawink/api/props/drawink-api#captureUpdate) for more details.
+       * Check [API docs](https://docs.drawink.app/docs/@drawink/drawink/api/props/drawink-api#captureUpdate) for more details.
        *
        * @default CaptureUpdateAction.EVENTUALLY
        */

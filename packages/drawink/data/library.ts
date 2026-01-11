@@ -52,7 +52,7 @@ import type {
  * boundaries
  **/
 const ALLOWED_LIBRARY_URLS = [
-  "drawink.com",
+  "drawink.app",
   // when installing from github PRs
   "raw.githubusercontent.com/drawink/drawink-libraries",
 ];
@@ -679,7 +679,7 @@ export const useHandleLibrary = (
     drawinkAPI: DrawinkImperativeAPI | null;
     /**
      * Return `true` if the library install url should be allowed.
-     * If not supplied, only the drawink.com base domain is allowed.
+     * If not supplied, only the drawink.app base domain is allowed.
      */
     validateLibraryUrl?: (libraryUrl: string) => boolean;
   } & (

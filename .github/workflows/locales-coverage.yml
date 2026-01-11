@@ -25,7 +25,7 @@ jobs:
           FILE_CHANGED=$(git diff packages/drawink/locales/percentages.json)
           if [ ! -z "${FILE_CHANGED}" ]; then
             git config --global user.name 'Drawink Bot'
-            git config --global user.email 'bot@drawink.com'
+            git config --global user.email 'bot@drawink.app'
             git add packages/drawink/locales/percentages.json
             git commit -am "Auto commit: Calculate translation coverage"
             git push

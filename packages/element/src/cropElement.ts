@@ -475,7 +475,7 @@ const recomputeOrigin = (
   return newOrigin;
 };
 
-// refer to https://link.drawink.com/l/6rfy1007QOo/6stx5PmRn0k
+// refer to https://link.drawink.app/l/6rfy1007QOo/6stx5PmRn0k
 export const getUncroppedImageElement = (
   element: DrawinkImageElement,
   elementsMap: ElementsMap,

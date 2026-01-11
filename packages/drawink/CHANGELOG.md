@@ -203,7 +203,7 @@ The `updateScene` API has changed due to the added `Store` component, as part of
 
 - `DrawinkTextElement.baseline` was removed and replaced with a vertical offset computation based on font metrics, performed on each text element re-render. In case of custom font usage, extend the `FONT_METRICS` object with the related properties. [#7693](https://github.com/drawink/drawink/pull/7693)
 
-- `DrawinkEmbeddableElement.validated` was removed and moved to the private editor state. This should largely not affect your apps unless you were reading from this attribute. We keep validating embeddable urls internally, and the public [`props.validateEmbeddable`](https://docs.drawink.com/docs/@drawink/drawink/api/props#validateembeddable) still applies. [#7539](https://github.com/drawink/drawink/pull/7539)
+- `DrawinkEmbeddableElement.validated` was removed and moved to the private editor state. This should largely not affect your apps unless you were reading from this attribute. We keep validating embeddable urls internally, and the public [`props.validateEmbeddable`](https://docs.drawink.app/docs/@drawink/drawink/api/props#validateembeddable) still applies. [#7539](https://github.com/drawink/drawink/pull/7539)
 
 - Stats container CSS has changed, so if you're using `renderCustomStats`, you may need to adjust your styles to retain the same layout. [#8361](https://github.com/drawink/drawink/pull/8361)
 
@@ -211,7 +211,7 @@ The `updateScene` API has changed due to the added `Store` component, as part of
 
 ### Features
 
-- Prefer user defined coordinates and dimensions when creating a frame using [`convertToDrawinkElements`](https://docs.drawink.com/docs/@drawink/drawink/api/drawink-element-skeleton#converttodrawinkelements) [#8517](https://github.com/drawink/drawink/pull/8517)
+- Prefer user defined coordinates and dimensions when creating a frame using [`convertToDrawinkElements`](https://docs.drawink.app/docs/@drawink/drawink/api/drawink-element-skeleton#converttodrawinkelements) [#8517](https://github.com/drawink/drawink/pull/8517)
 
 - `props.initialData` can now be a function that returns `DrawinkInitialDataState` or `Promise<DrawinkInitialDataState>` [#8107](https://github.com/drawink/drawink/pull/8135)
 
@@ -787,7 +787,7 @@ define: {
 
 - Support `drawinkAPI` prop for accessing the Drawink API [#7251](https://github.com/drawink/drawink/pull/7251).
 
-- Export [`getCommonBounds`](https://docs.drawink.com/docs/@drawink/drawink/api/utils#getcommonbounds) helper from the package [#7247](https://github.com/drawink/drawink/pull/7247).
+- Export [`getCommonBounds`](https://docs.drawink.app/docs/@drawink/drawink/api/utils#getcommonbounds) helper from the package [#7247](https://github.com/drawink/drawink/pull/7247).
 
 - Support frames via programmatic API [#7205](https://github.com/drawink/drawink/pull/7205).
 
@@ -811,7 +811,7 @@ define: {
 
 - Additionally `ready` and `readyPromise` from the API have been discontinued. These APIs were found to be superfluous, and as part of the effort to streamline the APIs and maintain simplicity, they were removed in version v0.17.0 [#7251](https://github.com/drawink/drawink/pull/7251).
 
-- [`useDevice`](https://docs.drawink.com/docs/@drawink/drawink/api/utils#usedevice) hook's return value was changed to differentiate between `editor` and `viewport` breakpoints. [#7243](https://github.com/drawink/drawink/pull/7243)
+- [`useDevice`](https://docs.drawink.app/docs/@drawink/drawink/api/utils#usedevice) hook's return value was changed to differentiate between `editor` and `viewport` breakpoints. [#7243](https://github.com/drawink/drawink/pull/7243)
 
 ### Build
 
@@ -967,8 +967,8 @@ define: {
 
 - Support creating containers, linear elements, text containers, labelled arrows and arrow bindings programatically [#6546](https://github.com/drawink/drawink/pull/6546)
 - Introducing Web-Embeds (alias iframe element)[#6691](https://github.com/drawink/drawink/pull/6691)
-- Added [`props.validateEmbeddable`](https://docs.drawink.com/docs/@drawink/drawink/api/props#validateembeddable) to customize embeddable src url validation. [#6691](https://github.com/drawink/drawink/pull/6691)
-- Add support for `opts.fitToViewport` and `opts.viewportZoomFactor` in the [`DrawinkAPI.scrollToContent`](https://docs.drawink.com/docs/@drawink/drawink/api/props/drawink-api#scrolltocontent) API. [#6581](https://github.com/drawink/drawink/pull/6581).
+- Added [`props.validateEmbeddable`](https://docs.drawink.app/docs/@drawink/drawink/api/props#validateembeddable) to customize embeddable src url validation. [#6691](https://github.com/drawink/drawink/pull/6691)
+- Add support for `opts.fitToViewport` and `opts.viewportZoomFactor` in the [`DrawinkAPI.scrollToContent`](https://docs.drawink.app/docs/@drawink/drawink/api/props/drawink-api#scrolltocontent) API. [#6581](https://github.com/drawink/drawink/pull/6581).
 - Properly sanitize element `link` urls. [#6728](https://github.com/drawink/drawink/pull/6728).
 - Sidebar component now supports tabs — for more detailed description of new behavior and breaking changes, see the linked PR. [#6213](https://github.com/drawink/drawink/pull/6213)
 - Exposed `DefaultSidebar` component to allow modifying the default sidebar, such as adding custom tabs to it. [#6213](https://github.com/drawink/drawink/pull/6213)
@@ -1247,23 +1247,23 @@ define: {
 
 ### Features
 
-- [`DrawinkAPI.scrollToContent`](https://docs.drawink.com/docs/@drawink/drawink/api/props/drawink-api#scrolltocontent) has new opts object allowing you to fit viewport to content, and animate the scrolling. [#6319](https://github.com/drawink/drawink/pull/6319)
+- [`DrawinkAPI.scrollToContent`](https://docs.drawink.app/docs/@drawink/drawink/api/props/drawink-api#scrolltocontent) has new opts object allowing you to fit viewport to content, and animate the scrolling. [#6319](https://github.com/drawink/drawink/pull/6319)
 
 - Expose `useI18n()` hook return an object containing `t()` i18n helper and current `langCode`. You can use this in components you render as `<Drawink>` children to render any of our i18n locale strings. [#6224](https://github.com/drawink/drawink/pull/6224)
 
-- [`restoreElements`](https://docs.drawink.com/docs/@drawink/drawink/api/utils/restore#restoreelements) API now takes an optional parameter `opts` which currently supports the below attributes
+- [`restoreElements`](https://docs.drawink.app/docs/@drawink/drawink/api/utils/restore#restoreelements) API now takes an optional parameter `opts` which currently supports the below attributes
 
 ```js
 { refreshDimensions?: boolean, repairBindings?: boolean }
 ```
 
-The same `opts` param has been added to [`restore`](https://docs.drawink.com/docs/@drawink/drawink/api/utils/restore#restore) API as well.
+The same `opts` param has been added to [`restore`](https://docs.drawink.app/docs/@drawink/drawink/api/utils/restore#restore) API as well.
 
-For more details refer to the [docs](https://docs.drawink.com)
+For more details refer to the [docs](https://docs.drawink.app)
 
 #### BREAKING CHANGE
 
-- The optional parameter `refreshDimensions` in [`restoreElements`](https://docs.drawink.com/docs/@drawink/drawink/api/utils/restore#restoreelements) has been removed and can be enabled via `opts`
+- The optional parameter `refreshDimensions` in [`restoreElements`](https://docs.drawink.app/docs/@drawink/drawink/api/utils/restore#restoreelements) has been removed and can be enabled via `opts`
 
 ### Fixes
 
@@ -1885,7 +1885,7 @@ Check out the [release notes](https://github.com/drawink/drawink/releases/tag/v0
 - Expose [`serializeAsJSON`](https://github.com/drawink/drawink/blob/master/src/packages/drawink/README.md#serializeAsJSON) helper that we use when saving Drawink scene to a file [#3538](https://github.com/drawink/drawink/pull/3538).
 - Add support to render custom UI in the top right corner via [`renderTopRightUI`](https://github.com/drawink/drawink/blob/master/src/packages/drawink/README.md#renderTopRightUI) prop [#3539](https://github.com/drawink/drawink/pull/3539), [#3572](https://github.com/drawink/drawink/pull/3572) .
 
-  This also removes the GitHub icon, keeping it local to the https://drawink.com app.
+  This also removes the GitHub icon, keeping it local to the https://drawink.app app.
 
 ### Fixes
 
@@ -2022,7 +2022,7 @@ Check out the [release notes](https://github.com/drawink/drawink/releases/tag/v0
 - Calculate offsets when drawink container resizes using resize observer api [#3374](https://github.com/drawink/drawink/pull/3374).
 - Export types for the package so now it can be used with typescript [#3337](https://github.com/drawink/drawink/pull/3337). The types are available at `@drawink/drawink/types`.
 - Add `renderCustomStats` prop to render extra stats on host, and expose `setToastMessage` API via refs which can be used to show toast with custom message [#3360](https://github.com/drawink/drawink/pull/3360).
-- Support passing a CSRF token when importing libraries to prevent prompting before installation. The token is passed from [https://libraries.drawink.com](https://libraries.drawink.com/) using the `token` URL key [#3329](https://github.com/drawink/drawink/pull/3329).
+- Support passing a CSRF token when importing libraries to prevent prompting before installation. The token is passed from [https://libraries.drawink.app](https://libraries.drawink.app/) using the `token` URL key [#3329](https://github.com/drawink/drawink/pull/3329).
 - #### BREAKING CHANGE
   Use `location.hash` when importing libraries to fix installation issues. This will require host apps to add a `hashchange` listener and call the newly exposed `drawinkAPI.importLibrary(url)` API when applicable [#3320](https://github.com/drawink/drawink/pull/3320). Check the [readme](https://github.com/drawink/drawink/blob/master/src/packages/drawink/README.md#importlibrary) for more details.
 - Append `location.pathname` to `libraryReturnUrl` default url [#3325](https://github.com/drawink/drawink/pull/3325).

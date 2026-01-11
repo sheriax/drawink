@@ -293,7 +293,7 @@ const chartLines = (
   return [xLine, yLine, maxLine];
 };
 
-// For the maths behind it https://drawink.com/#json=6320864370884608,O_5xfD-Agh32tytHpRJx1g
+// For the maths behind it https://drawink.app/#json=6320864370884608,O_5xfD-Agh32tytHpRJx1g
 const chartBaseElements = (
   spreadsheet: Spreadsheet,
   x: number,

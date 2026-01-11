@@ -387,7 +387,7 @@ const PublishLibrary = ({
               i18nKey="publishDialog.noteDescription"
               link={(el) => (
                 <a
-                  href="https://libraries.drawink.com"
+                  href="https://libraries.drawink.app"
                   target="_blank"
                   rel="noopener"
                 >

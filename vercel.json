@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://drawink.com"
+          "value": "https://drawink.app"
         },
         {
           "key": "X-Content-Type-Options",
@@ -31,7 +31,7 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://drawink.com"
+          "value": "https://drawink.app"
         }
       ]
     },
@@ -52,14 +52,14 @@
   "redirects": [
     {
       "source": "/webex/:match*",
-      "destination": "https://for-webex.drawink.com"
+      "destination": "https://for-webex.drawink.app"
     },
     {
       "source": "/:path*",
       "has": [
         {
           "type": "host",
-          "value": "vscode.drawink.com"
+          "value": "vscode.drawink.app"
         }
       ],
       "destination": "https://marketplace.visualstudio.com/items?itemName=pomdtr.drawink-editor"

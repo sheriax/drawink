@@ -34,12 +34,12 @@ Go to [CodeSandbox](https://codesandbox.io/p/sandbox/github/drawink/drawink/tree
 
 ## Integration
 
-Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/integration).
+Head over to the [docs](https://docs.drawink.app/docs/@drawink/drawink/integration).
 
 ## API
 
-Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/api).
+Head over to the [docs](https://docs.drawink.app/docs/@drawink/drawink/api).
 
 ## Contributing
 
-Head over to the [docs](https://docs.drawink.com/docs/@drawink/drawink/contributing).
+Head over to the [docs](https://docs.drawink.app/docs/@drawink/drawink/contributing).

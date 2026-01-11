@@ -9,7 +9,7 @@ import {
 export const diagramFixture = {
   type: "drawink",
   version: VERSIONS.drawink,
-  source: "https://drawink.com",
+  source: "https://drawink.app",
   elements: [diamondFixture, ellipseFixture, rectangleFixture],
   appState: {
     viewBackgroundColor: "#ffffff",

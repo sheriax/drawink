@@ -124,7 +124,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       Sitemap({
-        hostname: "https://drawink.com",
+        hostname: "https://drawink.app",
         outDir: "build",
         changefreq: "monthly",
         // its static in public folder
