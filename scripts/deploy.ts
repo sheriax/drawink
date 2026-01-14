@@ -1,7 +1,14 @@
 #!/usr/bin/env bun
 
+// @ts-ignore - Bun-specific
 import { $ } from "bun";
-import { resolve } from "path";
+// @ts-ignore - Bun-specific
+import { resolve, dirname } from "path";
+// @ts-ignore - Bun-specific
+import { fileURLToPath } from "url";
+
+// @ts-ignore - Bun global
+declare const process: any;
 
 const colors = {
   reset: "\x1b[0m",
@@ -117,7 +124,9 @@ async function buildDockerImage(): Promise<boolean> {
   step("Building Docker image...");
 
   try {
-    const rootDir = resolve(import.meta.dir, "..");
+    // @ts-ignore - Bun-specific
+    const __dirname = import.meta.dir || dirname(fileURLToPath(import.meta.url));
+    const rootDir = resolve(__dirname, "..");
     await $`docker build --platform linux/amd64 -t ${CONFIG.imageName}:latest ${rootDir}`.quiet();
     success("Docker image built successfully");
     return true;

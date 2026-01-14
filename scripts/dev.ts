@@ -1,7 +1,10 @@
 #!/usr/bin/env bun
 
+// @ts-ignore - Bun-specific
 import { spawn } from "bun";
+// @ts-ignore - Bun-specific
 import { resolve, dirname } from "path";
+// @ts-ignore - Bun-specific
 import { fileURLToPath } from "url";
 
 // @ts-ignore - Bun global
