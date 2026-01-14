@@ -43,7 +43,6 @@ const CLOUD_RUN_SETTINGS = [
   "--max-instances=3",
   "--concurrency=80",
   "--timeout=300",
-  "--max-request-timeout=300",
 ] as const;
 
 function log(message: string, color = colors.cyan) {
