@@ -1,6 +1,29 @@
-# Drawink Deployment Instructions
+# Drawink Deployment Guide
 
 This guide covers deploying Drawink to Google Cloud Run with a custom domain.
+
+## Quick Start
+
+**For existing deployments, simply run:**
+
+```bash
+bun deploy
+```
+
+Or for quick deploy (skips confirmation prompts):
+
+```bash
+bun deploy:quick
+```
+
+The deployment script will:
+1. Build the Docker image
+2. Tag and push to Artifact Registry
+3. Deploy to Cloud Run with optimized settings
+
+**For first-time setup, see [First-Time Setup](#first-time-setup) below.**
+
+---
 
 ## Prerequisites
 
@@ -13,53 +36,33 @@ brew install --cask google-cloud-sdk
 
 **Or download directly:**
 ```bash
-# Download and install
 curl https://sdk.cloud.google.com | bash
-
-# Restart your terminal, then initialize
 gcloud init
 ```
 
 **After installation, authenticate:**
 ```bash
-# Login to Google Cloud
 gcloud auth login
-
-# Set the project
 gcloud config set project drawink-2026
-
-# Verify installation
-gcloud --version
 ```
-
----
 
 ### 2. Docker
 
 **macOS:**
 ```bash
-# Using Homebrew
 brew install --cask docker
-
-# Or download Docker Desktop from:
-# https://www.docker.com/products/docker-desktop
 ```
 
-**After installation:**
-1. Open **Docker Desktop** from Applications
-2. Wait for Docker to start (whale icon in menu bar)
-3. Verify installation:
+After installation, open Docker Desktop and wait for it to start.
+
+### 3. Verify Installation
+
 ```bash
 docker --version
-docker run hello-world
+gcloud --version
 ```
 
 ---
-
-### 3. Other Requirements
-
-- Access to your domain's DNS settings (for custom domain setup)
-- Git (for version control)
 
 ## Project Configuration
 
@@ -73,47 +76,9 @@ docker run hello-world
 
 ---
 
-## Quick Deploy (Existing Setup)
+## First-Time Setup
 
-If the infrastructure is already set up, use these commands to deploy updates:
-
-```bash
-# 1. Build the Docker image
-docker build --platform linux/amd64 -t drawink:latest .
-
-# 2. Tag for Artifact Registry
-docker tag drawink:latest asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
-
-# 3. Push to Artifact Registry
-docker push asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
-
-# 4. Deploy to Cloud Run (with cost optimizations)
-gcloud run deploy drawink \
-  --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
-  --region=asia-south1 \
-  --port=3000 \
-  --cpu-throttling \
-  --memory=256Mi \
-  --max-instances=3 \
-  --timeout=300 \
-  --project=drawink-2026
-```
-
----
-
-## First-Time Setup (Complete Guide)
-
-### Step 1: Configure gcloud
-
-```bash
-# Set the project
-gcloud config set project drawink-2026
-
-# Verify configuration
-gcloud config list
-```
-
-### Step 2: Enable Required APIs
+### Step 1: Enable Required APIs
 
 ```bash
 gcloud services enable \
@@ -123,7 +88,7 @@ gcloud services enable \
   --project=drawink-2026
 ```
 
-### Step 3: Create Artifact Registry Repository
+### Step 2: Create Artifact Registry Repository
 
 ```bash
 gcloud artifacts repositories create drawink \
@@ -133,50 +98,21 @@ gcloud artifacts repositories create drawink \
   --project=drawink-2026
 ```
 
-### Step 4: Configure Docker Authentication
+### Step 3: Configure Docker Authentication
 
 ```bash
 gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
 ```
 
-### Step 5: Build and Push Docker Image
+### Step 4: Deploy
 
 ```bash
-# Build for linux/amd64 (required for Cloud Run)
-docker build --platform linux/amd64 -t drawink:latest .
-
-# Tag for Artifact Registry
-docker tag drawink:latest asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
-
-# Push to Artifact Registry
-docker push asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
+bun deploy
 ```
 
-### Step 6: Deploy to Cloud Run
+### Step 5: Make Service Publicly Accessible
 
-```bash
-gcloud run deploy drawink \
-  --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
-  --platform=managed \
-  --region=asia-south1 \
-  --port=3000 \
-  --allow-unauthenticated \
-  --cpu-throttling \
-  --cpu=1 \
-  --memory=256Mi \
-  --min-instances=0 \
-  --max-instances=3 \
-  --concurrency=80 \
-  --timeout=300 \
-  --max-request-timeout=300 \
-  --project=drawink-2026
-```
-
-**Note**: These settings are optimized for cost reduction. See [COST_OPTIMIZATION.md](./COST_OPTIMIZATION.md) for details.
-
-### Step 7: Make Service Publicly Accessible
-
-Create a file named `iam-policy.yaml`:
+Create `iam-policy.yaml`:
 
 ```yaml
 bindings:
@@ -321,7 +257,6 @@ Add an A record in your domain's DNS settings:
 ### Step 10: Verify SSL Certificate
 
 ```bash
-# Check certificate status
 gcloud compute ssl-certificates describe drawink-ssl-cert \
   --global \
   --project=drawink-2026 \
@@ -329,6 +264,35 @@ gcloud compute ssl-certificates describe drawink-ssl-cert \
 ```
 
 Wait for `status: ACTIVE` (can take 5-30 minutes after DNS is configured).
+
+---
+
+## Cost Optimization
+
+The deployment is configured with cost optimizations to stay within Google Cloud's free tier:
+
+### Optimized Settings
+
+- **CPU Throttling**: Enabled - CPU only allocated during request processing
+- **Memory**: 256Mi (reduced from 512Mi)
+- **Max Instances**: 3 (reduced from 10)
+- **Min Instances**: 0 (scales to zero when idle)
+- **Timeout**: 300 seconds (5 minutes)
+- **Concurrency**: 80 requests per instance
+- **WebSocket Timeout**: 1 hour (reduced from 24 hours)
+
+### Free Tier Limits
+
+| Resource | Free Tier Limit |
+|----------|----------------|
+| **Requests** | 2 million requests/month |
+| **Memory** | 360,000 GB-seconds |
+| **CPU** | 180,000 vCPU-seconds |
+| **Outbound Data** | 1 GB from North America regions |
+
+### Expected Costs
+
+With these optimizations, the deployment should stay **within the free tier** for low to medium traffic. Typical costs: **₹0-50/month** (vs ₹207/month without optimizations).
 
 ---
 
@@ -363,21 +327,32 @@ gcloud compute ssl-certificates describe drawink-ssl-cert \
 ### Verify DNS
 
 ```bash
-# Check A record
 dig drawink.app A +short
-
-# Check via Google DNS
 dig @8.8.8.8 drawink.app A +short
 ```
 
 ### Test Endpoints
 
 ```bash
-# Test health endpoint
 curl https://drawink.app/health
-
-# Test main app
 curl -I https://drawink.app/
+```
+
+### Verify Configuration
+
+```bash
+gcloud run services describe drawink \
+  --region=asia-south1 \
+  --project=drawink-2026 \
+  --format="table(
+    spec.template.spec.containers[0].resources.limits.memory,
+    spec.template.spec.containers[0].resources.limits.cpu,
+    spec.template.spec.containers[0].resources.cpuThrottling,
+    spec.template.spec.minInstances,
+    spec.template.spec.maxInstances,
+    spec.template.spec.timeoutSeconds,
+    spec.template.spec.containerConcurrency
+  )"
 ```
 
 ---
@@ -390,6 +365,7 @@ curl -I https://drawink.app/
 | Artifact Registry | [console.cloud.google.com/artifacts?project=drawink-2026](https://console.cloud.google.com/artifacts?project=drawink-2026) |
 | Load Balancing | [console.cloud.google.com/net-services/loadbalancing/list/loadBalancers?project=drawink-2026](https://console.cloud.google.com/net-services/loadbalancing/list/loadBalancers?project=drawink-2026) |
 | SSL Certificates | [console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/list?project=drawink-2026](https://console.cloud.google.com/net-services/loadbalancing/advanced/sslCertificates/list?project=drawink-2026) |
+| Billing Reports | [console.cloud.google.com/billing/reports?project=drawink-2026](https://console.cloud.google.com/billing/reports?project=drawink-2026) |
 
 ---
 
@@ -407,8 +383,8 @@ curl -I https://drawink.app/
 ┌───────────────┐                        ┌───────────────────┐                          ┌────────────────────┐
 │   DNS Record  │                        │   Static IP       │                          │  Artifact Registry │
 │               │                        │   35.241.3.91     │                          │                    │
-│ drawink.      │                        └─────────┬─────────┘                          │ asia-south1-docker │
-│ sheriax.com   │────────────────────────────────▶ │                                    │ .pkg.dev/drawink-  │
+│ drawink.app   │                        └─────────┬─────────┘                          │ asia-south1-docker │
+│               │────────────────────────────────▶ │                                    │ .pkg.dev/drawink-  │
 │               │                                  │                                    │ 2026/drawink       │
 └───────────────┘                                  │                                    └────────────────────┘
                                                    │                                              │
@@ -418,7 +394,7 @@ curl -I https://drawink.app/
                                     │                               │                             │
                                     │  ┌─────────────────────────┐  │                             │
                                     │  │ HTTPS Proxy             │  │                             │
-                                    │  │ (SSL Termination)       │  │                             │
+                                    │  │ (SSL Termination)         │  │                             │
                                     │  └───────────┬─────────────┘  │                             │
                                     │              │                 │                             │
                                     │  ┌───────────▼─────────────┐  │                             │
@@ -449,13 +425,18 @@ curl -I https://drawink.app/
                                     │  │ Container              │  │
                                     │  │                        │  │
                                     │  │  ┌──────────────────┐  │  │
-                                    │  │  │ Nginx (Port 80)  │  │  │
-                                    │  │  │ Frontend App     │  │  │
-                                    │  │  └────────┬─────────┘  │  │
+                                    │  │  │ Nginx (Port 80) │  │  │
+                                    │  │  │ Frontend App    │  │  │
+                                    │  │  └────────┬────────┘  │  │
                                     │  │           │            │  │
                                     │  │  ┌────────▼─────────┐  │  │
-                                    │  │  │ JSON Backend     │  │  │
-                                    │  │  │ (Port 3001)      │  │  │
+                                    │  │  │ JSON Backend    │  │  │
+                                    │  │  │ (Port 3001)     │  │  │
+                                    │  │  └──────────────────┘  │  │
+                                    │  │                        │  │
+                                    │  │  ┌──────────────────┐  │  │
+                                    │  │  │ WebSocket Server │  │  │
+                                    │  │  │ (Port 3003)     │  │  │
                                     │  │  └──────────────────┘  │  │
                                     │  │                        │  │
                                     │  │  Managed by Supervisor │  │
@@ -477,18 +458,37 @@ curl -I https://drawink.app/
 ## Notes
 
 - The Docker image is built for `linux/amd64` platform (required by Cloud Run)
-- The container runs **nginx** (port 80) for the frontend and **json-server** (port 3001) for the API
-- Both services are managed by **supervisord** inside the container
+- The container runs **nginx** (port 80) for the frontend, **json-server** (port 3001) for the API, and **websocket-server** (port 3003) for real-time collaboration
+- All services are managed by **supervisord** inside the container
 - SSL certificate provisioning can take 5-30 minutes after DNS configuration
 - The Load Balancer automatically handles HTTP to HTTPS redirects
+- CPU throttling ensures you only pay for CPU time during request processing
+- The service scales to zero when idle, reducing costs to near zero
 
-## Cost Optimization
+---
 
-This deployment is configured with cost optimizations enabled:
-- **CPU Throttling**: CPU only allocated during request processing
-- **Memory**: 256Mi (reduced from 512Mi)
-- **Max Instances**: 3 (reduced from 10)
-- **Timeout**: 300 seconds (5 minutes)
-- **WebSocket Timeout**: 1 hour (reduced from 24 hours)
+## Manual Deployment (Alternative)
 
-For detailed cost optimization information, see [COST_OPTIMIZATION.md](./COST_OPTIMIZATION.md).
+If you prefer to deploy manually instead of using the script:
+
+```bash
+# 1. Build the Docker image
+docker build --platform linux/amd64 -t drawink:latest .
+
+# 2. Tag for Artifact Registry
+docker tag drawink:latest asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
+
+# 3. Push to Artifact Registry
+docker push asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
+
+# 4. Deploy to Cloud Run (with cost optimizations)
+gcloud run deploy drawink \
+  --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
+  --region=asia-south1 \
+  --port=3000 \
+  --cpu-throttling \
+  --memory=256Mi \
+  --max-instances=3 \
+  --timeout=300 \
+  --project=drawink-2026
+```

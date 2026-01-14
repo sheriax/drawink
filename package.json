@@ -71,6 +71,11 @@
   "homepage": ".",
   "prettier": "@drawink/prettier-config",
   "scripts": {
+    "dev": "bun scripts/dev.ts",
+    "dev:frontend": "bun scripts/dev.ts frontend",
+    "dev:backend": "bun scripts/dev.ts backend",
+    "deploy": "bun scripts/deploy.ts",
+    "deploy:quick": "bun scripts/deploy.ts --quick",
     "build-node": "bun ./scripts/build-node.ts",
     "build:app:docker": "cd ./drawink-app && bun run build:app:docker",
     "build:app": "cd ./drawink-app && bun run build:app",
