@@ -1,8 +1,10 @@
-# Docker Compose for Drawink Development
-# Run with: docker-compose up
+# Docker Compose for Drawink
+#
+# Development mode: docker-compose -f docker-compose.yml up
+# Production mode: docker-compose -f docker-compose.yml up drawink
 
 services:
-  # Production-like build (all services in one container)
+  # Production build (all services in one container)
   drawink:
     build:
       context: .
@@ -19,46 +21,70 @@ services:
       retries: 3
     environment:
       - NODE_ENV=production
+    profiles:
+      - production
+
   # Development mode: Run services separately for hot reload
-  # Uncomment below and comment out 'drawink' service above for development
+  frontend:
+    image: oven/bun:1
+    container_name: drawink-frontend
+    working_dir: /app
+    command: sh -c "bun install && cd drawink-app && bun run start"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - drawink_app_node_modules:/app/drawink-app/node_modules
+    environment:
+      - VITE_APP_BACKEND_V2_GET_URL=http://json-server:3001/api/v2/
+      - VITE_APP_BACKEND_V2_POST_URL=http://json-server:3001/api/v2/post
+      - VITE_APP_PORT=3000
+      - VITE_APP_DISABLE_SENTRY=true
+      - VITE_APP_DISABLE_PWA=true
+    depends_on:
+      - json-server
+      - websocket-server
+    profiles:
+      - dev
 
-  # frontend:
-  #   image: oven/bun:1
-  #   container_name: drawink-frontend
-  #   working_dir: /app
-  #   command: sh -c "bun install && cd drawink-app && bun run start"
-  #   ports:
-  #     - "5173:5173"
-  #   volumes:
-  #     - .:/app
-  #     - node_modules:/app/node_modules
-  #   environment:
-  #     - VITE_APP_BACKEND_V2_GET_URL=http://localhost:3001/api/v2/
-  #     - VITE_APP_BACKEND_V2_POST_URL=http://localhost:3001/api/v2/post
+  json-server:
+    image: oven/bun:1
+    container_name: drawink-json-server
+    working_dir: /app/json-server
+    command: sh -c "bun install && bun run dev"
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./json-server:/app/json-server
+      - ./firebase-project:/app/firebase-project
+      - json_server_node_modules:/app/json-server/node_modules
+    environment:
+      - PORT=3001
+      - JSON_BACKEND_PORT=3001
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-project/drawink-2026-firebase-adminsdk.json
+    profiles:
+      - dev
 
-  # json-server:
-  #   image: oven/bun:1
-  #   container_name: drawink-json-server
-  #   working_dir: /app/json-server
-  #   command: sh -c "bun install && bun run dev"
-  #   ports:
-  #     - "3001:3001"
-  #   volumes:
-  #     - ./json-server:/app/json-server
-  #   environment:
-  #     - PORT=3001
-
-  # websocket-server:
-  #   image: oven/bun:1
-  #   container_name: drawink-websocket-server
-  #   working_dir: /app/websocket-server
-  #   command: sh -c "bun install && bun run dev"
-  #   ports:
-  #     - "3003:3003"
-  #   volumes:
-  #     - ./websocket-server:/app/websocket-server
-  #   environment:
-  #     - PORT=3003
+  websocket-server:
+    image: oven/bun:1
+    container_name: drawink-websocket-server
+    working_dir: /app/websocket-server
+    command: sh -c "bun install && bun run dev"
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./websocket-server:/app/websocket-server
+      - websocket_server_node_modules:/app/websocket-server/node_modules
+    environment:
+      - PORT=3003
+      - WEBSOCKET_SERVER_PORT=3003
+      - CORS_ORIGIN=*
+    profiles:
+      - dev
 
 volumes:
   node_modules:
+  drawink_app_node_modules:
+  json_server_node_modules:
+  websocket_server_node_modules:
