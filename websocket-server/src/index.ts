@@ -144,8 +144,41 @@ io.on("connection", (socket: Socket) => {
     console.log(`[Socket] ${socket.id} disconnected`);
     socket.removeAllListeners();
   });
+
+  // Voice chat signaling events
+  socket.on("voice-offer", (data: { targetSocketId: string; offer: RTCSessionDescriptionInit }) => {
+    console.log(`[Voice] ${socket.id} sending offer to ${data.targetSocketId}`);
+    io.to(data.targetSocketId).emit("voice-offer", {
+      fromSocketId: socket.id,
+      offer: data.offer,
+    });
+  });
+
+  socket.on("voice-answer", (data: { targetSocketId: string; answer: RTCSessionDescriptionInit }) => {
+    console.log(`[Voice] ${socket.id} sending answer to ${data.targetSocketId}`);
+    io.to(data.targetSocketId).emit("voice-answer", {
+      fromSocketId: socket.id,
+      answer: data.answer,
+    });
+  });
+
+  socket.on("voice-ice-candidate", (data: { targetSocketId: string; candidate: RTCIceCandidateInit }) => {
+    io.to(data.targetSocketId).emit("voice-ice-candidate", {
+      fromSocketId: socket.id,
+      candidate: data.candidate,
+    });
+  });
+
+  socket.on("voice-mute-state", (data: { roomID: string; isMuted: boolean }) => {
+    console.log(`[Voice] ${socket.id} mute state: ${data.isMuted}`);
+    socket.broadcast.to(data.roomID).emit("voice-mute-state", {
+      socketId: socket.id,
+      isMuted: data.isMuted,
+    });
+  });
 });
 
 console.log(`✅ Drawink WebSocket Server running on port ${port}`);
 console.log(`   CORS: ${corsOrigin}`);
 console.log(`   Transports: websocket, polling`);
+console.log(`   Voice chat: enabled`);

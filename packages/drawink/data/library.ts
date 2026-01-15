@@ -889,9 +889,18 @@ export const useHandleLibrary = (
             })
             // errors caught during `migrationAdapter.load()`
             .catch((error: any) => {
-              console.error(`error during library migration: ${error.message}`);
+              // IndexedDB errors are non-critical, just log and continue
+              if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+                console.warn(`[Library] IndexedDB unavailable during migration: ${error.message}`);
+              } else {
+                console.error(`[Library] Error during library migration: ${error.message}`);
+              }
               // as a default, load latest library from current data source
-              return AdapterTransaction.getLibraryItems(adapter, "load");
+              return AdapterTransaction.getLibraryItems(adapter, "load").catch((loadError: any) => {
+                // If loading also fails, return empty array
+                console.warn("[Library] Failed to load library after migration error, returning empty:", loadError.message);
+                return [];
+              });
             }),
         );
       } else {
@@ -962,18 +971,23 @@ export const useHandleLibrary = (
               }
             }
           } catch (error: any) {
-            console.error(
-              `couldn't persist library update: ${error.message}`,
-              update,
-            );
+            // IndexedDB errors are non-critical, just log and continue
+            if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+              console.warn(`[Library] IndexedDB unavailable, couldn't persist library update: ${error.message}`);
+            } else {
+              console.error(
+                `[Library] Couldn't persist library update: ${error.message}`,
+                update,
+              );
 
-            // currently we only show error if an editor is loaded
-            if (isLoaded && optsRef.current.drawinkAPI) {
-              optsRef.current.drawinkAPI.updateScene({
-                appState: {
-                  errorMessage: t("errors.saveLibraryError"),
-                },
-              });
+              // currently we only show error if an editor is loaded
+              if (isLoaded && optsRef.current.drawinkAPI) {
+                optsRef.current.drawinkAPI.updateScene({
+                  appState: {
+                    errorMessage: t("errors.saveLibraryError"),
+                  },
+                });
+              }
             }
           }
         },

@@ -538,7 +538,12 @@ const DrawinkWrapper = () => {
           }
           // on fresh load, clear unused files from IDB (from previous
           // session)
-          hybridStorageAdapter.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds });
+          hybridStorageAdapter.fileStorage.clearObsoleteFiles({ currentFileIds: fileIds }).catch((error: any) => {
+            // Non-critical operation, just log if IndexedDB is unavailable
+            if (error.name !== "UnknownError" && !error.message?.includes("backing store")) {
+              console.error("[App] Error clearing obsolete files:", error);
+            }
+          });
         }
       }
     };

@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { atom, useAtom, useAtomValue } from "../app-jotai";
 import { activeRoomLinkAtom } from "../collab/Collab";
+import { VoiceChatControls } from "../collab/VoiceChatControls";
 
 import "./ShareDialog.scss";
 
@@ -156,6 +157,11 @@ const ActiveRoomDialog = ({
         <p>{t("roomDialog.desc_exitSession")}</p>
       </div>
 
+      <VoiceChatControls
+        voiceChat={collabAPI.getVoiceChat()}
+        isCollaborating={collabAPI.isCollaborating()}
+      />
+
       <div className="ShareDialog__active__actions">
         <FilledButton
           size="large"
@@ -244,6 +250,11 @@ const ShareDialogPicker = (props: ShareDialogProps) => {
 
 const ShareDialogInner = (props: ShareDialogProps) => {
   const activeRoomLink = useAtomValue(activeRoomLinkAtom);
+
+  console.log("[ShareDialog] ShareDialogInner render", {
+    hasCollabAPI: !!props.collabAPI,
+    hasActiveRoomLink: !!activeRoomLink
+  });
 
   return (
     <Dialog size="small" onCloseRequest={props.handleClose} title={false}>

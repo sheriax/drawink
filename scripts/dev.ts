@@ -37,7 +37,7 @@ const services: Service[] = [
     name: "Frontend",
     color: colors.cyan,
     cwd: resolve(__dirname, "..", "drawink-app"),
-    command: ["bun", "run", "start"],
+    command: ["bun", "run", "start", "--", "--host"],
     env: {
       VITE_APP_BACKEND_V2_GET_URL: "http://localhost:3001/api/v2/",
       VITE_APP_BACKEND_V2_POST_URL: "http://localhost:3001/api/v2/post",
@@ -117,7 +117,7 @@ function startService(service: Service): Promise<void> {
       })
     );
 
-    proc.exited.then((code) => {
+    proc.exited.then((code: number | null) => {
       if (code !== 0 && code !== null) {
         log(service, `${colors.red}✗ Exited with code ${code}${colors.reset}`);
         reject(new Error(`${service.name} exited with code ${code}`));

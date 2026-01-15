@@ -1,0 +1,31 @@
+.VoiceChatControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--default-border-color);
+
+  &__button {
+    transition: all 0.2s ease;
+
+    &--muted {
+      opacity: 0.6;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__error {
+    color: var(--color-danger);
+    font-size: 0.875rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  &--error {
+    padding: 0.5rem;
+  }
+}

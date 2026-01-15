@@ -13,6 +13,8 @@ import checker from "vite-plugin-checker";
 import { createHtmlPlugin } from "vite-plugin-html";
 import Sitemap from "vite-plugin-sitemap";
 import { woff2BrowserPlugin } from "../scripts/woff2/woff2-vite-plugins";
+// @ts-ignore - CommonJS module with default export
+import basicSsl from "@vitejs/plugin-basic-ssl";
 export default defineConfig(({ mode }) => {
   // To load .env variables
   const envVars = loadEnv(mode, `../`);
@@ -24,6 +26,8 @@ export default defineConfig(({ mode }) => {
       port: Number(envVars.VITE_APP_PORT || 3000),
       // open the browser
       open: true,
+      // Enable host for network access
+      host: true,
     },
     // We need to specify the envDir since now there are no
     //more located in parallel with the vite.config.ts file but in parent dir
@@ -123,6 +127,8 @@ export default defineConfig(({ mode }) => {
       assetsInlineLimit: 0,
     },
     plugins: [
+      // HTTPS for secure context (crypto.subtle API requires this on network)
+      basicSsl(),
       Sitemap({
         hostname: "https://drawink.app",
         outDir: "build",

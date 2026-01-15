@@ -65,17 +65,31 @@ export const localStorageQuotaExceededAtom = atom(false);
 
 class LocalFileManager extends FileManager {
   clearObsoleteFiles = async (opts: { currentFileIds: FileId[] }) => {
-    await entries(filesStore).then((entries) => {
-      for (const [id, imageData] of entries as [FileId, BinaryFileData][]) {
-        if (
-          (!imageData.lastRetrieved ||
-            Date.now() - imageData.lastRetrieved > 24 * 3600 * 1000) &&
-          !opts.currentFileIds.includes(id as FileId)
-        ) {
-          del(id, filesStore);
+    try {
+      const fileEntries = await entries(filesStore);
+      for (const [id, imageData] of fileEntries as [FileId, BinaryFileData][]) {
+        try {
+          if (
+            (!imageData.lastRetrieved ||
+              Date.now() - imageData.lastRetrieved > 24 * 3600 * 1000) &&
+            !opts.currentFileIds.includes(id as FileId)
+          ) {
+            await del(id, filesStore);
+          }
+        } catch (error: any) {
+          // Silently handle individual file deletion errors
+          console.warn(`[LocalStorageAdapter] Failed to delete obsolete file ${id}:`, error.message);
         }
       }
-    });
+    } catch (error: any) {
+      // IndexedDB might be unavailable (privacy settings, quota, etc.)
+      // This is non-critical, so we just log and continue
+      if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+        console.warn("[LocalStorageAdapter] IndexedDB unavailable, skipping file cleanup:", error.message);
+      } else {
+        console.error("[LocalStorageAdapter] Error clearing obsolete files:", error);
+      }
+    }
   };
 }
 
@@ -106,35 +120,53 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   fileStorage = new LocalFileManager({
     getFiles: (ids) => {
-      return getMany(ids, filesStore).then(
-        async (filesData: (BinaryFileData | undefined)[]) => {
-          const loadedFiles: BinaryFileData[] = [];
-          const erroredFiles = new Map<FileId, true>();
-          const filesToSave: [FileId, BinaryFileData][] = [];
+      return getMany(ids, filesStore)
+        .then(
+          async (filesData: (BinaryFileData | undefined)[]) => {
+            const loadedFiles: BinaryFileData[] = [];
+            const erroredFiles = new Map<FileId, true>();
+            const filesToSave: [FileId, BinaryFileData][] = [];
 
-          filesData.forEach((data, index) => {
-            const id = ids[index];
-            if (data) {
-              const _data: BinaryFileData = {
-                ...data,
-                lastRetrieved: Date.now(),
-              };
-              filesToSave.push([id, _data]);
-              loadedFiles.push(_data);
-            } else {
-              erroredFiles.set(id, true);
+            filesData.forEach((data, index) => {
+              const id = ids[index];
+              if (data) {
+                const _data: BinaryFileData = {
+                  ...data,
+                  lastRetrieved: Date.now(),
+                };
+                filesToSave.push([id, _data]);
+                loadedFiles.push(_data);
+              } else {
+                erroredFiles.set(id, true);
+              }
+            });
+
+            try {
+              await setMany(filesToSave, filesStore);
+            } catch (error: any) {
+              if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+                console.warn("[LocalStorageAdapter] IndexedDB unavailable, skipping file metadata update");
+              } else {
+                console.warn("[LocalStorageAdapter] Failed to update file metadata:", error);
+              }
             }
-          });
 
-          try {
-            setMany(filesToSave, filesStore);
-          } catch (error) {
-            console.warn(error);
+            return { loadedFiles, erroredFiles };
+          },
+        )
+        .catch((error: any) => {
+          // IndexedDB might be unavailable
+          if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+            console.warn("[LocalStorageAdapter] IndexedDB unavailable, returning empty file list");
+          } else {
+            console.error("[LocalStorageAdapter] Error getting files:", error);
           }
-
-          return { loadedFiles, erroredFiles };
-        },
-      );
+          // Return empty results instead of crashing
+          return {
+            loadedFiles: [],
+            erroredFiles: new Map(ids.map((id) => [id, true as const])),
+          };
+        });
     },
     async saveFiles({ addedFiles }) {
       const savedFiles = new Map<FileId, BinaryFileData>();
@@ -148,7 +180,11 @@ export class LocalStorageAdapter implements StorageAdapter {
             await set(id, fileData, filesStore);
             savedFiles.set(id, fileData);
           } catch (error: any) {
-            console.error(error);
+            if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+              console.warn(`[LocalStorageAdapter] IndexedDB unavailable, marking file ${id} as errored`);
+            } else {
+              console.warn(`[LocalStorageAdapter] Failed to save file ${id}:`, error);
+            }
             erroredFiles.set(id, fileData);
           }
         }),
@@ -503,15 +539,35 @@ export class LibraryIndexedDBAdapter {
   private static key = "libraryData";
 
   static async load() {
-    const IDBData = await get<LibraryPersistedData>(
-      LibraryIndexedDBAdapter.key,
-      libraryStore,
-    );
-    return IDBData || null;
+    try {
+      const IDBData = await get<LibraryPersistedData>(
+        LibraryIndexedDBAdapter.key,
+        libraryStore,
+      );
+      return IDBData || null;
+    } catch (error: any) {
+      // IndexedDB might be unavailable (privacy settings, quota, etc.)
+      if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+        console.warn("[LibraryIndexedDBAdapter] IndexedDB unavailable, returning null");
+      } else {
+        console.error("[LibraryIndexedDBAdapter] Error loading library:", error);
+      }
+      return null;
+    }
   }
 
-  static save(data: LibraryPersistedData): MaybePromise<void> {
-    return set(LibraryIndexedDBAdapter.key, data, libraryStore);
+  static async save(data: LibraryPersistedData): Promise<void> {
+    try {
+      await set(LibraryIndexedDBAdapter.key, data, libraryStore);
+    } catch (error: any) {
+      // IndexedDB might be unavailable (privacy settings, quota, etc.)
+      if (error.name === "UnknownError" || error.message?.includes("backing store")) {
+        console.warn("[LibraryIndexedDBAdapter] IndexedDB unavailable, library not persisted");
+      } else {
+        console.error("[LibraryIndexedDBAdapter] Error saving library:", error);
+      }
+      // Don't throw - library persistence is non-critical
+    }
   }
 }
 

@@ -86,6 +86,7 @@ import { resetBrowserStateVersions } from "../data/tabSync";
 
 import { collabErrorIndicatorAtom } from "./CollabError";
 import Portal from "./Portal";
+import { VoiceChat } from "./VoiceChat";
 
 import type { SocketUpdateDataSource, SyncableDrawinkElement } from "../data";
 
@@ -117,6 +118,7 @@ export interface CollabAPI {
   getUsername: CollabInstance["getUsername"];
   getActiveRoomLink: CollabInstance["getActiveRoomLink"];
   setCollabError: CollabInstance["setErrorDialog"];
+  getVoiceChat: () => VoiceChat | null;
 }
 
 interface CollabProps {
@@ -129,6 +131,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   drawinkAPI: CollabProps["drawinkAPI"];
   activeIntervalId: number | null;
   idleTimeoutId: number | null;
+  voiceChat: VoiceChat | null = null;
 
   private socketInitializationTimer?: number;
   private lastBroadcastedOrReceivedSceneVersion: number = -1;
@@ -231,6 +234,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       getUsername: this.getUsername,
       getActiveRoomLink: this.getActiveRoomLink,
       setCollabError: this.setErrorDialog,
+      getVoiceChat: () => this.voiceChat,
     };
 
     appJotaiStore.set(collabAPIAtom, collabAPI);
@@ -393,9 +397,20 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   private destroySocketClient = (opts?: { isUnload: boolean }) => {
+    console.log("[Collab] destroySocketClient called", { isUnload: opts?.isUnload, hasVoiceChat: !!this.voiceChat });
+
     this.lastBroadcastedOrReceivedSceneVersion = -1;
     this.portal.close();
     this.fileManager.reset();
+
+    // Cleanup voice chat
+    if (this.voiceChat) {
+      console.log("[Collab] Cleaning up voice chat");
+      this.voiceChat.cleanup();
+      this.voiceChat = null;
+      console.log("[Collab] Voice chat cleaned up");
+    }
+
     if (!opts?.isUnload) {
       this.setIsCollaborating(false);
       this.setActiveRoomLink(null);
@@ -405,6 +420,8 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       });
       hybridStorageAdapter.resumeSave("collaboration");
     }
+
+    console.log("[Collab] destroySocketClient complete");
   };
 
   private fetchImageFilesFromFirebase = async (opts: {
@@ -733,7 +750,115 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     } else {
       this.portal.socketInitialized = true;
     }
+
+    // Initialize voice chat after socket is ready (non-blocking)
+    console.log("[Collab] Checking if voice chat should be initialized", {
+      hasSocket: !!this.portal.socket,
+      hasRoomId: !!this.portal.roomId,
+      socketId: this.portal.socket?.id,
+      roomId: this.portal.roomId
+    });
+
+    if (this.portal.socket && this.portal.roomId) {
+      console.log("[Collab] Initializing voice chat in background");
+      // Don't await - let it initialize in background without blocking collaboration
+      this.initializeVoiceChat().catch((error) => {
+        console.error("[Collab] Failed to initialize voice chat:", error);
+        // Don't block collaboration if voice chat fails
+        this.voiceChat = null;
+      });
+    } else {
+      console.log("[Collab] Voice chat initialization skipped - missing socket or roomId");
+    }
+
     return null;
+  };
+
+  private initializeVoiceChat = async () => {
+    console.log("[Collab] initializeVoiceChat called", {
+      hasSocket: !!this.portal.socket,
+      hasRoomId: !!this.portal.roomId,
+      hasVoiceChat: !!this.voiceChat,
+      socketId: this.portal.socket?.id,
+      roomId: this.portal.roomId
+    });
+
+    if (!this.portal.socket || !this.portal.roomId || this.voiceChat) {
+      console.log("[Collab] initializeVoiceChat skipped - conditions not met");
+      return;
+    }
+
+    // Check if WebRTC APIs are available
+    const hasRTCPeerConnection = typeof RTCPeerConnection !== "undefined";
+    const hasNavigator = typeof navigator !== "undefined";
+    const hasMediaDevices = hasNavigator && !!navigator.mediaDevices;
+    const hasGetUserMedia = hasMediaDevices && !!navigator.mediaDevices.getUserMedia;
+
+    console.log("[Collab] WebRTC API availability check", {
+      hasRTCPeerConnection,
+      hasNavigator,
+      hasMediaDevices,
+      hasGetUserMedia
+    });
+
+    if (!hasRTCPeerConnection || !hasNavigator || !hasMediaDevices || !hasGetUserMedia) {
+      console.warn("[Collab] WebRTC APIs not available, skipping voice chat");
+      return;
+    }
+
+    try {
+      console.log("[Collab] Creating VoiceChat instance");
+      this.voiceChat = new VoiceChat({
+        onError: (error) => {
+          console.error("[Collab] VoiceChat error callback:", error);
+        },
+        onPermissionDenied: () => {
+          console.warn("[Collab] VoiceChat permission denied callback");
+        },
+      });
+
+      console.log("[Collab] Calling voiceChat.initialize()", {
+        socketId: this.portal.socket.id,
+        roomId: this.portal.roomId
+      });
+      await this.voiceChat.initialize(this.portal.socket, this.portal.roomId);
+      console.log("[Collab] Voice chat initialized successfully");
+
+      // Connect to existing collaborators that are already in the room
+      // This fixes the race condition where setCollaborators was called before voice chat was ready
+      const currentSocketId = this.portal.socket.id;
+      if (currentSocketId && this.collaborators.size > 0) {
+        console.log("[Collab] Connecting to existing collaborators after voice chat init", {
+          collaboratorCount: this.collaborators.size,
+          currentSocketId
+        });
+        for (const socketId of this.collaborators.keys()) {
+          if (socketId !== currentSocketId) {
+            const isInitiator = currentSocketId < socketId;
+            console.log("[Collab] Adding existing collaborator as voice peer", {
+              socketId,
+              isInitiator
+            });
+            this.voiceChat.addPeer(socketId, isInitiator).catch((error) => {
+              console.error("[Collab] Failed to add existing collaborator as voice peer:", error, { socketId });
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error("[Collab] Failed to initialize voice chat:", error, {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      // Don't block collaboration if voice chat fails
+      this.voiceChat = null;
+      // Re-throw only if it's a critical error that should be handled upstream
+      // For permission errors, we just log and continue
+      if (error.name !== "NotAllowedError" && error.name !== "PermissionDeniedError") {
+        // Only log, don't throw - we want collaboration to continue
+      }
+    }
   };
 
   private _reconcileElements = (
@@ -838,18 +963,76 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   setCollaborators(sockets: SocketId[]) {
+    console.log("[Collab] setCollaborators called", {
+      socketCount: sockets.length,
+      sockets,
+      currentSocketId: this.portal.socket?.id
+    });
+
     const collaborators: InstanceType<typeof Collab>["collaborators"] =
       new Map();
+    const currentSocketId = this.portal.socket?.id;
+
+    // Track previous collaborators to detect joins/leaves
+    const previousSocketIds = new Set(this.collaborators.keys());
+    const newSocketIds = new Set(sockets);
+
+    console.log("[Collab] Collaborator changes", {
+      previous: Array.from(previousSocketIds),
+      new: Array.from(newSocketIds),
+      currentSocketId
+    });
+
     for (const socketId of sockets) {
       collaborators.set(
         socketId,
         Object.assign({}, this.collaborators.get(socketId), {
-          isCurrentUser: socketId === this.portal.socket?.id,
+          isCurrentUser: socketId === currentSocketId,
         }),
       );
     }
     this.collaborators = collaborators;
     this.drawinkAPI.updateScene({ collaborators });
+
+    // Handle voice chat peer connections
+    if (this.voiceChat && currentSocketId) {
+      console.log("[Collab] Handling voice chat peer connections", {
+        hasVoiceChat: !!this.voiceChat,
+        currentSocketId,
+        previousCount: previousSocketIds.size,
+        newCount: newSocketIds.size
+      });
+
+      // Remove peers that left
+      for (const socketId of previousSocketIds) {
+        if (!newSocketIds.has(socketId) && socketId !== currentSocketId) {
+          console.log("[Collab] Removing voice chat peer (user left)", { socketId });
+          this.voiceChat.removePeer(socketId);
+        }
+      }
+
+      // Add peers that joined
+      for (const socketId of newSocketIds) {
+        if (socketId !== currentSocketId && !previousSocketIds.has(socketId)) {
+          // Determine if current user should be initiator (lower socket ID)
+          const isInitiator = currentSocketId < socketId;
+          console.log("[Collab] Adding voice chat peer (user joined)", {
+            socketId,
+            isInitiator,
+            currentSocketId,
+            comparison: `${currentSocketId} < ${socketId} = ${isInitiator}`
+          });
+          this.voiceChat.addPeer(socketId, isInitiator).catch((error) => {
+            console.error("[Collab] Failed to add voice chat peer:", error, { socketId });
+          });
+        }
+      }
+    } else {
+      console.log("[Collab] Voice chat peer connection handling skipped", {
+        hasVoiceChat: !!this.voiceChat,
+        hasCurrentSocketId: !!currentSocketId
+      });
+    }
   }
 
   updateCollaborator = (socketId: SocketId, updates: Partial<Collaborator>) => {
