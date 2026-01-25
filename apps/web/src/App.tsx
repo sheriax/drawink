@@ -131,7 +131,7 @@ import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
 import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
-import { firebaseAuth } from "./data/firebase";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -384,57 +384,69 @@ const DrawinkWrapper = () => {
     }
   }, [drawinkAPI]);
 
-  // Firebase auth state listener
+  // Clerk auth state
+  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  const { signOut } = useClerk();
+
+  // Clerk auth state listener
   useEffect(() => {
-    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in
-        const authUser: AuthUser = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          providerId: user.providerData[0]?.providerId || "unknown",
-        };
+    if (!isUserLoaded) {
+      // Still loading auth state
+      editorJotaiStore.set(authStateAtom, {
+        isAuthenticated: false,
+        user: null,
+        isLoading: true,
+        error: null,
+      });
+      return;
+    }
 
-        editorJotaiStore.set(authStateAtom, {
-          isAuthenticated: true,
-          user: authUser,
-          isLoading: false,
-          error: null,
-        });
+    if (clerkUser) {
+      // User is signed in
+      const authUser: AuthUser = {
+        uid: clerkUser.id,
+        email: clerkUser.primaryEmailAddress?.emailAddress || null,
+        displayName: clerkUser.fullName || clerkUser.username || null,
+        photoURL: clerkUser.imageUrl || null,
+        providerId: clerkUser.externalAccounts[0]?.provider || "clerk",
+        username: clerkUser.username || null,
+        firstName: clerkUser.firstName || null,
+        lastName: clerkUser.lastName || null,
+      };
 
-        // Enable cloud sync
-        hybridStorageAdapter.enableCloudSync(user.uid);
-        editorJotaiStore.set(cloudEnabledAtom, true);
+      editorJotaiStore.set(authStateAtom, {
+        isAuthenticated: true,
+        user: authUser,
+        isLoading: false,
+        error: null,
+      });
 
-        // Wire up sync status updates
-        hybridStorageAdapter.onSyncStatusChange((status) => {
-          editorJotaiStore.set(syncStatusAtom, status);
-        });
+      // Enable cloud sync
+      hybridStorageAdapter.enableCloudSync(clerkUser.id);
+      editorJotaiStore.set(cloudEnabledAtom, true);
 
-        console.log("[Auth] User signed in:", user.email);
-      } else {
-        // User is signed out
-        editorJotaiStore.set(authStateAtom, {
-          isAuthenticated: false,
-          user: null,
-          isLoading: false,
-          error: null,
-        });
+      // Wire up sync status updates
+      hybridStorageAdapter.onSyncStatusChange((status) => {
+        editorJotaiStore.set(syncStatusAtom, status);
+      });
 
-        // Disable cloud sync
-        hybridStorageAdapter.disableCloudSync();
-        editorJotaiStore.set(cloudEnabledAtom, false);
+      console.log("[Auth] User signed in:", authUser.email);
+    } else {
+      // User is signed out
+      editorJotaiStore.set(authStateAtom, {
+        isAuthenticated: false,
+        user: null,
+        isLoading: false,
+        error: null,
+      });
 
-        console.log("[Auth] User signed out");
-      }
-    });
+      // Disable cloud sync
+      hybridStorageAdapter.disableCloudSync();
+      editorJotaiStore.set(cloudEnabledAtom, false);
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+      console.log("[Auth] User signed out");
+    }
+  }, [clerkUser, isUserLoaded]);
 
   useEffect(() => {
     if (!drawinkAPI || (!isCollabDisabled && !collabAPI)) {

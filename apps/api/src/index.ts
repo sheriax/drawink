@@ -4,6 +4,8 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { SCENES_COLLECTION, db } from "./firebase";
 import { appRouter } from "./router";
+import { createContext } from "./trpc";
+import { authMiddleware } from "./middleware/auth";
 
 const app = new Hono();
 
@@ -21,6 +23,7 @@ const MAX_BODY_SIZE = 2 * 1024 * 1024; // 2MB limit
 // Middleware
 app.use("*", logger());
 app.use("*", cors());
+app.use("*", authMiddleware);
 
 // Health check endpoint
 app.get("/health", async (c) => {
@@ -39,6 +42,16 @@ app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
+    createContext: async ({ req }) => {
+      const userId = req.raw.headers.get("x-user-id") || undefined;
+      const userEmail = req.raw.headers.get("x-user-email") || null;
+      const userName = req.raw.headers.get("x-user-name") || null;
+
+      return {
+        userId,
+        user: userId ? { id: userId, email: userEmail, name: userName } : undefined,
+      };
+    },
   }),
 );
 

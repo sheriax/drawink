@@ -10,14 +10,17 @@ import { atom } from "../editor-jotai";
 import type { SyncStatus } from "../storage/types";
 
 /**
- * User information from Firebase Auth
+ * User information from Clerk Auth
  */
 export interface AuthUser {
-  uid: string;
+  uid: string; // Clerk user ID
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
-  providerId: string;
+  providerId: string; // e.g., "clerk", "google", "github"
+  username?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
 }
 
 /**
