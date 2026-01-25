@@ -834,9 +834,7 @@ const DrawinkWrapper = () => {
     keywords: ["plus", "cloud", "server"],
     perform: () => {
       window.open(
-        `${
-          import.meta.env.
-        }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
+        `/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
     },

@@ -51,9 +51,7 @@ export const AppMainMenu: React.FC<{
       <MainMenu.Separator />
       {/* <MainMenu.ItemLink
         icon={ExcalLogo}
-        href={`${
-          import.meta.env.
-        }/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger`}
+        href="/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger"
         className=""
       >
         Drawink Pro

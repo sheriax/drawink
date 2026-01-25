@@ -69,9 +69,7 @@ export const AIComponents = ({
                   <div style="color:red">Too many requests today,</br>please try again tomorrow!</div>
                   </br>
                   </br>
-                  <div>You can also try <a href="${
-                    import.meta.env.
-                  }/plus?utm_source=drawink&utm_medium=app&utm_content=d2c" target="_blank" rel="noopener">Drawink Pro</a> to get more requests.</div>
+                  <div>Please try again later or contact support.</div>
                 </div>
                 </body>
                 </html>`,
