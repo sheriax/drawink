@@ -44,6 +44,11 @@ export const AppMainMenu: React.FC<{
       {/* Cloud Sync Login/Logout */}
       <CloudSyncMenuItem />
       <MainMenu.Separator />
+      {/* Dashboard Link */}
+      <MainMenu.ItemLink href="/dashboard">
+        Dashboard
+      </MainMenu.ItemLink>
+      <MainMenu.Separator />
       {/* <MainMenu.ItemLink
         icon={ExcalLogo}
         href={`${

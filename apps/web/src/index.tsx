@@ -7,6 +7,7 @@ import "./sentry";
 
 import DrawinkApp from "./App";
 import { SignIn, SignUp } from "./components/auth";
+import { Dashboard } from "./pages/Dashboard";
 import { CLERK_PUBLISHABLE_KEY, clerkAppearance } from "./lib/clerk";
 
 window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
@@ -34,6 +35,7 @@ root.render(
         <Routes>
           <Route path="/sign-in/*" element={<SignIn />} />
           <Route path="/sign-up/*" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/*" element={<DrawinkApp />} />
         </Routes>
       </BrowserRouter>
