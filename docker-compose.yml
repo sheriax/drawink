@@ -29,36 +29,36 @@ services:
     image: oven/bun:1
     container_name: drawink-frontend
     working_dir: /app
-    command: sh -c "bun install && cd drawink-app && bun run start"
+    command: sh -c "bun install && cd apps/web && bun run start"
     ports:
-      - "3000:3000"
+      - "3000:5173"
     volumes:
       - .:/app
       - node_modules:/app/node_modules
-      - drawink_app_node_modules:/app/drawink-app/node_modules
+      - web_node_modules:/app/apps/web/node_modules
     environment:
-      - VITE_APP_BACKEND_V2_GET_URL=http://json-server:3001/api/v2/
-      - VITE_APP_BACKEND_V2_POST_URL=http://json-server:3001/api/v2/post
-      - VITE_APP_PORT=3000
+      - VITE_APP_BACKEND_V2_GET_URL=http://api:3001/api/v2/
+      - VITE_APP_BACKEND_V2_POST_URL=http://api:3001/api/v2/post
+      - VITE_APP_PORT=5173
       - VITE_APP_DISABLE_SENTRY=true
       - VITE_APP_DISABLE_PWA=true
     depends_on:
-      - json-server
-      - websocket-server
+      - api
+      - ws
     profiles:
       - dev
 
-  json-server:
+  api:
     image: oven/bun:1
-    container_name: drawink-json-server
-    working_dir: /app/json-server
+    container_name: drawink-api
+    working_dir: /app/apps/api
     command: sh -c "bun install && bun run dev"
     ports:
       - "3001:3001"
     volumes:
-      - ./json-server:/app/json-server
+      - ./apps/api:/app/apps/api
       - ./firebase-project:/app/firebase-project
-      - json_server_node_modules:/app/json-server/node_modules
+      - api_node_modules:/app/apps/api/node_modules
     environment:
       - PORT=3001
       - JSON_BACKEND_PORT=3001
@@ -66,16 +66,16 @@ services:
     profiles:
       - dev
 
-  websocket-server:
+  ws:
     image: oven/bun:1
-    container_name: drawink-websocket-server
-    working_dir: /app/websocket-server
+    container_name: drawink-ws
+    working_dir: /app/apps/ws
     command: sh -c "bun install && bun run dev"
     ports:
       - "3003:3003"
     volumes:
-      - ./websocket-server:/app/websocket-server
-      - websocket_server_node_modules:/app/websocket-server/node_modules
+      - ./apps/ws:/app/apps/ws
+      - ws_node_modules:/app/apps/ws/node_modules
     environment:
       - PORT=3003
       - WEBSOCKET_SERVER_PORT=3003
@@ -85,6 +85,6 @@ services:
 
 volumes:
   node_modules:
-  drawink_app_node_modules:
-  json_server_node_modules:
-  websocket_server_node_modules:
+  web_node_modules:
+  api_node_modules:
+  ws_node_modules:
