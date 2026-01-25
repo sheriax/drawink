@@ -3,7 +3,7 @@
  * Handles storage and retrieval of whiteboard scenes
  */
 
-import { db, SCENES_COLLECTION } from '../firebase';
+import { SCENES_COLLECTION, db } from "../firebase";
 
 const MAX_BODY_SIZE = 2 * 1024 * 1024; // 2MB limit
 
@@ -20,8 +20,8 @@ export function generateSceneId(): string {
   const bytes = new Uint8Array(8);
   crypto.getRandomValues(bytes);
   return Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 /**
@@ -47,7 +47,7 @@ export const getSceneById = async (id: string): Promise<SceneData | null> => {
       createdAt: data.createdAt,
     };
   } catch (error) {
-    console.error('Error getting scene:', error);
+    console.error("Error getting scene:", error);
     throw error;
   }
 };
@@ -57,9 +57,9 @@ export const getSceneById = async (id: string): Promise<SceneData | null> => {
  */
 export const storeScene = async (sceneData: string): Promise<string> => {
   // Check size limit
-  const buffer = Buffer.from(sceneData, 'base64');
+  const buffer = Buffer.from(sceneData, "base64");
   if (buffer.byteLength > MAX_BODY_SIZE) {
-    throw new Error('Scene data too large (max 2MB)');
+    throw new Error("Scene data too large (max 2MB)");
   }
 
   const id = generateSceneId();
@@ -74,7 +74,7 @@ export const storeScene = async (sceneData: string): Promise<string> => {
 
     return id;
   } catch (error) {
-    console.error('Error storing scene:', error);
+    console.error("Error storing scene:", error);
     throw error;
   }
 };

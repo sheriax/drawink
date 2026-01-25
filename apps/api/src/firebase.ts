@@ -1,6 +1,6 @@
-import { initializeApp, cert, getApps, type ServiceAccount } from "firebase-admin/app";
-import { getFirestore, initializeFirestore } from "firebase-admin/firestore";
-import { readFileSync, existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
+import { type ServiceAccount, cert, getApps, initializeApp } from "firebase-admin/app";
+import { initializeFirestore } from "firebase-admin/firestore";
 
 // Initialize Firebase Admin SDK
 // In production, use GOOGLE_APPLICATION_CREDENTIALS environment variable
@@ -77,7 +77,9 @@ function initializeFirebase() {
     });
   } catch (error) {
     console.error("Failed to initialize with default credentials:", error);
-    throw new Error("Could not initialize Firebase. Please ensure a service account file is available.");
+    throw new Error(
+      "Could not initialize Firebase. Please ensure a service account file is available.",
+    );
   }
 }
 
@@ -92,4 +94,3 @@ console.log("📡 Firestore initialized with REST transport (preferRest: true)")
 
 // Collection name for storing scene data
 export const SCENES_COLLECTION = "scenes";
-

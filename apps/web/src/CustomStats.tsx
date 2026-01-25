@@ -1,21 +1,13 @@
+import { DEFAULT_VERSION, debounce, getVersion, nFormatter } from "@drawink/common";
 import { Stats } from "@drawink/drawink";
 import { copyTextToSystemClipboard } from "@drawink/drawink/clipboard";
-import {
-  DEFAULT_VERSION,
-  debounce,
-  getVersion,
-  nFormatter,
-} from "@drawink/common";
 import { t } from "@drawink/drawink/i18n";
 import { useEffect, useState } from "react";
 
-import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 import type { UIAppState } from "@drawink/drawink/types";
+import type { NonDeletedDrawinkElement } from "@drawink/element/types";
 
-import {
-  getElementsStorageSize,
-  getTotalStorageSize,
-} from "./data/localStorage";
+import { getElementsStorageSize, getTotalStorageSize } from "./data/localStorage";
 
 type StorageSizes = { scene: number; total: number };
 

@@ -1,11 +1,8 @@
 import { CaptureUpdateAction, newElementWith } from "@drawink/drawink";
-import {
-  createRedoAction,
-  createUndoAction,
-} from "@drawink/drawink/actions/actionHistory";
-import { syncInvalidIndices } from "@drawink/element";
+import { createRedoAction, createUndoAction } from "@drawink/drawink/actions/actionHistory";
 import { API } from "@drawink/drawink/tests/helpers/api";
 import { act, render, waitFor } from "@drawink/drawink/tests/test-utils";
+import { syncInvalidIndices } from "@drawink/element";
 import { vi } from "vitest";
 
 import { StoreIncrement } from "@drawink/element";
@@ -131,12 +128,8 @@ describe("collaboration", () => {
       // we expect two ephemeral increments for each update,
       // and each such update should have the expected change
       expect(ephemeralIncrements.length).toBe(2);
-      expect(ephemeralIncrements[0].change.elements.A).toEqual(
-        expect.objectContaining({ x: 100 }),
-      );
-      expect(ephemeralIncrements[1].change.elements.A).toEqual(
-        expect.objectContaining({ x: 200 }),
-      );
+      expect(ephemeralIncrements[0].change.elements.A).toEqual(expect.objectContaining({ x: 100 }));
+      expect(ephemeralIncrements[1].change.elements.A).toEqual(expect.objectContaining({ x: 200 }));
       // eslint-disable-next-line dot-notation
       expect(h.store["scheduledMicroActions"].length).toBe(0);
     });
@@ -167,10 +160,7 @@ describe("collaboration", () => {
     });
 
     API.updateScene({
-      elements: syncInvalidIndices([
-        rect1,
-        newElementWith(h.elements[1], { isDeleted: true }),
-      ]),
+      elements: syncInvalidIndices([rect1, newElementWith(h.elements[1], { isDeleted: true })]),
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     });
 

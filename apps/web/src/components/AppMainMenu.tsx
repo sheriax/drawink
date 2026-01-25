@@ -13,8 +13,8 @@ import type { Theme } from "@drawink/element/types";
 import { LanguageList } from "../app-language/LanguageList";
 // import { isDrawinkPlusSignedUser } from "../app_constants";
 
-import { saveDebugState } from "./DebugCanvas";
 import { CloudSyncMenuItem } from "./CloudSyncMenuItem";
+import { saveDebugState } from "./DebugCanvas";
 
 export const AppMainMenu: React.FC<{
   onCollabDialogOpen: () => any;

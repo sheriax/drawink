@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-restricted-imports
 import {
-  atom,
+  type PrimitiveAtom,
   Provider,
+  atom,
+  createStore,
   useAtom,
   useAtomValue,
   useSetAtom,
-  createStore,
-  type PrimitiveAtom,
 } from "jotai";
 import { useLayoutEffect } from "react";
 
@@ -14,10 +14,7 @@ export const appJotaiStore = createStore();
 
 export { atom, Provider, useAtom, useAtomValue, useSetAtom };
 
-export const useAtomWithInitialValue = <
-  T extends unknown,
-  A extends PrimitiveAtom<T>,
->(
+export const useAtomWithInitialValue = <T, A extends PrimitiveAtom<T>>(
   atom: A,
   initialValue: T | (() => T),
 ) => {

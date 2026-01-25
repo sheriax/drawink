@@ -1,14 +1,7 @@
-import {
-  ArrowheadArrowIcon,
-  CloseIcon,
-  TrashIcon,
-} from "@drawink/drawink/components/icons";
-import {
-  bootstrapCanvas,
-  getNormalizedCanvasDimensions,
-} from "@drawink/drawink/renderer/helpers";
-import { type AppState } from "@drawink/drawink/types";
 import { arrayToMap, throttleRAF } from "@drawink/common";
+import { ArrowheadArrowIcon, CloseIcon, TrashIcon } from "@drawink/drawink/components/icons";
+import { bootstrapCanvas, getNormalizedCanvasDimensions } from "@drawink/drawink/renderer/helpers";
+import type { AppState } from "@drawink/drawink/types";
 import { useCallback } from "react";
 
 import {
@@ -17,24 +10,20 @@ import {
   isBindableElement,
 } from "@drawink/element";
 
-import {
-  isLineSegment,
-  type GlobalPoint,
-  type LineSegment,
-} from "@drawink/math";
+import { type GlobalPoint, type LineSegment, isLineSegment } from "@drawink/math";
 import { isCurve } from "@drawink/math/curve";
 
 import React from "react";
 
-import type { Curve } from "@drawink/math";
 import type { DebugElement } from "@drawink/common";
 import type {
-  ElementsMap,
   DrawinkArrowElement,
   DrawinkBindableElement,
+  ElementsMap,
   FixedPointBinding,
   OrderedDrawinkElement,
 } from "@drawink/element/types";
+import type { Curve } from "@drawink/math";
 
 import { STORAGE_KEYS } from "../app_constants";
 
@@ -102,11 +91,7 @@ const _renderBinding = (
   }
 
   const bindable = elementsMap.get(binding.elementId) as DrawinkBindableElement;
-  const [x, y] = getGlobalFixedPointForBindableElement(
-    binding.fixedPoint,
-    bindable,
-    elementsMap,
-  );
+  const [x, y] = getGlobalFixedPointForBindableElement(binding.fixedPoint, bindable, elementsMap);
 
   context.save();
   context.strokeStyle = color;
@@ -140,11 +125,7 @@ const _renderBindableBinding = (
     return;
   }
 
-  const [x, y] = getGlobalFixedPointForBindableElement(
-    binding.fixedPoint,
-    bindable,
-    elementsMap,
-  );
+  const [x, y] = getGlobalFixedPointForBindableElement(binding.fixedPoint, bindable, elementsMap);
 
   context.save();
   context.strokeStyle = color;
@@ -225,54 +206,24 @@ const renderBindings = (
         const arrow = elementsMap.get(boundElement.id) as DrawinkArrowElement;
 
         if (arrow && arrow.startBinding?.elementId === element.id) {
-          _renderBindableBinding(
-            arrow.startBinding,
-            context,
-            elementsMap,
-            zoom,
-            dim,
-            dim,
-            "green",
-          );
+          _renderBindableBinding(arrow.startBinding, context, elementsMap, zoom, dim, dim, "green");
         }
         if (arrow && arrow.endBinding?.elementId === element.id) {
-          _renderBindableBinding(
-            arrow.endBinding,
-            context,
-            elementsMap,
-            zoom,
-            dim,
-            dim,
-            "green",
-          );
+          _renderBindableBinding(arrow.endBinding, context, elementsMap, zoom, dim, dim, "green");
         }
       });
     }
   });
 };
 
-const render = (
-  frame: DebugElement[],
-  context: CanvasRenderingContext2D,
-  appState: AppState,
-) => {
+const render = (frame: DebugElement[], context: CanvasRenderingContext2D, appState: AppState) => {
   frame.forEach((el: DebugElement) => {
     switch (true) {
       case isLineSegment(el.data):
-        renderLine(
-          context,
-          appState.zoom.value,
-          el.data as LineSegment<GlobalPoint>,
-          el.color,
-        );
+        renderLine(context, appState.zoom.value, el.data as LineSegment<GlobalPoint>, el.color);
         break;
       case isCurve(el.data):
-        renderCubicBezier(
-          context,
-          appState.zoom.value,
-          el.data as Curve<GlobalPoint>,
-          el.color,
-        );
+        renderCubicBezier(context, appState.zoom.value, el.data as Curve<GlobalPoint>, el.color);
         break;
       default:
         throw new Error(`Unknown element type ${JSON.stringify(el)}`);
@@ -286,10 +237,7 @@ const _debugRenderer = (
   elements: readonly OrderedDrawinkElement[],
   scale: number,
 ) => {
-  const [normalizedWidth, normalizedHeight] = getNormalizedCanvasDimensions(
-    canvas,
-    scale,
-  );
+  const [normalizedWidth, normalizedHeight] = getNormalizedCanvasDimensions(canvas, scale);
 
   const context = bootstrapCanvas({
     canvas,
@@ -301,10 +249,7 @@ const _debugRenderer = (
 
   // Apply zoom
   context.save();
-  context.translate(
-    appState.scrollX * appState.zoom.value,
-    appState.scrollY * appState.zoom.value,
-  );
+  context.translate(appState.scrollX * appState.zoom.value, appState.scrollY * appState.zoom.value);
 
   renderOrigin(context, appState.zoom.value);
   renderBindings(context, elements, appState.zoom.value);
@@ -327,9 +272,7 @@ const _debugRenderer = (
 
   if (window.visualDebug) {
     window.visualDebug!.data =
-      window.visualDebug?.data.map((frame) =>
-        frame.filter((el) => el.permanent),
-      ) ?? [];
+      window.visualDebug?.data.map((frame) => frame.filter((el) => el.permanent)) ?? [];
   }
 };
 
@@ -346,10 +289,7 @@ const debugFrameData = (): [number, number] => {
 
 export const saveDebugState = (debug: { enabled: boolean }) => {
   try {
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_DEBUG,
-      JSON.stringify(debug),
-    );
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_DEBUG, JSON.stringify(debug));
   } catch (error: any) {
     console.error(error);
   }
@@ -370,9 +310,7 @@ export const debugRenderer = throttleRAF(
 export const loadSavedDebugState = () => {
   let debug;
   try {
-    const savedDebugState = localStorage.getItem(
-      STORAGE_KEYS.LOCAL_STORAGE_DEBUG,
-    );
+    const savedDebugState = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_DEBUG);
     if (savedDebugState) {
       debug = JSON.parse(savedDebugState) as { enabled: boolean };
     }
@@ -383,15 +321,11 @@ export const loadSavedDebugState = () => {
   return debug ?? { enabled: false };
 };
 
-export const isVisualDebuggerEnabled = () =>
-  Array.isArray(window.visualDebug?.data);
+export const isVisualDebuggerEnabled = () => Array.isArray(window.visualDebug?.data);
 
 export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
   const moveForward = useCallback(() => {
-    if (
-      !window.visualDebug?.currentFrame ||
-      isNaN(window.visualDebug?.currentFrame ?? -1)
-    ) {
+    if (!window.visualDebug?.currentFrame || isNaN(window.visualDebug?.currentFrame ?? -1)) {
       window.visualDebug!.currentFrame = 0;
     }
     window.visualDebug!.currentFrame += 1;
@@ -429,11 +363,7 @@ export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
         type="button"
         onClick={trashFrames}
       >
-        <div
-          className="ToolIcon__icon"
-          aria-hidden="true"
-          aria-disabled="false"
-        >
+        <div className="ToolIcon__icon" aria-hidden="true" aria-disabled="false">
           {TrashIcon}
         </div>
       </button>
@@ -444,11 +374,7 @@ export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
         type="button"
         onClick={moveBackward}
       >
-        <div
-          className="ToolIcon__icon"
-          aria-hidden="true"
-          aria-disabled="false"
-        >
+        <div className="ToolIcon__icon" aria-hidden="true" aria-disabled="false">
           <ArrowheadArrowIcon flip />
         </div>
       </button>
@@ -459,11 +385,7 @@ export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
         type="button"
         onClick={reset}
       >
-        <div
-          className="ToolIcon__icon"
-          aria-hidden="true"
-          aria-disabled="false"
-        >
+        <div className="ToolIcon__icon" aria-hidden="true" aria-disabled="false">
           {CloseIcon}
         </div>
       </button>
@@ -474,11 +396,7 @@ export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
         type="button"
         onClick={moveForward}
       >
-        <div
-          className="ToolIcon__icon"
-          aria-hidden="true"
-          aria-disabled="false"
-        >
+        <div className="ToolIcon__icon" aria-hidden="true" aria-disabled="false">
           <ArrowheadArrowIcon />
         </div>
       </button>

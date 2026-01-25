@@ -1,45 +1,31 @@
+import { bytesToHexString } from "@drawink/common";
 import { compressData, decompressData } from "@drawink/drawink/data/encode";
 import {
+  IV_LENGTH_BYTES,
   decryptData,
   generateEncryptionKey,
-  IV_LENGTH_BYTES,
 } from "@drawink/drawink/data/encryption";
 import { serializeAsJSON } from "@drawink/drawink/data/json";
 import { restore } from "@drawink/drawink/data/restore";
+import { t } from "@drawink/drawink/i18n";
 import { isInvisiblySmallElement } from "@drawink/element";
 import { isInitializedImageElement } from "@drawink/element";
-import { t } from "@drawink/drawink/i18n";
-import { bytesToHexString } from "@drawink/common";
 
 import type { UserIdleState } from "@drawink/common";
-import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { SceneBounds } from "@drawink/element";
-import type {
-  DrawinkElement,
-  FileId,
-  OrderedDrawinkElement,
-} from "@drawink/element/types";
-import type {
-  AppState,
-  BinaryFileData,
-  BinaryFiles,
-  SocketId,
-} from "@drawink/drawink/types";
 import type { MakeBrand } from "@drawink/common/utility-types";
+import type { ImportedDataState } from "@drawink/drawink/data/types";
+import type { AppState, BinaryFileData, BinaryFiles, SocketId } from "@drawink/drawink/types";
+import type { SceneBounds } from "@drawink/element";
+import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@drawink/element/types";
 
-import {
-  DELETED_ELEMENT_TIMEOUT,
-  FILE_UPLOAD_MAX_BYTES,
-  ROOM_ID_BYTES,
-} from "../app_constants";
+import { DELETED_ELEMENT_TIMEOUT, FILE_UPLOAD_MAX_BYTES, ROOM_ID_BYTES } from "../app_constants";
 
 import { encodeFilesForUpload } from "./FileManager";
 import { saveFilesToFirebase } from "./firebase";
 
 import type { WS_SUBTYPES } from "../app_constants";
 
-export type SyncableDrawinkElement = OrderedDrawinkElement &
-  MakeBrand<"SyncableDrawinkElement">;
+export type SyncableDrawinkElement = OrderedDrawinkElement & MakeBrand<"SyncableDrawinkElement">;
 
 export const isSyncableElement = (
   element: OrderedDrawinkElement,
@@ -53,12 +39,8 @@ export const isSyncableElement = (
   return !isInvisiblySmallElement(element);
 };
 
-export const getSyncableElements = (
-  elements: readonly OrderedDrawinkElement[],
-) =>
-  elements.filter((element) =>
-    isSyncableElement(element),
-  ) as SyncableDrawinkElement[];
+export const getSyncableElements = (elements: readonly OrderedDrawinkElement[]) =>
+  elements.filter((element) => isSyncableElement(element)) as SyncableDrawinkElement[];
 
 const BACKEND_V2_GET = import.meta.env.VITE_APP_BACKEND_V2_GET_URL;
 const BACKEND_V2_POST = import.meta.env.VITE_APP_BACKEND_V2_POST_URL;
@@ -118,13 +100,11 @@ export type SocketUpdateDataSource = {
   };
 };
 
-export type SocketUpdateDataIncoming =
-  SocketUpdateDataSource[keyof SocketUpdateDataSource];
+export type SocketUpdateDataIncoming = SocketUpdateDataSource[keyof SocketUpdateDataSource];
 
-export type SocketUpdateData =
-  SocketUpdateDataSource[keyof SocketUpdateDataSource] & {
-    _brand: "socketUpdateData";
-  };
+export type SocketUpdateData = SocketUpdateDataSource[keyof SocketUpdateDataSource] & {
+  _brand: "socketUpdateData";
+};
 
 const RE_COLLAB_LINK = /^#room=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/;
 
@@ -186,9 +166,7 @@ const legacy_decodeFromBackend = async ({
   }
 
   // We need to convert the decrypted array buffer to a string
-  const string = new window.TextDecoder("utf-8").decode(
-    new Uint8Array(decrypted),
-  );
+  const string = new window.TextDecoder("utf-8").decode(new Uint8Array(decrypted));
   const data: ImportedDataState = JSON.parse(string);
 
   return {
@@ -197,10 +175,7 @@ const legacy_decodeFromBackend = async ({
   };
 };
 
-const importFromBackend = async (
-  id: string,
-  decryptionKey: string,
-): Promise<ImportedDataState> => {
+const importFromBackend = async (id: string, decryptionKey: string): Promise<ImportedDataState> => {
   try {
     const response = await fetch(`${BACKEND_V2_GET}${id}`);
 
@@ -211,25 +186,17 @@ const importFromBackend = async (
     const buffer = await response.arrayBuffer();
 
     try {
-      const { data: decodedBuffer } = await decompressData(
-        new Uint8Array(buffer),
-        {
-          decryptionKey,
-        },
-      );
-      const data: ImportedDataState = JSON.parse(
-        new TextDecoder().decode(decodedBuffer),
-      );
+      const { data: decodedBuffer } = await decompressData(new Uint8Array(buffer), {
+        decryptionKey,
+      });
+      const data: ImportedDataState = JSON.parse(new TextDecoder().decode(decodedBuffer));
 
       return {
         elements: data.elements || null,
         appState: data.appState || null,
       };
     } catch (error: any) {
-      console.warn(
-        "error when decoding shareLink data using the new format:",
-        error,
-      );
+      console.warn("error when decoding shareLink data using the new format:", error);
       return legacy_decodeFromBackend({ buffer, decryptionKey });
     }
   } catch (error: any) {
@@ -290,9 +257,7 @@ export const exportToBackend = async (
   const encryptionKey = await generateEncryptionKey("string");
 
   const payload = await compressData(
-    new TextEncoder().encode(
-      serializeAsJSON(elements, appState, files, "database"),
-    ),
+    new TextEncoder().encode(serializeAsJSON(elements, appState, files, "database")),
     { encryptionKey },
   );
 

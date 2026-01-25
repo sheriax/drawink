@@ -7,11 +7,8 @@
 
 import { debounce } from "@drawink/common";
 
-import type { BoardContent } from "@drawink/drawink/storage/types";
-import type { Board } from "@drawink/drawink/types";
-
-import type { LocalStorageAdapter } from "./LocalStorageAdapter";
 import type { CloudStorageAdapter } from "./CloudStorageAdapter";
+import type { LocalStorageAdapter } from "./LocalStorageAdapter";
 
 export type SyncStatus = "idle" | "syncing" | "error";
 
@@ -23,7 +20,7 @@ export type SyncState = {
 
 /**
  * SyncEngine - handles initial sync on login
- * 
+ *
  * Flow:
  * 1. User logs in → start() called
  * 2. Pull cloud boards to local (one-time)
@@ -45,10 +42,7 @@ export class SyncEngine {
   // Debounced content sync for batching rapid changes
   private pendingContentSyncs = new Map<string, ReturnType<typeof debounce>>();
 
-  constructor(
-    localAdapter: LocalStorageAdapter,
-    cloudAdapter: CloudStorageAdapter,
-  ) {
+  constructor(localAdapter: LocalStorageAdapter, cloudAdapter: CloudStorageAdapter) {
     this.localAdapter = localAdapter;
     this.cloudAdapter = cloudAdapter;
   }
@@ -168,8 +162,7 @@ export class SyncEngine {
       });
       console.log("[SyncEngine] Initial pull completed");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Initial sync failed";
+      const errorMessage = error instanceof Error ? error.message : "Initial sync failed";
       console.error("[SyncEngine] Initial pull failed:", error);
       this.updateState({
         status: "error",

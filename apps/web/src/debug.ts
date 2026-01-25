@@ -4,8 +4,7 @@ declare global {
   }
 }
 
-const lessPrecise = (num: number, precision = 5) =>
-  parseFloat(num.toPrecision(precision));
+const lessPrecise = (num: number, precision = 5) => Number.parseFloat(num.toPrecision(precision));
 
 const getAvgFrameTime = (times: number[]) =>
   lessPrecise(times.reduce((a, b) => a + b) / times.length);
@@ -15,12 +14,8 @@ const getFps = (frametime: number) => lessPrecise(1000 / frametime);
 export class Debug {
   public static DEBUG_LOG_TIMES = true;
 
-  private static TIMES_AGGR: Record<string, { t: number; times: number[] }> =
-    {};
-  private static TIMES_AVG: Record<
-    string,
-    { t: number; times: number[]; avg: number | null }
-  > = {};
+  private static TIMES_AGGR: Record<string, { t: number; times: number[] }> = {};
+  private static TIMES_AVG: Record<string, { t: number; times: number[]; avg: number | null }> = {};
   private static LAST_DEBUG_LOG_CALL = 0;
   private static DEBUG_LOG_INTERVAL_ID: null | number = null;
 
@@ -33,18 +28,12 @@ export class Debug {
   };
 
   private static debugLogger = () => {
-    if (
-      Date.now() - Debug.LAST_DEBUG_LOG_CALL > 600 &&
-      Debug.DEBUG_LOG_INTERVAL_ID !== null
-    ) {
+    if (Date.now() - Debug.LAST_DEBUG_LOG_CALL > 600 && Debug.DEBUG_LOG_INTERVAL_ID !== null) {
       window.clearInterval(Debug.DEBUG_LOG_INTERVAL_ID);
       Debug.DEBUG_LOG_INTERVAL_ID = null;
       for (const [name, { avg }] of Object.entries(Debug.TIMES_AVG)) {
         if (avg != null) {
-          console.info(
-            `%c${name} run avg: ${avg}ms (${getFps(avg)} fps)`,
-            "color: blue",
-          );
+          console.info(`%c${name} run avg: ${avg}ms (${getFps(avg)} fps)`, "color: blue");
         }
       }
       console.info("%c(stopping perf recording)", "color: red");
@@ -70,8 +59,7 @@ export class Debug {
           Debug.TIMES_AVG[name] = {
             t,
             times: [],
-            avg:
-              avg != null ? getAvgFrameTime([avg, avgFrameTime]) : avgFrameTime,
+            avg: avg != null ? getAvgFrameTime([avg, avgFrameTime]) : avgFrameTime,
           };
         }
       }
@@ -117,10 +105,7 @@ export class Debug {
   public static logTimeWrap = Debug.logWrapper("logTime");
   public static logTimeAverageWrap = Debug.logWrapper("logTimeAverage");
 
-  public static perfWrap = <T extends any[], R>(
-    fn: (...args: T) => R,
-    name = "default",
-  ) => {
+  public static perfWrap = <T extends any[], R>(fn: (...args: T) => R, name = "default") => {
     return (...args: T) => {
       // eslint-disable-next-line no-console
       console.time(name);

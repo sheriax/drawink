@@ -5,18 +5,13 @@
  * Similar to ShareDialog pattern.
  */
 
-import { useEffect, useSyncExternalStore, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
+import { type AuthState, authStateAtom } from "@drawink/drawink/atoms/auth";
 import { Dialog } from "@drawink/drawink/components/Dialog";
 import { FilledButton } from "@drawink/drawink/components/FilledButton";
-import { GithubIcon } from "@drawink/drawink/components/icons";
 import { useUIAppState } from "@drawink/drawink/context/ui-appState";
-import { editorJotaiStore, atom } from "@drawink/drawink/editor-jotai";
-import {
-  authStateAtom,
-  cloudEnabledAtom,
-  type AuthState,
-} from "@drawink/drawink/atoms/auth";
+import { atom, editorJotaiStore } from "@drawink/drawink/editor-jotai";
 import { firebaseAuth } from "../data/firebase";
 
 import { useAtom } from "../app-jotai";
@@ -196,7 +191,9 @@ const AuthDialogInner = ({ handleClose }: AuthDialogInnerProps) => {
 
         <div className="AuthDialog__footer">
           <p>
-            <span role="img" aria-hidden="true">🔒</span>{" "}
+            <span role="img" aria-hidden="true">
+              🔒
+            </span>{" "}
             Your data is end-to-end encrypted and only accessible to you.
           </p>
         </div>
@@ -220,9 +217,5 @@ export const AuthDialog = () => {
     return null;
   }
 
-  return (
-    <AuthDialogInner
-      handleClose={() => setAuthDialogState({ isOpen: false })}
-    />
-  );
+  return <AuthDialogInner handleClose={() => setAuthDialogState({ isOpen: false })} />;
 };

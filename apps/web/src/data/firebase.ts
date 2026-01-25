@@ -1,49 +1,34 @@
-import { reconcileElements } from "@drawink/drawink";
 import { MIME_TYPES } from "@drawink/common";
+import { reconcileElements } from "@drawink/drawink";
 import { decompressData } from "@drawink/drawink/data/encode";
-import { encryptData, decryptData } from "@drawink/drawink/data/encryption";
+import { decryptData, encryptData } from "@drawink/drawink/data/encryption";
 import { restoreElements } from "@drawink/drawink/data/restore";
 import { getSceneVersion } from "@drawink/element";
 import { initializeApp } from "firebase/app";
 import {
-  getFirestore,
-  doc,
-  getDoc,
-  runTransaction,
-  Bytes,
-} from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-import {
+  type User as FirebaseUser,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  type Unsubscribe,
+  onAuthStateChanged as firebaseOnAuthStateChanged,
+  signOut as firebaseSignOut,
   getAuth,
   signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  signOut as firebaseSignOut,
-  onAuthStateChanged as firebaseOnAuthStateChanged,
-  type User as FirebaseUser,
-  type Unsubscribe,
 } from "firebase/auth";
+import { Bytes, doc, getDoc, getFirestore, runTransaction } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
-import type {
-  DrawinkElement,
-  FileId,
-  OrderedDrawinkElement,
-} from "@drawink/element/types";
-import type {
-  AppState,
-  BinaryFileData,
-  BinaryFileMetadata,
-  DataURL,
-} from "@drawink/drawink/types";
+import type { AppState, BinaryFileData, BinaryFileMetadata, DataURL } from "@drawink/drawink/types";
+import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@drawink/element/types";
 
 import { FILE_CACHE_MAX_AGE_SEC } from "../app_constants";
 
 import { getSyncableElements } from ".";
 
+import type { Socket } from "socket.io-client";
 import type { SyncableDrawinkElement } from ".";
 import type Portal from "../collab/Portal";
-import type { Socket } from "socket.io-client";
 
 // Re-export FirebaseUser type for use in other files
 export type { FirebaseUser };
@@ -56,7 +41,8 @@ try {
   FIREBASE_CONFIG = JSON.parse(import.meta.env.VITE_APP_FIREBASE_CONFIG);
 } catch (error: any) {
   console.warn(
-    `Error JSON parsing firebase config. Supplied value: ${import.meta.env.VITE_APP_FIREBASE_CONFIG
+    `Error JSON parsing firebase config. Supplied value: ${
+      import.meta.env.VITE_APP_FIREBASE_CONFIG
     }`,
   );
   FIREBASE_CONFIG = {};
@@ -142,9 +128,7 @@ export const firebaseAuth = {
    * @param callback - Function called when auth state changes
    * @returns Unsubscribe function
    */
-  onAuthStateChanged: (
-    callback: (user: FirebaseUser | null) => void,
-  ): Unsubscribe => {
+  onAuthStateChanged: (callback: (user: FirebaseUser | null) => void): Unsubscribe => {
     const authInstance = _getAuth();
     return firebaseOnAuthStateChanged(authInstance, callback);
   },
@@ -189,9 +173,7 @@ const decryptElements = async (
   const iv = data.iv.toUint8Array();
 
   const decrypted = await decryptData(iv, ciphertext, roomKey);
-  const decodedData = new TextDecoder("utf-8").decode(
-    new Uint8Array(decrypted),
-  );
+  const decodedData = new TextDecoder("utf-8").decode(new Uint8Array(decrypted));
   return JSON.parse(decodedData);
 };
 
@@ -200,18 +182,12 @@ class FirebaseSceneVersionCache {
   static get = (socket: Socket) => {
     return FirebaseSceneVersionCache.cache.get(socket);
   };
-  static set = (
-    socket: Socket,
-    elements: readonly SyncableDrawinkElement[],
-  ) => {
+  static set = (socket: Socket, elements: readonly SyncableDrawinkElement[]) => {
     FirebaseSceneVersionCache.cache.set(socket, getSceneVersion(elements));
   };
 }
 
-export const isSavedToFirebase = (
-  portal: Portal,
-  elements: readonly DrawinkElement[],
-): boolean => {
+export const isSavedToFirebase = (portal: Portal, elements: readonly DrawinkElement[]): boolean => {
   if (portal.socket && portal.roomId && portal.roomKey) {
     const sceneVersion = getSceneVersion(elements);
 
@@ -306,10 +282,7 @@ export const saveToFirebase = async (
       ),
     );
 
-    const storedScene = await createFirebaseSceneDocument(
-      reconciledElements,
-      roomKey,
-    );
+    const storedScene = await createFirebaseSceneDocument(reconciledElements, roomKey);
 
     transaction.update(docRef, storedScene);
 
@@ -362,8 +335,9 @@ export const loadFilesFromFirebase = async (
   await Promise.all(
     [...new Set(filesIds)].map(async (id) => {
       try {
-        const url = `https://firebasestorage.googleapis.com/v0/b/${FIREBASE_CONFIG.storageBucket
-          }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
+        const url = `https://firebasestorage.googleapis.com/v0/b/${
+          FIREBASE_CONFIG.storageBucket
+        }/o/${encodeURIComponent(prefix.replace(/^\//, ""))}%2F${id}`;
         const response = await fetch(`${url}?alt=media`);
         if (response.status < 400) {
           const arrayBuffer = await response.arrayBuffer();

@@ -64,6 +64,4 @@ export const COOKIES = {
   AUTH_STATE_COOKIE: "excplus-auth",
 } as const;
 
-export const isDrawinkPlusSignedUser = document.cookie.includes(
-  COOKIES.AUTH_STATE_COOKIE,
-);
+export const isDrawinkPlusSignedUser = document.cookie.includes(COOKIES.AUTH_STATE_COOKIE);

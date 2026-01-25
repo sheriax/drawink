@@ -11,11 +11,13 @@ const root = createRoot(rootElement);
 
 // Conditionally register PWA (disabled in Docker builds)
 if (import.meta.env.VITE_APP_DISABLE_PWA !== "true") {
-  import("./pwa-register").then(({ initPWA }) => {
-    initPWA();
-  }).catch(() => {
-    // PWA registration module not available, skip
-  });
+  import("./pwa-register")
+    .then(({ initPWA }) => {
+      initPWA();
+    })
+    .catch(() => {
+      // PWA registration module not available, skip
+    });
 }
 
 root.render(

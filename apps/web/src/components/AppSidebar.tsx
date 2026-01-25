@@ -1,8 +1,5 @@
 import { DefaultSidebar, Sidebar, THEME } from "@drawink/drawink";
-import {
-  messageCircleIcon,
-  presentationIcon,
-} from "@drawink/drawink/components/icons";
+import { messageCircleIcon, presentationIcon } from "@drawink/drawink/components/icons";
 // import { LinkButton } from "@drawink/drawink/components/LinkButton";
 import { useUIAppState } from "@drawink/drawink/context/ui-appState";
 
@@ -32,14 +29,13 @@ export const AppSidebar = () => {
           <div
             className="app-sidebar-promo-image"
             style={{
-              ["--image-source" as any]: `url(/oss_promo_comments_${theme === THEME.DARK ? "dark" : "light"
-                }.jpg)`,
+              ["--image-source" as any]: `url(/oss_promo_comments_${
+                theme === THEME.DARK ? "dark" : "light"
+              }.jpg)`,
               opacity: 0.7,
             }}
           />
-          <div className="app-sidebar-promo-text">
-            Make comments with Drawink Pro
-          </div>
+          <div className="app-sidebar-promo-text">Make comments with Drawink Pro</div>
           {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP
@@ -54,15 +50,14 @@ export const AppSidebar = () => {
           <div
             className="app-sidebar-promo-image"
             style={{
-              ["--image-source" as any]: `url(/oss_promo_presentations_${theme === THEME.DARK ? "dark" : "light"
-                }.svg)`,
+              ["--image-source" as any]: `url(/oss_promo_presentations_${
+                theme === THEME.DARK ? "dark" : "light"
+              }.svg)`,
               backgroundSize: "60%",
               opacity: 0.4,
             }}
           />
-          <div className="app-sidebar-promo-text">
-            Create presentations with Drawink Pro
-          </div>
+          <div className="app-sidebar-promo-text">Create presentations with Drawink Pro</div>
           {/* <LinkButton
             href={`${
               import.meta.env.VITE_APP_PLUS_LP

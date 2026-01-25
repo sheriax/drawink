@@ -1,5 +1,5 @@
-import { router } from './trpc';
-import { sceneRouter } from './routers/scene';
+import { sceneRouter } from "./routers/scene";
+import { router } from "./trpc";
 
 // Create main app router
 export const appRouter = router({

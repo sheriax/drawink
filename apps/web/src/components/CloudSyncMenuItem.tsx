@@ -5,20 +5,21 @@
  * Shows user info when logged in, or sign-in button that opens AuthDialog.
  */
 
-import React, { useSyncExternalStore } from "react";
+import type React from "react";
+import { useSyncExternalStore } from "react";
 
-import { MainMenu } from "@drawink/drawink/index";
-import { usersIcon, checkIcon } from "@drawink/drawink/components/icons";
-import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
 import {
+  type AuthState,
   authStateAtom,
   cloudEnabledAtom,
   syncStatusAtom,
-  type AuthState,
 } from "@drawink/drawink/atoms/auth";
+import { checkIcon, usersIcon } from "@drawink/drawink/components/icons";
+import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
+import { MainMenu } from "@drawink/drawink/index";
 import type { SyncStatus } from "@drawink/drawink/storage/types";
-import { firebaseAuth } from "../data/firebase";
 import { useSetAtom } from "../app-jotai";
+import { firebaseAuth } from "../data/firebase";
 import { authDialogStateAtom } from "./AuthDialog";
 
 // Custom hook to subscribe to editorJotaiStore atoms
@@ -124,10 +125,7 @@ export const CloudSyncMenuItem: React.FC = () => {
           {authState.user.displayName || authState.user.email || "User"}
         </MainMenu.Item>
         {cloudEnabled && (
-          <MainMenu.Item
-            icon={syncStatus === "syncing" ? SpinnerIcon : checkIcon}
-            disabled
-          >
+          <MainMenu.Item icon={syncStatus === "syncing" ? SpinnerIcon : checkIcon} disabled>
             {syncStatus === "syncing"
               ? "Syncing..."
               : syncStatus === "error"
@@ -146,11 +144,7 @@ export const CloudSyncMenuItem: React.FC = () => {
 
   // Logged out state - show sign in button that opens AuthDialog
   return (
-    <MainMenu.Item
-      icon={CloudIcon}
-      onClick={handleSignInClick}
-      className="highlighted"
-    >
+    <MainMenu.Item icon={CloudIcon} onClick={handleSignInClick} className="highlighted">
       Sign in for Cloud Sync
     </MainMenu.Item>
   );

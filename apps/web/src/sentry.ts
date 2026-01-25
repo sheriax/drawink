@@ -13,14 +13,10 @@ const SENTRY_DISABLED = import.meta.env.VITE_APP_DISABLE_SENTRY === "true";
 // Disable Sentry locally or inside the Docker to avoid noise/respect privacy
 const onlineEnv =
   !SENTRY_DISABLED &&
-  Object.keys(SentryEnvHostnameMap).find(
-    (item) => window.location.hostname.indexOf(item) >= 0,
-  );
+  Object.keys(SentryEnvHostnameMap).find((item) => window.location.hostname.indexOf(item) >= 0);
 
 Sentry.init({
-  dsn: onlineEnv
-    ? "https://7bfc596a5bf945eda6b660d3015a5460@sentry.io/5179260"
-    : undefined,
+  dsn: onlineEnv ? "https://7bfc596a5bf945eda6b660d3015a5460@sentry.io/5179260" : undefined,
   environment: onlineEnv ? SentryEnvHostnameMap[onlineEnv] : undefined,
   release: import.meta.env.VITE_APP_GIT_SHA,
   ignoreErrors: [
@@ -52,15 +48,12 @@ Sentry.init({
                 .slice(1)
                 .filter(
                   (frame) =>
-                    frame.getFileName() &&
-                    !frame.getFileName()?.includes("@sentry_browser.js"),
+                    frame.getFileName() && !frame.getFileName()?.includes("@sentry_browser.js"),
                 )
                 .map((frame) => ({
                   filename: frame.getFileName() ?? undefined,
                   function: frame.getFunctionName() ?? undefined,
-                  in_app: !(
-                    frame.getFileName()?.includes("node_modules") ?? false
-                  ),
+                  in_app: !(frame.getFileName()?.includes("node_modules") ?? false),
                   lineno: frame.getLineNumber() ?? undefined,
                   colno: frame.getColumnNumber() ?? undefined,
                 })),
@@ -83,12 +76,7 @@ Sentry.init({
 });
 
 const flagsIntegration =
-  Sentry.getClient()?.getIntegrationByName<Sentry.FeatureFlagsIntegration>(
-    "FeatureFlags",
-  );
+  Sentry.getClient()?.getIntegrationByName<Sentry.FeatureFlagsIntegration>("FeatureFlags");
 if (flagsIntegration) {
-  flagsIntegration.addFeatureFlag(
-    "COMPLEX_BINDINGS",
-    getFeatureFlag("COMPLEX_BINDINGS"),
-  );
+  flagsIntegration.addFeatureFlag("COMPLEX_BINDINGS", getFeatureFlag("COMPLEX_BINDINGS"));
 }

@@ -523,11 +523,7 @@ export const libraryItems = [
       seed: 371096063,
       groupIds: ["9ppmKFUbA4iKjt8FaDFox"],
       strokeSharpness: "sharp",
-      boundElementIds: [
-        "CFu0B4Mw_1wC1Hbgx8Fs0",
-        "XIl_NhaFtRO00pX5Pq6VU",
-        "EndiSTFlx1AT7vcBVjgve",
-      ],
+      boundElementIds: ["CFu0B4Mw_1wC1Hbgx8Fs0", "XIl_NhaFtRO00pX5Pq6VU", "EndiSTFlx1AT7vcBVjgve"],
     },
     {
       type: "rectangle",
@@ -550,11 +546,7 @@ export const libraryItems = [
       seed: 685932433,
       groupIds: ["0RJwA-yKP5dqk5oMiSeot", "9ppmKFUbA4iKjt8FaDFox"],
       strokeSharpness: "sharp",
-      boundElementIds: [
-        "CFu0B4Mw_1wC1Hbgx8Fs0",
-        "XIl_NhaFtRO00pX5Pq6VU",
-        "EndiSTFlx1AT7vcBVjgve",
-      ],
+      boundElementIds: ["CFu0B4Mw_1wC1Hbgx8Fs0", "XIl_NhaFtRO00pX5Pq6VU", "EndiSTFlx1AT7vcBVjgve"],
     },
     {
       type: "rectangle",
@@ -577,11 +569,7 @@ export const libraryItems = [
       seed: 58634943,
       groupIds: ["9ppmKFUbA4iKjt8FaDFox"],
       strokeSharpness: "sharp",
-      boundElementIds: [
-        "CFu0B4Mw_1wC1Hbgx8Fs0",
-        "XIl_NhaFtRO00pX5Pq6VU",
-        "EndiSTFlx1AT7vcBVjgve",
-      ],
+      boundElementIds: ["CFu0B4Mw_1wC1Hbgx8Fs0", "XIl_NhaFtRO00pX5Pq6VU", "EndiSTFlx1AT7vcBVjgve"],
     },
     {
       type: "draw",

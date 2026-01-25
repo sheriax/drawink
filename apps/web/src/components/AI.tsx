@@ -1,12 +1,12 @@
+import { safelyParseJSON } from "@drawink/common";
 import {
   DiagramToCodePlugin,
-  exportToBlob,
-  getTextFromElements,
   MIME_TYPES,
   TTDDialog,
+  exportToBlob,
+  getTextFromElements,
 } from "@drawink/drawink";
 import { getDataURL } from "@drawink/drawink/data/blob";
-import { safelyParseJSON } from "@drawink/common";
 
 import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
 
@@ -38,8 +38,7 @@ export const AIComponents = ({
           const textFromFrameChildren = getTextFromElements(children);
 
           const response = await fetch(
-            `${import.meta.env.VITE_APP_AI_BACKEND
-            }/v1/ai/diagram-to-code/generate`,
+            `${import.meta.env.VITE_APP_AI_BACKEND}/v1/ai/diagram-to-code/generate`,
             {
               method: "POST",
               headers: {
@@ -70,7 +69,8 @@ export const AIComponents = ({
                   <div style="color:red">Too many requests today,</br>please try again tomorrow!</div>
                   </br>
                   </br>
-                  <div>You can also try <a href="${import.meta.env.VITE_APP_PLUS_LP
+                  <div>You can also try <a href="${
+                    import.meta.env.VITE_APP_PLUS_LP
                   }/plus?utm_source=drawink&utm_medium=app&utm_content=d2c" target="_blank" rel="noopener">Drawink Pro</a> to get more requests.</div>
                 </div>
                 </body>
@@ -100,8 +100,7 @@ export const AIComponents = ({
         onTextSubmit={async (input) => {
           try {
             const response = await fetch(
-              `${import.meta.env.VITE_APP_AI_BACKEND
-              }/v1/ai/text-to-diagram/generate`,
+              `${import.meta.env.VITE_APP_AI_BACKEND}/v1/ai/text-to-diagram/generate`,
               {
                 method: "POST",
                 headers: {
@@ -113,16 +112,11 @@ export const AIComponents = ({
             );
 
             const rateLimit = response.headers.has("X-Ratelimit-Limit")
-              ? parseInt(response.headers.get("X-Ratelimit-Limit") || "0", 10)
+              ? Number.parseInt(response.headers.get("X-Ratelimit-Limit") || "0", 10)
               : undefined;
 
-            const rateLimitRemaining = response.headers.has(
-              "X-Ratelimit-Remaining",
-            )
-              ? parseInt(
-                response.headers.get("X-Ratelimit-Remaining") || "0",
-                10,
-              )
+            const rateLimitRemaining = response.headers.has("X-Ratelimit-Remaining")
+              ? Number.parseInt(response.headers.get("X-Ratelimit-Remaining") || "0", 10)
               : undefined;
 
             const json = await response.json();
@@ -132,9 +126,7 @@ export const AIComponents = ({
                 return {
                   rateLimit,
                   rateLimitRemaining,
-                  error: new Error(
-                    "Too many requests today, please try again tomorrow!",
-                  ),
+                  error: new Error("Too many requests today, please try again tomorrow!"),
                 };
               }
 

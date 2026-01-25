@@ -3,7 +3,7 @@
  *
  * Implements the StorageAdapter interface for Firebase Firestore.
  * Used for cloud sync when user is authenticated.
- * 
+ *
  * Data is encrypted before storage using PBKDF2-derived AES-GCM keys.
  *
  * Firestore Structure:
@@ -13,27 +13,23 @@
  */
 
 import {
-  getFirestore,
+  Bytes,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  serverTimestamp,
   setDoc,
   updateDoc,
-  deleteDoc,
-  query,
   where,
-  orderBy,
-  serverTimestamp,
-  Bytes,
 } from "firebase/firestore";
 
+import type { BoardContent, StorageAdapter, Workspace } from "@drawink/drawink/storage/types";
 import type { Board } from "@drawink/drawink/types";
-import type {
-  StorageAdapter,
-  BoardContent,
-  Workspace,
-} from "@drawink/drawink/storage/types";
 
 // Cache for derived encryption keys
 const encryptionKeyCache = new Map<string, CryptoKey>();
@@ -91,11 +87,7 @@ const encryptContent = async (
   const encoded = new TextEncoder().encode(json);
   const iv = window.crypto.getRandomValues(new Uint8Array(12));
 
-  const encryptedBuffer = await window.crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    key,
-    encoded,
-  );
+  const encryptedBuffer = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
 
   return {
     ciphertext: new Uint8Array(encryptedBuffer),
@@ -241,12 +233,7 @@ export class CloudStorageAdapter implements StorageAdapter {
     }
 
     try {
-      const boardsRef = collection(
-        this.firestore,
-        "workspaces",
-        this.currentWorkspaceId,
-        "boards",
-      );
+      const boardsRef = collection(this.firestore, "workspaces", this.currentWorkspaceId, "boards");
       const q = query(boardsRef, orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
 
@@ -273,12 +260,7 @@ export class CloudStorageAdapter implements StorageAdapter {
       throw new Error("No workspace selected");
     }
 
-    const boardsRef = collection(
-      this.firestore,
-      "workspaces",
-      this.currentWorkspaceId,
-      "boards",
-    );
+    const boardsRef = collection(this.firestore, "workspaces", this.currentWorkspaceId, "boards");
     const boardRef = doc(boardsRef);
 
     await setDoc(boardRef, {
@@ -299,13 +281,7 @@ export class CloudStorageAdapter implements StorageAdapter {
       throw new Error("No workspace selected");
     }
 
-    const boardRef = doc(
-      this.firestore,
-      "workspaces",
-      this.currentWorkspaceId,
-      "boards",
-      id,
-    );
+    const boardRef = doc(this.firestore, "workspaces", this.currentWorkspaceId, "boards", id);
 
     // Check if board already exists
     const existingDoc = await getDoc(boardRef);
@@ -329,13 +305,7 @@ export class CloudStorageAdapter implements StorageAdapter {
       throw new Error("No workspace selected");
     }
 
-    const boardRef = doc(
-      this.firestore,
-      "workspaces",
-      this.currentWorkspaceId,
-      "boards",
-      id,
-    );
+    const boardRef = doc(this.firestore, "workspaces", this.currentWorkspaceId, "boards", id);
 
     await updateDoc(boardRef, {
       ...data,
@@ -366,13 +336,7 @@ export class CloudStorageAdapter implements StorageAdapter {
     });
 
     // Delete board
-    const boardRef = doc(
-      this.firestore,
-      "workspaces",
-      this.currentWorkspaceId,
-      "boards",
-      id,
-    );
+    const boardRef = doc(this.firestore, "workspaces", this.currentWorkspaceId, "boards", id);
     await deleteDoc(boardRef);
   }
 
@@ -457,10 +421,7 @@ export class CloudStorageAdapter implements StorageAdapter {
   /**
    * Save board content (elements and appState) - encrypted
    */
-  async saveBoardContent(
-    boardId: string,
-    content: BoardContent,
-  ): Promise<void> {
+  async saveBoardContent(boardId: string, content: BoardContent): Promise<void> {
     if (!this.currentWorkspaceId) {
       throw new Error("No workspace selected");
     }
@@ -477,9 +438,7 @@ export class CloudStorageAdapter implements StorageAdapter {
 
     // Get current version for increment
     const currentDoc = await getDoc(contentRef);
-    const currentVersion = currentDoc.exists()
-      ? currentDoc.data()?.version || 0
-      : 0;
+    const currentVersion = currentDoc.exists() ? currentDoc.data()?.version || 0 : 0;
 
     // Get encryption key and encrypt the content
     const key = await this.getEncryptionKey();
@@ -499,13 +458,7 @@ export class CloudStorageAdapter implements StorageAdapter {
     });
 
     // Also update the board's updatedAt timestamp
-    const boardRef = doc(
-      this.firestore,
-      "workspaces",
-      this.currentWorkspaceId,
-      "boards",
-      boardId,
-    );
+    const boardRef = doc(this.firestore, "workspaces", this.currentWorkspaceId, "boards", boardId);
     await updateDoc(boardRef, {
       updatedAt: serverTimestamp(),
     }).catch(() => {

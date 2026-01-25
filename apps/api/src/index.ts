@@ -1,8 +1,8 @@
+import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { trpcServer } from "@hono/trpc-server";
-import { db, SCENES_COLLECTION } from "./firebase";
+import { SCENES_COLLECTION, db } from "./firebase";
 import { appRouter } from "./router";
 
 const app = new Hono();
@@ -39,7 +39,7 @@ app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
-  })
+  }),
 );
 
 // REST API endpoints (kept for backward compatibility)
@@ -76,7 +76,7 @@ app.get("/api/v2/:id", async (c) => {
 // POST /api/v2/post - Upload new scene and return unique ID
 app.post("/api/v2/post", async (c) => {
   try {
-    const contentLength = parseInt(c.req.header("content-length") || "0", 10);
+    const contentLength = Number.parseInt(c.req.header("content-length") || "0", 10);
 
     // Check size limit before reading the body
     if (contentLength > MAX_BODY_SIZE) {
@@ -114,7 +114,7 @@ app.post("/api/v2/post", async (c) => {
 });
 
 // Start server
-const port = parseInt(process.env.JSON_BACKEND_PORT || process.env.PORT || "3001", 10);
+const port = Number.parseInt(process.env.JSON_BACKEND_PORT || process.env.PORT || "3001", 10);
 
 console.log(`🚀 API server running at http://localhost:${port}`);
 console.log(`📦 Using Firestore for persistent storage`);

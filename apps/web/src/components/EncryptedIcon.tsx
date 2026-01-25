@@ -10,7 +10,7 @@ export const EncryptedIcon = () => {
       className="encrypted-icon tooltip"
       href="https://plus.drawink.app/blog/end-to-end-encryption"
       target="_blank"
-      rel="noopener"
+      rel="noreferrer noopener"
       aria-label={t("encrypted.link")}
     >
       <Tooltip label={t("encrypted.tooltip")} long={true}>

@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import React from "react";
 
 import styles from "./styles.module.css";
 
@@ -7,28 +6,20 @@ const FeatureList = [
   {
     title: "Learn how Drawink works",
     Svg: require("@site/static/img/undraw_innovative.svg").default,
-    description: (
-      <>Want to contribute to Drawink but got lost in the codebase?</>
-    ),
+    description: <>Want to contribute to Drawink but got lost in the codebase?</>,
   },
   {
     title: "Integrate Drawink",
     Svg: require("@site/static/img/undraw_blank_canvas.svg").default,
-    description: (
-      <>
-        Want to build your own app powered by Drawink but don't know where to
-        start?
-      </>
-    ),
+    description: <>Want to build your own app powered by Drawink but don't know where to start?</>,
   },
   {
     title: "Help us improve",
     Svg: require("@site/static/img/undraw_add_files.svg").default,
     description: (
       <>
-        Are the docs missing something? Anything you had trouble understanding
-        or needs an explanation? Come contribute to the docs to make them even
-        better!
+        Are the docs missing something? Anything you had trouble understanding or needs an
+        explanation? Come contribute to the docs to make them even better!
       </>
     ),
   },

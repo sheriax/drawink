@@ -1,11 +1,12 @@
+import { KEYS, getFrame } from "@drawink/common";
 import { trackEvent } from "@drawink/drawink/analytics";
 import { copyTextToSystemClipboard } from "@drawink/drawink/clipboard";
 import { Dialog } from "@drawink/drawink/components/Dialog";
 import { FilledButton } from "@drawink/drawink/components/FilledButton";
 import { TextField } from "@drawink/drawink/components/TextField";
 import {
-  copyIcon,
   LinkIcon,
+  copyIcon,
   playerPlayIcon,
   playerStopFilledIcon,
   share,
@@ -15,7 +16,6 @@ import {
 import { useUIAppState } from "@drawink/drawink/context/ui-appState";
 import { useCopyStatus } from "@drawink/drawink/hooks/useCopiedIndicator";
 import { useI18n } from "@drawink/drawink/i18n";
-import { KEYS, getFrame } from "@drawink/common";
 import { useEffect, useRef, useState } from "react";
 
 import { atom, useAtom, useAtomValue } from "../app-jotai";
@@ -114,13 +114,7 @@ const ActiveRoomDialog = ({
         onKeyDown={(event) => event.key === KEYS.ENTER && handleClose()}
       />
       <div className="ShareDialog__active__linkRow">
-        <TextField
-          ref={ref}
-          label="Link"
-          readonly
-          fullWidth
-          value={activeRoomLink}
-        />
+        <TextField ref={ref} label="Link" readonly fullWidth value={activeRoomLink} />
         {isShareSupported && (
           <FilledButton
             size="large"
@@ -144,11 +138,7 @@ const ActiveRoomDialog = ({
       </div>
       <div className="ShareDialog__active__description">
         <p>
-          <span
-            role="img"
-            aria-hidden="true"
-            className="ShareDialog__active__description__emoji"
-          >
+          <span role="img" aria-hidden="true" className="ShareDialog__active__description__emoji">
             🔒{" "}
           </span>
           {t("roomDialog.desc_privacy")}
@@ -218,12 +208,8 @@ const ShareDialogPicker = (props: ShareDialogProps) => {
 
       {props.type === "share" && (
         <>
-          <div className="ShareDialog__picker__header">
-            {t("exportDialog.link_title")}
-          </div>
-          <div className="ShareDialog__picker__description">
-            {t("exportDialog.link_details")}
-          </div>
+          <div className="ShareDialog__picker__header">{t("exportDialog.link_title")}</div>
+          <div className="ShareDialog__picker__description">{t("exportDialog.link_details")}</div>
 
           <div className="ShareDialog__picker__button">
             <FilledButton

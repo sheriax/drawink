@@ -1,19 +1,13 @@
-import {
-  clearAppStateForLocalStorage,
-  getDefaultAppState,
-} from "@drawink/drawink/appState";
+import { clearAppStateForLocalStorage, getDefaultAppState } from "@drawink/drawink/appState";
 
-import type { DrawinkElement } from "@drawink/element/types";
 import type { AppState } from "@drawink/drawink/types";
+import type { DrawinkElement } from "@drawink/element/types";
 
 import { STORAGE_KEYS } from "../app_constants";
 
 export const saveUsernameToLocalStorage = (username: string) => {
   try {
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_COLLAB,
-      JSON.stringify({ username }),
-    );
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_COLLAB, JSON.stringify({ username }));
   } catch (error: any) {
     // Unable to access window.localStorage
     console.error(error);
@@ -39,9 +33,7 @@ export const importFromLocalStorage = () => {
   let savedState = null;
 
   try {
-    const currentBoardId = localStorage.getItem(
-      STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
-    );
+    const currentBoardId = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
     const elementsKey = currentBoardId
       ? `drawink-board-${currentBoardId}-elements`
       : STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS;
@@ -61,26 +53,14 @@ export const importFromLocalStorage = () => {
         createdAt: Date.now(),
         lastModified: Date.now(),
       };
-      localStorage.setItem(
-        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-        JSON.stringify([defaultBoard]),
-      );
-      localStorage.setItem(
-        STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
-        defaultBoard.id,
-      );
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify([defaultBoard]));
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID, defaultBoard.id);
       // Save current data to default board keys
       if (savedElements) {
-        localStorage.setItem(
-          `drawink-board-${defaultBoard.id}-elements`,
-          savedElements,
-        );
+        localStorage.setItem(`drawink-board-${defaultBoard.id}-elements`, savedElements);
       }
       if (savedState) {
-        localStorage.setItem(
-          `drawink-board-${defaultBoard.id}-state`,
-          savedState,
-        );
+        localStorage.setItem(`drawink-board-${defaultBoard.id}-state`, savedState);
       }
     }
   } catch (error: any) {
@@ -103,9 +83,7 @@ export const importFromLocalStorage = () => {
     try {
       appState = {
         ...getDefaultAppState(),
-        ...clearAppStateForLocalStorage(
-          JSON.parse(savedState) as Partial<AppState>,
-        ),
+        ...clearAppStateForLocalStorage(JSON.parse(savedState) as Partial<AppState>),
       };
     } catch (error: any) {
       console.error(error);

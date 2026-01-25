@@ -1,15 +1,7 @@
-import {
-  CaptureUpdateAction,
-  getSceneVersion,
-  restoreElements,
-  zoomToFitBounds,
-  reconcileElements,
-} from "@drawink/drawink";
-import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
 import { APP_NAME, EVENT } from "@drawink/common";
 import {
-  IDLE_THRESHOLD,
   ACTIVE_THRESHOLD,
+  IDLE_THRESHOLD,
   UserIdleState,
   assertNever,
   isDevEnv,
@@ -18,36 +10,44 @@ import {
   resolvablePromise,
   throttleRAF,
 } from "@drawink/common";
+import {
+  CaptureUpdateAction,
+  getSceneVersion,
+  reconcileElements,
+  restoreElements,
+  zoomToFitBounds,
+} from "@drawink/drawink";
+import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
 import { decryptData } from "@drawink/drawink/data/encryption";
-import { getVisibleSceneBounds } from "@drawink/element";
-import { newElementWith } from "@drawink/element";
-import { isImageElement, isInitializedImageElement } from "@drawink/element";
 import { AbortError } from "@drawink/drawink/errors";
 import { t } from "@drawink/drawink/i18n";
 import { withBatchedUpdates } from "@drawink/drawink/reactUtils";
+import { getVisibleSceneBounds } from "@drawink/element";
+import { newElementWith } from "@drawink/element";
+import { isImageElement, isInitializedImageElement } from "@drawink/element";
 
 import throttle from "lodash.throttle";
 import { PureComponent } from "react";
 
+import type { Mutable, ValueOf } from "@drawink/common/utility-types";
 import type {
   ReconciledDrawinkElement,
   RemoteDrawinkElement,
 } from "@drawink/drawink/data/reconcile";
 import type { ImportedDataState } from "@drawink/drawink/data/types";
 import type {
+  BinaryFileData,
+  Collaborator,
+  DrawinkImperativeAPI,
+  Gesture,
+  SocketId,
+} from "@drawink/drawink/types";
+import type {
   DrawinkElement,
   FileId,
   InitializedDrawinkImageElement,
   OrderedDrawinkElement,
 } from "@drawink/element/types";
-import type {
-  BinaryFileData,
-  DrawinkImperativeAPI,
-  SocketId,
-  Collaborator,
-  Gesture,
-} from "@drawink/drawink/types";
-import type { Mutable, ValueOf } from "@drawink/common/utility-types";
 
 import { appJotaiStore, atom } from "../app-jotai";
 import {
@@ -56,20 +56,12 @@ import {
   FIREBASE_STORAGE_PREFIXES,
   INITIAL_SCENE_UPDATE_TIMEOUT,
   LOAD_IMAGES_TIMEOUT,
-  WS_SUBTYPES,
   SYNC_FULL_SCENE_INTERVAL_MS,
   WS_EVENTS,
+  WS_SUBTYPES,
 } from "../app_constants";
-import {
-  generateCollaborationLinkData,
-  getCollaborationLink,
-  getSyncableElements,
-} from "../data";
-import {
-  encodeFilesForUpload,
-  FileManager,
-  updateStaleImageStatuses,
-} from "../data/FileManager";
+import { generateCollaborationLinkData, getCollaborationLink, getSyncableElements } from "../data";
+import { FileManager, encodeFilesForUpload, updateStaleImageStatuses } from "../data/FileManager";
 import { hybridStorageAdapter } from "../data/HybridStorageAdapter";
 import {
   isSavedToFirebase,
@@ -78,10 +70,7 @@ import {
   saveFilesToFirebase,
   saveToFirebase,
 } from "../data/firebase";
-import {
-  importUsernameFromLocalStorage,
-  saveUsernameToLocalStorage,
-} from "../data/localStorage";
+import { importUsernameFromLocalStorage, saveUsernameToLocalStorage } from "../data/localStorage";
 import { resetBrowserStateVersions } from "../data/tabSync";
 
 import { collabErrorIndicatorAtom } from "./CollabError";
@@ -131,7 +120,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   idleTimeoutId: number | null;
 
   private socketInitializationTimer?: number;
-  private lastBroadcastedOrReceivedSceneVersion: number = -1;
+  private lastBroadcastedOrReceivedSceneVersion = -1;
   private collaborators = new Map<SocketId, Collaborator>();
 
   constructor(props: CollabProps) {
@@ -168,26 +157,20 @@ class Collab extends PureComponent<CollabProps, CollabState> {
         });
 
         return {
-          savedFiles: savedFiles.reduce(
-            (acc: Map<FileId, BinaryFileData>, id) => {
-              const fileData = addedFiles.get(id);
-              if (fileData) {
-                acc.set(id, fileData);
-              }
-              return acc;
-            },
-            new Map(),
-          ),
-          erroredFiles: erroredFiles.reduce(
-            (acc: Map<FileId, BinaryFileData>, id) => {
-              const fileData = addedFiles.get(id);
-              if (fileData) {
-                acc.set(id, fileData);
-              }
-              return acc;
-            },
-            new Map(),
-          ),
+          savedFiles: savedFiles.reduce((acc: Map<FileId, BinaryFileData>, id) => {
+            const fileData = addedFiles.get(id);
+            if (fileData) {
+              acc.set(id, fileData);
+            }
+            return acc;
+          }, new Map()),
+          erroredFiles: erroredFiles.reduce((acc: Map<FileId, BinaryFileData>, id) => {
+            const fileData = addedFiles.get(id);
+            if (fileData) {
+              acc.set(id, fileData);
+            }
+            return acc;
+          }, new Map()),
         };
       },
     });
@@ -207,9 +190,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     const unsubOnUserFollow = this.drawinkAPI.onUserFollow((payload) => {
       this.portal.socket && this.portal.broadcastUserFollowed(payload);
     });
-    const throttledRelayUserViewportBounds = throttleRAF(
-      this.relayVisibleSceneBounds,
-    );
+    const throttledRelayUserViewportBounds = throttleRAF(this.relayVisibleSceneBounds);
     const unsubOnScrollChange = this.drawinkAPI.onScrollChange(() =>
       throttledRelayUserViewportBounds(),
     );
@@ -256,10 +237,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     window.removeEventListener(EVENT.BEFORE_UNLOAD, this.beforeUnload);
     window.removeEventListener(EVENT.UNLOAD, this.onUnload);
     window.removeEventListener(EVENT.POINTER_MOVE, this.onPointerMove);
-    window.removeEventListener(
-      EVENT.VISIBILITY_CHANGE,
-      this.onVisibilityChange,
-    );
+    window.removeEventListener(EVENT.VISIBILITY_CHANGE, this.onVisibilityChange);
     if (this.activeIntervalId) {
       window.clearInterval(this.activeIntervalId);
       this.activeIntervalId = null;
@@ -282,9 +260,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   private beforeUnload = withBatchedUpdates((event: BeforeUnloadEvent) => {
-    const syncableElements = getSyncableElements(
-      this.getSceneElementsIncludingDeleted(),
-    );
+    const syncableElements = getSyncableElements(this.getSceneElementsIncludingDeleted());
 
     if (
       this.isCollaborating() &&
@@ -298,16 +274,12 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       if (import.meta.env.VITE_APP_DISABLE_PREVENT_UNLOAD !== "true") {
         preventUnload(event);
       } else {
-        console.warn(
-          "preventing unload disabled (VITE_APP_DISABLE_PREVENT_UNLOAD)",
-        );
+        console.warn("preventing unload disabled (VITE_APP_DISABLE_PREVENT_UNLOAD)");
       }
     }
   });
 
-  saveCollabRoomToFirebase = async (
-    syncableElements: readonly SyncableDrawinkElement[],
-  ) => {
+  saveCollabRoomToFirebase = async (syncableElements: readonly SyncableDrawinkElement[]) => {
     try {
       const storedElements = await saveToFirebase(
         this.portal,
@@ -325,10 +297,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
         ? t("errors.collabSaveFailed_sizeExceeded")
         : t("errors.collabSaveFailed");
 
-      if (
-        !this.state.dialogNotifiedErrors[errorMessage] ||
-        !this.isCollaborating()
-      ) {
+      if (!this.state.dialogNotifiedErrors[errorMessage] || !this.isCollaborating()) {
         this.setErrorDialog(errorMessage);
         this.setState({
           dialogNotifiedErrors: {
@@ -357,10 +326,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     );
 
     if (this.portal.socket && this.fallbackInitializationHandler) {
-      this.portal.socket.off(
-        "connect_error",
-        this.fallbackInitializationHandler,
-      );
+      this.portal.socket.off("connect_error", this.fallbackInitializationHandler);
     }
 
     if (!keepRemoteState) {
@@ -376,14 +342,12 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
       hybridStorageAdapter.fileStorage.reset();
 
-      const elements = this.drawinkAPI
-        .getSceneElementsIncludingDeleted()
-        .map((element) => {
-          if (isImageElement(element) && element.status === "saved") {
-            return newElementWith(element, { status: "pending" });
-          }
-          return element;
-        });
+      const elements = this.drawinkAPI.getSceneElementsIncludingDeleted().map((element) => {
+        if (isImageElement(element) && element.status === "saved") {
+          return newElementWith(element, { status: "pending" });
+        }
+        return element;
+      });
 
       this.drawinkAPI.updateScene({
         elements,
@@ -425,8 +389,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
           !this.fileManager.isFileTracked(element.fileId) &&
           !element.isDeleted &&
           (opts.forceFetchFiles
-            ? element.status !== "pending" ||
-            Date.now() - element.updated > 10000
+            ? element.status !== "pending" || Date.now() - element.updated > 10000
             : element.status === "saved")
         );
       })
@@ -443,9 +406,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     try {
       const decrypted = await decryptData(iv, encryptedData, decryptionKey);
 
-      const decodedData = new TextDecoder("utf-8").decode(
-        new Uint8Array(decrypted),
-      );
+      const decodedData = new TextDecoder("utf-8").decode(new Uint8Array(decrypted));
       return JSON.parse(decodedData);
     } catch (error) {
       window.alert(t("alerts.decryptFailed"));
@@ -458,9 +419,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
   private fallbackInitializationHandler: null | (() => any) = null;
 
-  startCollaboration = async (
-    existingRoomLinkData: null | { roomId: string; roomKey: string },
-  ) => {
+  startCollaboration = async (existingRoomLinkData: null | { roomId: string; roomKey: string }) => {
     if (!this.state.username) {
       import("@excalidraw/random-username").then(({ getRandomUsername }) => {
         const username = getRandomUsername();
@@ -479,17 +438,12 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       ({ roomId, roomKey } = existingRoomLinkData);
     } else {
       ({ roomId, roomKey } = await generateCollaborationLinkData());
-      window.history.pushState(
-        {},
-        APP_NAME,
-        getCollaborationLink({ roomId, roomKey }),
-      );
+      window.history.pushState({}, APP_NAME, getCollaborationLink({ roomId, roomKey }));
     }
 
     // TODO: `ImportedDataState` type here seems abused
     const scenePromise = resolvablePromise<
-      | (ImportedDataState & { elements: readonly OrderedDrawinkElement[] })
-      | null
+      (ImportedDataState & { elements: readonly OrderedDrawinkElement[] }) | null
     >();
 
     this.setIsCollaborating(true);
@@ -562,11 +516,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
           return;
         }
 
-        const decryptedData = await this.decryptPayload(
-          iv,
-          encryptedData,
-          this.portal.roomKey,
-        );
+        const decryptedData = await this.decryptPayload(iv, encryptedData, this.portal.roomKey);
 
         switch (decryptedData.type) {
           case WS_SUBTYPES.INVALID_RESPONSE:
@@ -575,8 +525,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
             if (!this.portal.socketInitialized) {
               this.initializeRoom({ fetchScene: false });
               const remoteElements = decryptedData.payload.elements;
-              const reconciledElements =
-                this._reconcileElements(remoteElements);
+              const reconciledElements = this._reconcileElements(remoteElements);
               this.handleRemoteSceneUpdate(reconciledElements);
               // noop if already resolved via init from firebase
               scenePromise.resolve({
@@ -587,13 +536,10 @@ class Collab extends PureComponent<CollabProps, CollabState> {
             break;
           }
           case WS_SUBTYPES.UPDATE:
-            this.handleRemoteSceneUpdate(
-              this._reconcileElements(decryptedData.payload.elements),
-            );
+            this.handleRemoteSceneUpdate(this._reconcileElements(decryptedData.payload.elements));
             break;
           case WS_SUBTYPES.MOUSE_LOCATION: {
-            const { pointer, button, username, selectedElementIds } =
-              decryptedData.payload;
+            const { pointer, button, username, selectedElementIds } = decryptedData.payload;
 
             const socketId: SocketUpdateDataSource["MOUSE_LOCATION"]["payload"]["socketId"] =
               decryptedData.payload.socketId ||
@@ -625,10 +571,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
             }
 
             // cross-follow case, ignore updates in this case
-            if (
-              appState.userToFollow &&
-              appState.followedBy.has(appState.userToFollow.socketId)
-            ) {
+            if (appState.userToFollow && appState.followedBy.has(appState.userToFollow.socketId)) {
               return;
             }
 
@@ -671,16 +614,13 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       scenePromise.resolve(sceneData);
     });
 
-    this.portal.socket.on(
-      WS_EVENTS.USER_FOLLOW_ROOM_CHANGE,
-      (followedBy: SocketId[]) => {
-        this.drawinkAPI.updateScene({
-          appState: { followedBy: new Set(followedBy) },
-        });
+    this.portal.socket.on(WS_EVENTS.USER_FOLLOW_ROOM_CHANGE, (followedBy: SocketId[]) => {
+      this.drawinkAPI.updateScene({
+        appState: { followedBy: new Set(followedBy) },
+      });
 
-        this.relayVisibleSceneBounds({ force: true });
-      },
-    );
+      this.relayVisibleSceneBounds({ force: true });
+    });
 
     this.initializeIdleDetector();
 
@@ -694,16 +634,13 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     roomLinkData,
   }:
     | {
-      fetchScene: true;
-      roomLinkData: { roomId: string; roomKey: string } | null;
-    }
+        fetchScene: true;
+        roomLinkData: { roomId: string; roomKey: string } | null;
+      }
     | { fetchScene: false; roomLinkData?: null }) => {
     clearTimeout(this.socketInitializationTimer!);
     if (this.portal.socket && this.fallbackInitializationHandler) {
-      this.portal.socket.off(
-        "connect_error",
-        this.fallbackInitializationHandler,
-      );
+      this.portal.socket.off("connect_error", this.fallbackInitializationHandler);
     }
     if (fetchScene && roomLinkData && this.portal.socket) {
       this.drawinkAPI.resetScene();
@@ -715,9 +652,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
           this.portal.socket,
         );
         if (elements) {
-          this.setLastBroadcastedOrReceivedSceneVersion(
-            getSceneVersion(elements),
-          );
+          this.setLastBroadcastedOrReceivedSceneVersion(getSceneVersion(elements));
 
           return {
             elements,
@@ -752,18 +687,15 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     // we just received!
     // Note: this needs to be set before updating the scene as it
     // synchronously calls render.
-    this.setLastBroadcastedOrReceivedSceneVersion(
-      getSceneVersion(reconciledElements),
-    );
+    this.setLastBroadcastedOrReceivedSceneVersion(getSceneVersion(reconciledElements));
 
     return reconciledElements;
   };
 
   private loadImageFiles = throttle(async () => {
-    const { loadedFiles, erroredFiles } =
-      await this.fetchImageFilesFromFirebase({
-        elements: this.drawinkAPI.getSceneElementsIncludingDeleted(),
-      });
+    const { loadedFiles, erroredFiles } = await this.fetchImageFilesFromFirebase({
+      elements: this.drawinkAPI.getSceneElementsIncludingDeleted(),
+    });
 
     this.drawinkAPI.addFiles(loadedFiles);
 
@@ -792,10 +724,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     this.idleTimeoutId = window.setTimeout(this.reportIdle, IDLE_THRESHOLD);
 
     if (!this.activeIntervalId) {
-      this.activeIntervalId = window.setInterval(
-        this.reportActive,
-        ACTIVE_THRESHOLD,
-      );
+      this.activeIntervalId = window.setInterval(this.reportActive, ACTIVE_THRESHOLD);
     }
   };
 
@@ -812,10 +741,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       this.onIdleStateChange(UserIdleState.AWAY);
     } else {
       this.idleTimeoutId = window.setTimeout(this.reportIdle, IDLE_THRESHOLD);
-      this.activeIntervalId = window.setInterval(
-        this.reportActive,
-        ACTIVE_THRESHOLD,
-      );
+      this.activeIntervalId = window.setInterval(this.reportActive, ACTIVE_THRESHOLD);
       this.onIdleStateChange(UserIdleState.ACTIVE);
     }
   };
@@ -838,8 +764,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   setCollaborators(sockets: SocketId[]) {
-    const collaborators: InstanceType<typeof Collab>["collaborators"] =
-      new Map();
+    const collaborators: InstanceType<typeof Collab>["collaborators"] = new Map();
     for (const socketId of sockets) {
       collaborators.set(
         socketId,
@@ -854,14 +779,9 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
   updateCollaborator = (socketId: SocketId, updates: Partial<Collaborator>) => {
     const collaborators = new Map(this.collaborators);
-    const user: Mutable<Collaborator> = Object.assign(
-      {},
-      collaborators.get(socketId),
-      updates,
-      {
-        isCurrentUser: socketId === this.portal.socket?.id,
-      },
-    );
+    const user: Mutable<Collaborator> = Object.assign({}, collaborators.get(socketId), updates, {
+      isCurrentUser: socketId === this.portal.socket?.id,
+    });
     collaborators.set(socketId, user);
     this.collaborators = collaborators;
 
@@ -913,10 +833,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
   };
 
   broadcastElements = (elements: readonly OrderedDrawinkElement[]) => {
-    if (
-      getSceneVersion(elements) >
-      this.getLastBroadcastedOrReceivedSceneVersion()
-    ) {
+    if (getSceneVersion(elements) > this.getLastBroadcastedOrReceivedSceneVersion()) {
       this.portal.broadcastScene(WS_SUBTYPES.UPDATE, elements, false);
       this.lastBroadcastedOrReceivedSceneVersion = getSceneVersion(elements);
       this.queueBroadcastAllElements();
@@ -946,9 +863,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     () => {
       if (this.portal.socketInitialized) {
         this.saveCollabRoomToFirebase(
-          getSyncableElements(
-            this.drawinkAPI.getSceneElementsIncludingDeleted(),
-          ),
+          getSyncableElements(this.drawinkAPI.getSceneElementsIncludingDeleted()),
         );
       }
     },
@@ -998,9 +913,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     return (
       <>
         {errorMessage != null && (
-          <ErrorDialog onClose={() => this.setErrorDialog(null)}>
-            {errorMessage}
-          </ErrorDialog>
+          <ErrorDialog onClose={() => this.setErrorDialog(null)}>{errorMessage}</ErrorDialog>
         )}
       </>
     );

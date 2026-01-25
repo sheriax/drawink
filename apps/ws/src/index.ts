@@ -11,10 +11,7 @@ type OnUserFollowedPayload = {
   action: "FOLLOW" | "UNFOLLOW";
 };
 
-const port = parseInt(
-  process.env.WEBSOCKET_SERVER_PORT || process.env.PORT || "3003",
-  10
-);
+const port = Number.parseInt(process.env.WEBSOCKET_SERVER_PORT || process.env.PORT || "3003", 10);
 
 const corsOrigin = process.env.CORS_ORIGIN || "*";
 
@@ -56,27 +53,22 @@ io.on("connection", (socket: Socket) => {
     // Broadcast updated user list to room
     io.in(roomID).emit(
       "room-user-change",
-      sockets.map((s: { id: string }) => s.id)
+      sockets.map((s: { id: string }) => s.id),
     );
   });
 
   // Handle scene broadcasts (reliable)
-  socket.on(
-    "server-broadcast",
-    (roomID: string, encryptedData: ArrayBuffer, iv: Uint8Array) => {
-      console.log(`[Broadcast] ${socket.id} -> room ${roomID}`);
-      socket.broadcast.to(roomID).emit("client-broadcast", encryptedData, iv);
-    }
-  );
+  socket.on("server-broadcast", (roomID: string, encryptedData: ArrayBuffer, iv: Uint8Array) => {
+    console.log(`[Broadcast] ${socket.id} -> room ${roomID}`);
+    socket.broadcast.to(roomID).emit("client-broadcast", encryptedData, iv);
+  });
 
   // Handle volatile broadcasts (cursor position, etc - can be dropped)
   socket.on(
     "server-volatile-broadcast",
     (roomID: string, encryptedData: ArrayBuffer, iv: Uint8Array) => {
-      socket.volatile.broadcast
-        .to(roomID)
-        .emit("client-broadcast", encryptedData, iv);
-    }
+      socket.volatile.broadcast.to(roomID).emit("client-broadcast", encryptedData, iv);
+    },
   );
 
   // Handle user follow/unfollow
@@ -90,10 +82,7 @@ io.on("connection", (socket: Socket) => {
         const sockets = await io.in(roomID).fetchSockets();
         const followedBy = sockets.map((s: { id: string }) => s.id);
 
-        io.to(payload.userToFollow.socketId).emit(
-          "user-follow-room-change",
-          followedBy
-        );
+        io.to(payload.userToFollow.socketId).emit("user-follow-room-change", followedBy);
         break;
       }
       case "UNFOLLOW": {
@@ -102,10 +91,7 @@ io.on("connection", (socket: Socket) => {
         const sockets = await io.in(roomID).fetchSockets();
         const followedBy = sockets.map((s: { id: string }) => s.id);
 
-        io.to(payload.userToFollow.socketId).emit(
-          "user-follow-room-change",
-          followedBy
-        );
+        io.to(payload.userToFollow.socketId).emit("user-follow-room-change", followedBy);
         break;
       }
     }
@@ -119,7 +105,7 @@ io.on("connection", (socket: Socket) => {
       if (roomID === socket.id) continue; // Skip the default room
 
       const otherClients = (await io.in(roomID).fetchSockets()).filter(
-        (s: { id: string }) => s.id !== socket.id
+        (s: { id: string }) => s.id !== socket.id,
       );
 
       const isFollowRoom = roomID.startsWith("follow@");
@@ -128,7 +114,7 @@ io.on("connection", (socket: Socket) => {
         // Notify remaining users
         socket.broadcast.to(roomID).emit(
           "room-user-change",
-          otherClients.map((s: { id: string }) => s.id)
+          otherClients.map((s: { id: string }) => s.id),
         );
       }
 

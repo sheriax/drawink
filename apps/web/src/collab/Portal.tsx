@@ -5,24 +5,20 @@ import { newElementWith } from "@drawink/element";
 import throttle from "lodash.throttle";
 
 import type { UserIdleState } from "@drawink/common";
-import type { OrderedDrawinkElement } from "@drawink/element/types";
 import type { OnUserFollowedPayload, SocketId } from "@drawink/drawink/types";
+import type { OrderedDrawinkElement } from "@drawink/element/types";
 
-import { WS_EVENTS, FILE_UPLOAD_TIMEOUT, WS_SUBTYPES } from "../app_constants";
+import { FILE_UPLOAD_TIMEOUT, WS_EVENTS, WS_SUBTYPES } from "../app_constants";
 import { isSyncableElement } from "../data";
 
-import type {
-  SocketUpdateData,
-  SocketUpdateDataSource,
-  SyncableDrawinkElement,
-} from "../data";
-import type { TCollabClass } from "./Collab";
 import type { Socket } from "socket.io-client";
+import type { SocketUpdateData, SocketUpdateDataSource, SyncableDrawinkElement } from "../data";
+import type { TCollabClass } from "./Collab";
 
 class Portal {
   collab: TCollabClass;
   socket: Socket | null = null;
-  socketInitialized: boolean = false; // we don't want the socket to emit any updates until it is fully initialized
+  socketInitialized = false; // we don't want the socket to emit any updates until it is fully initialized
   roomId: string | null = null;
   roomKey: string | null = null;
   broadcastedElementVersions: Map<string, number> = new Map();
@@ -71,19 +67,10 @@ class Portal {
   }
 
   isOpen() {
-    return !!(
-      this.socketInitialized &&
-      this.socket &&
-      this.roomId &&
-      this.roomKey
-    );
+    return !!(this.socketInitialized && this.socket && this.roomId && this.roomKey);
   }
 
-  async _broadcastSocketData(
-    data: SocketUpdateData,
-    volatile: boolean = false,
-    roomId?: string,
-  ) {
+  async _broadcastSocketData(data: SocketUpdateData, volatile = false, roomId?: string) {
     if (this.isOpen()) {
       const json = JSON.stringify(data);
       const encoded = new TextEncoder().encode(json);
@@ -115,18 +102,16 @@ class Portal {
     }
 
     let isChanged = false;
-    const newElements = this.collab.drawinkAPI
-      .getSceneElementsIncludingDeleted()
-      .map((element) => {
-        if (this.collab.fileManager.shouldUpdateImageElementStatus(element)) {
-          isChanged = true;
-          // this will signal collaborators to pull image data from server
-          // (using mutation instead of newElementWith otherwise it'd break
-          // in-progress dragging)
-          return newElementWith(element, { status: "saved" });
-        }
-        return element;
-      });
+    const newElements = this.collab.drawinkAPI.getSceneElementsIncludingDeleted().map((element) => {
+      if (this.collab.fileManager.shouldUpdateImageElementStatus(element)) {
+        isChanged = true;
+        // this will signal collaborators to pull image data from server
+        // (using mutation instead of newElementWith otherwise it'd break
+        // in-progress dragging)
+        return newElementWith(element, { status: "saved" });
+      }
+      return element;
+    });
 
     if (isChanged) {
       this.collab.drawinkAPI.updateScene({
@@ -168,10 +153,7 @@ class Portal {
     };
 
     for (const syncableElement of syncableElements) {
-      this.broadcastedElementVersions.set(
-        syncableElement.id,
-        syncableElement.version,
-      );
+      this.broadcastedElementVersions.set(syncableElement.id, syncableElement.version);
     }
 
     this.queueFileUpload();
@@ -207,8 +189,7 @@ class Portal {
           socketId: this.socket.id as SocketId,
           pointer: payload.pointer,
           button: payload.button || "up",
-          selectedElementIds:
-            this.collab.drawinkAPI.getAppState().selectedElementIds,
+          selectedElementIds: this.collab.drawinkAPI.getAppState().selectedElementIds,
           username: this.collab.state.username,
         },
       };

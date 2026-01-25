@@ -1,8 +1,21 @@
 import {
-  Drawink,
-  LiveCollaborationTrigger,
-  TTDDialogTrigger,
+  APP_NAME,
+  EVENT,
+  THEME,
+  VERSION_TIMEOUT,
+  debounce,
+  getFrame,
+  getVersion,
+  // isRunningInIframe,
+  isDevEnv,
+  isTestEnv,
+  preventUnload,
+  resolvablePromise,
+} from "@drawink/common";
+import {
   CaptureUpdateAction,
+  Drawink,
+  TTDDialogTrigger,
   reconcileElements,
   useEditorInterface,
 } from "@drawink/drawink";
@@ -16,143 +29,108 @@ import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
 import { OverwriteConfirmDialog } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirm";
 import { openConfirmModal } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirmState";
 import { ShareableLinkDialog } from "@drawink/drawink/components/ShareableLinkDialog";
-import DropdownMenuItem from "@drawink/drawink/components/dropdownMenu/DropdownMenuItem";
 import Trans from "@drawink/drawink/components/Trans";
-import {
-  APP_NAME,
-  EVENT,
-  THEME,
-  VERSION_TIMEOUT,
-  debounce,
-  getVersion,
-  getFrame,
-  isTestEnv,
-  preventUnload,
-  resolvablePromise,
-  // isRunningInIframe,
-  isDevEnv,
-} from "@drawink/common";
-import polyfill from "@drawink/drawink/polyfill";
-import { useCallback, useEffect, useRef, useState } from "react";
+import DropdownMenuItem from "@drawink/drawink/components/dropdownMenu/DropdownMenuItem";
 import { loadFromBlob } from "@drawink/drawink/data/blob";
 import { useCallbackRefState } from "@drawink/drawink/hooks/useCallbackRefState";
 import { t } from "@drawink/drawink/i18n";
+import polyfill from "@drawink/drawink/polyfill";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
-  GithubIcon,
-  XBrandIcon,
   DiscordIcon,
   ExcalLogo,
-  usersIcon,
+  GithubIcon,
+  XBrandIcon,
   exportToPlus,
   share,
+  usersIcon,
   youtubeIcon,
 } from "@drawink/drawink/components/icons";
-import { isElementLink } from "@drawink/element";
+import { parseLibraryTokensFromUrl, useHandleLibrary } from "@drawink/drawink/data/library";
 import { restore, restoreAppState } from "@drawink/drawink/data/restore";
+import { isElementLink } from "@drawink/element";
 import { newElementWith } from "@drawink/element";
 import { isInitializedImageElement } from "@drawink/element";
 import clsx from "clsx";
-import {
-  parseLibraryTokensFromUrl,
-  useHandleLibrary,
-} from "@drawink/drawink/data/library";
 
+import type { ResolutionType } from "@drawink/common/utility-types";
+import type { ResolvablePromise } from "@drawink/common/utils";
 import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
 import type { RestoredDataState } from "@drawink/drawink/data/restore";
+import type {
+  AppState,
+  BinaryFiles,
+  DrawinkImperativeAPI,
+  DrawinkInitialDataState,
+  UIAppState,
+} from "@drawink/drawink/types";
 import type {
   FileId,
   NonDeletedDrawinkElement,
   OrderedDrawinkElement,
 } from "@drawink/element/types";
-import type {
-  AppState,
-  DrawinkImperativeAPI,
-  BinaryFiles,
-  DrawinkInitialDataState,
-  UIAppState,
-} from "@drawink/drawink/types";
-import type { ResolutionType } from "@drawink/common/utility-types";
-import type { ResolvablePromise } from "@drawink/common/utils";
 
 import CustomStats from "./CustomStats";
 import {
   Provider,
+  appJotaiStore,
   useAtom,
   useAtomValue,
   useAtomWithInitialValue,
-  appJotaiStore,
 } from "./app-jotai";
 import {
   FIREBASE_STORAGE_PREFIXES,
-  isDrawinkPlusSignedUser,
   STORAGE_KEYS,
   SYNC_BROWSER_TABS_TIMEOUT,
+  isDrawinkPlusSignedUser,
 } from "./app_constants";
-import Collab, {
-  collabAPIAtom,
-  isCollaboratingAtom,
-  isOfflineAtom,
-} from "./collab/Collab";
+import Collab, { collabAPIAtom, isCollaboratingAtom, isOfflineAtom } from "./collab/Collab";
 import { AppFooter } from "./components/AppFooter";
 import { AppMainMenu } from "./components/AppMainMenu";
 import { AppWelcomeScreen } from "./components/AppWelcomeScreen";
-import {
-  ExportToDrawinkPlus,
-  exportToDrawinkPlus,
-} from "./components/ExportToDrawinkPlus";
+import { ExportToDrawinkPlus, exportToDrawinkPlus } from "./components/ExportToDrawinkPlus";
 import { TopErrorBoundary } from "./components/TopErrorBoundary";
 
-import {
-  exportToBackend,
-  getCollaborationLinkData,
-  isCollaborationLink,
-  loadScene,
-} from "./data";
+import { exportToBackend, getCollaborationLinkData, isCollaborationLink, loadScene } from "./data";
 
 import { updateStaleImageStatuses } from "./data/FileManager";
-import {
-  importFromLocalStorage,
-  importUsernameFromLocalStorage,
-} from "./data/localStorage";
+import { importFromLocalStorage, importUsernameFromLocalStorage } from "./data/localStorage";
 
-import { loadFilesFromFirebase } from "./data/firebase";
-import {
-  LibraryIndexedDBAdapter,
-  LibraryLocalStorageMigrationAdapter,
-} from "./data/LocalStorageAdapter";
-import {
-  hybridStorageAdapter,
-  localStorageQuotaExceededAtom,
-} from "./data/HybridStorageAdapter";
-import { isBrowserStorageStateNewer } from "./data/tabSync";
-import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
-import { AuthDialog } from "./components/AuthDialog";
-import CollabError, { collabErrorIndicatorAtom } from "./collab/CollabError";
-import { useHandleAppTheme } from "./useHandleAppTheme";
+import { DrawinkPlusIframeExport } from "./DrawinkPlusIframeExport";
 import { getPreferredLanguage } from "./app-language/language-detector";
 import { useAppLangCode } from "./app-language/language-state";
+import CollabError, { collabErrorIndicatorAtom } from "./collab/CollabError";
+import { AIComponents } from "./components/AI";
+import { AuthDialog } from "./components/AuthDialog";
 import DebugCanvas, {
   debugRenderer,
   isVisualDebuggerEnabled,
   loadSavedDebugState,
 } from "./components/DebugCanvas";
-import { AIComponents } from "./components/AI";
-import { DrawinkPlusIframeExport } from "./DrawinkPlusIframeExport";
+import { hybridStorageAdapter, localStorageQuotaExceededAtom } from "./data/HybridStorageAdapter";
+import {
+  LibraryIndexedDBAdapter,
+  LibraryLocalStorageMigrationAdapter,
+} from "./data/LocalStorageAdapter";
+import { loadFilesFromFirebase } from "./data/firebase";
+import { isBrowserStorageStateNewer } from "./data/tabSync";
+import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
+import { useHandleAppTheme } from "./useHandleAppTheme";
 
 import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
-import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
-import { AppSidebar } from "./components/AppSidebar";
-import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
-import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
 import {
+  type AuthUser,
   authStateAtom,
   cloudEnabledAtom,
   syncStatusAtom,
-  type AuthUser,
 } from "@drawink/drawink/atoms/auth";
+import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
+import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
+import { AppSidebar } from "./components/AppSidebar";
+import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { firebaseAuth } from "./data/firebase";
 
 import type { CollabAPI } from "./collab/Collab";
@@ -186,15 +164,12 @@ let pwaEvent: BeforeInstallPromptEvent | null = null;
 //
 // Also note that it will fire only if certain heuristics are met (user has
 // used the app for some time, etc.)
-window.addEventListener(
-  "beforeinstallprompt",
-  (event: BeforeInstallPromptEvent) => {
-    // prevent Chrome <= 67 from automatically showing the prompt
-    event.preventDefault();
-    // cache for later use
-    pwaEvent = event;
-  },
-);
+window.addEventListener("beforeinstallprompt", (event: BeforeInstallPromptEvent) => {
+  // prevent Chrome <= 67 from automatically showing the prompt
+  event.preventDefault();
+  // cache for later use
+  pwaEvent = event;
+});
 
 let isSelfEmbedding = false;
 
@@ -234,9 +209,7 @@ const initializeScene = async (opts: {
 > => {
   const searchParams = new URLSearchParams(window.location.search);
   const id = searchParams.get("id");
-  const jsonBackendMatch = window.location.hash.match(
-    /^#json=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/,
-  );
+  const jsonBackendMatch = window.location.hash.match(/^#json=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/);
   const externalUrlMatch = window.location.hash.match(/^#url=(.*)$/);
 
   const localDataState = importFromLocalStorage();
@@ -257,11 +230,7 @@ const initializeScene = async (opts: {
       (await openConfirmModal(shareableLinkConfirmDialog))
     ) {
       if (jsonBackendMatch) {
-        scene = await loadScene(
-          jsonBackendMatch[1],
-          jsonBackendMatch[2],
-          localDataState,
-        );
+        scene = await loadScene(jsonBackendMatch[1], jsonBackendMatch[2], localDataState);
       }
       scene.scrollToContent = true;
       if (!roomLinkData) {
@@ -291,10 +260,7 @@ const initializeScene = async (opts: {
     try {
       const request = await fetch(window.decodeURIComponent(url));
       const data = await loadFromBlob(await request.blob(), null, null);
-      if (
-        !scene.elements.length ||
-        (await openConfirmModal(shareableLinkConfirmDialog))
-      ) {
+      if (!scene.elements.length || (await openConfirmModal(shareableLinkConfirmDialog))) {
         return { scene: data, isExternalScene };
       }
     } catch (error: any) {
@@ -345,11 +311,11 @@ const initializeScene = async (opts: {
   } else if (scene) {
     return isExternalScene && jsonBackendMatch
       ? {
-        scene,
-        isExternalScene,
-        id: jsonBackendMatch[1],
-        key: jsonBackendMatch[2],
-      }
+          scene,
+          isExternalScene,
+          id: jsonBackendMatch[1],
+          key: jsonBackendMatch[2],
+        }
       : { scene, isExternalScene: false };
   }
   return { scene: null, isExternalScene: false };
@@ -372,8 +338,7 @@ const DrawinkWrapper = () => {
     promise: ResolvablePromise<DrawinkInitialDataState | null>;
   }>({ promise: null! });
   if (!initialStatePromiseRef.current.promise) {
-    initialStatePromiseRef.current.promise =
-      resolvablePromise<DrawinkInitialDataState | null>();
+    initialStatePromiseRef.current.promise = resolvablePromise<DrawinkInitialDataState | null>();
   }
 
   const debugCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -386,8 +351,7 @@ const DrawinkWrapper = () => {
     }, VERSION_TIMEOUT);
   }, []);
 
-  const [drawinkAPI, drawinkRefCallback] =
-    useCallbackRefState<DrawinkImperativeAPI>();
+  const [drawinkAPI, drawinkRefCallback] = useCallbackRefState<DrawinkImperativeAPI>();
 
   const [, setShareDialogState] = useAtom(shareDialogStateAtom);
   const [collabAPI] = useAtom(collabAPIAtom);
@@ -477,10 +441,7 @@ const DrawinkWrapper = () => {
       return;
     }
 
-    const loadImages = (
-      data: ResolutionType<typeof initializeScene>,
-      isInitialLoad = false,
-    ) => {
+    const loadImages = (data: ResolutionType<typeof initializeScene>, isInitialLoad = false) => {
       if (!data.scene) {
         return;
       }
@@ -553,10 +514,7 @@ const DrawinkWrapper = () => {
       event.preventDefault();
       const libraryUrlTokens = parseLibraryTokensFromUrl();
       if (!libraryUrlTokens) {
-        if (
-          collabAPI?.isCollaborating() &&
-          !isCollaborationLink(window.location.href)
-        ) {
+        if (collabAPI?.isCollaborating() && !isCollaborationLink(window.location.href)) {
           collabAPI.stopCollaboration(false);
         }
         drawinkAPI.updateScene({ appState: { isLoading: true } });
@@ -578,10 +536,7 @@ const DrawinkWrapper = () => {
       if (isTestEnv()) {
         return;
       }
-      if (
-        !document.hidden &&
-        ((collabAPI && !collabAPI.isCollaborating()) || isCollabDisabled)
-      ) {
+      if (!document.hidden && ((collabAPI && !collabAPI.isCollaborating()) || isCollabDisabled)) {
         // don't sync if local state is newer or identical to browser state
         if (isBrowserStorageStateNewer(STORAGE_KEYS.VERSION_DATA_STATE)) {
           const localDataState = importFromLocalStorage();
@@ -641,10 +596,7 @@ const DrawinkWrapper = () => {
       if (event.type === EVENT.BLUR || document.hidden) {
         hybridStorageAdapter.flushSave();
       }
-      if (
-        event.type === EVENT.VISIBILITY_CHANGE ||
-        event.type === EVENT.FOCUS
-      ) {
+      if (event.type === EVENT.VISIBILITY_CHANGE || event.type === EVENT.FOCUS) {
         syncData();
       }
     };
@@ -659,11 +611,7 @@ const DrawinkWrapper = () => {
       window.removeEventListener(EVENT.UNLOAD, onUnload, false);
       window.removeEventListener(EVENT.BLUR, visibilityChange, false);
       window.removeEventListener(EVENT.FOCUS, visibilityChange, false);
-      document.removeEventListener(
-        EVENT.VISIBILITY_CHANGE,
-        visibilityChange,
-        false,
-      );
+      document.removeEventListener(EVENT.VISIBILITY_CHANGE, visibilityChange, false);
     };
   }, [isCollabDisabled, collabAPI, drawinkAPI, setLangCode]);
 
@@ -678,9 +626,7 @@ const DrawinkWrapper = () => {
         if (import.meta.env.VITE_APP_DISABLE_PREVENT_UNLOAD !== "true") {
           preventUnload(event);
         } else {
-          console.warn(
-            "preventing unload disabled (VITE_APP_DISABLE_PREVENT_UNLOAD)",
-          );
+          console.warn("preventing unload disabled (VITE_APP_DISABLE_PREVENT_UNLOAD)");
         }
       }
     };
@@ -722,18 +668,16 @@ const DrawinkWrapper = () => {
         .map((el: any) => el.fileId);
 
       if (fileIds.length > 0) {
-        hybridStorageAdapter.fileStorage
-          .getFiles(fileIds)
-          .then(({ loadedFiles, erroredFiles }) => {
-            if (loadedFiles.length) {
-              drawinkAPI.addFiles(loadedFiles);
-            }
-            updateStaleImageStatuses({
-              drawinkAPI,
-              erroredFiles,
-              elements: drawinkAPI.getSceneElementsIncludingDeleted(),
-            });
+        hybridStorageAdapter.fileStorage.getFiles(fileIds).then(({ loadedFiles, erroredFiles }) => {
+          if (loadedFiles.length) {
+            drawinkAPI.addFiles(loadedFiles);
+          }
+          updateStaleImageStatuses({
+            drawinkAPI,
+            erroredFiles,
+            elements: drawinkAPI.getSceneElementsIncludingDeleted(),
           });
+        });
       }
     };
 
@@ -759,20 +703,16 @@ const DrawinkWrapper = () => {
         if (drawinkAPI) {
           let didChange = false;
 
-          const elements = drawinkAPI
-            .getSceneElementsIncludingDeleted()
-            .map((element) => {
-              if (
-                hybridStorageAdapter.fileStorage.shouldUpdateImageElementStatus(element)
-              ) {
-                const newElement = newElementWith(element, { status: "saved" });
-                if (newElement !== element) {
-                  didChange = true;
-                }
-                return newElement;
+          const elements = drawinkAPI.getSceneElementsIncludingDeleted().map((element) => {
+            if (hybridStorageAdapter.fileStorage.shouldUpdateImageElementStatus(element)) {
+              const newElement = newElementWith(element, { status: "saved" });
+              if (newElement !== element) {
+                didChange = true;
               }
-              return element;
-            });
+              return newElement;
+            }
+            return element;
+          });
 
           if (didChange) {
             drawinkAPI.updateScene({
@@ -786,18 +726,11 @@ const DrawinkWrapper = () => {
 
     // Render the debug scene if the debug canvas is available
     if (debugCanvasRef.current && drawinkAPI) {
-      debugRenderer(
-        debugCanvasRef.current,
-        appState,
-        elements,
-        window.devicePixelRatio,
-      );
+      debugRenderer(debugCanvasRef.current, appState, elements, window.devicePixelRatio);
     }
   };
 
-  const [latestShareableLink, setLatestShareableLink] = useState<string | null>(
-    null,
-  );
+  const [latestShareableLink, setLatestShareableLink] = useState<string | null>(null);
 
   const onExportToBackend = async (
     exportedElements: readonly NonDeletedDrawinkElement[],
@@ -888,7 +821,8 @@ const DrawinkWrapper = () => {
     keywords: ["plus", "cloud", "server"],
     perform: () => {
       window.open(
-        `${import.meta.env.VITE_APP_PLUS_LP
+        `${
+          import.meta.env.VITE_APP_PLUS_LP
         }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
@@ -899,18 +833,11 @@ const DrawinkWrapper = () => {
     category: DEFAULT_CATEGORIES.links,
     predicate: true,
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
-    keywords: [
-      "drawink",
-      "plus",
-      "cloud",
-      "server",
-      "signin",
-      "login",
-      "signup",
-    ],
+    keywords: ["drawink", "plus", "cloud", "server", "signin", "login", "signup"],
     perform: () => {
       window.open(
-        `${import.meta.env.VITE_APP_PLUS_APP
+        `${
+          import.meta.env.VITE_APP_PLUS_APP
         }?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
@@ -937,27 +864,27 @@ const DrawinkWrapper = () => {
               onExportToBackend,
               renderCustomUI: drawinkAPI
                 ? (elements, appState, files) => {
-                  return (
-                    <ExportToDrawinkPlus
-                      elements={elements}
-                      appState={appState}
-                      files={files}
-                      name={drawinkAPI.getName()}
-                      onError={(error) => {
-                        drawinkAPI?.updateScene({
-                          appState: {
-                            errorMessage: error.message,
-                          },
-                        });
-                      }}
-                      onSuccess={() => {
-                        drawinkAPI.updateScene({
-                          appState: { openDialog: null },
-                        });
-                      }}
-                    />
-                  );
-                }
+                    return (
+                      <ExportToDrawinkPlus
+                        elements={elements}
+                        appState={appState}
+                        files={files}
+                        name={drawinkAPI.getName()}
+                        onError={(error) => {
+                          drawinkAPI?.updateScene({
+                            appState: {
+                              errorMessage: error.message,
+                            },
+                          });
+                        }}
+                        onSuccess={() => {
+                          drawinkAPI.updateScene({
+                            appState: { openDialog: null },
+                          });
+                        }}
+                      />
+                    );
+                  }
                 : undefined,
             },
           },
@@ -979,9 +906,7 @@ const DrawinkWrapper = () => {
               <DropdownMenuItem
                 data-testid="share-button"
                 className="share-button"
-                onSelect={() =>
-                  setShareDialogState({ isOpen: true, type: "share" })
-                }
+                onSelect={() => setShareDialogState({ isOpen: true, type: "share" })}
                 icon={share}
               >
                 {null}
@@ -1033,14 +958,10 @@ const DrawinkWrapper = () => {
 
         <TTDDialogTrigger />
         {isCollaborating && isOffline && (
-          <div className="alertalert--warning">
-            {t("alerts.collabOfflineWarning")}
-          </div>
+          <div className="alertalert--warning">{t("alerts.collabOfflineWarning")}</div>
         )}
         {localStorageQuotaExceeded && (
-          <div className="alert alert--danger">
-            {t("alerts.localStorageQuotaExceeded")}
-          </div>
+          <div className="alert alert--danger">{t("alerts.localStorageQuotaExceeded")}</div>
         )}
         {latestShareableLink && (
           <ShareableLinkDialog
@@ -1073,9 +994,7 @@ const DrawinkWrapper = () => {
         <AppSidebar />
 
         {errorMessage && (
-          <ErrorDialog onClose={() => setErrorMessage("")}>
-            {errorMessage}
-          </ErrorDialog>
+          <ErrorDialog onClose={() => setErrorMessage("")}>{errorMessage}</ErrorDialog>
         )}
 
         <CommandPalette
@@ -1083,14 +1002,7 @@ const DrawinkWrapper = () => {
             {
               label: t("labels.liveCollaboration"),
               category: DEFAULT_CATEGORIES.app,
-              keywords: [
-                "team",
-                "multiplayer",
-                "share",
-                "public",
-                "session",
-                "invite",
-              ],
+              keywords: ["team", "multiplayer", "share", "public", "session", "invite"],
               icon: usersIcon,
               perform: () => {
                 setShareDialogState({
@@ -1103,15 +1015,7 @@ const DrawinkWrapper = () => {
               label: t("roomDialog.button_stopSession"),
               category: DEFAULT_CATEGORIES.app,
               predicate: () => !!collabAPI?.isCollaborating(),
-              keywords: [
-                "stop",
-                "session",
-                "end",
-                "leave",
-                "close",
-                "exit",
-                "collaboration",
-              ],
+              keywords: ["stop", "session", "end", "leave", "close", "exit", "collaboration"],
               perform: () => {
                 if (collabAPI) {
                   collabAPI.stopCollaboration();
@@ -1146,21 +1050,9 @@ const DrawinkWrapper = () => {
               icon: GithubIcon,
               category: DEFAULT_CATEGORIES.links,
               predicate: true,
-              keywords: [
-                "issues",
-                "bugs",
-                "requests",
-                "report",
-                "features",
-                "social",
-                "community",
-              ],
+              keywords: ["issues", "bugs", "requests", "report", "features", "social", "community"],
               perform: () => {
-                window.open(
-                  "https://github.com/drawink/drawink",
-                  "_blank",
-                  "noopener noreferrer",
-                );
+                window.open("https://github.com/drawink/drawink", "_blank", "noopener noreferrer");
               },
             },
             {
@@ -1170,11 +1062,7 @@ const DrawinkWrapper = () => {
               predicate: true,
               keywords: ["twitter", "contact", "social", "community"],
               perform: () => {
-                window.open(
-                  "https://x.com/drawink",
-                  "_blank",
-                  "noopener noreferrer",
-                );
+                window.open("https://x.com/drawink", "_blank", "noopener noreferrer");
               },
             },
             {
@@ -1195,11 +1083,7 @@ const DrawinkWrapper = () => {
                 "community",
               ],
               perform: () => {
-                window.open(
-                  "https://discord.gg/UexuTaE",
-                  "_blank",
-                  "noopener noreferrer",
-                );
+                window.open("https://discord.gg/UexuTaE", "_blank", "noopener noreferrer");
               },
             },
             {
@@ -1209,20 +1093,16 @@ const DrawinkWrapper = () => {
               predicate: true,
               keywords: ["features", "tutorials", "howto", "help", "community"],
               perform: () => {
-                window.open(
-                  "https://youtube.com/@drawink",
-                  "_blank",
-                  "noopener noreferrer",
-                );
+                window.open("https://youtube.com/@drawink", "_blank", "noopener noreferrer");
               },
             },
             ...(isDrawinkPlusSignedUser
               ? [
-                {
-                  ...DrawinkPlusAppCommand,
-                  label: "Sign in / Go to Drawink Pro",
-                },
-              ]
+                  {
+                    ...DrawinkPlusAppCommand,
+                    label: "Sign in / Go to Drawink Pro",
+                  },
+                ]
               : [DrawinkPlusCommand, DrawinkPlusAppCommand]),
 
             {
@@ -1245,9 +1125,7 @@ const DrawinkWrapper = () => {
             {
               ...CommandPalette.defaultItems.toggleTheme,
               perform: () => {
-                setAppTheme(
-                  editorTheme === THEME.DARK ? THEME.LIGHT : THEME.DARK,
-                );
+                setAppTheme(editorTheme === THEME.DARK ? THEME.LIGHT : THEME.DARK);
               },
             },
             {
@@ -1280,8 +1158,7 @@ const DrawinkWrapper = () => {
 };
 
 const DrawinkApp = () => {
-  const isCloudExportWindow =
-    window.location.pathname === "/drawink-plus-export";
+  const isCloudExportWindow = window.location.pathname === "/drawink-plus-export";
   if (isCloudExportWindow) {
     return <DrawinkPlusIframeExport />;
   }

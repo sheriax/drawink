@@ -4,28 +4,28 @@
  * The main storage interface for Drawink that orchestrates local and cloud storage.
  * Follows a local-first approach: always reads from local first for instant response,
  * then syncs with cloud in the background when authenticated.
- * 
+ *
  * This is the ONLY file that calls LocalStorageAdapter and CloudStorageAdapter.
  */
 
 import type {
-  StorageAdapter,
   BoardContent,
-  Workspace,
+  StorageAdapter,
   SyncStatus,
+  Workspace,
 } from "@drawink/drawink/storage/types";
-import type { Board, BoardsAPI, AppState, BinaryFiles } from "@drawink/drawink/types";
+import type { AppState, BinaryFiles, Board, BoardsAPI } from "@drawink/drawink/types";
 import type { DrawinkElement } from "@drawink/element/types";
 
-import { LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
 import { CloudStorageAdapter } from "./CloudStorageAdapter";
+import { type LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
 import { SyncEngine } from "./SyncEngine";
 
 /**
  * HybridStorageAdapter orchestrates between local and cloud storage.
  * - For anonymous users: only local storage is used
  * - For authenticated users: local-first with background cloud sync
- * 
+ *
  * Also implements BoardsAPI for use as the boards atom provider.
  */
 export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {

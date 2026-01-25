@@ -8,35 +8,19 @@
  * - Library storage (IndexedDB)
  */
 
-import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
 import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@drawink/common";
+import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
 import { getNonDeletedElements } from "@drawink/element";
-import {
-  createStore,
-  entries,
-  del,
-  getMany,
-  get,
-  set,
-  setMany,
-} from "idb-keyval";
+import { createStore, del, entries, get, getMany, set, setMany } from "idb-keyval";
 
 import { appJotaiStore, atom } from "drawink-app/app-jotai";
 
-import type { DrawinkElement, FileId } from "@drawink/element/types";
-import type {
-  Board,
-  AppState,
-  BinaryFiles,
-  BinaryFileData,
-} from "@drawink/drawink/types";
-import type {
-  StorageAdapter,
-  BoardContent,
-} from "@drawink/drawink/storage/types";
+import type { MaybePromise } from "@drawink/common/utility-types";
 import type { LibraryPersistedData } from "@drawink/drawink/data/library";
 import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { MaybePromise } from "@drawink/common/utility-types";
+import type { BoardContent, StorageAdapter } from "@drawink/drawink/storage/types";
+import type { AppState, BinaryFileData, BinaryFiles, Board } from "@drawink/drawink/types";
+import type { DrawinkElement, FileId } from "@drawink/element/types";
 
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
 import { FileManager } from "./FileManager";
@@ -68,8 +52,7 @@ class LocalFileManager extends FileManager {
     await entries(filesStore).then((entries) => {
       for (const [id, imageData] of entries as [FileId, BinaryFileData][]) {
         if (
-          (!imageData.lastRetrieved ||
-            Date.now() - imageData.lastRetrieved > 24 * 3600 * 1000) &&
+          (!imageData.lastRetrieved || Date.now() - imageData.lastRetrieved > 24 * 3600 * 1000) &&
           !opts.currentFileIds.includes(id as FileId)
         ) {
           del(id, filesStore);
@@ -106,35 +89,33 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   fileStorage = new LocalFileManager({
     getFiles: (ids) => {
-      return getMany(ids, filesStore).then(
-        async (filesData: (BinaryFileData | undefined)[]) => {
-          const loadedFiles: BinaryFileData[] = [];
-          const erroredFiles = new Map<FileId, true>();
-          const filesToSave: [FileId, BinaryFileData][] = [];
+      return getMany(ids, filesStore).then(async (filesData: (BinaryFileData | undefined)[]) => {
+        const loadedFiles: BinaryFileData[] = [];
+        const erroredFiles = new Map<FileId, true>();
+        const filesToSave: [FileId, BinaryFileData][] = [];
 
-          filesData.forEach((data, index) => {
-            const id = ids[index];
-            if (data) {
-              const _data: BinaryFileData = {
-                ...data,
-                lastRetrieved: Date.now(),
-              };
-              filesToSave.push([id, _data]);
-              loadedFiles.push(_data);
-            } else {
-              erroredFiles.set(id, true);
-            }
-          });
-
-          try {
-            setMany(filesToSave, filesStore);
-          } catch (error) {
-            console.warn(error);
+        filesData.forEach((data, index) => {
+          const id = ids[index];
+          if (data) {
+            const _data: BinaryFileData = {
+              ...data,
+              lastRetrieved: Date.now(),
+            };
+            filesToSave.push([id, _data]);
+            loadedFiles.push(_data);
+          } else {
+            erroredFiles.set(id, true);
           }
+        });
 
-          return { loadedFiles, erroredFiles };
-        },
-      );
+        try {
+          setMany(filesToSave, filesStore);
+        } catch (error) {
+          console.warn(error);
+        }
+
+        return { loadedFiles, erroredFiles };
+      });
     },
     async saveFiles({ addedFiles }) {
       const savedFiles = new Map<FileId, BinaryFileData>();
@@ -228,13 +209,8 @@ export class LocalStorageAdapter implements StorageAdapter {
   /**
    * Save scene data to localStorage
    */
-  saveSceneData = (
-    elements: readonly DrawinkElement[],
-    appState: AppState,
-  ) => {
-    const localStorageQuotaExceeded = appJotaiStore.get(
-      localStorageQuotaExceededAtom,
-    );
+  saveSceneData = (elements: readonly DrawinkElement[], appState: AppState) => {
+    const localStorageQuotaExceeded = appJotaiStore.get(localStorageQuotaExceededAtom);
     try {
       const _appState = clearAppStateForLocalStorage(appState);
 
@@ -245,9 +221,7 @@ export class LocalStorageAdapter implements StorageAdapter {
         _appState.openSidebar = null;
       }
 
-      const currentBoardId = localStorage.getItem(
-        STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
-      );
+      const currentBoardId = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
       const elementsKey = currentBoardId
         ? `drawink-board-${currentBoardId}-elements`
         : STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS;
@@ -255,10 +229,7 @@ export class LocalStorageAdapter implements StorageAdapter {
         ? `drawink-board-${currentBoardId}-state`
         : STORAGE_KEYS.LOCAL_STORAGE_APP_STATE;
 
-      localStorage.setItem(
-        elementsKey,
-        JSON.stringify(getNonDeletedElements(elements)),
-      );
+      localStorage.setItem(elementsKey, JSON.stringify(getNonDeletedElements(elements)));
       localStorage.setItem(stateKey, JSON.stringify(_appState));
       updateBrowserStateVersion(STORAGE_KEYS.VERSION_DATA_STATE);
       if (localStorageQuotaExceeded) {
@@ -305,10 +276,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       lastModified: Date.now(),
     };
     boards.push(newBoard);
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-      JSON.stringify(boards),
-    );
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
     return newBoard.id;
   }
 
@@ -330,10 +298,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       lastModified: Date.now(),
     };
     boards.push(newBoard);
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-      JSON.stringify(boards),
-    );
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
   }
 
   /**
@@ -344,10 +309,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     const board = boards.find((b) => b.id === id);
     if (board) {
       Object.assign(board, data, { lastModified: Date.now() });
-      localStorage.setItem(
-        STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-        JSON.stringify(boards),
-      );
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
     }
   }
 
@@ -357,10 +319,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   async deleteBoard(id: string): Promise<void> {
     const boards = await this.getBoards();
     const newBoards = boards.filter((b) => b.id !== id);
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-      JSON.stringify(newBoards),
-    );
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(newBoards));
     // Clean up associated data
     localStorage.removeItem(`drawink-board-${id}-elements`);
     localStorage.removeItem(`drawink-board-${id}-state`);
@@ -418,7 +377,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     try {
       const savedVersion = localStorage.getItem(versionKey);
       if (savedVersion) {
-        version = parseInt(savedVersion, 10) || 0;
+        version = Number.parseInt(savedVersion, 10) || 0;
       }
     } catch (error) {
       console.error("Failed to load board version", error);
@@ -448,10 +407,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       const board = boards.find((b) => b.id === boardId);
       if (board) {
         board.lastModified = Date.now();
-        localStorage.setItem(
-          STORAGE_KEYS.LOCAL_STORAGE_BOARDS,
-          JSON.stringify(boards),
-        );
+        localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
       }
     } catch (error) {
       console.error("Failed to save board content", error);
@@ -503,10 +459,7 @@ export class LibraryIndexedDBAdapter {
   private static key = "libraryData";
 
   static async load() {
-    const IDBData = await get<LibraryPersistedData>(
-      LibraryIndexedDBAdapter.key,
-      libraryStore,
-    );
+    const IDBData = await get<LibraryPersistedData>(LibraryIndexedDBAdapter.key, libraryStore);
     return IDBData || null;
   }
 
@@ -520,12 +473,9 @@ export class LibraryIndexedDBAdapter {
  */
 export class LibraryLocalStorageMigrationAdapter {
   static load() {
-    const LSData = localStorage.getItem(
-      STORAGE_KEYS.__LEGACY_LOCAL_STORAGE_LIBRARY,
-    );
+    const LSData = localStorage.getItem(STORAGE_KEYS.__LEGACY_LOCAL_STORAGE_LIBRARY);
     if (LSData != null) {
-      const libraryItems: ImportedDataState["libraryItems"] =
-        JSON.parse(LSData);
+      const libraryItems: ImportedDataState["libraryItems"] = JSON.parse(LSData);
       if (libraryItems) {
         return { libraryItems };
       }

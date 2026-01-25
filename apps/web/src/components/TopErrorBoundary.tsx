@@ -9,10 +9,7 @@ interface TopErrorBoundaryState {
   localStorage: string;
 }
 
-export class TopErrorBoundary extends React.Component<
-  any,
-  TopErrorBoundaryState
-> {
+export class TopErrorBoundary extends React.Component<any, TopErrorBoundaryState> {
   state: TopErrorBoundaryState = {
     hasError: false,
     sentryEventId: "",
@@ -56,9 +53,7 @@ export class TopErrorBoundary extends React.Component<
     let body = "";
     try {
       const templateStrFn = (
-        await import(
-          /* webpackChunkName: "bug-issue-template" */ "../bug-issue-template"
-        )
+        await import(/* webpackChunkName: "bug-issue-template" */ "../bug-issue-template")
       ).default;
       body = encodeURIComponent(templateStrFn(this.state.sentryEventId));
     } catch (error: any) {
@@ -79,9 +74,7 @@ export class TopErrorBoundary extends React.Component<
           <div className="ErrorSplash-paragraph bigger align-center">
             <Trans
               i18nKey="errorSplash.headingMain"
-              button={(el) => (
-                <button onClick={() => window.location.reload()}>{el}</button>
-              )}
+              button={(el) => <button onClick={() => window.location.reload()}>{el}</button>}
             />
           </div>
           <div className="ErrorSplash-paragraph align-center">
@@ -122,9 +115,7 @@ export class TopErrorBoundary extends React.Component<
             <div className="ErrorSplash-paragraph">
               <Trans
                 i18nKey="errorSplash.openIssueMessage"
-                button={(el) => (
-                  <button onClick={() => this.createGithubIssue()}>{el}</button>
-                )}
+                button={(el) => <button onClick={() => this.createGithubIssue()}>{el}</button>}
               />
             </div>
             <div className="ErrorSplash-paragraph">

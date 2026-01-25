@@ -1,7 +1,7 @@
-import React from "react";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
-import initialData from "@site/src/initialData";
 import { useColorMode } from "@docusaurus/theme-common";
+import initialData from "@site/src/initialData";
+import React from "react";
 
 import "@drawink/drawink/index.css";
 
@@ -11,8 +11,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 const Drawink = React.forwardRef((props, ref) => {
   if (!window.EXCALIDRAW_ASSET_PATH) {
-    window.EXCALIDRAW_ASSET_PATH =
-      "https://esm.sh/@drawink/drawink@0.18.0/dist/prod/";
+    window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@drawink/drawink@0.18.0/dist/prod/";
   }
 
   const { colorMode } = useColorMode();

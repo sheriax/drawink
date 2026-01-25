@@ -2,8 +2,8 @@ import { base64urlToString } from "@drawink/drawink/data/encode";
 import { DrawinkError } from "@drawink/drawink/errors";
 import { useLayoutEffect, useRef } from "react";
 
-import type { FileId, OrderedDrawinkElement } from "@drawink/element/types";
 import type { AppState, BinaryFileData } from "@drawink/drawink/types";
+import type { FileId, OrderedDrawinkElement } from "@drawink/element/types";
 
 import { STORAGE_KEYS } from "./app_constants";
 import { hybridStorageAdapter } from "./data/HybridStorageAdapter";
@@ -54,10 +54,7 @@ const parseSceneData = async ({
       throw new DrawinkError("Scene is empty, nothing to export.");
     }
 
-    const appState = JSON.parse(rawAppStateString) as Pick<
-      AppState,
-      "viewBackgroundColor"
-    >;
+    const appState = JSON.parse(rawAppStateString) as Pick<AppState, "viewBackgroundColor">;
 
     const fileIds = elements.reduce((acc, el) => {
       if ("fileId" in el && el.fileId) {
@@ -75,9 +72,7 @@ const parseSceneData = async ({
       files,
     };
   } catch (error: any) {
-    throw error instanceof DrawinkError
-      ? error
-      : new DrawinkError("Failed to parse scene data.");
+    throw error instanceof DrawinkError ? error : new DrawinkError("Failed to parse scene data.");
   }
 };
 
@@ -104,14 +99,10 @@ const verifyJWT = async ({
     const decodedSignature = base64urlToString(signature);
 
     const data = `${header}.${payload}`;
-    const signatureArrayBuffer = Uint8Array.from(decodedSignature, (c) =>
-      c.charCodeAt(0),
-    );
+    const signatureArrayBuffer = Uint8Array.from(decodedSignature, (c) => c.charCodeAt(0));
 
     const keyData = publicKey.replace(/-----\w+ PUBLIC KEY-----/g, "");
-    const keyArrayBuffer = Uint8Array.from(atob(keyData), (c) =>
-      c.charCodeAt(0),
-    );
+    const keyArrayBuffer = Uint8Array.from(atob(keyData), (c) => c.charCodeAt(0));
 
     const key = await crypto.subtle.importKey(
       "spki",
@@ -171,12 +162,8 @@ export const DrawinkPlusIframeExport = () => {
           }
 
           const parsedSceneData: MESSAGE_SCENE_DATA = await parseSceneData({
-            rawAppStateString: localStorage.getItem(
-              STORAGE_KEYS.LOCAL_STORAGE_APP_STATE,
-            ),
-            rawElementsString: localStorage.getItem(
-              STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS,
-            ),
+            rawAppStateString: localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_APP_STATE),
+            rawElementsString: localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS),
           });
 
           event.source!.postMessage(parsedSceneData, {
@@ -185,10 +172,7 @@ export const DrawinkPlusIframeExport = () => {
         } catch (error) {
           const responseData: MESSAGE_ERROR = {
             type: "ERROR",
-            message:
-              error instanceof DrawinkError
-                ? error.message
-                : "Failed to export scene data",
+            message: error instanceof DrawinkError ? error.message : "Failed to export scene data",
           };
           event.source!.postMessage(responseData, {
             targetOrigin: DRAWINK_PLUS_ORIGIN,

@@ -1,11 +1,6 @@
 import { defaultLang } from "@drawink/drawink/i18n";
 import { UI } from "@drawink/drawink/tests/helpers/ui";
-import {
-  screen,
-  fireEvent,
-  waitFor,
-  render,
-} from "@drawink/drawink/tests/test-utils";
+import { fireEvent, render, screen, waitFor } from "@drawink/drawink/tests/test-utils";
 
 import DrawinkApp from "../App";
 

@@ -1,5 +1,5 @@
-import { useI18n, languages } from "@drawink/drawink/i18n";
-import React from "react";
+import { languages, useI18n } from "@drawink/drawink/i18n";
+import type React from "react";
 
 import { useSetAtom } from "../app-jotai";
 

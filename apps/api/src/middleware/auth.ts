@@ -3,7 +3,7 @@
  * Will integrate with Clerk in Phase 2
  */
 
-import type { Context } from 'hono';
+import type { Context } from "hono";
 
 export interface AuthContext {
   userId?: string;

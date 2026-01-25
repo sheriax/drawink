@@ -1,21 +1,21 @@
 import { CaptureUpdateAction } from "@drawink/drawink";
 import { compressData } from "@drawink/drawink/data/encode";
+import { t } from "@drawink/drawink/i18n";
 import { newElementWith } from "@drawink/element";
 import { isInitializedImageElement } from "@drawink/element";
-import { t } from "@drawink/drawink/i18n";
 
+import type {
+  BinaryFileData,
+  BinaryFileMetadata,
+  BinaryFiles,
+  DrawinkImperativeAPI,
+} from "@drawink/drawink/types";
 import type {
   DrawinkElement,
   DrawinkImageElement,
   FileId,
   InitializedDrawinkImageElement,
 } from "@drawink/element/types";
-import type {
-  BinaryFileData,
-  BinaryFileMetadata,
-  DrawinkImperativeAPI,
-  BinaryFiles,
-} from "@drawink/drawink/types";
 
 type FileVersion = Required<BinaryFileData>["version"];
 
@@ -27,10 +27,7 @@ export class FileManager {
   private savingFiles = new Map<DrawinkImageElement["fileId"], FileVersion>();
   /* files already saved to persistent storage */
   private savedFiles = new Map<DrawinkImageElement["fileId"], FileVersion>();
-  private erroredFiles_save = new Map<
-    DrawinkImageElement["fileId"],
-    FileVersion
-  >();
+  private erroredFiles_save = new Map<DrawinkImageElement["fileId"], FileVersion>();
 
   private _getFiles;
   private _saveFiles;
@@ -68,8 +65,7 @@ export class FileManager {
   isFileSavedOrBeingSaved = (file: BinaryFileData) => {
     const fileVersion = this.getFileVersion(file);
     return (
-      this.savedFiles.get(file.id) === fileVersion ||
-      this.savingFiles.get(file.id) === fileVersion
+      this.savedFiles.get(file.id) === fileVersion || this.savingFiles.get(file.id) === fileVersion
     );
   };
 
@@ -87,8 +83,7 @@ export class FileManager {
     const addedFiles: Map<FileId, BinaryFileData> = new Map();
 
     for (const element of elements) {
-      const fileData =
-        isInitializedImageElement(element) && files[element.fileId];
+      const fileData = isInitializedImageElement(element) && files[element.fileId];
 
       if (
         fileData &&
@@ -250,19 +245,14 @@ export const updateStaleImageStatuses = (params: {
     return;
   }
   params.drawinkAPI.updateScene({
-    elements: params.drawinkAPI
-      .getSceneElementsIncludingDeleted()
-      .map((element) => {
-        if (
-          isInitializedImageElement(element) &&
-          params.erroredFiles.has(element.fileId)
-        ) {
-          return newElementWith(element, {
-            status: "error",
-          });
-        }
-        return element;
-      }),
+    elements: params.drawinkAPI.getSceneElementsIncludingDeleted().map((element) => {
+      if (isInitializedImageElement(element) && params.erroredFiles.has(element.fileId)) {
+        return newElementWith(element, {
+          status: "error",
+        });
+      }
+      return element;
+    }),
     captureUpdate: CaptureUpdateAction.NEVER,
   });
 };
