@@ -91,6 +91,7 @@ import { AppMainMenu } from "./components/AppMainMenu";
 import { AppWelcomeScreen } from "./components/AppWelcomeScreen";
 import { ExportToDrawinkPlus, exportToDrawinkPlus } from "./components/ExportToDrawinkPlus";
 import { TopErrorBoundary } from "./components/TopErrorBoundary";
+import { OrganizationSelector } from "./components/OrganizationSelector";
 
 import { exportToBackend, getCollaborationLinkData, isCollaborationLink, loadScene } from "./data";
 
@@ -915,6 +916,10 @@ const DrawinkWrapper = () => {
               )}
 
               {collabError.message && <CollabError collabError={collabError} />}
+
+              {/* Organization Selector */}
+              {!isMobile && <OrganizationSelector />}
+
               <DropdownMenuItem
                 data-testid="share-button"
                 className="share-button"
