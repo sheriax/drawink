@@ -42,16 +42,7 @@ app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
-    createContext: async ({ req }) => {
-      const userId = req.raw.headers.get("x-user-id") || undefined;
-      const userEmail = req.raw.headers.get("x-user-email") || null;
-      const userName = req.raw.headers.get("x-user-name") || null;
-
-      return {
-        userId,
-        user: userId ? { id: userId, email: userEmail, name: userName } : undefined,
-      };
-    },
+    createContext,
   }),
 );
 

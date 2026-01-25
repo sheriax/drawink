@@ -6,8 +6,15 @@
 // API types
 export * from './api';
 
-// Database types
+// Database shared types
 export * from './db';
 
 // Authentication types
 export * from './auth';
+
+// Domain types
+export * from './user';
+export * from './organization';
+export * from './project';
+export * from './board';
+export * from './template';

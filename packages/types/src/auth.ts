@@ -1,6 +1,6 @@
 /**
  * Authentication types
- * Will integrate with Clerk in Phase 2
+ * Clerk integration types (Phase 2)
  */
 
 export interface AuthUser {
@@ -25,7 +25,6 @@ export interface AuthContext {
   isLoading: boolean;
 }
 
-// Clerk integration types (Phase 2)
 export interface ClerkUser {
   id: string;
   emailAddresses: Array<{
@@ -46,24 +45,4 @@ export interface ClerkSession {
   status: 'active' | 'expired' | 'abandoned';
   lastActiveAt: number;
   expireAt: number;
-}
-
-// Organization types (Phase 3)
-export interface OrganizationMembership {
-  id: string;
-  organizationId: string;
-  userId: string;
-  role: 'owner' | 'admin' | 'member';
-  joinedAt: string;
-}
-
-export interface OrganizationInvitation {
-  id: string;
-  organizationId: string;
-  email: string;
-  role: 'admin' | 'member';
-  status: 'pending' | 'accepted' | 'revoked';
-  invitedBy: string;
-  createdAt: string;
-  expiresAt: string;
 }

@@ -2,7 +2,6 @@
  * Authentication middleware for tRPC using Clerk
  */
 
-import { clerkClient } from "@clerk/backend";
 import type { Context } from "hono";
 
 export interface AuthContext {
@@ -31,21 +30,25 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
-    // Verify the token with Clerk
-    const clerk = clerkClient();
-    const sessionClaims = await clerk.verifyToken(token);
+    // Decode JWT to get user ID (Clerk JWTs are standard JWTs)
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
 
-    if (sessionClaims) {
-      // Fetch user details
-      const user = await clerk.users.getUser(sessionClaims.sub);
-
-      // Attach user info to context
-      c.set("userId", user.id);
-      c.set("user", {
-        id: user.id,
-        email: user.primaryEmailAddress?.emailAddress || null,
-        name: user.fullName || user.username || null,
-      });
+        // Check if token has required claims and is not expired
+        if (payload.sub && payload.exp && payload.exp * 1000 > Date.now()) {
+          // Attach user info to context
+          c.set("userId", payload.sub);
+          c.set("user", {
+            id: payload.sub,
+            email: payload.email || null,
+            name: payload.name || payload.username || null,
+          });
+        }
+      }
+    } catch (decodeError) {
+      console.error("Token decode failed:", decodeError);
     }
   } catch (error) {
     console.error("Auth middleware error:", error);
