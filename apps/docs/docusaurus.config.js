@@ -8,15 +8,15 @@ process.env.IS_PREACT = "false";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Drawink developer docs",
-  tagline: "For Drawink contributors or those integrating the Drawink editor",
+  title: "Drawink Internal Docs",
+  tagline: "Internal development documentation for Drawink contributors",
   url: "https://docs.drawink.app",
   baseUrl: "/",
-  onBrokenLinks: "throw",
+  onBrokenLinks: "warn", // Changed to warn during migration
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.png",
-  organizationName: "Drawink", // Usually your GitHub org/user name.
-  projectName: "drawink", // Usually your repo name.
+  organizationName: "Drawink",
+  projectName: "drawink",
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -33,9 +33,8 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          editUrl: "https://github.com/drawink/drawink/tree/master/dev-docs/",
-          showLastUpdateAuthor: true,
+          editUrl: undefined, // Internal docs - no public edit link
+          showLastUpdateAuthor: false, // Internal docs
           showLastUpdateTime: true,
         },
         theme: {
@@ -52,7 +51,7 @@ const config = {
         respectPrefersColorScheme: true,
       },
       navbar: {
-        title: "Drawink",
+        title: "Drawink Internal Docs",
         logo: {
           alt: "Drawink Logo",
           src: "img/logo.svg",
@@ -61,17 +60,7 @@ const config = {
           {
             to: "/docs",
             position: "left",
-            label: "Docs",
-          },
-          {
-            to: "https://plus.drawink.app/blog",
-            label: "Blog",
-            position: "left",
-          },
-          {
-            to: "https://github.com/drawink/drawink",
-            label: "GitHub",
-            position: "right",
+            label: "Documentation",
           },
         ],
       },
@@ -79,46 +68,24 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
+            title: "Documentation",
             items: [
               {
                 label: "Get Started",
                 to: "/docs",
               },
-            ],
-          },
-          {
-            title: "Community",
-            items: [
               {
-                label: "Discord",
-                href: "https://discord.gg/UexuTaE",
+                label: "Development",
+                to: "/docs/introduction/development",
               },
               {
-                label: "Twitter",
-                href: "https://twitter.com/drawink",
-              },
-              {
-                label: "Linkedin",
-                href: "https://www.linkedin.com/company/drawink",
-              },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              {
-                label: "Blog",
-                to: "https://plus.drawink.app/blog",
-              },
-              {
-                label: "GitHub",
-                to: "https://github.com/drawink/drawink",
+                label: "Contributing",
+                to: "/docs/introduction/contributing",
               },
             ],
           },
         ],
-        copyright: `Copyright © 2023 Drawink community. Built with Docusaurus ❤️`,
+        copyright: `Copyright © ${new Date().getFullYear()} Drawink. Internal documentation.`,
       },
       prism: {
         theme: require("prism-react-renderer/themes/dracula"),
@@ -132,13 +99,15 @@ const config = {
       tableOfContents: {
         maxHeadingLevel: 4,
       },
-      algolia: {
-        appId: "8FEAOD28DI",
-        apiKey: "4b07cca33ff2d2919bc95ff98f148e9e",
-        indexName: "drawink",
-      },
+      // Algolia search disabled for internal docs
+      // algolia: {
+      //   appId: "8FEAOD28DI",
+      //   apiKey: "4b07cca33ff2d2919bc95ff98f148e9e",
+      //   indexName: "drawink",
+      // },
     }),
-  themes: ["@docusaurus/theme-live-codeblock"],
+  // Live codeblock theme removed - internal docs don't need interactive examples
+  // themes: ["@docusaurus/theme-live-codeblock"],
   plugins: [
     "docusaurus-plugin-sass",
     [

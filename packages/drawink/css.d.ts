@@ -1,10 +1,10 @@
 import "csstype";
 
 declare module "csstype" {
-  interface Properties {
-    "--max-width"?: number | string;
+  interface Properties<TLength = string | number, TTime = string> {
+    "--max-width"?: TLength;
     "--swatch-color"?: string;
-    "--gap"?: number | string;
-    "--padding"?: number | string;
+    "--gap"?: TLength;
+    "--padding"?: TLength;
   }
 }

@@ -17,14 +17,9 @@
       "types": "./dist/types/utils/src/*.d.ts"
     }
   },
-  "files": [
-    "dist/*"
-  ],
+  "files": ["dist/*"],
   "description": "Drawink utility functions",
-  "keywords": [
-    "drawink",
-    "drawink-utils"
-  ],
+  "keywords": ["drawink", "drawink-utils"],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -38,11 +33,7 @@
       "not and_uc < 13",
       "not samsung < 10"
     ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "dependencies": {
     "@braintree/sanitize-url": "6.0.2",
@@ -67,6 +58,7 @@
   },
   "scripts": {
     "gen:types": "rimraf types && tsc",
+    "build": "bun run build:esm",
     "build:esm": "rimraf dist && bun ../../scripts/buildUtils.ts && bun run gen:types"
   }
 }

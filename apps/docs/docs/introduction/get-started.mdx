@@ -3,15 +3,33 @@ title: Introduction
 slug: ../
 ---
 
-## Try now
+## Internal Development Documentation
 
-Go to [drawink.app](https://drawink.app) to start sketching.
+These docs are for internal Drawink development and contributors only. They cover the codebase architecture, development setup, and contribution guidelines for the Drawink monorepo.
 
-## How are these docs structured
+## Documentation Structure
 
-These docs are focused on developers, and structured in the following way:
+- **[Introduction](/docs/)** — Development setup and getting started guide
+- **[Development](/docs/introduction/development)** — Local development environment and commands
+- **[Contributing](/docs/introduction/contributing)** — Contribution guidelines and workflow
+- **[Codebase](/docs/codebase/json-schema)** — Internal architecture and technical documentation
 
-- [Introduction](/docs/) — development setup and introduction.
-- [@drawink/drawink](/docs/@drawink/drawink/installation) — docs for the npm package to help you integrate Drawink into your own app.
-- Editor — IN PROGRESS. Docs describing the internals of the Drawink editor to help in contributing to the codebase.
-- [@drawink/mermaid-to-drawink](/docs/@drawink/mermaid-to-drawink/installation) - Docs for the mermaid to drawink parser
+## Monorepo Structure
+
+Drawink is built as a Turborepo monorepo with the following structure:
+
+```
+drawink/
+├── apps/          # Applications
+│   ├── web/       # Main Vite + React app
+│   ├── api/       # tRPC + Hono API server
+│   ├── ws/        # WebSocket server
+│   ├── landing/   # Astro marketing site
+│   └── docs/      # This documentation site
+│
+└── packages/      # Shared packages
+    ├── common/    # Utilities and constants
+    ├── math/      # 2D math functions
+    ├── element/   # Element logic
+    └── drawink/   # Core React component
+```

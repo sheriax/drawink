@@ -1,72 +1,233 @@
-# Contributing
+# Contributing Guidelines
 
-Pull requests are welcome. For major changes, please [open an issue](https://github.com/drawink/drawink/issues/new) first to discuss what you would like to change.
+Welcome to the Drawink development team! This guide covers our development workflow, coding standards, and contribution process.
 
-We have a [roadmap](https://github.com/orgs/drawink/projects/3) which we strongly recommend to go through and check if something interests you.
-For new contributors we would recommend to start with *Easy* tasks.
+## Development Workflow
 
-In case you want to pick up something from the roadmap, comment on that issue and one of the project maintainers will assign it to you, post which you can discuss in the issue and start working on it.
+### 1. Set Up Your Environment
 
-## Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd drawink
 
-### Option 1 - Manual
+# Install dependencies
+bun install
 
-1. Fork and clone the repo
-1. Run `yarn` to install dependencies
-1. Create a branch for your PR with `git checkout -b your-branch-name`
+# Start development servers
+bun run dev
+```
 
-> To keep `master` branch pointing to remote repository and make pull requests from branches on your fork, run:
->
-> ```bash
-> git remote add upstream https://github.com/drawink/drawink.git
-> git fetch upstream
-> git branch --set-upstream-to=upstream/master master
-> ```
+### 2. Create a Feature Branch
 
-### Option 2 - CodeSandbox
+Always create a new branch for your work:
 
-1. Go to https://codesandbox.io/p/github/drawink/drawink
-1. Connect your GitHub account
-1. Go to Git tab on left side
-1. Tap on `Fork Sandbox`
-1. Write your code
-1. Commit and PR automatically
+```bash
+git checkout -b feature/your-feature-name
+# or
+git checkout -b fix/bug-description
+```
 
-## Pull Request Guidelines
+**Branch Naming Conventions:**
+- `feature/` - New features
+- `fix/` - Bug fixes
+- `refactor/` - Code refactoring
+- `docs/` - Documentation updates
+- `chore/` - Maintenance tasks
 
-Don't worry if you get any of the below wrong, or if you don't know how. We'll gladly help out.
+### 3. Make Your Changes
 
-### Title
+- Write clean, maintainable code
+- Follow the existing code style (enforced by Biome)
+- Add tests for new features or bug fixes
+- Update documentation as needed
 
-Make sure the title starts with a semantic prefix:
+### 4. Run Quality Checks
 
-- **feat**: A new feature
-- **fix**: A bug fix
-- **docs**: Documentation only changes
-- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-- **refactor**: A code change that neither fixes a bug nor adds a feature
-- **perf**: A code change that improves performance
-- **test**: Adding missing tests or correcting existing tests
-- **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-- **ci**: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
-- **chore**: Other changes that don't modify src or test files
-- **revert**: Reverts a previous commit
+Before committing, ensure all checks pass:
 
-### Testing
+```bash
+# Lint your code
+bun run lint
 
-Once you submit your pull request it will automatically be tested. Be sure to check the results of the test and fix any issues that arise.
+# Type check
+bun run typecheck
 
-It's also a good idea to consider if your change should include additional tests. This is highly recommended for new features or bug-fixes. For example, it's good practice to create a test for each bug you fix which ensures that we don't regress the code in the future.
+# Run tests
+bun run test
 
-Finally - always manually test your changes using the convenient staging environment deployed for each pull request. As much as local development attempts to replicate production, there can still be subtle differences in behavior. For larger features consider testing your change in multiple browsers as well.
+# Run all checks
+bun run lint && bun run typecheck && bun run test
+```
 
-:::note
-Some checks, such as the `lint` and `test`, require approval from the maintainers to run. 
-They will appear as `Expected — Waiting for status to be reported` in the PR checks when they are waiting for approval.
-:::
+### 5. Commit Your Changes
 
-## Translating
+Use semantic commit messages:
 
-To translate Drawink into other languages, please visit [our Crowdin page](https://crowdin.com/project/drawink). To add a new language, [open an issue](https://github.com/drawink/drawink/issues/new) so we can get things set up on our end first.
+```bash
+git add .
+git commit -m "feat: add new drawing tool"
+```
 
-Translations will be available on the app if they exceed a certain threshold of completion (currently **85%**).
+**Commit Message Format:**
+
+```
+<type>: <description>
+
+[optional body]
+[optional footer]
+```
+
+**Types:**
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation changes
+- `style` - Code style changes (formatting, missing semi-colons, etc.)
+- `refactor` - Code refactoring
+- `perf` - Performance improvements
+- `test` - Adding or updating tests
+- `build` - Build system changes
+- `ci` - CI/CD changes
+- `chore` - Other changes (dependencies, tooling, etc.)
+
+**Examples:**
+```bash
+git commit -m "feat: add text-to-diagram AI feature"
+git commit -m "fix: resolve WebSocket connection timeout issue"
+git commit -m "docs: update API integration guide"
+```
+
+### 6. Push and Create Pull Request
+
+```bash
+git push origin feature/your-feature-name
+```
+
+Then create a Pull Request through your Git interface.
+
+## Code Standards
+
+### TypeScript
+
+- Use TypeScript for all new code
+- Maintain strict type checking
+- Avoid `any` types - use `unknown` or proper typing
+- Document complex type definitions
+
+### React Components
+
+- Use functional components with hooks
+- Keep components focused and single-purpose
+- Extract reusable logic into custom hooks
+- Use Jotai for global state management
+
+### Styling
+
+- Use Tailwind CSS for styling
+- Follow the existing design system
+- Use Radix UI for accessible components
+- Avoid inline styles except for dynamic values
+
+### File Organization
+
+```
+app-or-package/
+├── src/
+│   ├── components/     # React components
+│   ├── hooks/          # Custom hooks
+│   ├── lib/            # Utilities and helpers
+│   ├── stores/         # Jotai atoms
+│   ├── types/          # TypeScript types
+│   └── index.ts        # Entry point
+```
+
+## Testing Guidelines
+
+### When to Write Tests
+
+- **Required:**
+  - New features
+  - Bug fixes
+  - Core logic changes
+  - Public APIs
+
+- **Optional:**
+  - UI components (focus on integration tests)
+  - Simple utility functions
+
+### Test Structure
+
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('FeatureName', () => {
+  it('should do something specific', () => {
+    // Arrange
+    const input = setupTestData();
+
+    // Act
+    const result = performAction(input);
+
+    // Assert
+    expect(result).toBe(expectedOutput);
+  });
+});
+```
+
+## Monorepo Guidelines
+
+### Package Dependencies
+
+**Strict Rules:**
+- `apps/*` can depend on `packages/*`
+- `packages/*` NEVER depend on `apps/*`
+- Avoid circular dependencies between packages
+
+### Adding Dependencies
+
+```bash
+# Add to specific package
+cd packages/common
+bun add <package-name>
+
+# Add to specific app
+cd apps/web
+bun add <package-name>
+
+# Add to root (workspace-wide)
+cd ../..
+bun add -D <package-name>
+```
+
+### Turborepo Caching
+
+Turborepo caches build outputs. Clear cache if you encounter issues:
+
+```bash
+rm -rf .turbo
+bun run clean
+bun install
+```
+
+## Code Review Process
+
+1. **Self-Review** - Review your own PR before requesting review
+2. **Automated Checks** - Ensure lint, typecheck, and tests pass
+3. **Peer Review** - Request review from team members
+4. **Address Feedback** - Make requested changes
+5. **Merge** - Once approved, merge to main branch
+
+## Getting Help
+
+- Check existing documentation
+- Review similar code in the codebase
+- Ask team members for guidance
+- Update docs if you find gaps
+
+## Best Practices
+
+- **Keep PRs focused** - One feature or fix per PR
+- **Write descriptive commit messages** - Future you will thank you
+- **Test thoroughly** - Both automated and manual testing
+- **Update docs** - Keep documentation in sync with code
+- **Be responsive** - Respond to review comments promptly

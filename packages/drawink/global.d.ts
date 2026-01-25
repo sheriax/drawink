@@ -111,3 +111,10 @@ declare namespace jest {
   interface Expect extends CustomMatchers { }
   interface Matchers extends CustomMatchers { }
 }
+
+// Allow CSS custom properties (CSS variables like --swatch-color, --padding, etc.)
+declare module 'react' {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number | undefined;
+  }
+}

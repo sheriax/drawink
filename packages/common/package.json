@@ -20,14 +20,9 @@
       "default": "./dist/prod/index.js"
     }
   },
-  "files": [
-    "dist/*"
-  ],
+  "files": ["dist/*"],
   "description": "Drawink common functions, constants, etc.",
-  "keywords": [
-    "drawink",
-    "drawink-utils"
-  ],
+  "keywords": ["drawink", "drawink-utils"],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -41,14 +36,14 @@
       "not and_uc < 13",
       "not samsung < 10"
     ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "scripts": {
     "gen:types": "rimraf types && tsc",
+    "build": "bun run build:esm",
     "build:esm": "rimraf dist && bun ../../scripts/buildBase.ts && bun run gen:types"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0"
   }
 }

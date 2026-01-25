@@ -18,7 +18,7 @@ export function useOutsideClick<T extends HTMLElement>(
    * Returning `undefined` will fallback to the default behavior.
    */
   isInside?: (
-    event: Event & { target: HTMLElement },
+    event: Event & { target: T },
     /** the element of the passed ref */
     container: T,
   ) => boolean | undefined,
@@ -35,7 +35,9 @@ export function useOutsideClick<T extends HTMLElement>(
 
       if (isInsideOverride === true) {
         return;
-      } else if (isInsideOverride === false) {
+      }
+
+      if (isInsideOverride === false) {
         return callback(_event);
       }
 

@@ -1,102 +1,184 @@
 # Development
 
-## Code Sandbox
+## Local Development Setup
 
-- Go to https://codesandbox.io/p/github/drawink/drawink
-  - You may need to sign in with GitHub and reload the page
-- You can start coding instantly, and even send PRs from there!
-
-## Local Installation
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+These instructions will get you a copy of the Drawink monorepo up and running on your local machine for development.
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/en/)
-- [Yarn](https://yarnpkg.com/getting-started/install) (v1 or v2.4.2+)
-- [Git](https://git-scm.com/downloads)
+- **[Bun](https://bun.sh)** v1.3.3+ (required - used as package manager and runtime)
+- **[Node.js](https://nodejs.org/en/)** v18+ (for compatibility)
+- **[Git](https://git-scm.com/downloads)**
 
-### Clone the repo
-
-```bash
-git clone https://github.com/drawink/drawink.git
-```
-
-### Install the dependencies
+### Clone the Repository
 
 ```bash
-yarn
+git clone <repository-url>
+cd drawink
 ```
 
-### Start the server
+### Install Dependencies
 
 ```bash
-yarn start
+bun install
 ```
 
-Now you can open [http://localhost:3000](http://localhost:3000) and start coding in your favorite code editor.
+This will install all dependencies across the entire monorepo using Bun's fast package manager.
 
-## Collaboration
+### Development Servers
 
-For collaboration, you will need to set up [collab server](https://github.com/drawink/drawink-room) in local.
-
-## Commands
-
-### Install the dependencies
+#### Start All Apps (Parallel)
 
 ```bash
-yarn
+bun run dev
 ```
 
-### Run the project
+This starts all applications simultaneously:
+- **Web App**: http://localhost:5173 (Vite dev server)
+- **API Server**: http://localhost:3001 (tRPC + Hono)
+- **WebSocket Server**: http://localhost:3003 (Socket.IO)
+- **Landing Page**: http://localhost:4321 (Astro)
+- **Docs**: http://localhost:3000 (Docusaurus)
+
+#### Start Individual Apps
 
 ```bash
-yarn start
+# Just the web app
+bun run dev --filter=@drawink/web
+
+# Just the API
+bun run dev --filter=@drawink/api
+
+# Web + API
+bun run dev --filter=@drawink/web --filter=@drawink/api
 ```
 
-### Reformat all files with Prettier
+## Common Commands
+
+### Build
+
+Build all packages and applications:
 
 ```bash
-yarn fix
+bun run build
 ```
 
-### Run tests
+Build specific app:
 
 ```bash
-yarn test
+bun run build --filter=@drawink/web
 ```
 
-### Update test snapshots
+### Lint
+
+Lint all code with Biome:
 
 ```bash
-yarn test:update
+bun run lint
 ```
 
-### Test for formatting with Prettier
+### Type Check
+
+Run TypeScript type checking:
 
 ```bash
-yarn test:code
+bun run typecheck
 ```
 
-### Docker Compose
+### Test
 
-You can use docker-compose to work on Drawink locally if you don't want to setup a Node.js env.
+Run tests with Vitest:
 
 ```bash
-docker-compose up --build -d
+bun run test
 ```
 
-## Self-hosting
+### Clean
 
-We publish a Docker image with the Drawink client at [drawink/drawink](https://hub.docker.com/r/drawink/drawink). You can use it to self-host your own client under your own domain, on Kubernetes, AWS ECS, etc.
+Clean all build artifacts and node_modules:
 
 ```bash
-docker build -t drawink/drawink .
-docker run --rm -dit --name drawink -p 5000:80 drawink/drawink:latest
+bun run clean
 ```
 
-The Docker image is free of analytics and other tracking libraries.
+## Turborepo Caching
 
-**At the moment, self-hosting your own instance doesn't support sharing or collaboration features.**
+Turborepo caches build outputs to speed up subsequent builds. The cache is stored in `.turbo/` directories.
 
-We are working towards providing a full-fledged solution for self-hosting your own Drawink.
+To clear the cache:
+
+```bash
+rm -rf .turbo
+bun run clean
+```
+
+## Development Workflow
+
+1. **Create a feature branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes**
+   - Edit files in the appropriate app or package
+   - Test locally with `bun run dev`
+
+3. **Run checks before committing**
+   ```bash
+   bun run lint
+   bun run typecheck
+   bun run test
+   ```
+
+4. **Commit and push**
+   ```bash
+   git add .
+   git commit -m "feat: your feature description"
+   git push origin feature/your-feature-name
+   ```
+
+## Monorepo Structure
+
+```
+drawink/
+├── apps/
+│   ├── web/       # Main whiteboard application (Vite + React)
+│   ├── api/       # Backend API (tRPC + Hono)
+│   ├── ws/        # WebSocket server (Socket.IO)
+│   ├── landing/   # Marketing site (Astro)
+│   └── docs/      # Documentation (Docusaurus)
+│
+├── packages/
+│   ├── common/    # Shared utilities and constants
+│   ├── math/      # 2D math functions
+│   ├── element/   # Element logic
+│   ├── drawink/   # Core React component
+│   ├── types/     # Shared TypeScript types
+│   ├── utils/     # Shared utilities
+│   ├── ui/        # Shared UI components
+│   ├── config/    # Shared configurations
+│   └── trpc/      # tRPC router definitions
+│
+├── turbo.json     # Turborepo configuration
+├── package.json   # Root package.json
+└── biome.json     # Biome linter configuration
+```
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Monorepo | Turborepo |
+| Runtime | Bun |
+| Web App | Vite + React |
+| API | tRPC + Hono |
+| WebSocket | Socket.IO |
+| Database | Firebase Firestore |
+| Auth | Clerk |
+| Payments | Stripe |
+| State | Jotai |
+| Styling | Tailwind CSS |
+| UI Components | Radix UI |
+| TypeScript | 5.3 |
+| Linting | Biome |
+| Testing | Vitest |
