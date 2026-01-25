@@ -70,7 +70,7 @@ export const AIComponents = ({
                   </br>
                   </br>
                   <div>You can also try <a href="${
-                    import.meta.env.VITE_APP_PLUS_LP
+                    import.meta.env.
                   }/plus?utm_source=drawink&utm_medium=app&utm_content=d2c" target="_blank" rel="noopener">Drawink Pro</a> to get more requests.</div>
                 </div>
                 </body>

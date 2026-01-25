@@ -42,7 +42,7 @@ export const AppSidebar = () => {
           </div>
           {/* <LinkButton
             href={`${
-              import.meta.env.VITE_APP_PLUS_LP
+              import.meta.env.
             }/plus?utm_source=drawink&utm_medium=app&utm_content=comments_promo#drawink-redirect`}
           >
             Sign up now
@@ -65,7 +65,7 @@ export const AppSidebar = () => {
           </div>
           {/* <LinkButton
             href={`${
-              import.meta.env.VITE_APP_PLUS_LP
+              import.meta.env.
             }/plus?utm_source=drawink&utm_medium=app&utm_content=presentations_promo#drawink-redirect`}
           >
             Sign up now

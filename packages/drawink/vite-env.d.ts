@@ -46,7 +46,7 @@ interface ImportMetaEnv {
   PKG_NAME: string;
   PKG_VERSION: string;
 
-  VITE_APP_PLUS_LP: string;
+  : string;
   VITE_APP_PLUS_APP: string;
 
   VITE_WORKER_ID: string;

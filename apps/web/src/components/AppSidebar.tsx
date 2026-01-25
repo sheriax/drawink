@@ -50,7 +50,7 @@ export const AppSidebar = () => {
           <div className="app-sidebar-promo-text">Make comments with Drawink Pro</div>
           {/* <LinkButton
             href={`${
-              import.meta.env.VITE_APP_PLUS_LP
+              import.meta.env.
             }/plus?utm_source=drawink&utm_medium=app&utm_content=comments_promo#drawink-redirect`}
           >
             Sign up now
@@ -72,7 +72,7 @@ export const AppSidebar = () => {
           <div className="app-sidebar-promo-text">Create presentations with Drawink Pro</div>
           {/* <LinkButton
             href={`${
-              import.meta.env.VITE_APP_PLUS_LP
+              import.meta.env.
             }/plus?utm_source=drawink&utm_medium=app&utm_content=presentations_promo#drawink-redirect`}
           >
             Sign up now

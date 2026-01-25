@@ -886,11 +886,7 @@ const DrawinkWrapper = () => {
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
     keywords: ["plus", "cloud", "server"],
     perform: () => {
-      window.open(
-        `${import.meta.env.VITE_APP_PLUS_LP
-        }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
-        "_blank",
-      );
+    
     },
   };
   const DrawinkPlusAppCommand = {

@@ -10,7 +10,7 @@ export const DrawinkPlusPromoBanner = ({
   //       isSignedIn
   //         ? import.meta.env.VITE_APP_PLUS_APP
   //         : `${
-  //             import.meta.env.VITE_APP_PLUS_LP
+  //             import.meta.env.
   //           }/plus?utm_source=drawink&utm_medium=app&utm_content=guestBanner#drawink-redirect`
   //     }
   //     target="_blank"

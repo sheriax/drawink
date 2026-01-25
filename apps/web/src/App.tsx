@@ -835,7 +835,7 @@ const DrawinkWrapper = () => {
     perform: () => {
       window.open(
         `${
-          import.meta.env.VITE_APP_PLUS_LP
+          import.meta.env.
         }/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
         "_blank",
       );
