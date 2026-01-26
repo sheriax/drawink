@@ -570,11 +570,11 @@ export interface DrawinkProps {
   renderTopLeftUI?: (
     isMobile: boolean,
     appState: UIAppState,
-  ) => React.React.JSX.Element | null;
+  ) => React.JSX.Element | null;
   renderTopRightUI?: (
     isMobile: boolean,
     appState: UIAppState,
-  ) => React.React.JSX.Element | null;
+  ) => React.JSX.Element | null;
   langCode?: Language["code"];
   viewModeEnabled?: boolean;
   zenModeEnabled?: boolean;
@@ -587,7 +587,7 @@ export interface DrawinkProps {
   renderCustomStats?: (
     elements: readonly NonDeletedDrawinkElement[],
     appState: UIAppState,
-  ) => React.React.JSX.Element;
+  ) => React.JSX.Element;
   UIOptions?: Partial<UIOptions>;
   detectScroll?: boolean;
   handleKeyboardGlobally?: boolean;
@@ -621,7 +621,7 @@ export interface DrawinkProps {
   renderEmbeddable?: (
     element: NonDeleted<DrawinkEmbeddableElement>,
     appState: AppState,
-  ) => React.React.JSX.Element | null;
+  ) => React.JSX.Element | null;
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
@@ -646,7 +646,7 @@ export type ExportOpts = {
     appState: UIAppState,
     files: BinaryFiles,
     canvas: HTMLCanvasElement,
-  ) => React.React.JSX.Element;
+  ) => React.JSX.Element;
 };
 
 // NOTE at the moment, if action name corresponds to canvasAction prop, its
