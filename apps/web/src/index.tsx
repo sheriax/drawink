@@ -10,6 +10,7 @@ import { SignIn, SignUp } from "./components/auth";
 import { Dashboard } from "./pages/Dashboard";
 import BillingSettings from "./pages/BillingSettings";
 import { CLERK_PUBLISHABLE_KEY, clerkAppearance } from "./lib/clerk";
+import { ConvexClientProvider } from "./lib/convex";
 
 window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
 const rootElement = document.getElementById("root")!;
@@ -32,15 +33,17 @@ root.render(
       publishableKey={CLERK_PUBLISHABLE_KEY}
       appearance={clerkAppearance}
     >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/sign-in/*" element={<SignIn />} />
-          <Route path="/sign-up/*" element={<SignUp />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/billing" element={<BillingSettings />} />
-          <Route path="/*" element={<DrawinkApp />} />
-        </Routes>
-      </BrowserRouter>
+      <ConvexClientProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/sign-in/*" element={<SignIn />} />
+            <Route path="/sign-up/*" element={<SignUp />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/billing" element={<BillingSettings />} />
+            <Route path="/*" element={<DrawinkApp />} />
+          </Routes>
+        </BrowserRouter>
+      </ConvexClientProvider>
     </ClerkProvider>
   </StrictMode>,
 );

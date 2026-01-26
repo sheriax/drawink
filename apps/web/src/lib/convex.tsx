@@ -2,7 +2,7 @@
  * Convex Provider Setup with Clerk Authentication
  */
 
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 import { ReactNode } from "react";
@@ -15,21 +15,18 @@ interface ConvexClientProviderProps {
 }
 
 /**
- * Combined Clerk + Convex Provider
+ * Convex Provider with Clerk Integration
  *
- * This wraps your app to provide:
- * - Clerk authentication
- * - Convex database with auth integration
+ * This wraps your app to provide Convex database with Clerk auth integration.
+ *
+ * IMPORTANT: This component expects ClerkProvider to be present higher in the tree.
+ * It uses Clerk's useAuth hook to sync authentication state with Convex.
  */
 export function ConvexClientProvider({ children }: ConvexClientProviderProps) {
   return (
-    <ClerkProvider
-      publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string}
-    >
-      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        {children}
-      </ConvexProviderWithClerk>
-    </ClerkProvider>
+    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+      {children}
+    </ConvexProviderWithClerk>
   );
 }
 
