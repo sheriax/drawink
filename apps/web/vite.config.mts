@@ -32,6 +32,15 @@ export default defineConfig(({ mode }) => {
     envDir: "../../",
     resolve: {
       alias: [
+        // Alias pwa-register to disabled version when PWA is off
+        ...(disablePWA
+          ? [
+              {
+                find: /^.*\/pwa-register$/,
+                replacement: path.resolve(__dirname, "./src/pwa-register-disabled.ts"),
+              },
+            ]
+          : []),
         {
           find: /^@drawink\/common$/,
           replacement: path.resolve(__dirname, "../../packages/common/src/index.ts"),

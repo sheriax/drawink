@@ -1,7 +1,8 @@
-// This file is conditionally imported only when PWA is enabled
-// The import will fail if vite-plugin-pwa is not active
+// This file is only used when PWA is enabled
+// When disabled, vite.config aliases this to pwa-register-disabled.ts
 import { registerSW } from "virtual:pwa-register";
 
 export function initPWA() {
   registerSW();
+  console.log("[PWA] Service worker registered successfully");
 }
