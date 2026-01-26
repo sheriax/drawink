@@ -1,2 +1,0 @@
-// tRPC server exports
-export {};

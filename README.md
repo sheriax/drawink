@@ -76,21 +76,55 @@ The Drawink editor (npm package) supports:
 
 ## drawink.app
 
-The app hosted at [drawink.app](https://drawink.app) is a minimal showcase of what you can build with Drawink. Its [source code](https://github.com/drawink/drawink/tree/master/apps/web) is part of this repository as well, and the app features:
+The app hosted at [drawink.app](https://drawink.app) is a showcase of what you can build with Drawink and features:
 
 - 📡&nbsp;PWA support (works offline).
-- 🤼&nbsp;Real-time collaboration.
+- 🤼&nbsp;Real-time collaboration (powered by Convex).
 - 🔒&nbsp;End-to-end encryption.
 - 💾&nbsp;Local-first support (autosaves to the browser).
 - 🔗&nbsp;Shareable links (export to a readonly link you can share with others).
 
-We'll be adding these features as drop-in plugins for the npm package in the future.
-
 ## Quick start
 
-**Note:** following instructions are for installing the Drawink [npm package](https://www.npmjs.com/package/@drawink/drawink) when integrating Drawink into your own app. To run the repository locally for development, please refer to our [Development Guide](https://docs.drawink.app/docs/introduction/development).
+### For Development
 
-Use `npm` or `yarn` to install the package.
+**Prerequisites:**
+- Node.js >= 18.0.0
+- Bun (recommended) or npm
+
+**Installation:**
+
+```bash
+# Clone the repository
+git clone https://github.com/drawink/drawink.git
+cd drawink
+
+# Install dependencies
+bun install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Start development server (runs both Convex and Vite)
+bun dev
+```
+
+The app will be available at [http://localhost:5173](http://localhost:5173)
+
+**Environment Setup:**
+
+1. Create a Convex account at [convex.dev](https://convex.dev)
+2. Create a Clerk account at [clerk.com](https://clerk.com)
+3. Update `.env.local` with your credentials:
+
+```bash
+VITE_CONVEX_URL=https://your-project.convex.cloud
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+```
+
+### For npm Package Usage
+
+**Note:** Following instructions are for installing the Drawink [npm package](https://www.npmjs.com/package/@drawink/drawink) when integrating Drawink into your own app.
 
 ```bash
 npm install react react-dom @drawink/drawink
@@ -99,6 +133,60 @@ yarn add react react-dom @drawink/drawink
 ```
 
 Check out our [documentation](https://docs.drawink.app/docs/@drawink/drawink/installation) for more details!
+
+## Architecture
+
+Drawink uses a **modern, simplified architecture**:
+
+- **Frontend:** React 19 + TypeScript + Vite
+- **Backend:** Convex (serverless, real-time database)
+- **Authentication:** Clerk
+- **Deployment:** Static hosting (Vercel, Netlify, Cloudflare Pages, etc.)
+
+**No Docker, no complex monorepo setup** - just a clean, single-app architecture.
+
+## Scripts
+
+```bash
+# Development
+bun dev              # Start both Convex and Vite
+bun dev:convex       # Start only Convex
+bun dev:vite         # Start only Vite
+
+# Build
+bun build            # Build for production
+bun preview          # Preview production build
+
+# Convex
+bun convex:deploy    # Deploy Convex functions
+bun convex:dashboard # Open Convex dashboard
+
+# Code Quality
+bun lint             # Lint code
+bun lint:fix         # Lint and fix
+bun typecheck        # Type check
+bun clean            # Clean build artifacts
+```
+
+## Deployment
+
+See [DEPLOY.md](./DEPLOY.md) for detailed deployment instructions.
+
+**Quick deploy:**
+
+```bash
+# Build
+bun build
+
+# Deploy to Vercel (recommended)
+vercel --prod
+
+# Or deploy to Netlify
+netlify deploy --prod
+
+# Or deploy to Firebase
+firebase deploy --only hosting
+```
 
 ## Contributing
 
