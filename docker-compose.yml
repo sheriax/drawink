@@ -48,6 +48,7 @@ services:
       - VITE_APP_FIREBASE_CONFIG={"apiKey":"AIzaSyCAUHzaqdecV3dGtNOTdO6jFich5K4mZOc","authDomain":"drawink-2026.firebaseapp.com","projectId":"drawink-2026","storageBucket":"drawink-2026.firebasestorage.app","messagingSenderId":"731425062456","appId":"1:731425062456:web:2994221d82e8eb01c9f0cd"}
       - VITE_CLERK_PUBLISHABLE_KEY=pk_test_bG95YWwtdmVydmV0LTMuY2xlcmsuYWNjb3VudHMuZGV2JA
       - VITE_CONVEX_URL=https://compassionate-ibis-308.convex.cloud
+      - CONVEX_DEPLOYMENT=
       - VITE_APP_ENABLE_TRACKING=true
     depends_on:
       - api
