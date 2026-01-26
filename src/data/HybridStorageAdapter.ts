@@ -114,6 +114,18 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    */
   enableCloudSync(userId: string): void {
     this._userId = userId;
+
+    // Check if Convex URL is configured
+    const convexUrl = import.meta.env.VITE_CONVEX_URL;
+    if (!convexUrl) {
+      console.warn(
+        "[HybridStorageAdapter] Cloud sync disabled - VITE_CONVEX_URL is not set. " +
+        "App will work in local-only mode. To enable cloud sync, configure Convex in .env.local"
+      );
+      this._cloudEnabled = false;
+      return;
+    }
+
     this._cloudEnabled = true;
 
     // Initialize ConvexStorageAdapter
