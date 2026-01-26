@@ -6,6 +6,7 @@ import { SCENES_COLLECTION, db } from "./firebase";
 import { appRouter } from "./router";
 import { createContext } from "./trpc";
 import { authMiddleware } from "./middleware/auth";
+import stripeWebhook from "./routers/webhooks/stripe";
 
 const app = new Hono();
 
@@ -36,6 +37,9 @@ app.get("/health", async (c) => {
     return c.json({ status: "degraded", firestore: "disconnected" }, 503);
   }
 });
+
+// Webhook endpoints (must be registered before auth middleware is applied to tRPC)
+app.route("/webhooks/stripe", stripeWebhook);
 
 // tRPC endpoint
 app.use(
@@ -128,6 +132,8 @@ console.log(`   POST /api/v2/post  - Store scene data`);
 console.log(`   GET  /health       - Health check`);
 console.log(`\ntRPC endpoint:`);
 console.log(`   *    /trpc/*       - tRPC procedures`);
+console.log(`\nWebhook endpoints:`);
+console.log(`   POST /webhooks/stripe - Stripe webhook handler`);
 
 export default {
   port,

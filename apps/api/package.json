@@ -18,6 +18,7 @@
     "@trpc/server": "^11.0.0-rc.678",
     "firebase-admin": "13.6.0",
     "hono": "^4.10.7",
+    "stripe": "20.2.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
