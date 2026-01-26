@@ -1,4 +1,4 @@
-import type { UnsubscribeCallback } from "@drawink/drawink/types";
+import type { UnsubscribeCallback } from "@drawink/types";
 
 type Subscriber<T extends any[]> = (...payload: T) => void;
 

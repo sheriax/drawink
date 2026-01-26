@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/types",
+    "skipLibCheck": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "types": ["react", "react-dom", "node"]
+  },
+  "include": [
+    "src/**/*",
+    "global.d.ts"
+  ]
+}

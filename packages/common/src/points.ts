@@ -4,7 +4,7 @@ import {
   type LocalPoint,
 } from "@drawink/math";
 
-import type { NullableGridSize } from "@drawink/drawink/types";
+import type { NullableGridSize } from "@drawink/types";
 
 export const getSizeFromPoints = (
   points: readonly (GlobalPoint | LocalPoint)[],

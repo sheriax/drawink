@@ -42,3 +42,51 @@ export type ActiveTool =
 
 // Simple callback type
 export type UnsubscribeCallback = () => void;
+
+// Grid size type (nullable)
+export type NullableGridSize = (number & { _brand: "NullableGridSize" }) | null;
+
+// App-specific tool type with additional state
+// This is an intersection of ActiveTool and additional state properties
+export type AppActiveTool = {
+  lastActiveTool: ActiveTool | null;
+  locked: boolean;
+  fromSelection: boolean;
+} & ActiveTool;
+
+// Arrow type for current item
+export type AppCurrentItemArrowType = "sharp" | "round" | "elbow";
+
+// UI Options type
+export type AppUIOptions = {
+  canvasActions: {
+    changeViewBackgroundColor: boolean;
+    clearCanvas: boolean;
+    export: { saveFileToDisk: boolean } | false;
+    loadScene: boolean;
+    saveToActiveFile: boolean;
+    toggleTheme: boolean | null;
+    saveAsImage: boolean;
+  };
+  tools: {
+    image: boolean;
+  };
+  dockedSidebarBreakpoint?: number;
+  formFactor?: "desktop" | "mobile";
+  desktopUIMode?: "full" | "minimal";
+};
+
+// Minimal AppState interface with only the fields needed by common package
+// The full AppState is defined in @drawink/drawink/types
+export interface AppState {
+  activeTool: AppActiveTool;
+  currentItemArrowType: AppCurrentItemArrowType;
+  // Add other fields as needed
+}
+
+// Minimal AppProps type with only the fields needed by common package
+// The full AppProps is defined in @drawink/drawink/types
+export interface AppProps {
+  UIOptions: AppUIOptions;
+  // Add other fields as needed
+}

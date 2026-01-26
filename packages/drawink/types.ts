@@ -8,6 +8,12 @@ import type {
 
 import type { LinearElementEditor } from "@drawink/element";
 
+// Import base types from @drawink/types
+import type {
+  AppState as BaseAppState,
+  AppProps as BaseAppProps,
+} from "@drawink/types";
+
 import type { MaybeTransformHandleType } from "@drawink/element";
 
 import type {
@@ -61,7 +67,6 @@ import type { ImportedDataState } from "./data/types";
 import type { Language } from "./i18n";
 import type { isOverScrollBars } from "./scene/scrollbars";
 import type React from "react";
-import type { JSX } from "react";
 
 export type SocketId = string & { _brand: "SocketId" };
 
@@ -154,35 +159,9 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<DrawinkElement["id"], BinaryFileData>;
 
-export type ToolType =
-  | "selection"
-  | "lasso"
-  | "rectangle"
-  | "diamond"
-  | "ellipse"
-  | "arrow"
-  | "line"
-  | "freedraw"
-  | "text"
-  | "image"
-  | "eraser"
-  | "hand"
-  | "frame"
-  | "magicframe"
-  | "embeddable"
-  | "laser";
+export type { ToolType, ActiveTool } from "@drawink/types";
 
 export type ElementOrToolType = DrawinkElementType | ToolType | "custom";
-
-export type ActiveTool =
-  | {
-    type: ToolType;
-    customType: null;
-  }
-  | {
-    type: "custom";
-    customType: string;
-  };
 
 export type SidebarName = string;
 export type SidebarTabName = string;
@@ -493,11 +472,7 @@ export type UIAppState = Omit<
   "startBoundElement" | "cursorButton" | "scrollX" | "scrollY"
 >;
 
-export type NormalizedZoomValue = number & { _brand: "normalizedZoom" };
-
-export type Zoom = Readonly<{
-  value: NormalizedZoomValue;
-}>;
+export type { NormalizedZoomValue, Zoom } from "@drawink/types";
 
 export type PointerCoords = Readonly<{
   x: number;
@@ -595,11 +570,11 @@ export interface DrawinkProps {
   renderTopLeftUI?: (
     isMobile: boolean,
     appState: UIAppState,
-  ) => JSX.Element | null;
+  ) => React.React.JSX.Element | null;
   renderTopRightUI?: (
     isMobile: boolean,
     appState: UIAppState,
-  ) => JSX.Element | null;
+  ) => React.React.JSX.Element | null;
   langCode?: Language["code"];
   viewModeEnabled?: boolean;
   zenModeEnabled?: boolean;
@@ -612,7 +587,7 @@ export interface DrawinkProps {
   renderCustomStats?: (
     elements: readonly NonDeletedDrawinkElement[],
     appState: UIAppState,
-  ) => JSX.Element;
+  ) => React.React.JSX.Element;
   UIOptions?: Partial<UIOptions>;
   detectScroll?: boolean;
   handleKeyboardGlobally?: boolean;
@@ -646,7 +621,7 @@ export interface DrawinkProps {
   renderEmbeddable?: (
     element: NonDeleted<DrawinkEmbeddableElement>,
     appState: AppState,
-  ) => JSX.Element | null;
+  ) => React.React.JSX.Element | null;
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
@@ -671,7 +646,7 @@ export type ExportOpts = {
     appState: UIAppState,
     files: BinaryFiles,
     canvas: HTMLCanvasElement,
-  ) => JSX.Element;
+  ) => React.React.JSX.Element;
 };
 
 // NOTE at the moment, if action name corresponds to canvasAction prop, its
@@ -842,7 +817,7 @@ export type PointerDownState = Readonly<{
   };
 }>;
 
-export type UnsubscribeCallback = () => void;
+export type { UnsubscribeCallback } from "@drawink/types";
 
 export interface DrawinkImperativeAPI {
   updateScene: InstanceType<typeof App>["updateScene"];
@@ -961,9 +936,7 @@ export type ElementsPendingErasure = Set<DrawinkElement["id"]>;
 export type PendingDrawinkElements = DrawinkElement[];
 
 /** Runtime gridSize value. Null indicates disabled grid. */
-export type NullableGridSize =
-  | (AppState["gridSize"] & MakeBrand<"NullableGridSize">)
-  | null;
+export type { NullableGridSize } from "@drawink/types";
 
 export type GenerateDiagramToCode = (props: {
   frame: DrawinkMagicFrameElement;

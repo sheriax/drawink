@@ -19,6 +19,8 @@
     "clean": "rimraf dist"
   },
   "devDependencies": {
+    "@types/react": "19.2.8",
+    "react": "^19.0.3",
     "typescript": "~5.3.0"
   }
 }

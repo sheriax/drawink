@@ -4,11 +4,12 @@ import type { FontFamilyValues, FontString } from "@drawink/element/types";
 
 import type {
   ActiveTool,
-  AppState,
   ToolType,
   UnsubscribeCallback,
   Zoom,
-} from "@drawink/drawink/types";
+} from "@drawink/types";
+
+import type { AppState } from "@drawink/types";
 
 import { COLOR_PALETTE } from "./colors";
 import {

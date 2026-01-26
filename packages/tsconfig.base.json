@@ -12,6 +12,12 @@
     "jsx": "react-jsx",
     "emitDeclarationOnly": true,
     "paths": {
+      "@drawink/types": [
+        "./types/src/index.ts"
+      ],
+      "@drawink/types/*": [
+        "./types/src/*"
+      ],
       "@drawink/common": [
         "./common/src/index.ts"
       ],
