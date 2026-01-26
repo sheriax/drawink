@@ -1,4 +1,4 @@
-import { MIME_TYPES } from "@drawink/drawink";
+import { MIME_TYPES } from "@/core";
 import { fileOpen as _fileOpen } from "browser-fs-access";
 import { unstable_batchedUpdates } from "react-dom";
 

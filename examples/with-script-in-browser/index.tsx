@@ -1,9 +1,9 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import "@drawink/drawink/index.css";
+import "@/core/index.css";
 
-import type * as TDrawink from "@drawink/drawink";
+import type * as TDrawink from "@/core";
 
 import App from "./components/ExampleApp";
 
