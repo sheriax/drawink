@@ -29,19 +29,19 @@ services:
     image: oven/bun:1
     container_name: drawink-frontend
     working_dir: /app
-    command: sh -c "bun install && cd apps/web && bun run start"
+    command: sh -c "bun install && cd apps/web && bun run dev"
     ports:
       - "3000:5173"
     volumes:
       - .:/app
       - node_modules:/app/node_modules
-      - web_node_modules:/app/apps/web/node_modules
     environment:
       - VITE_APP_BACKEND_V2_GET_URL=http://api:3001/api/v2/
       - VITE_APP_BACKEND_V2_POST_URL=http://api:3001/api/v2/post
       - VITE_APP_PORT=5173
       - VITE_APP_DISABLE_SENTRY=true
-      - VITE_APP_DISABLE_PWA=true
+      - VITE_APP_DISABLE_OPEN=true
+      - VITE_APP_ENABLE_PWA=true
     depends_on:
       - api
       - ws
@@ -51,14 +51,13 @@ services:
   api:
     image: oven/bun:1
     container_name: drawink-api
-    working_dir: /app/apps/api
-    command: sh -c "bun install && bun run dev"
+    working_dir: /app
+    command: sh -c "bun install && cd apps/api && bun run dev"
     ports:
       - "3001:3001"
     volumes:
-      - ./apps/api:/app/apps/api
-      - ./firebase-project:/app/firebase-project
-      - api_node_modules:/app/apps/api/node_modules
+      - .:/app
+      - node_modules:/app/node_modules
     environment:
       - PORT=3001
       - JSON_BACKEND_PORT=3001
@@ -69,13 +68,13 @@ services:
   ws:
     image: oven/bun:1
     container_name: drawink-ws
-    working_dir: /app/apps/ws
-    command: sh -c "bun install && bun run dev"
+    working_dir: /app
+    command: sh -c "bun install && cd apps/ws && bun run dev"
     ports:
       - "3003:3003"
     volumes:
-      - ./apps/ws:/app/apps/ws
-      - ws_node_modules:/app/apps/ws/node_modules
+      - .:/app
+      - node_modules:/app/node_modules
     environment:
       - PORT=3003
       - WEBSOCKET_SERVER_PORT=3003
@@ -85,6 +84,3 @@ services:
 
 volumes:
   node_modules:
-  web_node_modules:
-  api_node_modules:
-  ws_node_modules:

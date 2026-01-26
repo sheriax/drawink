@@ -23,8 +23,9 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       port: Number(envVars.VITE_APP_PORT || 3000),
-      // open the browser
-      open: true,
+      // open the browser (disabled in Docker via env var)
+      open: process.env.VITE_APP_DISABLE_OPEN !== "true",
+      host: true, // Expose to network for Docker
     },
     // We need to specify the envDir since now there are no
     //more located in parallel with the vite.config.ts file but in parent dir
