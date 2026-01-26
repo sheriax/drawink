@@ -49,22 +49,6 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/webex/:match*",
-      "destination": "https://for-webex.drawink.app"
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "vscode.drawink.app"
-        }
-      ],
-      "destination": "https://marketplace.visualstudio.com/items?itemName=pomdtr.drawink-editor"
-    }
-  ],
-  "outputDirectory": "drawink-app/build",
-  "installCommand": "yarn install"
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "bun install"
 }

@@ -458,7 +458,7 @@ gcloud run services describe drawink \
 ## Notes
 
 - The Docker image is built for `linux/amd64` platform (required by Cloud Run)
-- The container runs **nginx** (port 80) for the frontend, **json-server** (port 3001) for the API, and **websocket-server** (port 3003) for real-time collaboration
+- The container runs **nginx** (port 80) for the frontend (apps/web), **API server** (port 3001) at apps/api, and **WebSocket server** (port 3003) at apps/ws for real-time collaboration
 - All services are managed by **supervisord** inside the container
 - SSL certificate provisioning can take 5-30 minutes after DNS configuration
 - The Load Balancer automatically handles HTTP to HTTPS redirects

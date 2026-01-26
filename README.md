@@ -76,7 +76,7 @@ The Drawink editor (npm package) supports:
 
 ## drawink.app
 
-The app hosted at [drawink.app](https://drawink.app) is a minimal showcase of what you can build with Drawink. Its [source code](https://github.com/drawink/drawink/tree/master/drawink-app) is part of this repository as well, and the app features:
+The app hosted at [drawink.app](https://drawink.app) is a minimal showcase of what you can build with Drawink. Its [source code](https://github.com/drawink/drawink/tree/master/apps/web) is part of this repository as well, and the app features:
 
 - 📡&nbsp;PWA support (works offline).
 - 🤼&nbsp;Real-time collaboration.

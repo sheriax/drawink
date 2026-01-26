@@ -59,16 +59,16 @@ docs/
 
 - **Root README.md** - Project overview and getting started
 - **CONTRIBUTING.md** - Contribution guidelines
-- **dev-docs/** - Development documentation (Docusaurus site)
-- **json-server/README.md** - JSON backend server documentation
-- **websocket-server/README.md** - WebSocket server documentation
+- **apps/docs/** - Development documentation (Docusaurus site)
+- **apps/api/README.md** - API server documentation (tRPC + Hono)
+- **apps/ws/README.md** - WebSocket server documentation
 
 ## 🔍 Finding Documentation
 
 - **Deployment questions?** → See `docs/deployment/`
 - **Cost optimization?** → See `docs/deployment/COST_OPTIMIZATION.md`
-- **Development docs?** → See `dev-docs/`
-- **API documentation?** → See `json-server/README.md` and `websocket-server/README.md`
+- **Development docs?** → See `apps/docs/`
+- **API documentation?** → See `apps/api/README.md` and `apps/ws/README.md`
 
 ---
 

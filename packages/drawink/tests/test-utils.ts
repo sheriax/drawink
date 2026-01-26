@@ -17,7 +17,7 @@ import type { DrawinkElement } from "@drawink/element/types";
 
 import type { AllPossibleKeys } from "@drawink/common/utility-types";
 
-import { STORAGE_KEYS } from "../../../drawink-app/app_constants";
+import { STORAGE_KEYS } from "../../../apps/web/src/app_constants";
 
 import { Pointer, UI } from "./helpers/ui";
 import * as toolQueries from "./queries/toolQueries";

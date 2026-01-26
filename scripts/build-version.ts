@@ -6,7 +6,7 @@ import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const buildDir = resolve(__dirname, "../drawink-app/build");
+const buildDir = resolve(__dirname, "../apps/web/dist");
 const versionFile = join(buildDir, "version.json");
 const indexFile = join(buildDir, "index.html");
 

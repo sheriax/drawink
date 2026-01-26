@@ -60,7 +60,7 @@
   },
   "include": [
     "packages",
-    "drawink-app"
+    "apps"
   ],
   "exclude": [
     "examples",

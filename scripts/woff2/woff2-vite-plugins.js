@@ -4,7 +4,7 @@ const OSS_FONTS_CDN = "/";
 const OSS_FONTS_FALLBACK = "/";
 
 /**
- * Custom vite plugin for auto-prefixing `EXCALIDRAW_ASSET_PATH` woff2 fonts in `drawink-app`.
+ * Custom vite plugin for auto-prefixing `EXCALIDRAW_ASSET_PATH` woff2 fonts in `apps/web`.
  *
  * @returns {import("vite").PluginOption}
  */
@@ -19,9 +19,9 @@ module.exports.woff2BrowserPlugin = () => {
     },
     transform(code, id) {
       // using copy / replace as fonts defined in the `.css` don't have to be manually copied over (vite/rollup does this automatically),
-      // but at the same time can't be easily prefixed with the `EXCALIDRAW_ASSET_PATH` only for the `drawink-app`
+      // but at the same time can't be easily prefixed with the `EXCALIDRAW_ASSET_PATH` only for the `apps/web`
       if (!isDev && id.endsWith("/drawink/fonts/fonts.css")) {
-        return `/* WARN: The following content is generated during drawink-app build */
+        return `/* WARN: The following content is generated during apps/web build */
 
       @font-face {
         font-family: "Assistant";
@@ -64,7 +64,7 @@ module.exports.woff2BrowserPlugin = () => {
       }`;
       }
 
-      if (!isDev && id.endsWith("drawink-app/index.html")) {
+      if (!isDev && id.endsWith("apps/web/index.html")) {
         return code.replace(
           "<!-- PLACEHOLDER:EXCALIDRAW_APP_FONTS -->",
           `<script>
