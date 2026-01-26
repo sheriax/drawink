@@ -35,51 +35,67 @@ Fonts now load from your local `/public/fonts/` directory instead of trying to f
 
 ---
 
-## ⚠️ TODO: Fix Convex Authentication (You Must Do This)
+## ✅ Fixed: Convex Authentication
 
 **Problem:**
-The errors show:
+The errors showed:
 ```
 Failed to authenticate: "No auth provider found matching the given token (no providers configured). Check convex/auth.config.ts."
 ```
 
-And workspace operations fail with:
+And workspace operations failed with:
 ```
 Uncaught Error: Unauthorized at handler (../convex/workspaces.ts:220:30)
 ```
 
 **Root Cause:**
-Your app uses `ConvexProviderWithClerk` which requires a JWT template in Clerk Dashboard.
-Convex needs to know how to verify Clerk's JWT tokens.
+- Missing `convex/auth.config.ts` file to configure Clerk authentication
+- Missing `CLERK_JWT_ISSUER_DOMAIN` environment variable in Convex
+- Compiled `.js` and `.d.ts` files in `convex/` directory causing build conflicts
 
-**Solution (YOU MUST DO THIS):**
+**Solutions Applied:**
 
-### Step 1: Go to Clerk Dashboard
-1. Open: https://dashboard.clerk.com/
+### 1. Created `convex/auth.config.ts`
+```typescript
+export default {
+  providers: [
+    {
+      domain: process.env.CLERK_JWT_ISSUER_DOMAIN!,
+      applicationID: "convex",
+    },
+  ],
+};
+```
+
+### 2. Set Convex Environment Variable
+```bash
+npx convex env set CLERK_JWT_ISSUER_DOMAIN "https://loyal-vervet-3.clerk.accounts.dev"
+```
+
+### 3. Cleaned Up Build Artifacts
+- Removed compiled `.js`, `.d.ts`, and `.js.map` files from `convex/` directory
+- Added them to `.gitignore` to prevent future conflicts:
+  ```
+  convex/*.js
+  convex/*.d.ts
+  convex/*.js.map
+  !convex/convex.json
+  ```
+
+### 4. You Still Need: Create Clerk JWT Template
+1. Go to https://dashboard.clerk.com/
 2. Select your application: `loyal-vervet-3`
-
-### Step 2: Create Convex JWT Template
-1. In the sidebar, go to **JWT Templates**
-2. Click **New template** (or **+ New template**)
-3. Select **Convex** from the pre-built templates list
-4. The template will be auto-configured with:
-   - **Name:** `convex` (CRITICAL: must be exactly "convex" in lowercase!)
-   - **Claims:** Pre-configured for Convex
-   - **Token Lifetime:** Default is fine
-5. Click **Create** or **Apply Changes**
-
-### Step 3: Verify the Setup
-1. The template name MUST be exactly `convex` (lowercase, no typos)
-2. After saving, restart your dev server:
-   ```bash
-   npm run dev
-   ```
-3. Try logging in again
+3. Navigate to **JWT Templates** in the sidebar
+4. Click **New template**
+5. Select **Convex** from the pre-built templates
+6. **Name must be exactly:** `convex` (lowercase)
+7. Click **Create**
 
 **What This Does:**
-- Allows Clerk to issue JWTs with the "convex" template
-- Convex can then verify these tokens and authenticate your users
-- Your workspace operations will work (create, read, update boards)
+- `auth.config.ts` tells Convex how to verify Clerk JWT tokens
+- Environment variable provides the Clerk issuer domain for token verification
+- Clean build prevents duplicate output file errors
+- Clerk JWT template allows Clerk to issue tokens that Convex can verify
 
 ---
 
@@ -145,13 +161,13 @@ After applying Clerk JWT template:
 
 ---
 
-## Why auth.config.ts Was Removed
+## Why auth.config.ts Is Now Required
 
-I initially created `convex/auth.config.ts` but removed it because:
-- Your app uses the official `ConvexProviderWithClerk` integration
-- That integration doesn't use `auth.config.ts`
-- It relies on Clerk's JWT template configuration instead
-- Adding `auth.config.ts` would conflict with the existing setup
+Convex version 1.31.6 requires `auth.config.ts` even when using `ConvexProviderWithClerk`:
+- The error explicitly states: "Check convex/auth.config.ts"
+- The config file tells Convex which JWT issuers to trust
+- It works in conjunction with Clerk's JWT template (both are needed)
+- Without it, Convex rejects all authentication tokens
 
 ---
 

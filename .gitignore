@@ -28,3 +28,9 @@ html
 meta*.json
 .claude
 .turbo
+
+# Convex compiled files (auto-generated, should not be committed)
+convex/*.js
+convex/*.d.ts
+convex/*.js.map
+!convex/convex.json
