@@ -19,7 +19,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  getFirestore,
   orderBy,
   query,
   serverTimestamp,
@@ -30,6 +29,8 @@ import {
 
 import type { BoardContent, StorageAdapter, Workspace } from "@drawink/drawink/storage/types";
 import type { Board } from "@drawink/drawink/types";
+
+import { getFirestoreInstance } from "./firebase";
 
 // Cache for derived encryption keys
 const encryptionKeyCache = new Map<string, CryptoKey>();
@@ -121,12 +122,12 @@ const decryptContent = async <T>(
 export class CloudStorageAdapter implements StorageAdapter {
   private userId: string;
   private currentWorkspaceId: string | null = null;
-  private firestore: ReturnType<typeof getFirestore>;
+  private firestore: ReturnType<typeof getFirestoreInstance>;
   private encryptionKey: CryptoKey | null = null;
 
   constructor(userId: string) {
     this.userId = userId;
-    this.firestore = getFirestore();
+    this.firestore = getFirestoreInstance();
   }
 
   /**

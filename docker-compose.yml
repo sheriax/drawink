@@ -38,10 +38,14 @@ services:
     environment:
       - VITE_APP_BACKEND_V2_GET_URL=http://api:3001/api/v2/
       - VITE_APP_BACKEND_V2_POST_URL=http://api:3001/api/v2/post
+      - VITE_APP_WS_SERVER_URL=http://ws:3003
       - VITE_APP_PORT=5173
       - VITE_APP_DISABLE_SENTRY=true
       - VITE_APP_DISABLE_OPEN=true
       - VITE_APP_ENABLE_PWA=true
+      - VITE_APP_FIREBASE_CONFIG={"apiKey":"AIzaSyCAUHzaqdecV3dGtNOTdO6jFich5K4mZOc","authDomain":"drawink-2026.firebaseapp.com","projectId":"drawink-2026","storageBucket":"drawink-2026.firebasestorage.app","messagingSenderId":"731425062456","appId":"1:731425062456:web:2994221d82e8eb01c9f0cd"}
+      - VITE_CLERK_PUBLISHABLE_KEY=pk_test_bG95YWwtdmVydmV0LTMuY2xlcmsuYWNjb3VudHMuZGV2JA
+      - VITE_APP_ENABLE_TRACKING=true
     depends_on:
       - api
       - ws

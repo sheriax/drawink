@@ -82,6 +82,20 @@ const _getAuth = () => {
 };
 
 // -----------------------------------------------------------------------------
+// Firebase API Exports
+// -----------------------------------------------------------------------------
+
+/**
+ * Get Firestore instance (ensures Firebase is initialized)
+ */
+export const getFirestoreInstance = _getFirestore;
+
+/**
+ * Initialize Firebase app (can be called multiple times safely)
+ */
+export const initializeFirebaseApp = _initializeFirebase;
+
+// -----------------------------------------------------------------------------
 // Firebase Auth API
 // -----------------------------------------------------------------------------
 
