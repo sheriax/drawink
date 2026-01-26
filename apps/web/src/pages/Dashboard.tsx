@@ -7,6 +7,8 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTRPC } from "../lib/trpc";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import type { Board } from "@drawink/types";
 import "./Dashboard.scss";
 
@@ -15,96 +17,74 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const trpc = useTRPC();
 
-  const [recentBoards, setRecentBoards] = useState<Board[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
 
-  // Load selected organization from localStorage
+  // Convex queries - real-time data!
+  const workspaces = useQuery(api.workspaces.listMine);
+  const recentBoards = useQuery(
+    api.boards.listByWorkspace,
+    selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : "skip"
+  );
+
+  // Convex mutations
+  const createBoard = useMutation(api.boards.create);
+  const ensureDefaultWorkspace = useMutation(api.workspaces.ensureDefault);
+
+  // Load selected workspace from localStorage
   useEffect(() => {
-    const savedOrgId = localStorage.getItem("selectedOrganizationId");
-    if (savedOrgId && savedOrgId !== "personal") {
-      setSelectedOrg(savedOrgId);
+    const savedWorkspaceId = localStorage.getItem("selectedWorkspaceId");
+    if (savedWorkspaceId) {
+      setSelectedWorkspaceId(savedWorkspaceId);
     }
   }, []);
 
-  // Load recent boards
+  // Ensure user has a default workspace
   useEffect(() => {
-    if (!isLoaded || !user) {
-      setIsLoading(false);
+    if (!isLoaded || !user) return;
+
+    // If no workspace is selected and we have workspaces loaded
+    if (!selectedWorkspaceId && workspaces && workspaces.length > 0) {
+      const defaultWorkspace = workspaces[0];
+      setSelectedWorkspaceId(defaultWorkspace._id);
+      localStorage.setItem("selectedWorkspaceId", defaultWorkspace._id);
+    }
+
+    // If no workspaces exist, create a default one
+    if (workspaces && workspaces.length === 0) {
+      ensureDefaultWorkspace({}).then((workspaceId) => {
+        setSelectedWorkspaceId(workspaceId);
+        localStorage.setItem("selectedWorkspaceId", workspaceId);
+      });
+    }
+  }, [isLoaded, user, workspaces, selectedWorkspaceId, ensureDefaultWorkspace]);
+
+  const handleCreateBoard = async () => {
+    if (!selectedWorkspaceId) {
+      console.error("No workspace selected");
       return;
     }
 
-    const loadRecentBoards = async () => {
-      setIsLoading(true);
-      try {
-        // TODO: Implement board fetching from API/Firestore
-        // For now, load from localStorage (existing boards)
-        const boards = loadBoardsFromLocalStorage();
-        setRecentBoards(boards);
-      } catch (error) {
-        console.error("Failed to load boards:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    try {
+      // Create board in Convex
+      const boardId = await createBoard({
+        workspaceId: selectedWorkspaceId,
+        name: "Untitled Board",
+        isPublic: false,
+      });
 
-    loadRecentBoards();
-  }, [isLoaded, user, selectedOrg]);
-
-  // Load boards from localStorage (temporary until API is ready)
-  const loadBoardsFromLocalStorage = (): Board[] => {
-    const boards: Board[] = [];
-    const storageKeys = Object.keys(localStorage);
-
-    // Filter keys that look like board IDs
-    const boardKeys = storageKeys.filter(key =>
-      key.startsWith("drawink-") && !key.includes("-files")
-    );
-
-    for (const key of boardKeys.slice(0, 10)) { // Limit to 10 recent boards
-      try {
-        const data = localStorage.getItem(key);
-        if (data) {
-          const parsed = JSON.parse(data);
-          // Create a minimal Board object
-          boards.push({
-            id: key.replace("drawink-", ""),
-            name: parsed.name || "Untitled Board",
-            thumbnail: parsed.thumbnail,
-            projectId: null,
-            organizationId: selectedOrg,
-            ownerId: user?.id || "",
-            collaborators: [],
-            isPublic: false,
-            createdAt: parsed.createdAt || new Date(),
-            updatedAt: parsed.updatedAt || new Date(),
-            lastOpenedAt: parsed.lastOpenedAt || new Date(),
-            version: 1,
-          } as Board);
-        }
-      } catch (error) {
-        console.error(`Failed to parse board ${key}:`, error);
-      }
+      // Navigate to the new board
+      navigate(`/#${boardId}`);
+    } catch (error) {
+      console.error("Failed to create board:", error);
     }
-
-    // Sort by lastOpenedAt
-    return boards.sort((a, b) =>
-      new Date(b.lastOpenedAt).getTime() - new Date(a.lastOpenedAt).getTime()
-    );
-  };
-
-  const handleCreateBoard = () => {
-    // Generate a new board ID and navigate to it
-    const newBoardId = Math.random().toString(36).substring(2, 15);
-    navigate(`/#${newBoardId}`);
   };
 
   const handleOpenBoard = (boardId: string) => {
     navigate(`/#${boardId}`);
   };
 
-  const formatDate = (date: Date | string) => {
-    const d = typeof date === "string" ? new Date(date) : date;
+  const formatDate = (timestamp: number) => {
+    const d = new Date(timestamp);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -114,6 +94,9 @@ export const Dashboard: React.FC = () => {
     if (days < 7) return `${days} days ago`;
     return d.toLocaleDateString();
   };
+
+  // Loading state
+  const isLoadingBoards = recentBoards === undefined || workspaces === undefined;
 
   if (!isLoaded) {
     return (
@@ -153,12 +136,12 @@ export const Dashboard: React.FC = () => {
         <section className="dashboard-section">
           <h2>Recent Boards</h2>
 
-          {isLoading ? (
+          {isLoadingBoards ? (
             <div className="dashboard-loading-inline">
               <div className="spinner-small"></div>
               <span>Loading boards...</span>
             </div>
-          ) : recentBoards.length === 0 ? (
+          ) : !recentBoards || recentBoards.length === 0 ? (
             <div className="dashboard-empty-state">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -173,13 +156,13 @@ export const Dashboard: React.FC = () => {
             <div className="dashboard-boards-grid">
               {recentBoards.map((board) => (
                 <div
-                  key={board.id}
+                  key={board._id}
                   className="board-card"
-                  onClick={() => handleOpenBoard(board.id)}
+                  onClick={() => handleOpenBoard(board._id)}
                 >
                   <div className="board-card__thumbnail">
-                    {board.thumbnail ? (
-                      <img src={board.thumbnail} alt={board.name} />
+                    {board.thumbnailUrl ? (
+                      <img src={board.thumbnailUrl} alt={board.name} />
                     ) : (
                       <div className="board-card__thumbnail-placeholder">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -191,7 +174,7 @@ export const Dashboard: React.FC = () => {
                   <div className="board-card__info">
                     <h3>{board.name}</h3>
                     <p className="board-card__date">
-                      {formatDate(board.lastOpenedAt)}
+                      {formatDate(board._creationTime)}
                     </p>
                   </div>
                 </div>
@@ -200,16 +183,25 @@ export const Dashboard: React.FC = () => {
           )}
         </section>
 
-        {/* Team Activity Section (only if in organization) */}
-        {selectedOrg && (
+        {/* Workspace Selector */}
+        {workspaces && workspaces.length > 1 && (
           <section className="dashboard-section">
-            <h2>Team Activity</h2>
-            <div className="dashboard-empty-state">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <p>Team activity coming soon</p>
-            </div>
+            <h2>Workspace</h2>
+            <select
+              value={selectedWorkspaceId || ""}
+              onChange={(e) => {
+                const newWorkspaceId = e.target.value;
+                setSelectedWorkspaceId(newWorkspaceId);
+                localStorage.setItem("selectedWorkspaceId", newWorkspaceId);
+              }}
+              className="workspace-selector"
+            >
+              {workspaces.map((workspace) => (
+                <option key={workspace._id} value={workspace._id}>
+                  {workspace.name}
+                </option>
+              ))}
+            </select>
           </section>
         )}
       </div>

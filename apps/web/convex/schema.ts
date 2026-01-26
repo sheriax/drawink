@@ -268,7 +268,8 @@ export default defineSchema({
   })
     .index("by_board", ["boardId"])
     .index("by_board_active", ["boardId", "isActive"])
-    .index("by_user", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_board_and_user", ["boardId", "userId"]),
 
   // =========================================================================
   // AI USAGE TRACKING

@@ -288,15 +288,110 @@ If migration issues occur:
 - **Schema**: See `convex/schema.ts`
 - **Functions**: See `convex/boards.ts`, `convex/workspaces.ts`, etc.
 
+## Phase 3: Core Migration (COMPLETED ✅)
+
+### ✅ Data Migration Script Created
+**Location:** `src/scripts/migrateFirestoreToConvex.ts`
+
+**Features:**
+- Migrates workspaces, boards, and encrypted board content
+- Dry-run mode available (`--dry-run` flag)
+- Detailed logging and error tracking
+- Migration statistics report
+- READ-ONLY on Firestore (safe, doesn't delete anything)
+
+**Usage:**
+```bash
+# Dry run (no changes)
+bun run src/scripts/migrateFirestoreToConvex.ts --dry-run
+
+# Actual migration
+bun run src/scripts/migrateFirestoreToConvex.ts
+```
+
+**What it does:**
+1. Connects to both Firestore and Convex
+2. Fetches all workspaces and boards from Firestore
+3. Copies data to Convex with proper transformations
+4. Migrates encrypted board content (ciphertext + IV)
+5. Generates detailed migration report with statistics
+
+### ✅ Dashboard Component Updated
+**Location:** `src/pages/Dashboard.tsx`
+
+**Changes:**
+- ❌ Removed: localStorage board loading (temporary)
+- ❌ Removed: Manual board fetching logic
+- ✅ Added: Convex real-time queries (`useQuery`)
+- ✅ Added: Convex mutations (`useMutation`)
+- ✅ Added: Automatic workspace management
+- ✅ Added: Real-time board list updates
+
+**Before:**
+```typescript
+// Manual localStorage loading
+const boards = loadBoardsFromLocalStorage();
+setRecentBoards(boards);
+```
+
+**After:**
+```typescript
+// Real-time Convex queries
+const workspaces = useQuery(api.workspaces.listMine);
+const recentBoards = useQuery(api.boards.listByWorkspace, { workspaceId });
+const createBoard = useMutation(api.boards.create);
+```
+
+**Benefits:**
+- ⚡ Real-time updates (boards appear instantly across tabs)
+- 🔄 No manual refresh needed
+- 🎯 Type-safe queries with auto-generated types
+- 📦 Automatic workspace creation for new users
+
+### ✅ ConvexStorageAdapter Created
+**Location:** `src/data/ConvexStorageAdapter.ts`
+
+**Purpose:** Drop-in replacement for `CloudStorageAdapter` that uses Convex instead of Firestore.
+
+**Features:**
+- Implements same `StorageAdapter` interface
+- End-to-end encryption (PBKDF2 + AES-GCM)
+- Workspace management
+- Board CRUD operations
+- Encrypted board content storage
+- SHA-256 checksums for conflict detection
+
+**Migration Path:**
+```typescript
+// OLD (Firestore)
+const adapter = new CloudStorageAdapter(userId);
+
+// NEW (Convex)
+const adapter = new ConvexStorageAdapter(userId, convexUrl);
+
+// Same interface, zero code changes!
+await adapter.getBoards();
+await adapter.createBoard("My Board");
+await adapter.saveBoardContent(boardId, content);
+```
+
+**Hybrid Architecture:**
+- ✅ Board metadata → Convex (real-time reactive)
+- ✅ Board content (encrypted) → Convex
+- ✅ Files (images, thumbnails) → Firebase Storage (19x cheaper!)
+
 ## Next Actions
 
 1. ✅ Review this guide
-2. ⏳ Create data migration script
-3. ⏳ Update Dashboard component (high priority)
-4. ⏳ Update board creation/loading (high priority)
-5. ⏳ Test with real data
-6. ⏳ Gradually migrate remaining components
-7. ⏳ Remove Firestore code (after 100% migrated)
-8. ⏳ Update documentation
-9. ⏳ Remove old API server (`apps/api/`)
-10. ⏳ Remove WebSocket server (`apps/ws/`)
+2. ✅ Create data migration script
+3. ✅ Update Dashboard component (high priority)
+4. ✅ Update board creation/loading (high priority)
+5. ⏳ Run migration script with dry-run
+6. ⏳ Run actual migration script
+7. ⏳ Test with real data (verify all boards load)
+8. ⏳ Update remaining components to use ConvexStorageAdapter
+9. ⏳ Gradually migrate remaining components
+10. ⏳ Remove Firestore code (after 100% migrated)
+11. ⏳ Update documentation
+12. ⏳ Remove old API server (`apps/api/`)
+13. ⏳ Remove WebSocket server (`apps/ws/`)
