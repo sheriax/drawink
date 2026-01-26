@@ -22,6 +22,9 @@
   },
   "files": ["dist/*"],
   "description": "Drawink common functions, constants, etc.",
+  "dependencies": {
+    "react": "19.0.3"
+  },
   "keywords": ["drawink", "drawink-utils"],
   "browserslist": {
     "production": [
@@ -43,7 +46,13 @@
     "build": "bun run build:esm",
     "build:esm": "rimraf dist && bun ../../scripts/buildBase.ts && bun run gen:types"
   },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.3",
+    "react-dom": "^18.2.0 || ^19.0.3"
+  },
   "devDependencies": {
-    "@types/react": "^18.2.0"
+    "@types/node": "^20.0.0",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3"
   }
 }

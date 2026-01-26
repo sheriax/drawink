@@ -1452,7 +1452,7 @@ interface Template {
 ## Feature Implementations
 
 ### AI Text-to-Diagram (Improved)
-- Use OpenAI GPT-4 for generation
+- Use AIProvider as Wrapper with (OpenAI GPT-40-mini) for generation
 - Support Mermaid syntax input
 - Convert Mermaid to native Drawink elements
 - Add AI prompt templates

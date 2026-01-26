@@ -22,16 +22,16 @@
     "@drawink/types": "workspace:*",
     "@drawink/utils": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3"
   },
   "devDependencies": {
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
     "typescript": "~5.3.0"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.0.3",
+    "react-dom": "^19.0.3"
   }
 }
