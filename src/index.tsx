@@ -13,6 +13,10 @@ import { CLERK_PUBLISHABLE_KEY, clerkAppearance } from "./lib/clerk";
 import { ConvexClientProvider } from "./lib/convex";
 
 window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
+
+// Set font asset path - the DrawinkFontFace class looks for EXCALIDRAW_ASSET_PATH
+// Point to local public folder instead of external CDN
+window.EXCALIDRAW_ASSET_PATH = window.location.origin + "/";
 const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
 

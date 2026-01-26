@@ -916,7 +916,8 @@ const DrawinkWrapper = () => {
               {collabError.message && <CollabError collabError={collabError} />}
 
               {/* Organization Selector */}
-              {!isMobile && <OrganizationSelector />}
+              {/* TODO: Migrate to Convex or start tRPC backend */}
+              {/* {!isMobile && <OrganizationSelector />} */}
 
               <DropdownMenuItem
                 data-testid="share-button"
