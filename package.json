@@ -9,7 +9,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "convex dev & vite",
+    "dev": "vite",
     "dev:convex": "convex dev",
     "dev:vite": "vite",
     "build": "vite build",
