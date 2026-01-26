@@ -10,6 +10,8 @@ services:
       context: .
       args:
         - NODE_ENV=production
+        - VITE_CONVEX_URL=https://compassionate-ibis-308.convex.cloud
+        - VITE_CLERK_PUBLISHABLE_KEY=pk_test_bG95YWwtdmVydmV0LTMuY2xlcmsuYWNjb3VudHMuZGV2JA
     container_name: drawink
     ports:
       - "3000:3000" # Frontend (nginx)
@@ -29,7 +31,7 @@ services:
     image: oven/bun:1
     container_name: drawink-frontend
     working_dir: /app
-    command: sh -c "bun install && cd apps/web && bun run dev"
+    command: sh -c "bun install && cd apps/web && bun run dev:vite"
     ports:
       - "3000:5173"
     volumes:
@@ -45,6 +47,7 @@ services:
       - VITE_APP_DISABLE_PWA=true
       - VITE_APP_FIREBASE_CONFIG={"apiKey":"AIzaSyCAUHzaqdecV3dGtNOTdO6jFich5K4mZOc","authDomain":"drawink-2026.firebaseapp.com","projectId":"drawink-2026","storageBucket":"drawink-2026.firebasestorage.app","messagingSenderId":"731425062456","appId":"1:731425062456:web:2994221d82e8eb01c9f0cd"}
       - VITE_CLERK_PUBLISHABLE_KEY=pk_test_bG95YWwtdmVydmV0LTMuY2xlcmsuYWNjb3VudHMuZGV2JA
+      - VITE_CONVEX_URL=https://compassionate-ibis-308.convex.cloud
       - VITE_APP_ENABLE_TRACKING=true
     depends_on:
       - api

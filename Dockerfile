@@ -26,9 +26,16 @@ RUN bun install
 COPY . .
 
 ARG NODE_ENV=production
+ARG VITE_CONVEX_URL
+ARG VITE_CLERK_PUBLISHABLE_KEY
 
 # Build the frontend app
-RUN cd apps/web && VITE_APP_DISABLE_SENTRY=true VITE_APP_DISABLE_PWA=true bun x vite build
+RUN cd apps/web && \
+    VITE_APP_DISABLE_SENTRY=true \
+    VITE_APP_DISABLE_PWA=true \
+    VITE_CONVEX_URL=${VITE_CONVEX_URL} \
+    VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY} \
+    bun x vite build
 
 # Build stage for API server
 FROM --platform=${BUILDPLATFORM} oven/bun:1 AS api-build
