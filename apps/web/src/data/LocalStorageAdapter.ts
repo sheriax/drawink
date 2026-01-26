@@ -13,7 +13,7 @@ import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
 import { getNonDeletedElements } from "@drawink/element";
 import { createStore, del, entries, get, getMany, set, setMany } from "idb-keyval";
 
-import { appJotaiStore, atom } from "drawink-app/app-jotai";
+import { appJotaiStore, atom } from "../app-jotai";
 
 import type { MaybePromise } from "@drawink/common/utility-types";
 import type { LibraryPersistedData } from "@drawink/drawink/data/library";
