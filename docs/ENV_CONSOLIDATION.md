@@ -20,9 +20,8 @@ All environment variables have been consolidated from sub-app directories into t
 - ❌ `apps/api/.env.example` - Consolidated into root `.env.example`
 - ❌ `apps/docs/.env` - Was empty, removed
 
-### Files Preserved
-- ✅ `.env.development` - Environment-specific config (no secrets)
-- ✅ `.env.production` - Environment-specific config (no secrets)
+### Simplified Approach
+Instead of maintaining multiple environment files (`.env.development`, `.env.production`), we use a single `.env.local` file for simplicity. Change values as needed for development vs production.
 
 ## Variables Consolidated
 
@@ -153,17 +152,16 @@ drawink/
 ❌ Confusion about which file to edit
 ❌ Hard to track what variables exist
 
-### After (Centralized)
+### After (Centralized & Simplified)
 ```
 drawink/
-├── .env.example           # Template
-├── .env.local             # Secrets
-├── .env.development       # Dev config
-└── .env.production        # Prod config
+├── .env.example           # Template with all documentation
+└── .env.local             # Your actual values (all-in-one)
 ```
 ✅ Single source of truth
+✅ No duplication between dev/prod files
 ✅ Easy to find and update variables
-✅ Clear separation of secrets and config
+✅ Maximum simplicity (just 2 files!)
 ✅ Well-documented with `.env.README.md`
 
 ## Next Steps
