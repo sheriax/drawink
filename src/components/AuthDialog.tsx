@@ -8,11 +8,11 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { type AuthState, authStateAtom } from "@drawink/drawink/atoms/auth";
-import { Dialog } from "@drawink/drawink/components/Dialog";
-import { FilledButton } from "@drawink/drawink/components/FilledButton";
-import { useUIAppState } from "@drawink/drawink/context/ui-appState";
-import { atom, editorJotaiStore } from "@drawink/drawink/editor-jotai";
+import { type AuthState, authStateAtom } from "@/core/atoms/auth";
+import { Dialog } from "@/core/components/Dialog";
+import { FilledButton } from "@/core/components/FilledButton";
+import { useUIAppState } from "@/core/context/ui-appState";
+import { atom, editorJotaiStore } from "@/core/editor-jotai";
 
 import { useAtom } from "../app-jotai";
 

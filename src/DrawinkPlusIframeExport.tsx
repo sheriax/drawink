@@ -1,9 +1,9 @@
-import { base64urlToString } from "@drawink/drawink/data/encode";
-import { DrawinkError } from "@drawink/drawink/errors";
+import { base64urlToString } from "@/core/data/encode";
+import { DrawinkError } from "@/core/errors";
 import { useLayoutEffect, useRef } from "react";
 
-import type { AppState, BinaryFileData } from "@drawink/drawink/types";
-import type { FileId, OrderedDrawinkElement } from "@drawink/element/types";
+import type { AppState, BinaryFileData } from "@/core/types";
+import type { FileId, OrderedDrawinkElement } from "@/lib/elements/types";
 
 import { STORAGE_KEYS } from "./app_constants";
 import { hybridStorageAdapter } from "./data/HybridStorageAdapter";

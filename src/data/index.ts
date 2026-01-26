@@ -1,22 +1,22 @@
-import { bytesToHexString } from "@drawink/common";
-import { compressData, decompressData } from "@drawink/drawink/data/encode";
+import { bytesToHexString } from "@/lib/common";
+import { compressData, decompressData } from "@/core/data/encode";
 import {
   IV_LENGTH_BYTES,
   decryptData,
   generateEncryptionKey,
-} from "@drawink/drawink/data/encryption";
-import { serializeAsJSON } from "@drawink/drawink/data/json";
-import { restore } from "@drawink/drawink/data/restore";
-import { t } from "@drawink/drawink/i18n";
-import { isInvisiblySmallElement } from "@drawink/element";
-import { isInitializedImageElement } from "@drawink/element";
+} from "@/core/data/encryption";
+import { serializeAsJSON } from "@/core/data/json";
+import { restore } from "@/core/data/restore";
+import { t } from "@/core/i18n";
+import { isInvisiblySmallElement } from "@/lib/elements";
+import { isInitializedImageElement } from "@/lib/elements";
 
-import type { UserIdleState } from "@drawink/common";
-import type { MakeBrand } from "@drawink/common/utility-types";
-import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { AppState, BinaryFileData, BinaryFiles, SocketId } from "@drawink/drawink/types";
-import type { SceneBounds } from "@drawink/element";
-import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@drawink/element/types";
+import type { UserIdleState } from "@/lib/common";
+import type { MakeBrand } from "@/lib/common/utility-types";
+import type { ImportedDataState } from "@/core/data/types";
+import type { AppState, BinaryFileData, BinaryFiles, SocketId } from "@/core/types";
+import type { SceneBounds } from "@/lib/elements";
+import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@/lib/elements/types";
 
 import { DELETED_ELEMENT_TIMEOUT, FILE_UPLOAD_MAX_BYTES, ROOM_ID_BYTES } from "../app_constants";
 

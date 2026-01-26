@@ -6,8 +6,8 @@
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useTRPC } from "../lib/trpc";
-import type { Organization } from "@drawink/types";
-import DropdownMenu from "@drawink/drawink/components/dropdownMenu/DropdownMenu";
+import type { Organization } from "@/lib/types";
+import DropdownMenu from "@/core/components/dropdownMenu/DropdownMenu";
 import "./OrganizationSelector.scss";
 
 interface OrganizationSelectorProps {

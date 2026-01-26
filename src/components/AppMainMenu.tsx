@@ -2,13 +2,13 @@ import {
   // loginIcon,
   // ExcalLogo,
   eyeIcon,
-} from "@drawink/drawink/components/icons";
-import { MainMenu } from "@drawink/drawink/index";
+} from "@/core/components/icons";
+import { MainMenu } from "@/core/index";
 import React from "react";
 
-import { isDevEnv } from "@drawink/common";
+import { isDevEnv } from "@/lib/common";
 
-import type { Theme } from "@drawink/element/types";
+import type { Theme } from "@/lib/elements/types";
 
 import { LanguageList } from "../app-language/LanguageList";
 // import { isDrawinkPlusSignedUser } from "../app_constants";

@@ -1,4 +1,4 @@
 export {
   CommandPalette,
   DEFAULT_CATEGORIES,
-} from "@drawink/drawink/components/CommandPalette/CommandPalette";
+} from "@/core/components/CommandPalette/CommandPalette";

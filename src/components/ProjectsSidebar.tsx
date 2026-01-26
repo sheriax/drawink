@@ -6,7 +6,7 @@
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useTRPC } from "../lib/trpc";
-import type { Project } from "@drawink/types";
+import type { Project } from "@/lib/types";
 import "./ProjectsSidebar.scss";
 
 export const ProjectsSidebar: React.FC = () => {

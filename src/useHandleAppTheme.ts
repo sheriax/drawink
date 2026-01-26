@@ -1,8 +1,8 @@
-import { CODES, EVENT, KEYS } from "@drawink/common";
-import { THEME } from "@drawink/drawink";
+import { CODES, EVENT, KEYS } from "@/lib/common";
+import { THEME } from "@/core";
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import type { Theme } from "@drawink/element/types";
+import type { Theme } from "@/lib/elements/types";
 
 import { STORAGE_KEYS } from "./app_constants";
 

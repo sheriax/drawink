@@ -1,7 +1,7 @@
-import { clearAppStateForLocalStorage, getDefaultAppState } from "@drawink/drawink/appState";
+import { clearAppStateForLocalStorage, getDefaultAppState } from "@/core/appState";
 
-import type { AppState } from "@drawink/drawink/types";
-import type { DrawinkElement } from "@drawink/element/types";
+import type { AppState } from "@/core/types";
+import type { DrawinkElement } from "@/lib/elements/types";
 
 import { STORAGE_KEYS } from "../app_constants";
 

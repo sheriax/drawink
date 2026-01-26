@@ -1,4 +1,4 @@
-import { getFeatureFlag } from "@drawink/common";
+import { getFeatureFlag } from "@/lib/common";
 import * as Sentry from "@sentry/browser";
 import callsites from "callsites";
 

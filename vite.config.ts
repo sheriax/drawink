@@ -45,17 +45,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),
-        "@/lib": resolve(__dirname, "./src/lib"),
-        "@/components": resolve(__dirname, "./src/components"),
-        "@/hooks": resolve(__dirname, "./src/hooks"),
-        "@/convex": resolve(__dirname, "./src/convex"),
-        "@/styles": resolve(__dirname, "./src/styles"),
-        "@drawink/drawink": resolve(__dirname, "./packages/drawink"),
-        "@drawink/common": resolve(__dirname, "./packages/common/src"),
-        "@drawink/element": resolve(__dirname, "./packages/element/src"),
-        "@drawink/math": resolve(__dirname, "./packages/math/src"),
-        "@drawink/utils": resolve(__dirname, "./packages/utils/src"),
-        "@drawink/types": resolve(__dirname, "./packages/types/src"),
       },
     },
     server: {

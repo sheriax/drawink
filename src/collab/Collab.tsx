@@ -1,4 +1,4 @@
-import { APP_NAME, EVENT } from "@drawink/common";
+import { APP_NAME, EVENT } from "@/lib/common";
 import {
   ACTIVE_THRESHOLD,
   IDLE_THRESHOLD,
@@ -9,45 +9,45 @@ import {
   preventUnload,
   resolvablePromise,
   throttleRAF,
-} from "@drawink/common";
+} from "@/lib/common";
 import {
   CaptureUpdateAction,
   getSceneVersion,
   reconcileElements,
   restoreElements,
   zoomToFitBounds,
-} from "@drawink/drawink";
-import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
-import { decryptData } from "@drawink/drawink/data/encryption";
-import { AbortError } from "@drawink/drawink/errors";
-import { t } from "@drawink/drawink/i18n";
-import { withBatchedUpdates } from "@drawink/drawink/reactUtils";
-import { getVisibleSceneBounds } from "@drawink/element";
-import { newElementWith } from "@drawink/element";
-import { isImageElement, isInitializedImageElement } from "@drawink/element";
+} from "@/core";
+import { ErrorDialog } from "@/core/components/ErrorDialog";
+import { decryptData } from "@/core/data/encryption";
+import { AbortError } from "@/core/errors";
+import { t } from "@/core/i18n";
+import { withBatchedUpdates } from "@/core/reactUtils";
+import { getVisibleSceneBounds } from "@/lib/elements";
+import { newElementWith } from "@/lib/elements";
+import { isImageElement, isInitializedImageElement } from "@/lib/elements";
 
 import throttle from "lodash.throttle";
 import { PureComponent } from "react";
 
-import type { Mutable, ValueOf } from "@drawink/common/utility-types";
+import type { Mutable, ValueOf } from "@/lib/common/utility-types";
 import type {
   ReconciledDrawinkElement,
   RemoteDrawinkElement,
-} from "@drawink/drawink/data/reconcile";
-import type { ImportedDataState } from "@drawink/drawink/data/types";
+} from "@/core/data/reconcile";
+import type { ImportedDataState } from "@/core/data/types";
 import type {
   BinaryFileData,
   Collaborator,
   DrawinkImperativeAPI,
   Gesture,
   SocketId,
-} from "@drawink/drawink/types";
+} from "@/core/types";
 import type {
   DrawinkElement,
   FileId,
   InitializedDrawinkImageElement,
   OrderedDrawinkElement,
-} from "@drawink/element/types";
+} from "@/lib/elements/types";
 
 import { appJotaiStore, atom } from "../app-jotai";
 import {

@@ -1,8 +1,8 @@
-import { THEME } from "@drawink/common";
+import { THEME } from "@/lib/common";
 import oc from "open-color";
 import React from "react";
 
-import type { Theme } from "@drawink/element/types";
+import type { Theme } from "@/lib/elements/types";
 
 // https://github.com/tholman/github-corners
 export const GitHubCorner = React.memo(({ theme, dir }: { theme: Theme; dir: string }) => (

@@ -1,9 +1,9 @@
-import { UI } from "@drawink/drawink/tests/helpers/ui";
+import { UI } from "@/core/tests/helpers/ui";
 import {
   mockBoundingClientRect,
   render,
   restoreOriginalGetBoundingClientRect,
-} from "@drawink/drawink/tests/test-utils";
+} from "@/core/tests/test-utils";
 
 import DrawinkApp from "../App";
 

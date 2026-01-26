@@ -1,6 +1,6 @@
-import { Tooltip } from "@drawink/drawink/components/Tooltip";
-import { shield } from "@drawink/drawink/components/icons";
-import { useI18n } from "@drawink/drawink/i18n";
+import { Tooltip } from "@/core/components/Tooltip";
+import { shield } from "@/core/components/icons";
+import { useI18n } from "@/core/i18n";
 
 export const EncryptedIcon = () => {
   const { t } = useI18n();

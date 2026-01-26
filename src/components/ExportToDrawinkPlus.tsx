@@ -1,16 +1,16 @@
-import { MIME_TYPES } from "@drawink/common";
-import { Card } from "@drawink/drawink/components/Card";
-import { DrawinkLogo } from "@drawink/drawink/components/DrawinkLogo";
-import { encryptData, generateEncryptionKey } from "@drawink/drawink/data/encryption";
-import { serializeAsJSON } from "@drawink/drawink/data/json";
-import { useI18n } from "@drawink/drawink/i18n";
-import { isInitializedImageElement } from "@drawink/element";
+import { MIME_TYPES } from "@/lib/common";
+import { Card } from "@/core/components/Card";
+import { DrawinkLogo } from "@/core/components/DrawinkLogo";
+import { encryptData, generateEncryptionKey } from "@/core/data/encryption";
+import { serializeAsJSON } from "@/core/data/json";
+import { useI18n } from "@/core/i18n";
+import { isInitializedImageElement } from "@/lib/elements";
 import { ref, uploadBytes } from "firebase/storage";
 import { nanoid } from "nanoid";
 import type React from "react";
 
-import type { AppState, BinaryFileData, BinaryFiles } from "@drawink/drawink/types";
-import type { FileId, NonDeletedDrawinkElement } from "@drawink/element/types";
+import type { AppState, BinaryFileData, BinaryFiles } from "@/core/types";
+import type { FileId, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { FILE_UPLOAD_MAX_BYTES } from "../app_constants";
 import { encodeFilesForUpload } from "../data/FileManager";

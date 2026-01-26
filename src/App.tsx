@@ -11,30 +11,30 @@ import {
   isTestEnv,
   preventUnload,
   resolvablePromise,
-} from "@drawink/common";
+} from "@/lib/common";
 import {
   CaptureUpdateAction,
   Drawink,
   TTDDialogTrigger,
   reconcileElements,
   useEditorInterface,
-} from "@drawink/drawink";
-import { trackEvent } from "@drawink/drawink/analytics";
-import { getDefaultAppState } from "@drawink/drawink/appState";
+} from "@/core";
+import { trackEvent } from "@/core/analytics";
+import { getDefaultAppState } from "@/core/appState";
 import {
   CommandPalette,
   DEFAULT_CATEGORIES,
-} from "@drawink/drawink/components/CommandPalette/CommandPalette";
-import { ErrorDialog } from "@drawink/drawink/components/ErrorDialog";
-import { OverwriteConfirmDialog } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirm";
-import { openConfirmModal } from "@drawink/drawink/components/OverwriteConfirm/OverwriteConfirmState";
-import { ShareableLinkDialog } from "@drawink/drawink/components/ShareableLinkDialog";
-import Trans from "@drawink/drawink/components/Trans";
-import DropdownMenuItem from "@drawink/drawink/components/dropdownMenu/DropdownMenuItem";
-import { loadFromBlob } from "@drawink/drawink/data/blob";
-import { useCallbackRefState } from "@drawink/drawink/hooks/useCallbackRefState";
-import { t } from "@drawink/drawink/i18n";
-import polyfill from "@drawink/drawink/polyfill";
+} from "@/core/components/CommandPalette/CommandPalette";
+import { ErrorDialog } from "@/core/components/ErrorDialog";
+import { OverwriteConfirmDialog } from "@/core/components/OverwriteConfirm/OverwriteConfirm";
+import { openConfirmModal } from "@/core/components/OverwriteConfirm/OverwriteConfirmState";
+import { ShareableLinkDialog } from "@/core/components/ShareableLinkDialog";
+import Trans from "@/core/components/Trans";
+import DropdownMenuItem from "@/core/components/dropdownMenu/DropdownMenuItem";
+import { loadFromBlob } from "@/core/data/blob";
+import { useCallbackRefState } from "@/core/hooks/useCallbackRefState";
+import { t } from "@/core/i18n";
+import polyfill from "@/core/polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
@@ -46,30 +46,30 @@ import {
   share,
   usersIcon,
   youtubeIcon,
-} from "@drawink/drawink/components/icons";
-import { parseLibraryTokensFromUrl, useHandleLibrary } from "@drawink/drawink/data/library";
-import { restore, restoreAppState } from "@drawink/drawink/data/restore";
-import { isElementLink } from "@drawink/element";
-import { newElementWith } from "@drawink/element";
-import { isInitializedImageElement } from "@drawink/element";
+} from "@/core/components/icons";
+import { parseLibraryTokensFromUrl, useHandleLibrary } from "@/core/data/library";
+import { restore, restoreAppState } from "@/core/data/restore";
+import { isElementLink } from "@/lib/elements";
+import { newElementWith } from "@/lib/elements";
+import { isInitializedImageElement } from "@/lib/elements";
 import clsx from "clsx";
 
-import type { ResolutionType } from "@drawink/common/utility-types";
-import type { ResolvablePromise } from "@drawink/common/utils";
-import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
-import type { RestoredDataState } from "@drawink/drawink/data/restore";
+import type { ResolutionType } from "@/lib/common/utility-types";
+import type { ResolvablePromise } from "@/lib/common/utils";
+import type { RemoteDrawinkElement } from "@/core/data/reconcile";
+import type { RestoredDataState } from "@/core/data/restore";
 import type {
   AppState,
   BinaryFiles,
   DrawinkImperativeAPI,
   DrawinkInitialDataState,
   UIAppState,
-} from "@drawink/drawink/types";
+} from "@/core/types";
 import type {
   FileId,
   NonDeletedDrawinkElement,
   OrderedDrawinkElement,
-} from "@drawink/element/types";
+} from "@/lib/elements/types";
 
 import CustomStats from "./CustomStats";
 import {
@@ -127,9 +127,9 @@ import {
   authStateAtom,
   cloudEnabledAtom,
   syncStatusAtom,
-} from "@drawink/drawink/atoms/auth";
-import { boardsAPIAtom } from "@drawink/drawink/atoms/boards";
-import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
+} from "@/core/atoms/auth";
+import { boardsAPIAtom } from "@/core/atoms/boards";
+import { editorJotaiStore } from "@/core/editor-jotai";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 import { useUser, useClerk } from "@clerk/clerk-react";

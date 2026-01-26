@@ -1,13 +1,13 @@
-import { CaptureUpdateAction, newElementWith } from "@drawink/drawink";
-import { createRedoAction, createUndoAction } from "@drawink/drawink/actions/actionHistory";
-import { API } from "@drawink/drawink/tests/helpers/api";
-import { act, render, waitFor } from "@drawink/drawink/tests/test-utils";
-import { syncInvalidIndices } from "@drawink/element";
+import { CaptureUpdateAction, newElementWith } from "@/core";
+import { createRedoAction, createUndoAction } from "@/core/actions/actionHistory";
+import { API } from "@/core/tests/helpers/api";
+import { act, render, waitFor } from "@/core/tests/test-utils";
+import { syncInvalidIndices } from "@/lib/elements";
 import { vi } from "vitest";
 
-import { StoreIncrement } from "@drawink/element";
+import { StoreIncrement } from "@/lib/elements";
 
-import type { DurableIncrement, EphemeralIncrement } from "@drawink/element";
+import type { DurableIncrement, EphemeralIncrement } from "@/lib/elements";
 
 import DrawinkApp from "../App";
 

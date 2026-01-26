@@ -1,21 +1,21 @@
-import { CaptureUpdateAction } from "@drawink/drawink";
-import { compressData } from "@drawink/drawink/data/encode";
-import { t } from "@drawink/drawink/i18n";
-import { newElementWith } from "@drawink/element";
-import { isInitializedImageElement } from "@drawink/element";
+import { CaptureUpdateAction } from "@/core";
+import { compressData } from "@/core/data/encode";
+import { t } from "@/core/i18n";
+import { newElementWith } from "@/lib/elements";
+import { isInitializedImageElement } from "@/lib/elements";
 
 import type {
   BinaryFileData,
   BinaryFileMetadata,
   BinaryFiles,
   DrawinkImperativeAPI,
-} from "@drawink/drawink/types";
+} from "@/core/types";
 import type {
   DrawinkElement,
   DrawinkImageElement,
   FileId,
   InitializedDrawinkImageElement,
-} from "@drawink/element/types";
+} from "@/lib/elements/types";
 
 type FileVersion = Required<BinaryFileData>["version"];
 

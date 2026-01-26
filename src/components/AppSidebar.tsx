@@ -1,7 +1,7 @@
-import { DefaultSidebar, Sidebar, THEME } from "@drawink/drawink";
-import { messageCircleIcon, presentationIcon } from "@drawink/drawink/components/icons";
-// import { LinkButton } from "@drawink/drawink/components/LinkButton";
-import { useUIAppState } from "@drawink/drawink/context/ui-appState";
+import { DefaultSidebar, Sidebar, THEME } from "@/core";
+import { messageCircleIcon, presentationIcon } from "@/core/components/icons";
+// import { LinkButton } from "@/core/components/LinkButton";
+import { useUIAppState } from "@/core/context/ui-appState";
 
 import "./AppSidebar.scss";
 import { ProjectsSidebar } from "./ProjectsSidebar";

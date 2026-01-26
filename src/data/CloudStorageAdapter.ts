@@ -27,8 +27,8 @@ import {
   where,
 } from "firebase/firestore";
 
-import type { BoardContent, StorageAdapter, Workspace } from "@drawink/drawink/storage/types";
-import type { Board } from "@drawink/drawink/types";
+import type { BoardContent, StorageAdapter, Workspace } from "@/core/storage/types";
+import type { Board } from "@/core/types";
 
 import { getFirestoreInstance } from "./firebase";
 

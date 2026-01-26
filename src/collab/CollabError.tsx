@@ -1,5 +1,5 @@
-import { Tooltip } from "@drawink/drawink/components/Tooltip";
-import { warning } from "@drawink/drawink/components/icons";
+import { Tooltip } from "@/core/components/Tooltip";
+import { warning } from "@/core/components/icons";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 

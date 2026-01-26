@@ -8,19 +8,19 @@
  * - Library storage (IndexedDB)
  */
 
-import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@drawink/common";
-import { clearAppStateForLocalStorage } from "@drawink/drawink/appState";
-import { getNonDeletedElements } from "@drawink/element";
+import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@/lib/common";
+import { clearAppStateForLocalStorage } from "@/core/appState";
+import { getNonDeletedElements } from "@/lib/elements";
 import { createStore, del, entries, get, getMany, set, setMany } from "idb-keyval";
 
 import { appJotaiStore, atom } from "../app-jotai";
 
-import type { MaybePromise } from "@drawink/common/utility-types";
-import type { LibraryPersistedData } from "@drawink/drawink/data/library";
-import type { ImportedDataState } from "@drawink/drawink/data/types";
-import type { BoardContent, StorageAdapter } from "@drawink/drawink/storage/types";
-import type { AppState, BinaryFileData, BinaryFiles, Board } from "@drawink/drawink/types";
-import type { DrawinkElement, FileId } from "@drawink/element/types";
+import type { MaybePromise } from "@/lib/common/utility-types";
+import type { LibraryPersistedData } from "@/core/data/library";
+import type { ImportedDataState } from "@/core/data/types";
+import type { BoardContent, StorageAdapter } from "@/core/storage/types";
+import type { AppState, BinaryFileData, BinaryFiles, Board } from "@/core/types";
+import type { DrawinkElement, FileId } from "@/lib/elements/types";
 
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
 import { FileManager } from "./FileManager";

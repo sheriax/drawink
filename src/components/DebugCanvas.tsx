@@ -1,29 +1,29 @@
-import { arrayToMap, throttleRAF } from "@drawink/common";
-import { ArrowheadArrowIcon, CloseIcon, TrashIcon } from "@drawink/drawink/components/icons";
-import { bootstrapCanvas, getNormalizedCanvasDimensions } from "@drawink/drawink/renderer/helpers";
-import type { AppState } from "@drawink/drawink/types";
+import { arrayToMap, throttleRAF } from "@/lib/common";
+import { ArrowheadArrowIcon, CloseIcon, TrashIcon } from "@/core/components/icons";
+import { bootstrapCanvas, getNormalizedCanvasDimensions } from "@/core/renderer/helpers";
+import type { AppState } from "@/core/types";
 import { useCallback } from "react";
 
 import {
   getGlobalFixedPointForBindableElement,
   isArrowElement,
   isBindableElement,
-} from "@drawink/element";
+} from "@/lib/elements";
 
-import { type GlobalPoint, type LineSegment, isLineSegment } from "@drawink/math";
-import { isCurve } from "@drawink/math/curve";
+import { type GlobalPoint, type LineSegment, isLineSegment } from "@/lib/math";
+import { isCurve } from "@/lib/math/curve";
 
 import React from "react";
 
-import type { DebugElement } from "@drawink/common";
+import type { DebugElement } from "@/lib/common";
 import type {
   DrawinkArrowElement,
   DrawinkBindableElement,
   ElementsMap,
   FixedPointBinding,
   OrderedDrawinkElement,
-} from "@drawink/element/types";
-import type { Curve } from "@drawink/math";
+} from "@/lib/elements/types";
+import type { Curve } from "@/lib/math";
 
 import { STORAGE_KEYS } from "../app_constants";
 

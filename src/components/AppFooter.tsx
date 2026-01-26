@@ -1,4 +1,4 @@
-import { Footer } from "@drawink/drawink/index";
+import { Footer } from "@/core/index";
 import React from "react";
 
 import { isDrawinkPlusSignedUser } from "../app_constants";

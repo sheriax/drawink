@@ -13,9 +13,9 @@ import type {
   StorageAdapter,
   SyncStatus,
   Workspace,
-} from "@drawink/drawink/storage/types";
-import type { AppState, BinaryFiles, Board, BoardsAPI } from "@drawink/drawink/types";
-import type { DrawinkElement } from "@drawink/element/types";
+} from "@/core/storage/types";
+import type { AppState, BinaryFiles, Board, BoardsAPI } from "@/core/types";
+import type { DrawinkElement } from "@/lib/elements/types";
 
 import { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import { type LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";

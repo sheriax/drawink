@@ -1,12 +1,12 @@
-import { CaptureUpdateAction } from "@drawink/drawink";
-import { trackEvent } from "@drawink/drawink/analytics";
-import { encryptData } from "@drawink/drawink/data/encryption";
-import { newElementWith } from "@drawink/element";
+import { CaptureUpdateAction } from "@/core";
+import { trackEvent } from "@/core/analytics";
+import { encryptData } from "@/core/data/encryption";
+import { newElementWith } from "@/lib/elements";
 import throttle from "lodash.throttle";
 
-import type { UserIdleState } from "@drawink/common";
-import type { OnUserFollowedPayload, SocketId } from "@drawink/drawink/types";
-import type { OrderedDrawinkElement } from "@drawink/element/types";
+import type { UserIdleState } from "@/lib/common";
+import type { OnUserFollowedPayload, SocketId } from "@/core/types";
+import type { OrderedDrawinkElement } from "@/lib/elements/types";
 
 import { FILE_UPLOAD_TIMEOUT, WS_EVENTS, WS_SUBTYPES } from "../app_constants";
 import { isSyncableElement } from "../data";

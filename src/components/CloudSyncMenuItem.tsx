@@ -13,11 +13,11 @@ import {
   authStateAtom,
   cloudEnabledAtom,
   syncStatusAtom,
-} from "@drawink/drawink/atoms/auth";
-import { checkIcon, usersIcon } from "@drawink/drawink/components/icons";
-import { editorJotaiStore } from "@drawink/drawink/editor-jotai";
-import { MainMenu } from "@drawink/drawink/index";
-import type { SyncStatus } from "@drawink/drawink/storage/types";
+} from "@/core/atoms/auth";
+import { checkIcon, usersIcon } from "@/core/components/icons";
+import { editorJotaiStore } from "@/core/editor-jotai";
+import { MainMenu } from "@/core/index";
+import type { SyncStatus } from "@/core/storage/types";
 import { useSetAtom } from "../app-jotai";
 import { firebaseAuth } from "../data/firebase";
 import { authDialogStateAtom } from "./AuthDialog";

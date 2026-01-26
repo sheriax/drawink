@@ -1,9 +1,9 @@
-import { KEYS, getFrame } from "@drawink/common";
-import { trackEvent } from "@drawink/drawink/analytics";
-import { copyTextToSystemClipboard } from "@drawink/drawink/clipboard";
-import { Dialog } from "@drawink/drawink/components/Dialog";
-import { FilledButton } from "@drawink/drawink/components/FilledButton";
-import { TextField } from "@drawink/drawink/components/TextField";
+import { KEYS, getFrame } from "@/lib/common";
+import { trackEvent } from "@/core/analytics";
+import { copyTextToSystemClipboard } from "@/core/clipboard";
+import { Dialog } from "@/core/components/Dialog";
+import { FilledButton } from "@/core/components/FilledButton";
+import { TextField } from "@/core/components/TextField";
 import {
   LinkIcon,
   copyIcon,
@@ -12,10 +12,10 @@ import {
   share,
   shareIOS,
   shareWindows,
-} from "@drawink/drawink/components/icons";
-import { useUIAppState } from "@drawink/drawink/context/ui-appState";
-import { useCopyStatus } from "@drawink/drawink/hooks/useCopiedIndicator";
-import { useI18n } from "@drawink/drawink/i18n";
+} from "@/core/components/icons";
+import { useUIAppState } from "@/core/context/ui-appState";
+import { useCopyStatus } from "@/core/hooks/useCopiedIndicator";
+import { useI18n } from "@/core/i18n";
 import { useEffect, useRef, useState } from "react";
 
 import { atom, useAtom, useAtomValue } from "../app-jotai";

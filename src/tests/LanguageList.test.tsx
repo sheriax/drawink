@@ -1,6 +1,6 @@
-import { defaultLang } from "@drawink/drawink/i18n";
-import { UI } from "@drawink/drawink/tests/helpers/ui";
-import { fireEvent, render, screen, waitFor } from "@drawink/drawink/tests/test-utils";
+import { defaultLang } from "@/core/i18n";
+import { UI } from "@/core/tests/helpers/ui";
+import { fireEvent, render, screen, waitFor } from "@/core/tests/test-utils";
 
 import DrawinkApp from "../App";
 

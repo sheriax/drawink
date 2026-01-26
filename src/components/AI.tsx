@@ -1,14 +1,14 @@
-import { safelyParseJSON } from "@drawink/common";
+import { safelyParseJSON } from "@/lib/common";
 import {
   DiagramToCodePlugin,
   MIME_TYPES,
   TTDDialog,
   exportToBlob,
   getTextFromElements,
-} from "@drawink/drawink";
-import { getDataURL } from "@drawink/drawink/data/blob";
+} from "@/core";
+import { getDataURL } from "@/core/data/blob";
 
-import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
+import type { DrawinkImperativeAPI } from "@/core/types";
 
 export const AIComponents = ({
   drawinkAPI,

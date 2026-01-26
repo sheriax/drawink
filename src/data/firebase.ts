@@ -1,9 +1,9 @@
-import { MIME_TYPES } from "@drawink/common";
-import { reconcileElements } from "@drawink/drawink";
-import { decompressData } from "@drawink/drawink/data/encode";
-import { decryptData, encryptData } from "@drawink/drawink/data/encryption";
-import { restoreElements } from "@drawink/drawink/data/restore";
-import { getSceneVersion } from "@drawink/element";
+import { MIME_TYPES } from "@/lib/common";
+import { reconcileElements } from "@/core";
+import { decompressData } from "@/core/data/encode";
+import { decryptData, encryptData } from "@/core/data/encryption";
+import { restoreElements } from "@/core/data/restore";
+import { getSceneVersion } from "@/lib/elements";
 import { initializeApp } from "firebase/app";
 import {
   type User as FirebaseUser,
@@ -18,9 +18,9 @@ import {
 import { Bytes, doc, getDoc, getFirestore, runTransaction } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
-import type { RemoteDrawinkElement } from "@drawink/drawink/data/reconcile";
-import type { AppState, BinaryFileData, BinaryFileMetadata, DataURL } from "@drawink/drawink/types";
-import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@drawink/element/types";
+import type { RemoteDrawinkElement } from "@/core/data/reconcile";
+import type { AppState, BinaryFileData, BinaryFileMetadata, DataURL } from "@/core/types";
+import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@/lib/elements/types";
 
 import { FILE_CACHE_MAX_AGE_SEC } from "../app_constants";
 

@@ -1,7 +1,7 @@
-// import { loginIcon } from "@drawink/drawink/components/icons";
-// import { POINTER_EVENTS } from "@drawink/common";
-import { useI18n } from "@drawink/drawink/i18n";
-import { WelcomeScreen } from "@drawink/drawink/index";
+// import { loginIcon } from "@/core/components/icons";
+// import { POINTER_EVENTS } from "@/lib/common";
+import { useI18n } from "@/core/i18n";
+import { WelcomeScreen } from "@/core/index";
 import React from "react";
 
 import { isDrawinkPlusSignedUser } from "../app_constants";

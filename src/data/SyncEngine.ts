@@ -5,7 +5,7 @@
  * No periodic sync - HybridStorageAdapter calls CloudStorageAdapter directly.
  */
 
-import { debounce } from "@drawink/common";
+import { debounce } from "@/lib/common";
 
 import type { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import type { LocalStorageAdapter } from "./LocalStorageAdapter";

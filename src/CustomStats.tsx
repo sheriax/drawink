@@ -1,11 +1,11 @@
-import { DEFAULT_VERSION, debounce, getVersion, nFormatter } from "@drawink/common";
-import { Stats } from "@drawink/drawink";
-import { copyTextToSystemClipboard } from "@drawink/drawink/clipboard";
-import { t } from "@drawink/drawink/i18n";
+import { DEFAULT_VERSION, debounce, getVersion, nFormatter } from "@/lib/common";
+import { Stats } from "@/core";
+import { copyTextToSystemClipboard } from "@/core/clipboard";
+import { t } from "@/core/i18n";
 import { useEffect, useState } from "react";
 
-import type { UIAppState } from "@drawink/drawink/types";
-import type { NonDeletedDrawinkElement } from "@drawink/element/types";
+import type { UIAppState } from "@/core/types";
+import type { NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { getElementsStorageSize, getTotalStorageSize } from "./data/localStorage";
 
