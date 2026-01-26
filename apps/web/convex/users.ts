@@ -6,7 +6,25 @@
  */
 
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
+
+// =========================================================================
+// HELPER FUNCTIONS
+// =========================================================================
+
+/**
+ * Get the current user's ID from auth identity
+ * Throws error if user is not authenticated
+ */
+export async function getUserId(
+  ctx: MutationCtx | QueryCtx
+): Promise<string> {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    throw new Error("Unauthorized: User not authenticated");
+  }
+  return identity.subject; // Clerk user ID
+}
 
 // =========================================================================
 // QUERIES

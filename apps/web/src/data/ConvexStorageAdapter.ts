@@ -15,7 +15,7 @@
 import type { BoardContent, StorageAdapter, Workspace } from "@drawink/drawink/storage/types";
 import type { Board } from "@drawink/drawink/types";
 import { ConvexHttpClient } from "convex/browser";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../convex/_generated/api";
 
 // Cache for derived encryption keys
 const encryptionKeyCache = new Map<string, CryptoKey>();

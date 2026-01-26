@@ -4,6 +4,12 @@
  * Users are created/updated via Clerk webhook
  * This file contains queries for user data
  */
+import { MutationCtx, QueryCtx } from "./_generated/server";
+/**
+ * Get the current user's ID from auth identity
+ * Throws error if user is not authenticated
+ */
+export declare function getUserId(ctx: MutationCtx | QueryCtx): Promise<string>;
 /**
  * Get current user
  */

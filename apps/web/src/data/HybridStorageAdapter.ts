@@ -17,7 +17,7 @@ import type {
 import type { AppState, BinaryFiles, Board, BoardsAPI } from "@drawink/drawink/types";
 import type { DrawinkElement } from "@drawink/element/types";
 
-import { CloudStorageAdapter } from "./CloudStorageAdapter";
+import { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import { type LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
 import { SyncEngine } from "./SyncEngine";
 
@@ -30,7 +30,7 @@ import { SyncEngine } from "./SyncEngine";
  */
 export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   private localAdapter: LocalStorageAdapter;
-  private cloudAdapter: CloudStorageAdapter | null = null;
+  private cloudAdapter: ConvexStorageAdapter | null = null;
   private syncEngine: SyncEngine | null = null;
 
   private _cloudEnabled = false;
@@ -116,8 +116,8 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     this._userId = userId;
     this._cloudEnabled = true;
 
-    // Initialize CloudStorageAdapter
-    this.cloudAdapter = new CloudStorageAdapter(userId);
+    // Initialize ConvexStorageAdapter
+    this.cloudAdapter = new ConvexStorageAdapter(userId);
 
     // Initialize SyncEngine
     this.syncEngine = new SyncEngine(this.localAdapter, this.cloudAdapter);
@@ -131,7 +131,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     // Start sync engine
     this.syncEngine.start().catch(console.error);
 
-    console.log("[HybridStorageAdapter] Cloud sync enabled for user:", userId);
+    console.log("[HybridStorageAdapter] Cloud sync enabled for user (using Convex):", userId);
   }
 
   /**

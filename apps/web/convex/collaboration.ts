@@ -8,9 +8,41 @@
  * - Automatic stale session cleanup
  */
 
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { getUserId } from "./users";
+import type { Doc, Id } from "./_generated/dataModel";
+
+/**
+ * Internal helper to get active users for a board
+ * Can be called from other queries
+ *
+ * Note: This is a query helper, so it can't mutate data.
+ * Stale session cleanup happens in the cleanupStaleSessions mutation.
+ */
+async function getActiveUsersInternal(
+  ctx: QueryCtx,
+  boardId: Id<"boards">
+): Promise<Doc<"collaborationSessions">[]> {
+  // Get all sessions for this board
+  const sessions = await ctx.db
+    .query("collaborationSessions")
+    .withIndex("by_board_active", (q) =>
+      q.eq("boardId", boardId).eq("isActive", true)
+    )
+    .collect();
+
+  // Filter out stale sessions (no heartbeat in last 30 seconds)
+  // Note: We filter but don't mark as inactive (that's done by cleanupStaleSessions)
+  const now = Date.now();
+  const activeThreshold = 30 * 1000; // 30 seconds
+
+  const activeSessions = sessions.filter(
+    (session) => now - session.lastHeartbeat < activeThreshold
+  );
+
+  return activeSessions;
+}
 
 /**
  * Join a board (start collaborative session)
@@ -146,32 +178,7 @@ export const getActiveUsers = query({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    // Get all sessions for this board
-    const sessions = await ctx.db
-      .query("collaborationSessions")
-      .withIndex("by_board_active", (q) =>
-        q.eq("boardId", args.boardId).eq("isActive", true)
-      )
-      .collect();
-
-    // Filter out stale sessions (no heartbeat in last 30 seconds)
-    const now = Date.now();
-    const activeThreshold = 30 * 1000; // 30 seconds
-
-    const activeSessions = sessions.filter(
-      (session) => now - session.lastHeartbeat < activeThreshold
-    );
-
-    // Mark stale sessions as inactive (cleanup)
-    const staleSessions = sessions.filter(
-      (session) => now - session.lastHeartbeat >= activeThreshold
-    );
-
-    for (const session of staleSessions) {
-      await ctx.db.patch(session._id, { isActive: false });
-    }
-
-    return activeSessions;
+    return await getActiveUsersInternal(ctx, args.boardId);
   },
 });
 
@@ -183,7 +190,7 @@ export const getCursors = query({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const activeUsers = await getActiveUsers(ctx, args);
+    const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Assign colors to users (deterministic based on userId)
     const colors = [
@@ -196,7 +203,7 @@ export const getCursors = query({
       "#e2904a", // Orange
     ];
 
-    return activeUsers.map((user, index) => ({
+    return activeUsers.map((user: Doc<"collaborationSessions">, index: number) => ({
       userId: user.userId,
       userName: user.userName,
       userPhotoUrl: user.userPhotoUrl,
@@ -217,7 +224,7 @@ export const getStats = query({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const activeUsers = await getActiveUsers(ctx, args);
+    const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Get all-time collaboration sessions for this board
     const allSessions = await ctx.db
@@ -228,7 +235,7 @@ export const getStats = query({
     return {
       activeCount: activeUsers.length,
       totalCollaborators: new Set(allSessions.map((s) => s.userId)).size,
-      currentSessions: activeUsers.map((u) => ({
+      currentSessions: activeUsers.map((u: Doc<"collaborationSessions">) => ({
         userName: u.userName,
         joinedAt: u.joinedAt,
         lastActivity: u.lastHeartbeat,
@@ -247,11 +254,9 @@ export const cleanupStaleSessions = mutation({
     const now = Date.now();
     const staleThreshold = 5 * 60 * 1000; // 5 minutes
 
-    // Get all active sessions
-    const sessions = await ctx.db
-      .query("collaborationSessions")
-      .withIndex("by_board_active", (q) => q.eq("isActive", true))
-      .collect();
+    // Get all active sessions (no index - scanning all sessions)
+    const allSessions = await ctx.db.query("collaborationSessions").collect();
+    const sessions = allSessions.filter((s) => s.isActive);
 
     let cleanedCount = 0;
 

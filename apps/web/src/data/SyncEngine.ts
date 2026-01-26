@@ -7,7 +7,7 @@
 
 import { debounce } from "@drawink/common";
 
-import type { CloudStorageAdapter } from "./CloudStorageAdapter";
+import type { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import type { LocalStorageAdapter } from "./LocalStorageAdapter";
 
 export type SyncStatus = "idle" | "syncing" | "error";
@@ -28,7 +28,7 @@ export type SyncState = {
  */
 export class SyncEngine {
   private localAdapter: LocalStorageAdapter;
-  private cloudAdapter: CloudStorageAdapter;
+  private cloudAdapter: ConvexStorageAdapter;
 
   private _state: SyncState = {
     status: "idle",
@@ -42,7 +42,7 @@ export class SyncEngine {
   // Debounced content sync for batching rapid changes
   private pendingContentSyncs = new Map<string, ReturnType<typeof debounce>>();
 
-  constructor(localAdapter: LocalStorageAdapter, cloudAdapter: CloudStorageAdapter) {
+  constructor(localAdapter: LocalStorageAdapter, cloudAdapter: ConvexStorageAdapter) {
     this.localAdapter = localAdapter;
     this.cloudAdapter = cloudAdapter;
   }

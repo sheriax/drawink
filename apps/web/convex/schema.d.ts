@@ -264,6 +264,7 @@ declare const _default: import("convex/server").SchemaDefinition<{
         by_board: ["boardId", "_creationTime"];
         by_board_active: ["boardId", "isActive", "_creationTime"];
         by_user: ["userId", "_creationTime"];
+        by_board_and_user: ["boardId", "userId", "_creationTime"];
     }, {}, {}>;
     aiUsage: import("convex/server").TableDefinition<import("convex/values").VObject<{
         userId: string;

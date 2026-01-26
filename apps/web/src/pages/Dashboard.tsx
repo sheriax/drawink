@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTRPC } from "../lib/trpc";
 import { useQuery, useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../convex/_generated/api";
 import type { Board } from "@drawink/types";
 import "./Dashboard.scss";
 
