@@ -23,12 +23,16 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "convex dev & vite",
+    "dev:convex": "convex dev",
+    "dev:vite": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "biome check .",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf dist .vite"
+    "clean": "rimraf dist .vite",
+    "convex:deploy": "convex deploy",
+    "convex:dashboard": "convex dashboard"
   },
   "dependencies": {
     "@clerk/clerk-react": "5.59.6",
@@ -42,6 +46,8 @@
     "@sentry/browser": "9.0.1",
     "@trpc/client": "11.8.1",
     "callsites": "4.2.0",
+    "convex": "1.31.6",
+    "convex-helpers": "0.1.111",
     "firebase": "11.3.1",
     "i18next-browser-languagedetector": "6.1.4",
     "idb-keyval": "6.0.3",

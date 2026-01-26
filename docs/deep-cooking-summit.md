@@ -15,7 +15,7 @@
 - **Branding:** Keep "Drawink" name, remove all Excalidraw references
 - **Features:** Keep all Excalidraw Plus features, improve AI/Mermaid
 
-### Tech Stack Decisions
+### Tech Stack Decisions (UPDATED: Convex + Firebase Storage Hybrid)
 
 | Layer | Choice | Notes |
 |-------|--------|-------|
@@ -24,11 +24,11 @@
 | **Web App** | Vite + React | Keep current |
 | **Landing** | Astro (latest) | New |
 | **Docs** | Docusaurus | Keep, internal only |
-| **API** | tRPC + Hono | New |
-| **WebSocket** | Socket.IO | Keep current |
-| **Database** | Firebase Firestore | Keep current |
-| **File Storage** | Firebase Storage | Keep current |
-| **Auth** | Clerk | New (replace Firebase Auth) |
+| **Database** | **Convex** | ✨ NEW: Replaces Firestore, tRPC, WebSocket |
+| **Backend Functions** | **Convex Functions** | ✨ NEW: Replaces separate API server |
+| **Real-time** | **Convex Reactive Queries** | ✨ NEW: Replaces Socket.IO |
+| **File Storage** | **Firebase Storage** | ✅ KEEP: 19x cheaper than Convex ($0.026 vs $0.50/GB) |
+| **Auth** | Clerk | New (works seamlessly with Convex) |
 | **Payments** | Stripe | New |
 | **State** | Jotai | Keep current |
 | **Styling** | Tailwind CSS | Migrate from SCSS |
@@ -40,15 +40,22 @@
 | **Feature Flags** | Firebase Remote Config | |
 | **Analytics** | Vercel Analytics | |
 
-### Deployment
+### Deployment (SIMPLIFIED with Convex)
 
-| App | Platform |
-|-----|----------|
-| Web App | Vercel |
-| Landing | Vercel |
-| API Server | Google Cloud Run |
-| WebSocket Server | Google Cloud Run |
-| Docs | Vercel |
+| App | Platform | Notes |
+|-----|----------|-------|
+| Web App | Vercel | With Convex client |
+| Landing | Vercel | |
+| **Convex Backend** | **Convex Cloud** | ✨ All-in-one: DB + Functions + Real-time |
+| **Firebase Storage** | **Google Cloud** | ✅ Files only (19x cheaper) |
+| Docs | Vercel | Internal only |
+
+**ELIMINATED:**
+- ❌ Separate API server (Cloud Run)
+- ❌ Separate WebSocket server (Cloud Run)
+- ❌ tRPC setup complexity
+- ❌ Complex Firestore transactions
+- ❌ Manual real-time subscriptions
 
 ---
 
