@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/types",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "types": ["react", "react-dom", "node"]
+  },
+  "include": [
+    "src/**/*",
+    "global.d.ts"
+  ],
+  "exclude": [
+    "../drawink/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "Drawink's Prettier config",
+  "license": "MIT",
+  "main": "index.json",
+  "name": "@drawink/prettier-config",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "https://github.com/drawink/prettier-config",
+  "version": "1.0.2"
+}

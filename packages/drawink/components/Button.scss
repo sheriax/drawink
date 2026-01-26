@@ -1,0 +1,7 @@
+@import "../css/theme";
+
+.drawink {
+  .drawink-button {
+    @include outlineButtonStyles;
+  }
+}

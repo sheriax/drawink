@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
         registerType: "autoUpdate",
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         },
         includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
         manifest: {
@@ -49,11 +50,12 @@ export default defineConfig(({ mode }) => {
         "@/hooks": resolve(__dirname, "./src/hooks"),
         "@/convex": resolve(__dirname, "./src/convex"),
         "@/styles": resolve(__dirname, "./src/styles"),
-        "@drawink/drawink": resolve(__dirname, "./src/components/drawink/dist/prod/index.js"),
-        "@drawink/common": resolve(__dirname, "./src/lib/common"),
-        "@drawink/element": resolve(__dirname, "./src/lib/elements"),
-        "@drawink/math": resolve(__dirname, "./src/lib/math"),
-        "@drawink/utils": resolve(__dirname, "./src/lib/utils"),
+        "@drawink/drawink": resolve(__dirname, "./packages/drawink"),
+        "@drawink/common": resolve(__dirname, "./packages/common/src"),
+        "@drawink/element": resolve(__dirname, "./packages/element/src"),
+        "@drawink/math": resolve(__dirname, "./packages/math/src"),
+        "@drawink/utils": resolve(__dirname, "./packages/utils/src"),
+        "@drawink/types": resolve(__dirname, "./packages/types/src"),
       },
     },
     server: {
