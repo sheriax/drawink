@@ -23,7 +23,7 @@
       "@/hooks/*": ["src/hooks/*"],
       "@/convex/*": ["src/convex/*"],
       "@/styles/*": ["src/styles/*"],
-      "@drawink/drawink": ["packages/drawink/index.ts"],
+      "@drawink/drawink": ["packages/drawink/index.tsx"],
       "@drawink/drawink/*": ["packages/drawink/*"],
       "@drawink/common": ["packages/common/src/index.ts"],
       "@drawink/common/*": ["packages/common/src/*"],

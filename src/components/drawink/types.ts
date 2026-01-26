@@ -1,1 +1,1 @@
-export type { UIAppState } from "./dist/types/drawink/types";
+export type { UIAppState } from "@drawink/drawink/types";

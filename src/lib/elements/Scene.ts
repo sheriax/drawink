@@ -36,7 +36,7 @@ import type {
 
 import type { Assert, Mutable, SameType } from "@drawink/common/utility-types";
 
-import type { AppState } from "../../drawink/types";
+import type { AppState } from "@drawink/drawink/types";
 
 type SceneStateCallback = () => void;
 type SceneStateCallbackRemover = () => void;

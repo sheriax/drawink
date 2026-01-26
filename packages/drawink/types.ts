@@ -12,6 +12,10 @@ import type { LinearElementEditor } from "@drawink/element";
 import type {
   AppState as BaseAppState,
   AppProps as BaseAppProps,
+  ToolType,
+  ActiveTool,
+  Zoom,
+  UnsubscribeCallback,
 } from "@drawink/types";
 
 import type { MaybeTransformHandleType } from "@drawink/element";
@@ -159,7 +163,8 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<DrawinkElement["id"], BinaryFileData>;
 
-export type { ToolType, ActiveTool } from "@drawink/types";
+// Re-export imported types
+export type { ToolType, ActiveTool, Zoom, UnsubscribeCallback };
 
 export type ElementOrToolType = DrawinkElementType | ToolType | "custom";
 
