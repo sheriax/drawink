@@ -11,6 +11,7 @@
 import type * as boards from "../boards.js";
 import type * as collaboration from "../collaboration.js";
 import type * as files from "../files.js";
+import type * as publicShares from "../publicShares.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   boards: typeof boards;
   collaboration: typeof collaboration;
   files: typeof files;
+  publicShares: typeof publicShares;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;

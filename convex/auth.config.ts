@@ -14,13 +14,20 @@
  *
  * Environment Variables Required:
  * - CLERK_JWT_ISSUER_DOMAIN: Your Clerk issuer domain (e.g., https://your-app.clerk.accounts.dev)
+ *
+ * NOTE: Auth is optional. If not configured, authentication features won't work,
+ * but anonymous features (like public shareable links) will still function.
  */
 
+const clerkDomain = process.env.CLERK_JWT_ISSUER_DOMAIN;
+
 export default {
-  providers: [
-    {
-      domain: process.env.CLERK_JWT_ISSUER_DOMAIN!,
-      applicationID: "convex",
-    },
-  ],
+  providers: clerkDomain
+    ? [
+        {
+          domain: clerkDomain,
+          applicationID: "convex",
+        },
+      ]
+    : [],
 };
