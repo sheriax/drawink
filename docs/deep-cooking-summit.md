@@ -15,7 +15,7 @@
 - **Branding:** Keep "Drawink" name, remove all Excalidraw references
 - **Features:** Keep all Excalidraw Plus features, improve AI/Mermaid
 
-### Tech Stack Decisions (UPDATED: Convex + Firebase Storage Hybrid)
+### Tech Stack Decisions (UPDATED: Hybrid Architecture - Excalidraw Room + Convex + Firebase Storage)
 
 | Layer | Choice | Notes |
 |-------|--------|-------|
@@ -24,9 +24,9 @@
 | **Web App** | Vite + React | Keep current |
 | **Landing** | Astro (latest) | New |
 | **Docs** | Docusaurus | Keep, internal only |
-| **Database** | **Convex** | ✨ NEW: Replaces Firestore, tRPC, WebSocket |
-| **Backend Functions** | **Convex Functions** | ✨ NEW: Replaces separate API server |
-| **Real-time** | **Convex Reactive Queries** | ✨ NEW: Replaces Socket.IO |
+| **Database** | **Convex** | ✨ NEW: Replaces Firestore for structured data |
+| **Backend Functions** | **Convex Functions** | ✨ NEW: Replaces separate API server for business logic |
+| **Real-time Collaboration** | **Excalidraw Room (Socket.io)** | ✨ NEW: Battle-tested collaboration server for cursors, presence, live editing |
 | **File Storage** | **Firebase Storage** | ✅ KEEP: 19x cheaper than Convex ($0.026 vs $0.50/GB) |
 | **Auth** | Clerk | New (works seamlessly with Convex) |
 | **Payments** | Stripe | New |
@@ -40,22 +40,27 @@
 | **Feature Flags** | Firebase Remote Config | |
 | **Analytics** | Vercel Analytics | |
 
-### Deployment (SIMPLIFIED with Convex)
+### Deployment (Hybrid Architecture)
 
 | App | Platform | Notes |
 |-----|----------|-------|
-| Web App | Vercel | With Convex client |
+| Web App | Vercel | With Convex client + Excalidraw Room client |
 | Landing | Vercel | |
-| **Convex Backend** | **Convex Cloud** | ✨ All-in-one: DB + Functions + Real-time |
+| **Convex Backend** | **Convex Cloud** | ✨ Database + Functions + Auth integration |
+| **Collaboration Server** | **Cloud Run** | ✨ Excalidraw Room (Socket.io) for real-time collaboration |
 | **Firebase Storage** | **Google Cloud** | ✅ Files only (19x cheaper) |
 | Docs | Vercel | Internal only |
 
+**Architecture Benefits:**
+- ✅ **Convex** handles structured data, auth, billing, business logic (simpler than Firestore)
+- ✅ **Excalidraw Room** handles real-time collaboration (battle-tested, Excalidraw-compatible)
+- ✅ **Firebase Storage** handles file uploads (cost-effective)
+
 **ELIMINATED:**
-- ❌ Separate API server (Cloud Run)
-- ❌ Separate WebSocket server (Cloud Run)
-- ❌ tRPC setup complexity
-- ❌ Complex Firestore transactions
-- ❌ Manual real-time subscriptions
+- ❌ Firestore (replaced by Convex)
+- ❌ tRPC setup complexity (replaced by Convex functions)
+- ❌ Complex Firestore transactions (Convex handles this natively)
+- ❌ Manual real-time subscriptions (Excalidraw Room handles this)
 
 ---
 
@@ -86,9 +91,11 @@ drawink/
 │   │   ├── Dockerfile
 │   │   └── package.json
 │   │
-│   ├── ws/                  # WebSocket server
+│   ├── ws/                  # WebSocket server (Excalidraw Room)
 │   │   ├── src/
-│   │   │   └── index.ts
+│   │   │   ├── index.ts     # Socket.io server entry
+│   │   │   ├── rooms.ts     # Room management
+│   │   │   └── presence.ts  # User presence tracking
 │   │   ├── Dockerfile
 │   │   └── package.json
 │   │
@@ -147,6 +154,144 @@ drawink/
 ├── biome.json               # Biome config
 ├── tsconfig.json            # Root TS config
 └── .env.example
+```
+
+---
+
+## Hybrid Architecture: Excalidraw Room + Convex
+
+### Overview
+
+We've adopted a **hybrid architecture** that leverages the best of both worlds:
+
+| Responsibility | Technology | Rationale |
+|----------------|------------|-----------|
+| **Real-time Collaboration** | Excalidraw Room (Socket.io) | Battle-tested, purpose-built for Excalidraw's collaboration protocol |
+| **Structured Data** | Convex | Superior DX, type-safe queries, automatic caching |
+| **File Storage** | Firebase Storage | 19x cheaper than alternatives |
+| **Authentication** | Clerk | Seamless integration with Convex |
+
+### Why Excalidraw Room for Collaboration?
+
+The [excalidraw-room](https://github.com/excalidraw/excalidraw-room) server is the **official collaboration server** used by Excalidraw.com:
+
+1. **Protocol Compatibility**: Uses the exact same message format as Excalidraw's client expects
+2. **Battle-Tested**: Powers millions of collaborative sessions on Excalidraw.com
+3. **Feature Complete**: Handles cursors, presence, scene broadcasting, and user awareness
+4. **Simple to Deploy**: Single Docker container, minimal configuration
+5. **Room-Based**: Natural fit for our board-based collaboration model
+
+**What Excalidraw Room Handles:**
+- Real-time cursor positions
+- User presence (who's online)
+- Scene element broadcasting
+- Room join/leave events
+- User color assignment
+- Idle detection
+
+**What Excalidraw Room Does NOT Handle:**
+- Board persistence (that's Convex)
+- User authentication (that's Clerk)
+- File uploads (that's Firebase Storage)
+- Billing/subscriptions (that's Convex + Stripe)
+
+### Why Convex for Everything Else?
+
+Convex provides a superior developer experience for structured data operations:
+
+1. **Type Safety**: End-to-end TypeScript from frontend to database
+2. **Reactive Queries**: Automatic real-time updates for data changes
+3. **Simplified Backend**: No need for tRPC or REST API layer
+4. **Better than Firestore**: No complex security rules, simpler transactions
+5. **Clerk Integration**: First-class support for Clerk authentication
+
+**What Convex Handles:**
+- User profiles and preferences
+- Board metadata (name, permissions, collaborators)
+- Project/organization structure
+- Version history storage
+- Billing and subscription data
+- AI usage tracking
+- Template library
+
+### How They Work Together
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Drawink Web App                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   Convex    │  │   Clerk     │  │  Excalidraw Room    │  │
+│  │   Client    │  │   Auth      │  │  (Socket.io Client) │  │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘  │
+└─────────┼────────────────┼────────────────────┼─────────────┘
+          │                │                    │
+          ▼                ▼                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      Backend Services                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   Convex    │  │   Clerk     │  │  Excalidraw Room    │  │
+│  │   Cloud     │  │   (SaaS)    │  │  (Socket.io Server) │  │
+│  │             │  │             │  │                     │  │
+│  │ • Database  │  │ • Auth      │  │ • Real-time sync    │  │
+│  │ • Functions │  │ • Users     │  │ • Presence          │  │
+│  │ • Queries   │  │ • Orgs      │  │ • Cursors           │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │              Firebase Storage (Files)                   ││
+│  │         • Board exports (PNG, SVG, PDF)                 ││
+│  │         • Image uploads                                 ││
+│  │         • Template thumbnails                           ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow Example: Collaborative Board Session
+
+1. **User opens board**:
+   - Web app fetches board metadata from Convex (name, permissions, collaborators)
+   - Web app connects to Excalidraw Room using board ID as room name
+   - Excalidraw Room syncs current scene state with other connected users
+
+2. **User makes edits**:
+   - Changes are broadcast via Excalidraw Room to all connected users
+   - Periodic snapshots saved to Convex for persistence
+   - Version history snapshots stored in Convex
+
+3. **User leaves**:
+   - Excalidraw Room notifies other users of departure
+   - Final state persisted to Convex
+   - Presence updated in real-time
+
+### Environment Variables for Hybrid Setup
+
+```bash
+# Convex (Database + Functions)
+VITE_CONVEX_URL=https://<your-deployment>.convex.cloud
+CONVEX_DEPLOY_KEY=your-deploy-key
+
+# Excalidraw Room (Collaboration Server)
+VITE_WS_URL=wss://ws.drawink.app  # Production
+VITE_WS_URL=ws://localhost:3003   # Development
+WS_PORT=3003
+WS_CORS_ORIGIN=https://canvas.drawink.app
+
+# Clerk (Auth)
+VITE_CLERK_PUBLISHABLE_KEY=pk_xxx
+CLERK_SECRET_KEY=sk_xxx
+CLERK_WEBHOOK_SECRET=whsec_xxx
+
+# Firebase Storage (Files)
+VITE_FIREBASE_CONFIG={"apiKey":"...","storageBucket":"..."}
+FIREBASE_ADMIN_SDK={"projectId":"..."}
+
+# Stripe (Billing)
+STRIPE_SECRET_KEY=sk_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+VITE_STRIPE_PUBLISHABLE_KEY=pk_xxx
+
+# OpenAI (AI Features)
+OPENAI_API_KEY=sk_xxx
 ```
 
 ---
@@ -482,22 +627,38 @@ export const checkAIUsage = async (userId: string, estimatedTokens: number) => {
 };
 ```
 
-**WebSocket Throttling:**
+**WebSocket Throttling (Excalidraw Room):**
+
+Excalidraw Room includes built-in throttling. We can configure it via environment variables:
+
 ```typescript
-// apps/ws/src/middleware/throttle.ts
-const THROTTLE_CONFIG = {
+// apps/ws/src/config.ts
+export const WS_CONFIG = {
+  // Rate limits per socket
   broadcastsPerSecond: 10,      // Max scene updates per second
   cursorUpdatesPerSecond: 30,   // Max cursor position updates
   maxPayloadSize: 1_000_000,    // 1MB max per message
+  
+  // Room limits
+  maxUsersPerRoom: 50,          // Maximum concurrent users in a room
+  maxRooms: 1000,               // Maximum active rooms
+  
+  // Cleanup
+  inactiveRoomTimeout: 24 * 60 * 60 * 1000, // 24 hours
 };
+```
 
-// Per-socket rate limiter
+**Custom Throttling (if extending Excalidraw Room):**
+```typescript
+// apps/ws/src/middleware/throttle.ts
+import { WS_CONFIG } from '../config';
+
 const rateLimiter = new Map<string, { count: number; resetAt: number }>();
 
 export const throttleSocket = (socketId: string, type: 'broadcast' | 'cursor') => {
   const limit = type === 'broadcast'
-    ? THROTTLE_CONFIG.broadcastsPerSecond
-    : THROTTLE_CONFIG.cursorUpdatesPerSecond;
+    ? WS_CONFIG.broadcastsPerSecond
+    : WS_CONFIG.cursorUpdatesPerSecond;
 
   const now = Date.now();
   const state = rateLimiter.get(socketId) || { count: 0, resetAt: now + 1000 };
@@ -678,22 +839,162 @@ export const errorHandler = (error: unknown, ctx: Context) => {
 };
 ```
 
-**WebSocket Error Logging:**
+**WebSocket Error Logging (Excalidraw Room):**
 ```typescript
 // apps/ws/src/middleware/errorHandler.ts
+// Extends Excalidraw Room's error handling
+
 socket.on('error', (error) => {
   console.error(JSON.stringify({
     timestamp: new Date().toISOString(),
     socketId: socket.id,
     roomId: currentRoom,
     error: error.message,
+    type: 'websocket_error',
+  }));
+});
+
+// Log room-level events
+io.of('/').adapter.on('create-room', (room) => {
+  console.log(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    event: 'room_created',
+    roomId: room,
+  }));
+});
+
+io.of('/').adapter.on('delete-room', (room) => {
+  console.log(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    event: 'room_deleted',
+    roomId: room,
   }));
 });
 ```
 
-### 5. Firestore Security Rules (CRITICAL)
+### 5. Convex Security Model (Replaces Firestore Rules)
 
-**Location:** `firebase-project/firestore.rules`
+**Note:** With Convex replacing Firestore, we use Convex's built-in authentication and authorization instead of Firestore security rules.
+
+**Convex Functions with Clerk Auth:**
+```typescript
+// convex/boards.ts
+import { v } from 'convex/values';
+import { query, mutation } from './_generated/server';
+import { auth } from './auth';
+
+// Query with auth check
+export const get = query({
+  args: { boardId: v.id('boards') },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error('Unauthorized');
+
+    const board = await ctx.db.get(args.boardId);
+    if (!board) throw new Error('Not found');
+
+    // Check permissions
+    const hasAccess = await checkBoardAccess(ctx, userId, board);
+    if (!hasAccess) throw new Error('Forbidden');
+
+    return board;
+  },
+});
+
+// Mutation with auth check
+export const update = mutation({
+  args: {
+    boardId: v.id('boards'),
+    updates: v.object({ name: v.optional(v.string()) }),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error('Unauthorized');
+
+    const board = await ctx.db.get(args.boardId);
+    if (!board) throw new Error('Not found');
+
+    // Only owner or editor can update
+    const canEdit = await checkBoardEditPermission(ctx, userId, board);
+    if (!canEdit) throw new Error('Forbidden');
+
+    return await ctx.db.patch(args.boardId, {
+      ...args.updates,
+      updatedAt: Date.now(),
+    });
+  },
+});
+```
+
+**Permission Helper Functions:**
+```typescript
+// convex/lib/permissions.ts
+import { QueryCtx } from './_generated/server';
+
+export async function checkBoardAccess(
+  ctx: QueryCtx,
+  userId: string,
+  board: any
+): Promise<boolean> {
+  // Owner always has access
+  if (board.ownerId === userId) return true;
+
+  // Public boards
+  if (board.isPublic) return true;
+
+  // Check collaborators
+  if (board.collaboratorIds?.includes(userId)) return true;
+
+  // Check org membership
+  if (board.organizationId) {
+    const membership = await ctx.db
+      .query('organizationMembers')
+      .withIndex('by_org_user', q =>
+        q.eq('organizationId', board.organizationId).eq('userId', userId)
+      )
+      .first();
+    return !!membership;
+  }
+
+  return false;
+}
+
+export async function checkBoardEditPermission(
+  ctx: QueryCtx,
+  userId: string,
+  board: any
+): Promise<boolean> {
+  // Owner can always edit
+  if (board.ownerId === userId) return true;
+
+  // Check collaborator role
+  const collaborator = board.collaborators?.find(
+    (c: any) => c.userId === userId
+  );
+  if (collaborator?.role === 'editor') return true;
+
+  // Check org role
+  if (board.organizationId) {
+    const membership = await ctx.db
+      .query('organizationMembers')
+      .withIndex('by_org_user', q =>
+        q.eq('organizationId', board.organizationId).eq('userId', userId)
+      )
+      .first();
+    return membership?.role === 'owner' || membership?.role === 'admin';
+  }
+
+  return false;
+}
+```
+
+---
+
+### Firestore Security Rules (LEGACY - For Reference Only)
+
+**Note:** The following Firestore rules are preserved for reference during migration. Convex replaces these with function-level auth checks.
+
+**Location:** `firebase-project/firestore.rules` (LEGACY)
 
 ```javascript
 rules_version = '2';
@@ -869,7 +1170,84 @@ service cloud.firestore {
 }
 ```
 
-### 6. Clerk + Firebase Webhook Sync Strategy
+**Migration Note:** These rules are preserved for reference only. The new architecture uses:
+- **Convex** for structured data (users, boards, organizations, billing)
+- **Convex auth helpers** for permission checks (see section above)
+- **Excalidraw Room** for real-time collaboration (replaces `/scenes` collection)
+- **Firebase Storage** for files only (no Firestore needed)
+
+### 6. Clerk + Convex Integration Strategy
+
+**Note:** With Convex replacing Firestore, we use Convex's native Clerk integration instead of webhooks for most use cases.
+
+**Clerk + Convex Setup:**
+```typescript
+// convex/auth.ts
+import { convexAuth } from '@convex-dev/auth/server';
+import { clerk } from '@convex-dev/auth/providers/clerk';
+
+export const { auth, signIn, signOut, store } = convexAuth({
+  providers: [clerk],
+});
+```
+
+**User Data in Convex:**
+```typescript
+// convex/users.ts
+import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
+import { auth } from './auth';
+
+// Get current user
+export const me = query({
+  handler: async (ctx) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) return null;
+    return await ctx.db.get(userId);
+  },
+});
+
+// Sync user from Clerk (called on first login)
+export const syncFromClerk = mutation({
+  args: {
+    email: v.string(),
+    name: v.string(),
+    photoUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+    if (!userId) throw new Error('Unauthorized');
+
+    const existing = await ctx.db.get(userId);
+    if (existing) {
+      // Update existing user
+      await ctx.db.patch(userId, {
+        email: args.email,
+        name: args.name,
+        photoUrl: args.photoUrl,
+        lastLoginAt: Date.now(),
+      });
+    } else {
+      // Create new user
+      await ctx.db.insert('users', {
+        _id: userId,
+        email: args.email,
+        name: args.name,
+        photoUrl: args.photoUrl,
+        createdAt: Date.now(),
+        lastLoginAt: Date.now(),
+        subscription: {
+          tier: 'free',
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+        },
+      });
+    }
+  },
+});
+```
+
+### Clerk + Firebase Webhook Sync Strategy (LEGACY)
 
 **Problem:** Clerk manages auth, but we need user data in Firestore for queries.
 
@@ -1248,15 +1626,38 @@ export const cleanupJob = async () => {
 - `drawink-app/` → `apps/web/src/`
 - `drawink-app/vite.config.ts` → `apps/web/vite.config.ts`
 
-#### Step 1.3: Migrate Backend Servers
-1. Move `json-server/` to `apps/api/`
-2. Add tRPC setup with Hono adapter
-3. Move `websocket-server/` to `apps/ws/`
-4. Update Docker configurations
+#### Step 1.3: Set Up Backend Services (Hybrid Architecture)
 
-**Files to migrate:**
-- `json-server/` → `apps/api/`
-- `websocket-server/` → `apps/ws/`
+**A. Convex Backend (Database + Functions):**
+1. Initialize Convex project: `bunx convex dev`
+2. Create `convex/` directory at project root
+3. Set up schema definitions
+4. Create auth integration with Clerk
+5. Migrate business logic from `json-server/`
+
+**Files to create:**
+- `convex/schema.ts` - Database schema
+- `convex/auth.ts` - Clerk integration
+- `convex/boards.ts` - Board CRUD operations
+- `convex/users.ts` - User management
+- `convex/organizations.ts` - Team/org features
+
+**B. Excalidraw Room Server (Collaboration):**
+1. Fork/clone [excalidraw-room](https://github.com/excalidraw/excalidraw-room)
+2. Set up in `apps/ws/`
+3. Configure environment variables
+4. Update Docker configuration
+
+**Files to create:**
+- `apps/ws/src/index.ts` - Socket.io server entry
+- `apps/ws/src/config.ts` - Server configuration
+- `apps/ws/Dockerfile` - Container config
+- `apps/ws/.env.example` - Environment template
+
+**Migration from old architecture:**
+- ❌ `json-server/` → Replaced by Convex functions
+- ❌ `websocket-server/` → Replaced by Excalidraw Room
+- ✅ Firebase Storage → Keep as-is for file storage
 
 #### Step 1.4: Migrate Packages
 1. Keep existing packages (common, math, element, drawink)
@@ -1309,34 +1710,39 @@ export const cleanupJob = async () => {
 3. Configure roles: Owner, Admin, Member
 
 #### Step 3.2: Projects/Folders Structure
-1. Create project model in Firestore
+1. Create project model in Convex
 2. Add project CRUD operations
 3. Update sidebar to show projects
 4. Link boards to projects
 
-**Firestore Schema (IMPORTANT: Support folders/projects from day 1, even if UI is flat):**
+**Convex Schema (IMPORTANT: Support folders/projects from day 1, even if UI is flat):**
 ```typescript
-// users collection (linked to Clerk)
-interface User {
-  id: string;              // Clerk user ID
-  email: string;
-  name: string;
-  photoUrl?: string;
-  createdAt: Timestamp;
-  lastLoginAt: Timestamp;
-  subscription: {
-    tier: 'free' | 'pro' | 'team';
-    stripeCustomerId?: string;
-    stripeSubscriptionId?: string;
-    expiresAt?: Timestamp;
-  };
-}
+// convex/schema.ts
+import { defineSchema, defineTable } from 'convex/server';
+import { v } from 'convex/values';
 
-// organizations collection (linked to Clerk Organizations)
-interface Organization {
-  id: string;              // Clerk org ID
-  name: string;
-  ownerId: string;         // Clerk user ID
+export default defineSchema({
+  // users table (linked to Clerk)
+  users: defineTable({
+    email: v.string(),
+    name: v.string(),
+    photoUrl: v.optional(v.string()),
+    createdAt: v.number(),
+    lastLoginAt: v.number(),
+    subscription: v.object({
+      tier: v.union(v.literal('free'), v.literal('pro'), v.literal('team')),
+      stripeCustomerId: v.optional(v.string()),
+      stripeSubscriptionId: v.optional(v.string()),
+      expiresAt: v.optional(v.number()),
+    }),
+  })
+    .index('by_email', ['email']),
+
+  // organizations table (linked to Clerk Organizations)
+  organizations: defineTable({
+    clerkOrgId: v.string(),      // Clerk org ID
+    name: v.string(),
+    ownerId: v.string(),         // Clerk user ID
   createdAt: Timestamp;
   updatedAt: Timestamp;
   subscription: {
