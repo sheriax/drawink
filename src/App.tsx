@@ -1,18 +1,4 @@
 import {
-  APP_NAME,
-  EVENT,
-  THEME,
-  VERSION_TIMEOUT,
-  debounce,
-  getFrame,
-  getVersion,
-  // isRunningInIframe,
-  isDevEnv,
-  isTestEnv,
-  preventUnload,
-  resolvablePromise,
-} from "@/lib/common";
-import {
   CaptureUpdateAction,
   Drawink,
   TTDDialogTrigger,
@@ -35,6 +21,20 @@ import { loadFromBlob } from "@/core/data/blob";
 import { useCallbackRefState } from "@/core/hooks/useCallbackRefState";
 import { t } from "@/core/i18n";
 import polyfill from "@/core/polyfill";
+import {
+  APP_NAME,
+  EVENT,
+  THEME,
+  VERSION_TIMEOUT,
+  debounce,
+  getFrame,
+  getVersion,
+  // isRunningInIframe,
+  isDevEnv,
+  isTestEnv,
+  preventUnload,
+  resolvablePromise,
+} from "@/lib/common";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
@@ -54,8 +54,6 @@ import { newElementWith } from "@/lib/elements";
 import { isInitializedImageElement } from "@/lib/elements";
 import clsx from "clsx";
 
-import type { ResolutionType } from "@/lib/common/utility-types";
-import type { ResolvablePromise } from "@/lib/common/utils";
 import type { RemoteDrawinkElement } from "@/core/data/reconcile";
 import type { RestoredDataState } from "@/core/data/restore";
 import type {
@@ -65,11 +63,9 @@ import type {
   DrawinkInitialDataState,
   UIAppState,
 } from "@/core/types";
-import type {
-  FileId,
-  NonDeletedDrawinkElement,
-  OrderedDrawinkElement,
-} from "@/lib/elements/types";
+import type { ResolutionType } from "@/lib/common/utility-types";
+import type { ResolvablePromise } from "@/lib/common/utils";
+import type { FileId, NonDeletedDrawinkElement, OrderedDrawinkElement } from "@/lib/elements/types";
 
 import CustomStats from "./CustomStats";
 import {
@@ -91,7 +87,6 @@ import { AppMainMenu } from "./components/AppMainMenu";
 import { AppWelcomeScreen } from "./components/AppWelcomeScreen";
 import { ExportToDrawinkPlus, exportToDrawinkPlus } from "./components/ExportToDrawinkPlus";
 import { TopErrorBoundary } from "./components/TopErrorBoundary";
-import { OrganizationSelector } from "./components/OrganizationSelector";
 
 import { exportToBackend, getCollaborationLinkData, isCollaborationLink, loadScene } from "./data";
 
@@ -122,17 +117,12 @@ import { useHandleAppTheme } from "./useHandleAppTheme";
 import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
-import {
-  type AuthUser,
-  authStateAtom,
-  cloudEnabledAtom,
-  syncStatusAtom,
-} from "@/core/atoms/auth";
+import { type AuthUser, authStateAtom, cloudEnabledAtom, syncStatusAtom } from "@/core/atoms/auth";
 import { boardsAPIAtom } from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
+import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
-import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -237,16 +227,11 @@ const initializeScene = async (opts: {
         // Load from Convex public share (NO AUTH REQUIRED)
         const { importFromConvex } = await import("@/data/index");
         const shareData = await importFromConvex(shareMatch[1], shareMatch[2]);
-        scene = restore(
-          shareData,
-          localDataState?.appState,
-          localDataState?.elements,
-          {
-            repairBindings: true,
-            refreshDimensions: false,
-            deleteInvisibleElements: true,
-          },
-        );
+        scene = restore(shareData, localDataState?.appState, localDataState?.elements, {
+          repairBindings: true,
+          refreshDimensions: false,
+          deleteInvisibleElements: true,
+        });
       }
       scene.scrollToContent = true;
       if (!roomLinkData) {
@@ -439,7 +424,16 @@ const DrawinkWrapper = () => {
       });
 
       // Enable cloud sync with authentication
-      hybridStorageAdapter.enableCloudSync(clerkUser.id, getToken);
+      // Wrap getToken to always use the "convex" JWT template
+      const fetchConvexToken = async () => {
+        try {
+          return await getToken({ template: "convex" });
+        } catch (error) {
+          console.error("[Auth] Failed to get Convex token:", error);
+          return null;
+        }
+      };
+      hybridStorageAdapter.enableCloudSync(clerkUser.id, fetchConvexToken);
       editorJotaiStore.set(cloudEnabledAtom, true);
 
       // Wire up sync status updates
@@ -867,10 +861,7 @@ const DrawinkWrapper = () => {
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
     keywords: ["plus", "cloud", "server"],
     perform: () => {
-      window.open(
-        `/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`,
-        "_blank",
-      );
+      window.open(`/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`, "_blank");
     },
   };
   const DrawinkPlusAppCommand = {

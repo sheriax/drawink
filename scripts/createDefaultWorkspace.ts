@@ -24,8 +24,8 @@ const USER_ID = "user_38ljbaWYvlAfHZUpYZ82pcNPAOE"; // Youhana's Clerk user ID
 async function createDefaultWorkspaceForUser(userId: string, authToken: string) {
   const client = new ConvexHttpClient(CONVEX_URL);
 
-  // Set authentication
-  client.setAuth(async () => authToken);
+  // Set authentication - ConvexHttpClient.setAuth expects a string token
+  client.setAuth(authToken);
 
   try {
     console.log(`[Script] Creating default workspace for user: ${userId}`);
@@ -33,22 +33,20 @@ async function createDefaultWorkspaceForUser(userId: string, authToken: string) 
     // Call the ensureDefault mutation
     const workspaceId = await client.mutation(api.workspaces.ensureDefault, {});
 
-    console.log(`[Script] ✅ Default workspace created successfully!`);
+    console.log("[Script] ✅ Default workspace created successfully!");
     console.log(`[Script] Workspace ID: ${workspaceId}`);
 
     return workspaceId;
   } catch (error) {
     console.error("[Script] ❌ Failed to create workspace:", error);
     throw error;
-  } finally {
-    client.close();
   }
 }
 
 /**
  * Browser console version - use this in your browser dev tools
  */
-(window as any).createDefaultWorkspace = async function() {
+(window as any).createDefaultWorkspace = async () => {
   try {
     // Get auth token from Clerk
     const clerkAuth = (window as any).Clerk;
