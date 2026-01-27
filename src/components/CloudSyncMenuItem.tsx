@@ -18,8 +18,8 @@ import { checkIcon, usersIcon } from "@/core/components/icons";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { MainMenu } from "@/core/index";
 import type { SyncStatus } from "@/core/storage/types";
+import { useClerk } from "@clerk/clerk-react";
 import { useSetAtom } from "../app-jotai";
-import { firebaseAuth } from "../data/firebase";
 import { authDialogStateAtom } from "./AuthDialog";
 
 // Custom hook to subscribe to editorJotaiStore atoms
@@ -104,13 +104,16 @@ export const CloudSyncMenuItem: React.FC = () => {
   // Use app-jotai to set dialog state
   const setAuthDialogState = useSetAtom(authDialogStateAtom);
 
+  // Clerk auth hook
+  const { signOut } = useClerk();
+
   const handleSignInClick = () => {
     setAuthDialogState({ isOpen: true });
   };
 
   const handleLogout = async () => {
     try {
-      await firebaseAuth.signOut();
+      await signOut();
       console.log("Logged out");
     } catch (error: any) {
       console.error("Logout failed:", error);
