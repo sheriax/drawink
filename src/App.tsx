@@ -448,6 +448,24 @@ const DrawinkWrapper = () => {
       });
 
       console.log("[Auth] User signed in:", authUser.email);
+
+      // Ensure workspace exists after a short delay (give sync engine time to try first)
+      setTimeout(() => {
+        // Check if sync is in error state or if we should ensure workspace
+        const currentStatus = hybridStorageAdapter.getSyncStatus();
+        if (currentStatus === "error") {
+          console.log("[Auth] Sync in error state - ensuring workspace...");
+          hybridStorageAdapter.ensureWorkspaceAndSync().catch(console.error);
+        }
+      }, 3000); // Wait 3 seconds for initial sync attempt
+
+      // Expose helper for manual workspace creation (dev/debugging)
+      if (isDevEnv()) {
+        (window as any).__DRAWINK_ensureWorkspace = () => {
+          console.log("[Debug] Manually triggering workspace creation...");
+          return hybridStorageAdapter.ensureWorkspaceAndSync();
+        };
+      }
     } else {
       // User is signed out
       editorJotaiStore.set(authStateAtom, {

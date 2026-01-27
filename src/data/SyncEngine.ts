@@ -76,37 +76,17 @@ export class SyncEngine {
     this.isStopped = false;
     console.log("[SyncEngine] Starting...");
 
-    // Ensure we have a workspace (with retry for auth timing)
-    let workspaceCreated = false;
-    const maxRetries = 3;
+    // Ensure we have a workspace
+    // ConvexStorageAdapter now handles auth timing internally
+    try {
+      await this.cloudAdapter.ensureDefaultWorkspace();
+      console.log("[SyncEngine] Default workspace ensured");
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        await this.cloudAdapter.ensureDefaultWorkspace();
-        workspaceCreated = true;
-        break;
-      } catch (error) {
-        console.error(`[SyncEngine] Failed to ensure workspace (attempt ${attempt}/${maxRetries}):`, error);
-
-        // If this is an Unauthorized error and we have retries left, wait and try again
-        // This gives Clerk time to initialize the auth token
-        if (attempt < maxRetries && error instanceof Error && error.message.includes("Unauthorized")) {
-          console.log(`[SyncEngine] Waiting 1s before retry (auth token may not be ready yet)...`);
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
-          continue;
-        }
-
-        // For other errors or final attempt, continue without workspace
-        console.warn("[SyncEngine] Continuing without workspace - cloud sync will be limited");
-        break;
-      }
-    }
-
-    // Only do initial pull if workspace was created successfully
-    if (workspaceCreated) {
+      // Do initial pull from cloud
       await this.initialPullFromCloud();
-    } else {
-      console.log("[SyncEngine] Skipping initial pull (no workspace available)");
+    } catch (error) {
+      console.error("[SyncEngine] Failed to ensure workspace:", error);
+      console.warn("[SyncEngine] Continuing without workspace - cloud sync will be limited");
     }
 
     console.log("[SyncEngine] Started (no periodic sync)");

@@ -140,8 +140,24 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
       this._onSyncStatusChange?.(state.status);
     });
 
-    // Start sync engine
-    this.syncEngine.start().catch(console.error);
+    // Start sync engine with automatic workspace creation
+    this.syncEngine.start().catch((error) => {
+      console.error("[HybridStorageAdapter] Sync engine failed to start:", error);
+
+      // If workspace creation failed, try to recover
+      if (error.message?.includes("workspace") || error.message?.includes("Unauthorized")) {
+        console.log("[HybridStorageAdapter] Attempting to recover by creating workspace...");
+        this.cloudAdapter.ensureDefaultWorkspace()
+          .then(() => {
+            console.log("[HybridStorageAdapter] ✅ Workspace created successfully on retry");
+            // Restart sync engine
+            return this.syncEngine?.start();
+          })
+          .catch((retryError) => {
+            console.error("[HybridStorageAdapter] ❌ Failed to create workspace on retry:", retryError);
+          });
+      }
+    });
 
     console.log("[HybridStorageAdapter] Cloud sync enabled for user (using Convex):", userId);
   }
@@ -189,6 +205,33 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
    */
   onSyncStatusChange(callback: (status: SyncStatus) => void): void {
     this._onSyncStatusChange = callback;
+  }
+
+  /**
+   * Manually ensure workspace exists and restart sync
+   * This can be called when workspace is missing or sync fails
+   */
+  async ensureWorkspaceAndSync(): Promise<boolean> {
+    if (!this.cloudAdapter || !this.syncEngine) {
+      console.warn("[HybridStorageAdapter] Cannot ensure workspace - cloud sync not enabled");
+      return false;
+    }
+
+    try {
+      console.log("[HybridStorageAdapter] Ensuring workspace exists...");
+      await this.cloudAdapter.ensureDefaultWorkspace();
+      console.log("[HybridStorageAdapter] ✅ Workspace ensured");
+
+      // Restart sync engine
+      this.syncEngine.stop();
+      await this.syncEngine.start();
+      console.log("[HybridStorageAdapter] ✅ Sync restarted");
+
+      return true;
+    } catch (error) {
+      console.error("[HybridStorageAdapter] ❌ Failed to ensure workspace:", error);
+      return false;
+    }
   }
 
   // =========================================================================

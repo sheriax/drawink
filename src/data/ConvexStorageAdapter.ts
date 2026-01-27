@@ -16,6 +16,7 @@ import type { BoardContent, StorageAdapter, Workspace } from "@/core/storage/typ
 import type { Board } from "@/core/types";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
 // Cache for derived encryption keys
 const encryptionKeyCache = new Map<string, CryptoKey>();
@@ -76,9 +77,10 @@ const encryptContent = async (
   const encryptedBuffer = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
 
   // Convert to base64 for Convex storage
+  const encryptedArray = new Uint8Array(encryptedBuffer);
   return {
-    ciphertext: btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer))),
-    iv: btoa(String.fromCharCode(...iv)),
+    ciphertext: btoa(String.fromCharCode.apply(null, Array.from(encryptedArray))),
+    iv: btoa(String.fromCharCode.apply(null, Array.from(iv))),
   };
 };
 
@@ -125,15 +127,46 @@ export class ConvexStorageAdapter implements StorageAdapter {
   private currentWorkspaceId: string | null = null;
   private convexClient: ConvexHttpClient;
   private encryptionKey: CryptoKey | null = null;
+  private fetchToken?: () => Promise<string | null>;
 
   constructor(userId: string, convexUrl: string, fetchToken?: () => Promise<string | null>) {
     this.userId = userId;
+    this.fetchToken = fetchToken;
     this.convexClient = new ConvexHttpClient(convexUrl);
 
-    // Set authentication if token fetcher provided
-    if (fetchToken) {
-      this.convexClient.setAuth(fetchToken);
+    // Note: ConvexHttpClient.setAuth expects a string token, not a function
+    // We'll fetch and set the token before each API call using ensureAuth()
+  }
+
+  /**
+   * Ensure authentication token is set and ready
+   * ConvexHttpClient requires the token to be set as a string before API calls
+   */
+  private async ensureAuth(maxRetries = 5, delayMs = 500): Promise<void> {
+    if (!this.fetchToken) {
+      return; // No auth required
     }
+
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const token = await this.fetchToken();
+        if (token) {
+          // Set the token as a string on the client
+          this.convexClient.setAuth(token);
+          console.log("[ConvexStorageAdapter] Auth token set");
+          return;
+        }
+      } catch (error) {
+        console.warn(`[ConvexStorageAdapter] Auth token not ready (attempt ${i + 1}/${maxRetries})`);
+      }
+
+      // Wait before retrying
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+
+    throw new Error("Auth token not available after maximum retries");
   }
 
   /**
@@ -199,6 +232,9 @@ export class ConvexStorageAdapter implements StorageAdapter {
    * Create a default workspace for the user if they don't have one
    */
   async ensureDefaultWorkspace(): Promise<string> {
+    // Ensure auth token is set before making the API call
+    await this.ensureAuth();
+
     const workspaceId = await this.convexClient.mutation(api.workspaces.ensureDefault, {});
     this.currentWorkspaceId = workspaceId;
     return workspaceId;
@@ -219,7 +255,7 @@ export class ConvexStorageAdapter implements StorageAdapter {
 
     try {
       const boards = await this.convexClient.query(api.boards.listByWorkspace, {
-        workspaceId: this.currentWorkspaceId,
+        workspaceId: this.currentWorkspaceId as Id<"workspaces">,
       });
 
       return boards.map((b: any) => ({
@@ -243,9 +279,8 @@ export class ConvexStorageAdapter implements StorageAdapter {
     }
 
     const boardId = await this.convexClient.mutation(api.boards.create, {
-      workspaceId: this.currentWorkspaceId,
+      workspaceId: this.currentWorkspaceId as Id<"workspaces">,
       name,
-      isPublic: false,
     });
 
     return boardId;
@@ -253,28 +288,19 @@ export class ConvexStorageAdapter implements StorageAdapter {
 
   /**
    * Create a board with a specific ID (used for sync)
-   * Note: Convex auto-generates IDs, so this creates a board
-   * and returns the new ID instead.
+   * Note: Convex auto-generates IDs, so this just creates a board
+   * with the given name (ID is not preserved in migration).
    */
-  async createBoardWithId(id: string, name: string): Promise<void> {
+  async createBoardWithId(_id: string, name: string): Promise<void> {
     if (!this.currentWorkspaceId) {
       throw new Error("No workspace selected");
     }
 
-    // Check if board already exists
-    const existingBoard = await this.convexClient.query(api.boards.get, {
-      boardId: id,
-    });
-
-    if (existingBoard) {
-      return;
-    }
-
     // Create new board (Convex will assign new ID)
+    // We can't preserve the original ID in Convex, so we just create a new board
     await this.convexClient.mutation(api.boards.create, {
-      workspaceId: this.currentWorkspaceId,
+      workspaceId: this.currentWorkspaceId as Id<"workspaces">,
       name,
-      isPublic: false,
     });
   }
 
@@ -286,24 +312,24 @@ export class ConvexStorageAdapter implements StorageAdapter {
       throw new Error("No workspace selected");
     }
 
-    await this.convexClient.mutation(api.boards.update, {
-      boardId: id,
-      name: data.name,
-      isPublic: data.isPublic,
-      // thumbnailUrl is updated separately via Firebase Storage
-    });
+    // Only send defined fields to Convex
+    const updates: any = { boardId: id as Id<"boards"> };
+    if (data.name !== undefined) updates.name = data.name;
+
+    await this.convexClient.mutation(api.boards.update, updates);
   }
 
   /**
-   * Delete a board (soft delete)
+   * Delete a board (archive)
    */
   async deleteBoard(id: string): Promise<void> {
     if (!this.currentWorkspaceId) {
       throw new Error("No workspace selected");
     }
 
-    await this.convexClient.mutation(api.boards.softDelete, {
-      boardId: id,
+    // Use archive mutation instead of softDelete
+    await this.convexClient.mutation(api.boards.archive, {
+      boardId: id as Id<"boards">,
     });
   }
 
@@ -336,7 +362,7 @@ export class ConvexStorageAdapter implements StorageAdapter {
 
     try {
       const content = await this.convexClient.query(api.boards.getContent, {
-        boardId,
+        boardId: boardId as Id<"boards">,
       });
 
       if (!content) {
@@ -345,10 +371,19 @@ export class ConvexStorageAdapter implements StorageAdapter {
 
       // Decrypt the content
       const key = await this.getEncryptionKey();
+
+      // Convert ArrayBuffer to base64 string if needed
+      const ciphertextStr = typeof content.ciphertext === 'string'
+        ? content.ciphertext
+        : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.ciphertext))));
+      const ivStr = typeof content.iv === 'string'
+        ? content.iv
+        : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.iv))));
+
       const decrypted = await decryptContent<{ elements: any[]; appState: object }>(
         key,
-        content.ciphertext,
-        content.iv,
+        ciphertextStr,
+        ivStr,
       );
 
       return {
@@ -384,10 +419,14 @@ export class ConvexStorageAdapter implements StorageAdapter {
       appState: content.appState,
     });
 
+    // Convert base64 strings to ArrayBuffer for Convex
+    const ciphertextBuffer = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0)).buffer;
+    const ivBuffer = Uint8Array.from(atob(iv), c => c.charCodeAt(0)).buffer;
+
     await this.convexClient.mutation(api.boards.saveContent, {
-      boardId,
-      encryptedData: ciphertext,
-      iv,
+      boardId: boardId as Id<"boards">,
+      ciphertext: ciphertextBuffer,
+      iv: ivBuffer,
       checksum,
     });
   }
