@@ -247,11 +247,38 @@ export default defineSchema({
     .index("by_category_and_usage", ["category", "usageCount"]),
 
   // =========================================================================
+  // COLLABORATIVE ROOMS (Real-time collaboration scenes)
+  // =========================================================================
+  collaborativeRooms: defineTable({
+    roomId: v.string(), // Public room ID (shared in URL)
+
+    // Encrypted scene data (encrypted with roomKey on client)
+    // Contains: { elements: [], appState: {} }
+    ciphertext: v.bytes(),
+    iv: v.bytes(),
+
+    // Version tracking for conflict resolution
+    sceneVersion: v.number(),
+
+    // Metadata
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
+
+    // Expiry (auto-cleanup after N days of inactivity)
+    expiresAt: v.optional(v.number()),
+  })
+    .index("by_room_id", ["roomId"])
+    .index("by_updated_at", ["updatedAt"]),
+
+  // =========================================================================
   // COLLABORATION SESSIONS (Real-time presence)
   // =========================================================================
   collaborationSessions: defineTable({
-    boardId: v.id("boards"),
-    userId: v.string(), // Clerk user ID
+    boardId: v.optional(v.id("boards")), // Personal board (if authenticated)
+    roomId: v.optional(v.string()), // Collaborative room (if using real-time collab)
+
+    userId: v.string(), // Clerk user ID or anonymous session ID
     userName: v.string(),
     userPhotoUrl: v.optional(v.string()),
 
@@ -267,9 +294,12 @@ export default defineSchema({
     joinedAt: v.number(),
   })
     .index("by_board", ["boardId"])
+    .index("by_room", ["roomId"])
     .index("by_board_active", ["boardId", "isActive"])
+    .index("by_room_active", ["roomId", "isActive"])
     .index("by_user", ["userId"])
-    .index("by_board_and_user", ["boardId", "userId"]),
+    .index("by_board_and_user", ["boardId", "userId"])
+    .index("by_room_and_user", ["roomId", "userId"]),
 
   // =========================================================================
   // AI USAGE TRACKING

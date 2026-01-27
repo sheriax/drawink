@@ -271,3 +271,130 @@ export const cleanupStaleSessions = mutation({
     return { cleanedCount, totalSessions: sessions.length };
   },
 });
+
+// =========================================================================
+// COLLABORATIVE ROOM STORAGE (Replaces Firebase Firestore "scenes")
+// =========================================================================
+
+/**
+ * Save collaborative scene to Convex
+ * Replaces Firebase's saveToFirebase() function
+ */
+export const saveCollaborativeScene = mutation({
+  args: {
+    roomId: v.string(),
+    ciphertext: v.bytes(), // Encrypted scene data
+    iv: v.bytes(), // Encryption IV
+    sceneVersion: v.number(),
+    lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
+  },
+  handler: async (ctx, args) => {
+    // Check if room already exists
+    const existingRoom = await ctx.db
+      .query("collaborativeRooms")
+      .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
+      .first();
+
+    const now = Date.now();
+    const expiresAt = now + 30 * 24 * 60 * 60 * 1000; // 30 days from now
+
+    if (existingRoom) {
+      // Update existing room
+      await ctx.db.patch(existingRoom._id, {
+        ciphertext: args.ciphertext,
+        iv: args.iv,
+        sceneVersion: args.sceneVersion,
+        updatedAt: now,
+        lastEditedBy: args.lastEditedBy,
+        expiresAt, // Reset expiry on update
+      });
+
+      return { success: true, roomId: args.roomId, version: args.sceneVersion };
+    } else {
+      // Create new room
+      await ctx.db.insert("collaborativeRooms", {
+        roomId: args.roomId,
+        ciphertext: args.ciphertext,
+        iv: args.iv,
+        sceneVersion: args.sceneVersion,
+        createdAt: now,
+        updatedAt: now,
+        lastEditedBy: args.lastEditedBy,
+        expiresAt,
+      });
+
+      return { success: true, roomId: args.roomId, version: args.sceneVersion };
+    }
+  },
+});
+
+/**
+ * Load collaborative scene from Convex
+ * Replaces Firebase's loadFromFirebase() function
+ */
+export const loadCollaborativeScene = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("collaborativeRooms")
+      .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
+      .first();
+
+    if (!room) {
+      return null; // Room doesn't exist yet
+    }
+
+    return {
+      ciphertext: room.ciphertext,
+      iv: room.iv,
+      sceneVersion: room.sceneVersion,
+      updatedAt: room.updatedAt,
+    };
+  },
+});
+
+/**
+ * Check if room exists (for initialization logic)
+ */
+export const roomExists = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("collaborativeRooms")
+      .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
+      .first();
+
+    return room !== null;
+  },
+});
+
+/**
+ * Get room info (metadata only, no encrypted data)
+ */
+export const getRoomInfo = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("collaborativeRooms")
+      .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    return {
+      roomId: room.roomId,
+      sceneVersion: room.sceneVersion,
+      createdAt: room.createdAt,
+      updatedAt: room.updatedAt,
+      lastEditedBy: room.lastEditedBy,
+    };
+  },
+});

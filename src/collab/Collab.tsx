@@ -64,12 +64,14 @@ import { generateCollaborationLinkData, getCollaborationLink, getSyncableElement
 import { FileManager, encodeFilesForUpload, updateStaleImageStatuses } from "../data/FileManager";
 import { hybridStorageAdapter } from "../data/HybridStorageAdapter";
 import {
-  isSavedToFirebase,
   loadFilesFromFirebase,
-  loadFromFirebase,
   saveFilesToFirebase,
-  saveToFirebase,
 } from "../data/firebase";
+import {
+  isSavedToConvex,
+  loadFromConvex,
+  saveToConvex,
+} from "../data/convexCollab";
 import { importUsernameFromLocalStorage, saveUsernameToLocalStorage } from "../data/localStorage";
 import { resetBrowserStateVersions } from "../data/tabSync";
 
@@ -265,7 +267,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     if (
       this.isCollaborating() &&
       (this.fileManager.shouldPreventUnload(syncableElements) ||
-        !isSavedToFirebase(this.portal, syncableElements))
+        !isSavedToConvex(this.portal, syncableElements))
     ) {
       // this won't run in time if user decides to leave the site, but
       //  the purpose is to run in immediately after user decides to stay
@@ -281,7 +283,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
   saveCollabRoomToFirebase = async (syncableElements: readonly SyncableDrawinkElement[]) => {
     try {
-      const storedElements = await saveToFirebase(
+      const storedElements = await saveToConvex(
         this.portal,
         syncableElements,
         this.drawinkAPI.getAppState(),
@@ -646,7 +648,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       this.drawinkAPI.resetScene();
 
       try {
-        const elements = await loadFromFirebase(
+        const elements = await loadFromConvex(
           roomLinkData.roomId,
           roomLinkData.roomKey,
           this.portal.socket,

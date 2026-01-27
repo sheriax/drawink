@@ -1,24 +1,24 @@
+/**
+ * Firebase Storage Adapter
+ *
+ * ONLY handles file storage for collaborative drawings.
+ * Scene data is now stored in Convex (see convexCollab.ts).
+ *
+ * Firebase Storage is used because:
+ * - Cost-effective for large binary files (images, videos)
+ * - Better performance than storing blobs in database
+ * - Simple URL-based access
+ */
+
 import { MIME_TYPES } from "@/lib/common";
-import { reconcileElements } from "@/core";
 import { decompressData } from "@/core/data/encode";
-import { decryptData, encryptData } from "@/core/data/encryption";
-import { restoreElements } from "@/core/data/restore";
-import { getSceneVersion } from "@/lib/elements";
 import { initializeApp } from "firebase/app";
-import { Bytes, doc, getDoc, getFirestore, runTransaction } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
-import type { RemoteDrawinkElement } from "@/core/data/reconcile";
-import type { AppState, BinaryFileData, BinaryFileMetadata, DataURL } from "@/core/types";
-import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@/lib/elements/types";
+import type { BinaryFileData, BinaryFileMetadata, DataURL } from "@/core/types";
+import type { FileId } from "@/lib/elements/types";
 
 import { FILE_CACHE_MAX_AGE_SEC } from "../app_constants";
-
-import { getSyncableElements } from ".";
-
-import type { Socket } from "socket.io-client";
-import type { SyncableDrawinkElement } from ".";
-import type Portal from "../collab/Portal";
 
 // private
 // -----------------------------------------------------------------------------
@@ -36,7 +36,6 @@ try {
 }
 
 let firebaseApp: ReturnType<typeof initializeApp> | null = null;
-let firestore: ReturnType<typeof getFirestore> | null = null;
 let firebaseStorage: ReturnType<typeof getStorage> | null = null;
 
 const _initializeFirebase = () => {
@@ -44,13 +43,6 @@ const _initializeFirebase = () => {
     firebaseApp = initializeApp(FIREBASE_CONFIG);
   }
   return firebaseApp;
-};
-
-const _getFirestore = () => {
-  if (!firestore) {
-    firestore = getFirestore(_initializeFirebase());
-  }
-  return firestore;
 };
 
 const _getStorage = () => {
@@ -61,75 +53,25 @@ const _getStorage = () => {
 };
 
 // -----------------------------------------------------------------------------
-// Firebase API Exports
+// Firebase Storage API Exports
 // -----------------------------------------------------------------------------
-
-/**
- * Get Firestore instance (ensures Firebase is initialized)
- */
-export const getFirestoreInstance = _getFirestore;
 
 /**
  * Initialize Firebase app (can be called multiple times safely)
  */
 export const initializeFirebaseApp = _initializeFirebase;
 
-// -----------------------------------------------------------------------------
-
+/**
+ * Load Firebase Storage instance
+ */
 export const loadFirebaseStorage = async () => {
   return _getStorage();
 };
 
-type FirebaseStoredScene = {
-  sceneVersion: number;
-  iv: Bytes;
-  ciphertext: Bytes;
-};
-
-const encryptElements = async (
-  key: string,
-  elements: readonly DrawinkElement[],
-): Promise<{ ciphertext: ArrayBuffer; iv: Uint8Array }> => {
-  const json = JSON.stringify(elements);
-  const encoded = new TextEncoder().encode(json);
-  const { encryptedBuffer, iv } = await encryptData(key, encoded);
-
-  return { ciphertext: encryptedBuffer, iv };
-};
-
-const decryptElements = async (
-  data: FirebaseStoredScene,
-  roomKey: string,
-): Promise<readonly DrawinkElement[]> => {
-  const ciphertext = data.ciphertext.toUint8Array();
-  const iv = data.iv.toUint8Array();
-
-  const decrypted = await decryptData(iv, ciphertext, roomKey);
-  const decodedData = new TextDecoder("utf-8").decode(new Uint8Array(decrypted));
-  return JSON.parse(decodedData);
-};
-
-class FirebaseSceneVersionCache {
-  private static cache = new WeakMap<Socket, number>();
-  static get = (socket: Socket) => {
-    return FirebaseSceneVersionCache.cache.get(socket);
-  };
-  static set = (socket: Socket, elements: readonly SyncableDrawinkElement[]) => {
-    FirebaseSceneVersionCache.cache.set(socket, getSceneVersion(elements));
-  };
-}
-
-export const isSavedToFirebase = (portal: Portal, elements: readonly DrawinkElement[]): boolean => {
-  if (portal.socket && portal.roomId && portal.roomKey) {
-    const sceneVersion = getSceneVersion(elements);
-
-    return FirebaseSceneVersionCache.get(portal.socket) === sceneVersion;
-  }
-  // if no room exists, consider the room saved so that we don't unnecessarily
-  // prevent unload (there's nothing we could do at that point anyway)
-  return true;
-};
-
+/**
+ * Save files to Firebase Storage
+ * Used for collaborative drawing file uploads (images, etc.)
+ */
 export const saveFilesToFirebase = async ({
   prefix,
   files,
@@ -159,103 +101,10 @@ export const saveFilesToFirebase = async ({
   return { savedFiles, erroredFiles };
 };
 
-const createFirebaseSceneDocument = async (
-  elements: readonly SyncableDrawinkElement[],
-  roomKey: string,
-) => {
-  const sceneVersion = getSceneVersion(elements);
-  const { ciphertext, iv } = await encryptElements(roomKey, elements);
-  return {
-    sceneVersion,
-    ciphertext: Bytes.fromUint8Array(new Uint8Array(ciphertext)),
-    iv: Bytes.fromUint8Array(iv),
-  } as FirebaseStoredScene;
-};
-
-export const saveToFirebase = async (
-  portal: Portal,
-  elements: readonly SyncableDrawinkElement[],
-  appState: AppState,
-) => {
-  const { roomId, roomKey, socket } = portal;
-  if (
-    // bail if no room exists as there's nothing we can do at this point
-    !roomId ||
-    !roomKey ||
-    !socket ||
-    isSavedToFirebase(portal, elements)
-  ) {
-    return null;
-  }
-
-  const firestore = _getFirestore();
-  const docRef = doc(firestore, "scenes", roomId);
-
-  const storedScene = await runTransaction(firestore, async (transaction) => {
-    const snapshot = await transaction.get(docRef);
-
-    if (!snapshot.exists()) {
-      const storedScene = await createFirebaseSceneDocument(elements, roomKey);
-
-      transaction.set(docRef, storedScene);
-
-      return storedScene;
-    }
-
-    const prevStoredScene = snapshot.data() as FirebaseStoredScene;
-    const prevStoredElements = getSyncableElements(
-      restoreElements(await decryptElements(prevStoredScene, roomKey), null),
-    );
-    const reconciledElements = getSyncableElements(
-      reconcileElements(
-        elements,
-        prevStoredElements as OrderedDrawinkElement[] as RemoteDrawinkElement[],
-        appState,
-      ),
-    );
-
-    const storedScene = await createFirebaseSceneDocument(reconciledElements, roomKey);
-
-    transaction.update(docRef, storedScene);
-
-    // Return the stored elements as the in memory `reconciledElements` could have mutated in the meantime
-    return storedScene;
-  });
-
-  const storedElements = getSyncableElements(
-    restoreElements(await decryptElements(storedScene, roomKey), null),
-  );
-
-  FirebaseSceneVersionCache.set(socket, storedElements);
-
-  return storedElements;
-};
-
-export const loadFromFirebase = async (
-  roomId: string,
-  roomKey: string,
-  socket: Socket | null,
-): Promise<readonly SyncableDrawinkElement[] | null> => {
-  const firestore = _getFirestore();
-  const docRef = doc(firestore, "scenes", roomId);
-  const docSnap = await getDoc(docRef);
-  if (!docSnap.exists()) {
-    return null;
-  }
-  const storedScene = docSnap.data() as FirebaseStoredScene;
-  const elements = getSyncableElements(
-    restoreElements(await decryptElements(storedScene, roomKey), null, {
-      deleteInvisibleElements: true,
-    }),
-  );
-
-  if (socket) {
-    FirebaseSceneVersionCache.set(socket, elements);
-  }
-
-  return elements;
-};
-
+/**
+ * Load files from Firebase Storage
+ * Used for collaborative drawing file downloads
+ */
 export const loadFilesFromFirebase = async (
   prefix: string,
   decryptionKey: string,
