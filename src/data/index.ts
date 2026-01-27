@@ -175,6 +175,43 @@ const legacy_decodeFromBackend = async ({
   };
 };
 
+/**
+ * Import a public share from Convex (NO AUTH REQUIRED)
+ */
+export const importFromConvex = async (shareId: string, decryptionKey: string): Promise<ImportedDataState> => {
+  try {
+    const convexUrl = import.meta.env.VITE_CONVEX_URL;
+    if (!convexUrl) {
+      throw new Error("Convex URL not configured");
+    }
+
+    const { ConvexHttpClient } = await import("convex/browser");
+    const { api } = await import("../../convex/_generated/api");
+    const convex = new ConvexHttpClient(convexUrl);
+
+    // Get the public share (NO AUTH REQUIRED)
+    const share = await convex.query(api.publicShares.getPublicShare, {
+      shareId: shareId as any, // Convex ID type
+    });
+
+    // Decompress and decrypt the payload
+    const { data: decodedBuffer } = await decompressData(new Uint8Array(share.payload), {
+      decryptionKey,
+    });
+
+    const data: ImportedDataState = JSON.parse(new TextDecoder().decode(decodedBuffer));
+
+    return {
+      elements: data.elements || null,
+      appState: data.appState || null,
+    };
+  } catch (error: any) {
+    window.alert(t("alerts.importBackendFailed"));
+    console.error("Failed to load share from Convex:", error);
+    return {};
+  }
+};
+
 const importFromBackend = async (id: string, decryptionKey: string): Promise<ImportedDataState> => {
   try {
     const response = await fetch(`${BACKEND_V2_GET}${id}`);
@@ -262,6 +299,54 @@ export const exportToBackend = async (
   );
 
   try {
+    // Check if Convex is enabled
+    const convexUrl = import.meta.env.VITE_CONVEX_URL;
+
+    if (convexUrl) {
+      // NEW: Use Convex for shareable links
+      const { ConvexHttpClient } = await import("convex/browser");
+      const { api } = await import("../../convex/_generated/api");
+      const convex = new ConvexHttpClient(convexUrl);
+
+      // Store the entire encrypted payload as ArrayBuffer
+      // Format: [encodingMetadataBuffer, iv, encryptedBuffer]
+      // The client will use decompressData() to decode it, which handles splitting internally
+      const result = await convex.mutation(api.publicShares.createPublicShare, {
+        payload: new Uint8Array(payload).buffer as ArrayBuffer,
+        title: "Shared Drawing",
+      });
+
+      const shareId = result.shareId;
+
+      // Handle file uploads
+      const filesMap = new Map<FileId, BinaryFileData>();
+      for (const element of elements) {
+        if (isInitializedImageElement(element) && files[element.fileId]) {
+          filesMap.set(element.fileId, files[element.fileId]);
+        }
+      }
+
+      if (filesMap.size > 0) {
+        const filesToUpload = await encodeFilesForUpload({
+          files: filesMap,
+          encryptionKey,
+          maxBytes: FILE_UPLOAD_MAX_BYTES,
+        });
+
+        await saveFilesToFirebase({
+          prefix: `/files/publicShares/${shareId}`,
+          files: filesToUpload,
+        });
+      }
+
+      // Create shareable URL with encryption key in hash
+      const url = new URL(window.location.href);
+      url.hash = `share=${shareId},${encryptionKey}`;
+
+      return { url: url.toString(), errorMessage: null };
+    }
+
+    // FALLBACK: Old backend (if Convex not configured)
     const filesMap = new Map<FileId, BinaryFileData>();
     for (const element of elements) {
       if (isInitializedImageElement(element) && files[element.fileId]) {
@@ -282,8 +367,6 @@ export const exportToBackend = async (
     const json = await response.json();
     if (json.id) {
       const url = new URL(window.location.href);
-      // We need to store the key (and less importantly the id) as hash instead
-      // of queryParam in order to never send it to the server
       url.hash = `json=${json.id},${encryptionKey}`;
       const urlString = url.toString();
 

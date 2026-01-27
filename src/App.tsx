@@ -132,7 +132,7 @@ import { boardsAPIAtom } from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
-import { useUser, useClerk } from "@clerk/clerk-react";
+import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -211,6 +211,7 @@ const initializeScene = async (opts: {
   const searchParams = new URLSearchParams(window.location.search);
   const id = searchParams.get("id");
   const jsonBackendMatch = window.location.hash.match(/^#json=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/);
+  const shareMatch = window.location.hash.match(/^#share=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/);
   const externalUrlMatch = window.location.hash.match(/^#url=(.*)$/);
 
   const localDataState = importFromLocalStorage();
@@ -220,7 +221,7 @@ const initializeScene = async (opts: {
   } = await loadScene(null, null, localDataState);
 
   let roomLinkData = getCollaborationLinkData(window.location.href);
-  const isExternalScene = !!(id || jsonBackendMatch || roomLinkData);
+  const isExternalScene = !!(id || jsonBackendMatch || shareMatch || roomLinkData);
   if (isExternalScene) {
     if (
       // don't prompt if scene is empty
@@ -232,6 +233,20 @@ const initializeScene = async (opts: {
     ) {
       if (jsonBackendMatch) {
         scene = await loadScene(jsonBackendMatch[1], jsonBackendMatch[2], localDataState);
+      } else if (shareMatch) {
+        // Load from Convex public share (NO AUTH REQUIRED)
+        const { importFromConvex } = await import("@/data/index");
+        const shareData = await importFromConvex(shareMatch[1], shareMatch[2]);
+        scene = restore(
+          shareData,
+          localDataState?.appState,
+          localDataState?.elements,
+          {
+            repairBindings: true,
+            refreshDimensions: false,
+            deleteInvisibleElements: true,
+          },
+        );
       }
       scene.scrollToContent = true;
       if (!roomLinkData) {
@@ -388,6 +403,7 @@ const DrawinkWrapper = () => {
   // Clerk auth state
   const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
   const { signOut } = useClerk();
+  const { getToken } = useAuth();
 
   // Clerk auth state listener
   useEffect(() => {
@@ -422,8 +438,8 @@ const DrawinkWrapper = () => {
         error: null,
       });
 
-      // Enable cloud sync
-      hybridStorageAdapter.enableCloudSync(clerkUser.id);
+      // Enable cloud sync with authentication
+      hybridStorageAdapter.enableCloudSync(clerkUser.id, getToken);
       editorJotaiStore.set(cloudEnabledAtom, true);
 
       // Wire up sync status updates

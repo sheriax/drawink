@@ -126,9 +126,14 @@ export class ConvexStorageAdapter implements StorageAdapter {
   private convexClient: ConvexHttpClient;
   private encryptionKey: CryptoKey | null = null;
 
-  constructor(userId: string, convexUrl: string) {
+  constructor(userId: string, convexUrl: string, fetchToken?: () => Promise<string | null>) {
     this.userId = userId;
     this.convexClient = new ConvexHttpClient(convexUrl);
+
+    // Set authentication if token fetcher provided
+    if (fetchToken) {
+      this.convexClient.setAuth(fetchToken);
+    }
   }
 
   /**

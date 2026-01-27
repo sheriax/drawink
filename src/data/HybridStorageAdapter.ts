@@ -112,7 +112,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   /**
    * Enable cloud sync for an authenticated user.
    */
-  enableCloudSync(userId: string): void {
+  enableCloudSync(userId: string, fetchToken?: () => Promise<string | null>): void {
     this._userId = userId;
 
     // Check if Convex URL is configured
@@ -128,8 +128,8 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
 
     this._cloudEnabled = true;
 
-    // Initialize ConvexStorageAdapter
-    this.cloudAdapter = new ConvexStorageAdapter(userId, convexUrl);
+    // Initialize ConvexStorageAdapter with auth
+    this.cloudAdapter = new ConvexStorageAdapter(userId, convexUrl, fetchToken);
 
     // Initialize SyncEngine
     this.syncEngine = new SyncEngine(this.localAdapter, this.cloudAdapter);

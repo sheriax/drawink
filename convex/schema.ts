@@ -310,4 +310,28 @@ export default defineSchema({
   })
     .index("by_board", ["boardId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // =========================================================================
+  // PUBLIC SHARES (Anonymous shareable links - NO AUTH REQUIRED)
+  // =========================================================================
+  publicShares: defineTable({
+    // Encrypted payload (contains: encodingMetadataBuffer, iv, encryptedBuffer)
+    // This is the full output from compressData() which includes everything needed
+    // to decrypt and decompress using decompressData()
+    payload: v.bytes(),
+
+    // Optional short ID for backward compatibility
+    shortId: v.optional(v.string()),
+
+    // Metadata
+    title: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.optional(v.number()),
+
+    // Analytics
+    viewCount: v.number(),
+    lastViewedAt: v.optional(v.number()),
+  })
+    .index("by_short_id", ["shortId"])
+    .index("by_created_at", ["createdAt"]),
 });
