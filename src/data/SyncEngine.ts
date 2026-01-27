@@ -147,10 +147,14 @@ export class SyncEngine {
         if (!cloudMap.has(id)) {
           console.log(`[SyncEngine] Uploading local board: ${id}`);
           try {
-            await this.cloudAdapter.createBoardWithId(id, board.name);
+            // Create board in cloud and get the cloud board ID
+            const cloudBoardId = await this.cloudAdapter.createBoardWithId(id, board.name);
+            // Store the cloud ID mapping in the local board
+            await this.localAdapter.updateBoard(id, { cloudId: cloudBoardId });
+            // Use the cloud board ID for content operations
             const content = await this.localAdapter.getBoardContent(id);
             if (content.elements.length > 0) {
-              await this.cloudAdapter.saveBoardContent(id, content);
+              await this.cloudAdapter.saveBoardContent(cloudBoardId, content);
             }
           } catch (error) {
             console.error(`[SyncEngine] Failed to upload board ${id}:`, error);
@@ -200,9 +204,25 @@ export class SyncEngine {
     if (this.isStopped) return;
 
     try {
+      // Get the local board to find the cloud ID mapping
+      const boards = await this.localAdapter.getBoards();
+      const board = boards.find((b) => b.id === boardId);
+
+      if (!board) {
+        console.error(`[SyncEngine] Board not found: ${boardId}`);
+        return;
+      }
+
+      // Use cloud ID if available, otherwise skip (board hasn't been synced yet)
+      const cloudBoardId = board.cloudId;
+      if (!cloudBoardId) {
+        console.log(`[SyncEngine] Board ${boardId} not yet synced to cloud, skipping content sync`);
+        return;
+      }
+
       const localContent = await this.localAdapter.getBoardContent(boardId);
-      await this.cloudAdapter.saveBoardContent(boardId, localContent);
-      console.log(`[SyncEngine] Synced content for board: ${boardId}`);
+      await this.cloudAdapter.saveBoardContent(cloudBoardId, localContent);
+      console.log(`[SyncEngine] Synced content for board: ${boardId} (cloud ID: ${cloudBoardId})`);
     } catch (error) {
       console.error(`[SyncEngine] Failed to sync board content ${boardId}:`, error);
     }

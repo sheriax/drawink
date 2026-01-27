@@ -1,76 +1,60 @@
 import type {
+  EditorInterface,
   IMAGE_MIME_TYPES,
+  MIME_TYPES,
   UserIdleState,
   throttleRAF,
-  MIME_TYPES,
-  EditorInterface,
 } from "@/lib/common";
 
 import type { LinearElementEditor } from "@/lib/elements";
 
 // Import base types from @drawink/types
-import type {
-  AppState as BaseAppState,
-  AppProps as BaseAppProps,
-  ToolType,
-  ActiveTool,
-  Zoom,
-  UnsubscribeCallback,
-} from "@/lib/types";
+import type { ActiveTool, ToolType, UnsubscribeCallback, Zoom } from "@/lib/types";
 
 import type { MaybeTransformHandleType } from "@/lib/elements";
 
 import type {
-  PointerType,
-  DrawinkLinearElement,
-  NonDeletedDrawinkElement,
-  NonDeleted,
-  TextAlign,
-  DrawinkElement,
-  GroupId,
-  DrawinkBindableElement,
   Arrowhead,
-  ChartType,
-  FontFamilyValues,
-  FileId,
-  Theme,
-  StrokeRoundness,
-  DrawinkEmbeddableElement,
-  DrawinkMagicFrameElement,
-  DrawinkFrameLikeElement,
-  DrawinkElementType,
-  DrawinkIframeLikeElement,
-  OrderedDrawinkElement,
-  DrawinkNonSelectionElement,
   BindMode,
+  ChartType,
+  DrawinkBindableElement,
+  DrawinkElement,
+  DrawinkElementType,
+  DrawinkEmbeddableElement,
+  DrawinkFrameLikeElement,
+  DrawinkIframeLikeElement,
+  DrawinkLinearElement,
+  DrawinkMagicFrameElement,
+  DrawinkNonSelectionElement,
+  FileId,
+  FontFamilyValues,
+  GroupId,
+  NonDeleted,
+  NonDeletedDrawinkElement,
+  OrderedDrawinkElement,
+  PointerType,
+  StrokeRoundness,
+  TextAlign,
+  Theme,
 } from "@/lib/elements/types";
 
-import type {
-  Merge,
-  MaybePromise,
-  ValueOf,
-  MakeBrand,
-} from "@/lib/common/utility-types";
+import type { MaybePromise, Merge, ValueOf } from "@/lib/common/utility-types";
 
-import type {
-  CaptureUpdateActionType,
-  DurableIncrement,
-  EphemeralIncrement,
-} from "@/lib/elements";
+import type { CaptureUpdateActionType, DurableIncrement, EphemeralIncrement } from "@/lib/elements";
 
 import type { Action } from "./actions/types";
 import type { Spreadsheet } from "./charts";
 import type { ClipboardData } from "./clipboard";
 import type App from "./components/App";
-import type Library from "./data/library";
-import type { FileSystemHandle } from "./data/filesystem";
 import type { ContextMenuItems } from "./components/ContextMenu";
-import type { SnapLine } from "./snapping";
+import type { FileSystemHandle } from "./data/filesystem";
+import type Library from "./data/library";
 import type { ImportedDataState } from "./data/types";
+import type { SnapLine } from "./snapping";
 
+import type React from "react";
 import type { Language } from "./i18n";
 import type { isOverScrollBars } from "./scene/scrollbars";
-import type React from "react";
 
 export type SocketId = string & { _brand: "SocketId" };
 
@@ -79,6 +63,7 @@ export interface Board {
   name: string;
   createdAt: number;
   lastModified: number;
+  cloudId?: string; // Convex board ID when synced to cloud
 }
 
 export interface BoardsAPI {
@@ -135,9 +120,9 @@ export type DataURL = string & { _brand: "DataURL" };
 
 export type BinaryFileData = {
   mimeType:
-  | ValueOf<typeof IMAGE_MIME_TYPES>
-  // future user or unknown file type
-  | typeof MIME_TYPES.binary;
+    | ValueOf<typeof IMAGE_MIME_TYPES>
+    // future user or unknown file type
+    | typeof MIME_TYPES.binary;
   id: FileId;
   dataURL: DataURL;
   /**
@@ -243,8 +228,7 @@ export type InteractiveCanvasAppState = Readonly<
   }
 >;
 
-export type ObservedAppState = ObservedStandaloneAppState &
-  ObservedElementsAppState;
+export type ObservedAppState = ObservedStandaloneAppState & ObservedElementsAppState;
 
 export type ObservedStandaloneAppState = {
   name: AppState["name"];
@@ -359,23 +343,23 @@ export interface AppState {
   zoom: Zoom;
   openMenu: "canvas" | null;
   openPopup:
-  | "canvasBackground"
-  | "elementBackground"
-  | "elementStroke"
-  | "fontFamily"
-  | "compactTextProperties"
-  | "compactStrokeStyles"
-  | "compactOtherProperties"
-  | "compactArrowProperties"
-  | null;
+    | "canvasBackground"
+    | "elementBackground"
+    | "elementStroke"
+    | "fontFamily"
+    | "compactTextProperties"
+    | "compactStrokeStyles"
+    | "compactOtherProperties"
+    | "compactArrowProperties"
+    | null;
   openSidebar: { name: SidebarName; tab?: SidebarTabName } | null;
   openDialog:
-  | null
-  | { name: "imageExport" | "help" | "jsonExport" }
-  | { name: "ttd"; tab: "text-to-diagram" | "mermaid" }
-  | { name: "commandPalette" }
-  | { name: "settings" }
-  | { name: "elementLinkSelector"; sourceElementId: DrawinkElement["id"] };
+    | null
+    | { name: "imageExport" | "help" | "jsonExport" }
+    | { name: "ttd"; tab: "text-to-diagram" | "mermaid" }
+    | { name: "commandPalette" }
+    | { name: "settings" }
+    | { name: "elementLinkSelector"; sourceElementId: DrawinkElement["id"] };
   /**
    * Reflects user preference for whether the default sidebar should be docked.
    *
@@ -419,14 +403,14 @@ export interface AppState {
   };
   currentChartType: ChartType;
   pasteDialog:
-  | {
-    shown: false;
-    data: null;
-  }
-  | {
-    shown: true;
-    data: Spreadsheet;
-  };
+    | {
+        shown: false;
+        data: null;
+      }
+    | {
+        shown: true;
+        data: Spreadsheet;
+      };
   showHyperlinkPopup: false | "info" | "editor";
   selectedLinearElement: LinearElementEditor | null;
   snapLines: readonly SnapLine[];
@@ -517,9 +501,7 @@ export type LibraryItems = readonly LibraryItem[];
 export type LibraryItems_anyVersion = LibraryItems | LibraryItems_v1;
 
 export type LibraryItemsSource =
-  | ((
-    currentLibraryItems: LibraryItems,
-  ) => MaybePromise<LibraryItems_anyVersion | Blob>)
+  | ((currentLibraryItems: LibraryItems) => MaybePromise<LibraryItems_anyVersion | Blob>)
   | MaybePromise<LibraryItems_anyVersion | Blob>;
 // -----------------------------------------------------------------------------
 
@@ -543,8 +525,8 @@ export interface DrawinkProps {
   ) => void;
   onIncrement?: (event: DurableIncrement | EphemeralIncrement) => void;
   initialData?:
-  | (() => MaybePromise<DrawinkInitialDataState | null>)
-  | MaybePromise<DrawinkInitialDataState | null>;
+    | (() => MaybePromise<DrawinkInitialDataState | null>)
+    | MaybePromise<DrawinkInitialDataState | null>;
   drawinkAPI?: (api: DrawinkImperativeAPI) => void;
   isCollaborating?: boolean;
   onPointerUpdate?: (payload: {
@@ -552,10 +534,7 @@ export interface DrawinkProps {
     button: "down" | "up";
     pointersMap: Gesture["pointers"];
   }) => void;
-  onPaste?: (
-    data: ClipboardData,
-    event: ClipboardEvent | null,
-  ) => Promise<boolean> | boolean;
+  onPaste?: (data: ClipboardData, event: ClipboardEvent | null) => Promise<boolean> | boolean;
   /**
    * Called when element(s) are duplicated so you can listen or modify as
    * needed.
@@ -572,14 +551,8 @@ export interface DrawinkProps {
     /** excludes the duplicated elements */
     prevElements: readonly DrawinkElement[],
   ) => DrawinkElement[] | void;
-  renderTopLeftUI?: (
-    isMobile: boolean,
-    appState: UIAppState,
-  ) => React.JSX.Element | null;
-  renderTopRightUI?: (
-    isMobile: boolean,
-    appState: UIAppState,
-  ) => React.JSX.Element | null;
+  renderTopLeftUI?: (isMobile: boolean, appState: UIAppState) => React.JSX.Element | null;
+  renderTopRightUI?: (isMobile: boolean, appState: UIAppState) => React.JSX.Element | null;
   langCode?: Language["code"];
   viewModeEnabled?: boolean;
   zenModeEnabled?: boolean;
@@ -606,23 +579,17 @@ export interface DrawinkProps {
       nativeEvent: MouseEvent | React.PointerEvent<HTMLCanvasElement>;
     }>,
   ) => void;
-  onPointerDown?: (
-    activeTool: AppState["activeTool"],
-    pointerDownState: PointerDownState,
-  ) => void;
-  onPointerUp?: (
-    activeTool: AppState["activeTool"],
-    pointerDownState: PointerDownState,
-  ) => void;
+  onPointerDown?: (activeTool: AppState["activeTool"], pointerDownState: PointerDownState) => void;
+  onPointerUp?: (activeTool: AppState["activeTool"], pointerDownState: PointerDownState) => void;
   onScrollChange?: (scrollX: number, scrollY: number, zoom: Zoom) => void;
   onUserFollow?: (payload: OnUserFollowedPayload) => void;
   children?: React.ReactNode;
   validateEmbeddable?:
-  | boolean
-  | string[]
-  | RegExp
-  | RegExp[]
-  | ((link: string) => boolean | undefined);
+    | boolean
+    | string[]
+    | RegExp
+    | RegExp[]
+    | ((link: string) => boolean | undefined);
   renderEmbeddable?: (
     element: NonDeleted<DrawinkEmbeddableElement>,
     appState: AppState,
@@ -830,9 +797,7 @@ export interface DrawinkImperativeAPI {
   mutateElement: InstanceType<typeof App>["mutateElement"];
   updateLibrary: InstanceType<typeof Library>["updateLibrary"];
   resetScene: InstanceType<typeof App>["resetScene"];
-  getSceneElementsIncludingDeleted: InstanceType<
-    typeof App
-  >["getSceneElementsIncludingDeleted"];
+  getSceneElementsIncludingDeleted: InstanceType<typeof App>["getSceneElementsIncludingDeleted"];
   getSceneElementsMapIncludingDeleted: InstanceType<
     typeof App
   >["getSceneElementsMapIncludingDeleted"];
@@ -861,11 +826,7 @@ export interface DrawinkImperativeAPI {
    */
   updateFrameRendering: InstanceType<typeof App>["updateFrameRendering"];
   onChange: (
-    callback: (
-      elements: readonly DrawinkElement[],
-      appState: AppState,
-      files: BinaryFiles,
-    ) => void,
+    callback: (elements: readonly DrawinkElement[], appState: AppState, files: BinaryFiles) => void,
   ) => UnsubscribeCallback;
   onIncrement: (
     callback: (event: DurableIncrement | EphemeralIncrement) => void,
@@ -887,9 +848,7 @@ export interface DrawinkImperativeAPI {
   onScrollChange: (
     callback: (scrollX: number, scrollY: number, zoom: Zoom) => void,
   ) => UnsubscribeCallback;
-  onUserFollow: (
-    callback: (payload: OnUserFollowedPayload) => void,
-  ) => UnsubscribeCallback;
+  onUserFollow: (callback: (payload: OnUserFollowedPayload) => void) => UnsubscribeCallback;
 }
 
 export type FrameNameBounds = {
@@ -901,9 +860,7 @@ export type FrameNameBounds = {
 };
 
 export type FrameNameBoundsCache = {
-  get: (
-    frameElement: DrawinkFrameLikeElement | DrawinkMagicFrameElement,
-  ) => FrameNameBounds | null;
+  get: (frameElement: DrawinkFrameLikeElement | DrawinkMagicFrameElement) => FrameNameBounds | null;
   _cache: Map<
     string,
     FrameNameBounds & {
@@ -920,21 +877,11 @@ export type KeyboardModifiersObject = {
   metaKey: boolean;
 };
 
-export type Primitive =
-  | number
-  | string
-  | boolean
-  | bigint
-  | symbol
-  | null
-  | undefined;
+export type Primitive = number | string | boolean | bigint | symbol | null | undefined;
 
 export type JSONValue = string | number | boolean | null | object;
 
-export type EmbedsValidationStatus = Map<
-  DrawinkIframeLikeElement["id"],
-  boolean
->;
+export type EmbedsValidationStatus = Map<DrawinkIframeLikeElement["id"], boolean>;
 
 export type ElementsPendingErasure = Set<DrawinkElement["id"]>;
 

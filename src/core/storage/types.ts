@@ -38,7 +38,7 @@ export interface StorageAdapter {
   // Board operations
   getBoards(): Promise<Board[]>;
   createBoard(name: string): Promise<string>;
-  createBoardWithId?(id: string, name: string): Promise<void>;
+  createBoardWithId?(id: string, name: string): Promise<string>;
   updateBoard(id: string, data: Partial<Board>): Promise<void>;
   deleteBoard(id: string): Promise<void>;
   getCurrentBoardId(): Promise<string | null>;

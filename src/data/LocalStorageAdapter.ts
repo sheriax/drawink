@@ -8,18 +8,18 @@
  * - Library storage (IndexedDB)
  */
 
-import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@/lib/common";
 import { clearAppStateForLocalStorage } from "@/core/appState";
+import { CANVAS_SEARCH_TAB, DEFAULT_SIDEBAR, debounce, randomId } from "@/lib/common";
 import { getNonDeletedElements } from "@/lib/elements";
 import { createStore, del, entries, get, getMany, set, setMany } from "idb-keyval";
 
 import { appJotaiStore, atom } from "../app-jotai";
 
-import type { MaybePromise } from "@/lib/common/utility-types";
 import type { LibraryPersistedData } from "@/core/data/library";
 import type { ImportedDataState } from "@/core/data/types";
 import type { BoardContent, StorageAdapter } from "@/core/storage/types";
 import type { AppState, BinaryFileData, BinaryFiles, Board } from "@/core/types";
+import type { MaybePromise } from "@/lib/common/utility-types";
 import type { DrawinkElement, FileId } from "@/lib/elements/types";
 
 import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
@@ -282,13 +282,14 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   /**
    * Create a board with a specific ID (used for sync operations)
+   * Returns the board ID.
    */
-  async createBoardWithId(id: string, name: string): Promise<void> {
+  async createBoardWithId(id: string, name: string): Promise<string> {
     const boards = await this.getBoards();
 
     // Check if board already exists
     if (boards.some((b) => b.id === id)) {
-      return;
+      return id;
     }
 
     const newBoard: Board = {
@@ -299,6 +300,8 @@ export class LocalStorageAdapter implements StorageAdapter {
     };
     boards.push(newBoard);
     localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+
+    return id;
   }
 
   /**

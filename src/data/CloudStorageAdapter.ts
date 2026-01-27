@@ -276,8 +276,9 @@ export class CloudStorageAdapter implements StorageAdapter {
 
   /**
    * Create a board with a specific ID (used for sync)
+   * Returns the board ID.
    */
-  async createBoardWithId(id: string, name: string): Promise<void> {
+  async createBoardWithId(id: string, name: string): Promise<string> {
     if (!this.currentWorkspaceId) {
       throw new Error("No workspace selected");
     }
@@ -287,7 +288,7 @@ export class CloudStorageAdapter implements StorageAdapter {
     // Check if board already exists
     const existingDoc = await getDoc(boardRef);
     if (existingDoc.exists()) {
-      return;
+      return id;
     }
 
     await setDoc(boardRef, {
@@ -296,6 +297,8 @@ export class CloudStorageAdapter implements StorageAdapter {
       updatedAt: serverTimestamp(),
       createdBy: this.userId,
     });
+
+    return id;
   }
 
   /**

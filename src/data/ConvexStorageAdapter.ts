@@ -93,14 +93,10 @@ const decryptContent = async <T>(
   ivBase64: string,
 ): Promise<T> => {
   // Convert from base64
-  const ciphertext = Uint8Array.from(atob(ciphertextBase64), c => c.charCodeAt(0));
-  const iv = Uint8Array.from(atob(ivBase64), c => c.charCodeAt(0));
+  const ciphertext = Uint8Array.from(atob(ciphertextBase64), (c) => c.charCodeAt(0));
+  const iv = Uint8Array.from(atob(ivBase64), (c) => c.charCodeAt(0));
 
-  const decrypted = await window.crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
-    key,
-    ciphertext,
-  );
+  const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
 
   const decoded = new TextDecoder("utf-8").decode(new Uint8Array(decrypted));
   return JSON.parse(decoded) as T;
@@ -114,7 +110,7 @@ const computeChecksum = async (data: object): Promise<string> => {
   const encoded = new TextEncoder().encode(json);
   const hashBuffer = await window.crypto.subtle.digest("SHA-256", encoded);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 };
 
 /**
@@ -157,12 +153,14 @@ export class ConvexStorageAdapter implements StorageAdapter {
           return;
         }
       } catch (error) {
-        console.warn(`[ConvexStorageAdapter] Auth token not ready (attempt ${i + 1}/${maxRetries})`);
+        console.warn(
+          `[ConvexStorageAdapter] Auth token not ready (attempt ${i + 1}/${maxRetries})`,
+        );
       }
 
       // Wait before retrying
       if (i < maxRetries - 1) {
-        await new Promise(resolve => setTimeout(resolve, delayMs));
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
     }
 
@@ -290,18 +288,21 @@ export class ConvexStorageAdapter implements StorageAdapter {
    * Create a board with a specific ID (used for sync)
    * Note: Convex auto-generates IDs, so this just creates a board
    * with the given name (ID is not preserved in migration).
+   * Returns the Convex-generated board ID.
    */
-  async createBoardWithId(_id: string, name: string): Promise<void> {
+  async createBoardWithId(_id: string, name: string): Promise<string> {
     if (!this.currentWorkspaceId) {
       throw new Error("No workspace selected");
     }
 
     // Create new board (Convex will assign new ID)
     // We can't preserve the original ID in Convex, so we just create a new board
-    await this.convexClient.mutation(api.boards.create, {
+    const boardId = await this.convexClient.mutation(api.boards.create, {
       workspaceId: this.currentWorkspaceId as Id<"workspaces">,
       name,
     });
+
+    return boardId;
   }
 
   /**
@@ -369,16 +370,32 @@ export class ConvexStorageAdapter implements StorageAdapter {
         return { elements: [], appState: {} };
       }
 
+      // Check if content has valid ciphertext and iv
+      if (!content.ciphertext || !content.iv) {
+        console.log("[ConvexStorageAdapter] Board content is empty or not encrypted yet");
+        return { elements: [], appState: {} };
+      }
+
       // Decrypt the content
       const key = await this.getEncryptionKey();
 
       // Convert ArrayBuffer to base64 string if needed
-      const ciphertextStr = typeof content.ciphertext === 'string'
-        ? content.ciphertext
-        : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.ciphertext))));
-      const ivStr = typeof content.iv === 'string'
-        ? content.iv
-        : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.iv))));
+      const ciphertextStr =
+        typeof content.ciphertext === "string"
+          ? content.ciphertext
+          : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.ciphertext))));
+      const ivStr =
+        typeof content.iv === "string"
+          ? content.iv
+          : btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(content.iv))));
+
+      // Validate data before decrypting
+      if (!ciphertextStr || ciphertextStr.length < 10 || !ivStr || ivStr.length < 10) {
+        console.warn(
+          "[ConvexStorageAdapter] Invalid encrypted data (too small), returning empty content",
+        );
+        return { elements: [], appState: {} };
+      }
 
       const decrypted = await decryptContent<{ elements: any[]; appState: object }>(
         key,
@@ -420,8 +437,8 @@ export class ConvexStorageAdapter implements StorageAdapter {
     });
 
     // Convert base64 strings to ArrayBuffer for Convex
-    const ciphertextBuffer = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0)).buffer;
-    const ivBuffer = Uint8Array.from(atob(iv), c => c.charCodeAt(0)).buffer;
+    const ciphertextBuffer = Uint8Array.from(atob(ciphertext), (c) => c.charCodeAt(0)).buffer;
+    const ivBuffer = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0)).buffer;
 
     await this.convexClient.mutation(api.boards.saveContent, {
       boardId: boardId as Id<"boards">,

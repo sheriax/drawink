@@ -8,12 +8,7 @@
  * This is the ONLY file that calls LocalStorageAdapter and CloudStorageAdapter.
  */
 
-import type {
-  BoardContent,
-  StorageAdapter,
-  SyncStatus,
-  Workspace,
-} from "@/core/storage/types";
+import type { BoardContent, StorageAdapter, SyncStatus, Workspace } from "@/core/storage/types";
 import type { AppState, BinaryFiles, Board, BoardsAPI } from "@/core/types";
 import type { DrawinkElement } from "@/lib/elements/types";
 
@@ -120,7 +115,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     if (!convexUrl) {
       console.warn(
         "[HybridStorageAdapter] Cloud sync disabled - VITE_CONVEX_URL is not set. " +
-        "App will work in local-only mode. To enable cloud sync, configure Convex in .env.local"
+          "App will work in local-only mode. To enable cloud sync, configure Convex in .env.local",
       );
       this._cloudEnabled = false;
       return;
@@ -147,14 +142,18 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
       // If workspace creation failed, try to recover
       if (error.message?.includes("workspace") || error.message?.includes("Unauthorized")) {
         console.log("[HybridStorageAdapter] Attempting to recover by creating workspace...");
-        this.cloudAdapter.ensureDefaultWorkspace()
+        this.cloudAdapter
+          .ensureDefaultWorkspace()
           .then(() => {
             console.log("[HybridStorageAdapter] ✅ Workspace created successfully on retry");
             // Restart sync engine
             return this.syncEngine?.start();
           })
           .catch((retryError) => {
-            console.error("[HybridStorageAdapter] ❌ Failed to create workspace on retry:", retryError);
+            console.error(
+              "[HybridStorageAdapter] ❌ Failed to create workspace on retry:",
+              retryError,
+            );
           });
       }
     });
@@ -261,14 +260,23 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
 
   /**
    * Create a board with a specific ID (used for sync operations).
+   * Returns the cloud board ID if created in cloud, otherwise the local ID.
    */
-  async createBoardWithId(id: string, name: string): Promise<void> {
+  async createBoardWithId(id: string, name: string): Promise<string> {
     await this.localAdapter.createBoardWithId(id, name);
 
-    // Sync to cloud
+    // Sync to cloud and return the cloud board ID
     if (this.cloudAdapter) {
-      this.cloudAdapter.createBoardWithId(id, name).catch(console.error);
+      try {
+        const cloudBoardId = await this.cloudAdapter.createBoardWithId(id, name);
+        return cloudBoardId || id;
+      } catch (error) {
+        console.error("[HybridStorageAdapter] Failed to create board in cloud:", error);
+        return id;
+      }
     }
+
+    return id;
   }
 
   /**
