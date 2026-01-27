@@ -5,16 +5,6 @@ import { decryptData, encryptData } from "@/core/data/encryption";
 import { restoreElements } from "@/core/data/restore";
 import { getSceneVersion } from "@/lib/elements";
 import { initializeApp } from "firebase/app";
-import {
-  type User as FirebaseUser,
-  GithubAuthProvider,
-  GoogleAuthProvider,
-  type Unsubscribe,
-  onAuthStateChanged as firebaseOnAuthStateChanged,
-  signOut as firebaseSignOut,
-  getAuth,
-  signInWithPopup,
-} from "firebase/auth";
 import { Bytes, doc, getDoc, getFirestore, runTransaction } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
@@ -29,9 +19,6 @@ import { getSyncableElements } from ".";
 import type { Socket } from "socket.io-client";
 import type { SyncableDrawinkElement } from ".";
 import type Portal from "../collab/Portal";
-
-// Re-export FirebaseUser type for use in other files
-export type { FirebaseUser };
 
 // private
 // -----------------------------------------------------------------------------
@@ -51,7 +38,6 @@ try {
 let firebaseApp: ReturnType<typeof initializeApp> | null = null;
 let firestore: ReturnType<typeof getFirestore> | null = null;
 let firebaseStorage: ReturnType<typeof getStorage> | null = null;
-let auth: ReturnType<typeof getAuth> | null = null;
 
 const _initializeFirebase = () => {
   if (!firebaseApp) {
@@ -74,13 +60,6 @@ const _getStorage = () => {
   return firebaseStorage;
 };
 
-const _getAuth = () => {
-  if (!auth) {
-    auth = getAuth(_initializeFirebase());
-  }
-  return auth;
-};
-
 // -----------------------------------------------------------------------------
 // Firebase API Exports
 // -----------------------------------------------------------------------------
@@ -94,67 +73,6 @@ export const getFirestoreInstance = _getFirestore;
  * Initialize Firebase app (can be called multiple times safely)
  */
 export const initializeFirebaseApp = _initializeFirebase;
-
-// -----------------------------------------------------------------------------
-// Firebase Auth API
-// -----------------------------------------------------------------------------
-
-/**
- * Firebase Authentication API
- * Provides methods for user authentication with Google and GitHub
- */
-export const firebaseAuth = {
-  /**
-   * Get the Firebase Auth instance
-   */
-  getAuth: _getAuth,
-
-  /**
-   * Sign in with Google using a popup
-   */
-  signInWithGoogle: async (): Promise<FirebaseUser> => {
-    const authInstance = _getAuth();
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(authInstance, provider);
-    return result.user;
-  },
-
-  /**
-   * Sign in with GitHub using a popup
-   */
-  signInWithGithub: async (): Promise<FirebaseUser> => {
-    const authInstance = _getAuth();
-    const provider = new GithubAuthProvider();
-    const result = await signInWithPopup(authInstance, provider);
-    return result.user;
-  },
-
-  /**
-   * Sign out the current user
-   */
-  signOut: async (): Promise<void> => {
-    const authInstance = _getAuth();
-    await firebaseSignOut(authInstance);
-  },
-
-  /**
-   * Subscribe to auth state changes
-   * @param callback - Function called when auth state changes
-   * @returns Unsubscribe function
-   */
-  onAuthStateChanged: (callback: (user: FirebaseUser | null) => void): Unsubscribe => {
-    const authInstance = _getAuth();
-    return firebaseOnAuthStateChanged(authInstance, callback);
-  },
-
-  /**
-   * Get the currently signed-in user
-   */
-  getCurrentUser: (): FirebaseUser | null => {
-    const authInstance = _getAuth();
-    return authInstance.currentUser;
-  },
-};
 
 // -----------------------------------------------------------------------------
 
