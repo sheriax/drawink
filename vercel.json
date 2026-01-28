@@ -1,20 +1,16 @@
 {
   "public": true,
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
+  "installCommand": "bun install",
+  "framework": "vite",
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://drawink.app"
-        },
-        {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
-        },
-        {
-          "key": "Feature-Policy",
-          "value": "*"
         },
         {
           "key": "Referrer-Policy",
@@ -31,7 +27,7 @@
         },
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://drawink.app"
+          "value": "*"
         }
       ]
     },
@@ -49,6 +45,10 @@
       ]
     }
   ],
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "bun install"
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
