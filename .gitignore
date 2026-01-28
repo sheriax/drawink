@@ -20,6 +20,7 @@ logs
 node_modules
 npm-debug.log*
 package-lock.json
+bun.lock
 yarn-debug.log*
 yarn-error.log*
 packages/drawink/types
