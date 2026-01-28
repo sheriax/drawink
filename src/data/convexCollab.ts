@@ -136,10 +136,11 @@ export const saveToConvex = async (
     const { ciphertext, iv } = await encryptElements(roomKey, reconciledElements);
 
     // Save to Convex
+    // Convex v.bytes() expects ArrayBuffer, not Uint8Array
     await convex.mutation(api.collaboration.saveCollaborativeScene, {
       roomId,
-      ciphertext: new Uint8Array(ciphertext),
-      iv,
+      ciphertext: ciphertext instanceof ArrayBuffer ? ciphertext : new Uint8Array(ciphertext).buffer as ArrayBuffer,
+      iv: iv instanceof ArrayBuffer ? iv : iv.buffer as ArrayBuffer,
       sceneVersion,
       lastEditedBy: undefined, // Optional: could pass Clerk user ID if authenticated
     });
