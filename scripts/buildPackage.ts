@@ -49,6 +49,11 @@ const getConfig = (outdir: string) => ({
   external: ["@drawink/common", "@drawink/element", "@drawink/math"],
   loader: {
     ".woff2": "file" as const,
+    ".png": "file" as const,
+    ".jpg": "file" as const,
+    ".jpeg": "file" as const,
+    ".svg": "file" as const,
+    ".gif": "file" as const,
   },
 });
 

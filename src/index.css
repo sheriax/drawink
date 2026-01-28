@@ -1,0 +1,10 @@
+/* Tailwind CSS base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Tailwind layer for SCSS migration */
+@layer components {
+  /* These styles will be migrated from SCSS files */
+  /* For now, they are kept in their respective .scss files */
+}

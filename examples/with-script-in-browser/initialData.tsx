@@ -1,5 +1,5 @@
-import type { DrawinkElementSkeleton } from "@drawink/drawink/data/transform";
-import type { FileId } from "@drawink/drawink/element/types";
+import type { DrawinkElementSkeleton } from "@/lib/types";
+import type { FileId } from "@/lib/elements/types";
 
 const elements: DrawinkElementSkeleton[] = [
   {

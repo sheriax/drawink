@@ -1,0 +1,97 @@
+.upgrade-banner {
+  background: linear-gradient(135deg, #FF7043 0%, #ff5722 100%);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  box-shadow: 0 4px 12px rgba(255, 112, 67, 0.3);
+
+  &.compact {
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
+  .upgrade-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .icon {
+    color: white;
+    flex-shrink: 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .message {
+    flex: 1;
+    min-width: 200px;
+
+    p {
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  .upgrade-button {
+    background: white;
+    color: #FF7043;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: #fff5f2;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  /* Compact variant */
+  &.compact {
+    .icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .message p {
+      font-size: 14px;
+    }
+
+    .upgrade-button {
+      padding: 8px 20px;
+      font-size: 14px;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    padding: 16px;
+
+    .upgrade-banner-content {
+      gap: 12px;
+    }
+
+    .message {
+      min-width: 100%;
+    }
+
+    .upgrade-button {
+      width: 100%;
+    }
+  }
+}

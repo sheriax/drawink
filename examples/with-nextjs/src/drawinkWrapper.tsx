@@ -1,8 +1,8 @@
 "use client";
-import * as drawinkLib from "@drawink/drawink";
-import { Drawink } from "@drawink/drawink";
+import * as drawinkLib from "@/core";
+import { Drawink } from "@/core";
 
-import "@drawink/drawink/index.css";
+import "@/core/index.css";
 
 import App from "../../with-script-in-browser/components/ExampleApp";
 

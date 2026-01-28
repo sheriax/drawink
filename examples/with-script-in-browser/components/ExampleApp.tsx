@@ -8,12 +8,12 @@ import React, {
   cloneElement,
 } from "react";
 
-import type * as TDrawink from "@drawink/drawink";
-import type { ImportedLibraryData } from "@drawink/drawink/data/types";
+import type * as TDrawink from "@/core";
+import type { ImportedLibraryData } from "@/lib/types";
 import type {
   NonDeletedDrawinkElement,
   Theme,
-} from "@drawink/drawink/element/types";
+} from "@/lib/elements/types";
 import type {
   AppState,
   BinaryFileData,
@@ -22,7 +22,7 @@ import type {
   Gesture,
   LibraryItems,
   PointerDownState as DrawinkPointerDownState,
-} from "@drawink/drawink/types";
+} from "@/core/types";
 
 import initialData from "../initialData";
 import {

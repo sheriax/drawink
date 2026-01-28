@@ -36,7 +36,7 @@ const services: Service[] = [
   {
     name: "Frontend",
     color: colors.cyan,
-    cwd: resolve(__dirname, "..", "drawink-app"),
+    cwd: resolve(__dirname, "..", "apps/web"),
     command: ["bun", "run", "start"],
     env: {
       VITE_APP_BACKEND_V2_GET_URL: "http://localhost:3001/api/v2/",
@@ -44,9 +44,9 @@ const services: Service[] = [
     },
   },
   {
-    name: "JSON Server",
+    name: "API Server",
     color: colors.green,
-    cwd: resolve(__dirname, "..", "json-server"),
+    cwd: resolve(__dirname, "..", "apps/api"),
     command: ["bun", "run", "dev"],
     env: {
       PORT: "3001",
@@ -56,7 +56,7 @@ const services: Service[] = [
   {
     name: "WebSocket Server",
     color: colors.magenta,
-    cwd: resolve(__dirname, "..", "websocket-server"),
+    cwd: resolve(__dirname, "..", "apps/ws"),
     command: ["bun", "run", "dev"],
     env: {
       PORT: "3003",

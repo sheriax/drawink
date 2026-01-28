@@ -1,7 +1,7 @@
 import React from "react";
 
-import type * as TDrawink from "@drawink/drawink";
-import type { DrawinkImperativeAPI } from "@drawink/drawink/types";
+import type * as TDrawink from "@/core";
+import type { DrawinkImperativeAPI } from "@/core/types";
 
 import CustomFooter from "./CustomFooter";
 
