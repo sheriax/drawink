@@ -1,8 +1,4 @@
-import {
-  // loginIcon,
-  // ExcalLogo,
-  eyeIcon,
-} from "@/core/components/icons";
+import { ExcalLogo, eyeIcon } from "@/core/components/icons";
 import { MainMenu } from "@/core/index";
 import React from "react";
 
@@ -45,17 +41,15 @@ export const AppMainMenu: React.FC<{
       <CloudSyncMenuItem />
       <MainMenu.Separator />
       {/* Dashboard Link */}
-      <MainMenu.ItemLink href="/dashboard">
-        Dashboard
-      </MainMenu.ItemLink>
+      <MainMenu.ItemLink href="/dashboard">Dashboard</MainMenu.ItemLink>
       <MainMenu.Separator />
-      {/* <MainMenu.ItemLink
+      <MainMenu.ItemLink
         icon={ExcalLogo}
         href="/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger"
         className=""
       >
         Drawink Pro
-      </MainMenu.ItemLink> */}
+      </MainMenu.ItemLink>
       <MainMenu.DefaultItems.Socials disabled />
       {/* <MainMenu.ItemLink
         icon={loginIcon}

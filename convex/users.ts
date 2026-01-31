@@ -6,7 +6,7 @@
  */
 
 import { v } from "convex/values";
-import { mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
+import { type MutationCtx, type QueryCtx, mutation, query } from "./_generated/server";
 
 // =========================================================================
 // HELPER FUNCTIONS
@@ -16,9 +16,7 @@ import { mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
  * Get the current user's ID from auth identity
  * Throws error if user is not authenticated
  */
-export async function getUserId(
-  ctx: MutationCtx | QueryCtx
-): Promise<string> {
+export async function getUserId(ctx: MutationCtx | QueryCtx): Promise<string> {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
     throw new Error("Unauthorized: User not authenticated");
@@ -108,7 +106,7 @@ export const upsertFromClerk = mutation({
         email: args.email,
         name: args.name,
         photoUrl: args.photoUrl,
-        subscriptionTier: "free",
+        subscriptionTier: "team",
         createdAt: now,
         lastLoginAt: now,
       });

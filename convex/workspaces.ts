@@ -33,15 +33,10 @@ export const listMine = query({
       .collect();
 
     const memberWorkspaceIds = memberships.map((m) => m.workspaceId);
-    const memberWorkspaces = await Promise.all(
-      memberWorkspaceIds.map((id) => ctx.db.get(id))
-    );
+    const memberWorkspaces = await Promise.all(memberWorkspaceIds.map((id) => ctx.db.get(id)));
 
     // Combine and deduplicate
-    const allWorkspaces = [
-      ...ownedWorkspaces,
-      ...memberWorkspaces.filter((w) => w !== null),
-    ];
+    const allWorkspaces = [...ownedWorkspaces, ...memberWorkspaces.filter((w) => w !== null)];
 
     return allWorkspaces;
   },
@@ -71,7 +66,7 @@ export const getById = query({
       (await ctx.db
         .query("workspaceMembers")
         .withIndex("by_workspace_and_user", (q) =>
-          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject)
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
         )
         .first()) !== null;
 
@@ -120,7 +115,7 @@ export const getMembers = query({
           ...member,
           user: user || null,
         };
-      })
+      }),
     );
 
     return membersWithDetails;
@@ -151,7 +146,7 @@ export const create = mutation({
       name: args.name,
       ownerId: identity.subject,
       clerkOrgId: args.clerkOrgId,
-      subscriptionTier: "free",
+      subscriptionTier: "team",
       createdAt: now,
       updatedAt: now,
       memberCount: 1,
@@ -189,7 +184,7 @@ export const update = mutation({
     const member = await ctx.db
       .query("workspaceMembers")
       .withIndex("by_workspace_and_user", (q) =>
-        q.eq("workspaceId", workspaceId).eq("userId", identity.subject)
+        q.eq("workspaceId", workspaceId).eq("userId", identity.subject),
       )
       .first();
 
@@ -232,7 +227,7 @@ export const ensureDefault = mutation({
     const workspaceId = await ctx.db.insert("workspaces", {
       name: "My Workspace",
       ownerId: identity.subject,
-      subscriptionTier: "free",
+      subscriptionTier: "team",
       createdAt: now,
       updatedAt: now,
       memberCount: 1,

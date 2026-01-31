@@ -49,6 +49,7 @@ export default defineSchema({
     // Subscription (can be different from personal)
     subscriptionTier: v.union(
       v.literal("free"),
+      v.literal("pro"),
       v.literal("team")
     ),
 

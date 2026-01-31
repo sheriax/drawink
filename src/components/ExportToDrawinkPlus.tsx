@@ -1,9 +1,9 @@
-import { MIME_TYPES } from "@/lib/common";
 import { Card } from "@/core/components/Card";
 import { DrawinkLogo } from "@/core/components/DrawinkLogo";
 import { encryptData, generateEncryptionKey } from "@/core/data/encryption";
 import { serializeAsJSON } from "@/core/data/json";
 import { useI18n } from "@/core/i18n";
+import { MIME_TYPES } from "@/lib/common";
 import { isInitializedImageElement } from "@/lib/elements";
 import { ref, uploadBytes } from "firebase/storage";
 import { nanoid } from "nanoid";
@@ -12,6 +12,9 @@ import type React from "react";
 import type { AppState, BinaryFileData, BinaryFiles } from "@/core/types";
 import type { FileId, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
+import { trackEvent } from "@/core/analytics";
+import { ToolButton } from "@/core/components/ToolButton";
+import { getFrame } from "@/lib/common";
 import { FILE_UPLOAD_MAX_BYTES } from "../app_constants";
 import { encodeFilesForUpload } from "../data/FileManager";
 import { loadFirebaseStorage, saveFilesToFirebase } from "../data/firebase";
@@ -89,7 +92,7 @@ export const ExportToDrawinkPlus: React.FC<{
       </div>
       <h2>Drawink Pro</h2>
       <div className="Card-details">{t("exportDialog.drawinkplus_description")}</div>
-      {/* <ToolButton
+      <ToolButton
         className="Card-button"
         type="button"
         title={t("exportDialog.drawinkplus_button")}
@@ -107,7 +110,7 @@ export const ExportToDrawinkPlus: React.FC<{
             }
           }
         }}
-      /> */}
+      />
     </Card>
   );
 };

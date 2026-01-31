@@ -1,61 +1,22 @@
 /**
  * Projects Sidebar
- * Shows projects/folders hierarchy with boards
+ * Shows workspace hierarchy.
+ * Uses Convex workspaces instead of tRPC.
  */
 
 import { useUser } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
-import { useTRPC } from "../lib/trpc";
-import type { Project } from "@/lib/types";
+import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
+import { api } from "../../convex/_generated/api";
 import "./ProjectsSidebar.scss";
 
 export const ProjectsSidebar: React.FC = () => {
   const { user, isLoaded } = useUser();
-  const trpc = useTRPC();
-
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
-
-  // Load selected organization from localStorage
-  useEffect(() => {
-    const savedOrgId = localStorage.getItem("selectedOrganizationId");
-    if (savedOrgId && savedOrgId !== "personal") {
-      setSelectedOrg(savedOrgId);
-    }
-  }, []);
-
-  // Load projects
-  useEffect(() => {
-    if (!isLoaded || !user) {
-      return;
-    }
-
-    const loadProjects = async () => {
-      setIsLoading(true);
-      try {
-        if (selectedOrg) {
-          // Load organization projects
-          const orgProjects = await trpc.project.organizationProjects.query({
-            organizationId: selectedOrg,
-          });
-          setProjects(orgProjects);
-        } else {
-          // Load personal projects
-          const myProjects = await trpc.project.myProjects.query();
-          setProjects(myProjects);
-        }
-      } catch (error) {
-        console.error("Failed to load projects:", error);
-        setProjects([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProjects();
-  }, [isLoaded, user, selectedOrg]);
+  const workspaces = useQuery(api.workspaces.listMine);
+  const createWorkspace = useMutation(api.workspaces.create);
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(
+    new Set(),
+  );
 
   const toggleProject = (projectId: string) => {
     setExpandedProjects((prev) => {
@@ -70,28 +31,14 @@ export const ProjectsSidebar: React.FC = () => {
   };
 
   const handleCreateProject = async () => {
-    const name = prompt("Enter project name:");
+    const name = prompt("Enter workspace name:");
     if (!name) return;
 
     try {
-      await trpc.project.create.mutate({
-        name,
-        organizationId: selectedOrg || undefined,
-      });
-
-      // Reload projects
-      if (selectedOrg) {
-        const orgProjects = await trpc.project.organizationProjects.query({
-          organizationId: selectedOrg,
-        });
-        setProjects(orgProjects);
-      } else {
-        const myProjects = await trpc.project.myProjects.query();
-        setProjects(myProjects);
-      }
+      await createWorkspace({ name });
     } catch (error) {
-      console.error("Failed to create project:", error);
-      alert("Failed to create project. Please try again.");
+      console.error("Failed to create workspace:", error);
+      alert("Failed to create workspace. Please try again.");
     }
   };
 
@@ -104,6 +51,9 @@ export const ProjectsSidebar: React.FC = () => {
       </div>
     );
   }
+
+  const isLoading = workspaces === undefined;
+  const projects = workspaces ?? [];
 
   return (
     <div className="projects-sidebar">
@@ -120,12 +70,19 @@ export const ProjectsSidebar: React.FC = () => {
 
       {isLoading ? (
         <div className="projects-sidebar__loading">
-          <div className="spinner-small"></div>
+          <div className="spinner-small" />
           <span>Loading projects...</span>
         </div>
       ) : projects.length === 0 ? (
         <div className="projects-sidebar__empty">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
             <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
           </svg>
           <p>No projects yet</p>
@@ -136,28 +93,40 @@ export const ProjectsSidebar: React.FC = () => {
       ) : (
         <div className="projects-sidebar__list">
           {projects.map((project) => (
-            <div key={project.id} className="project-item">
+            <div key={project._id} className="project-item">
               <div
                 className="project-item__header"
-                onClick={() => toggleProject(project.id)}
+                onClick={() => toggleProject(project._id)}
               >
                 <svg
                   width="16"
                   height="16"
                   viewBox="0 0 16 16"
                   className={`project-item__chevron ${
-                    expandedProjects.has(project.id) ? "expanded" : ""
+                    expandedProjects.has(project._id) ? "expanded" : ""
                   }`}
                 >
-                  <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" fill="none" />
+                  <path
+                    d="M6 4l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
                 </svg>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
                 <span className="project-item__name">{project.name}</span>
               </div>
 
-              {expandedProjects.has(project.id) && (
+              {expandedProjects.has(project._id) && (
                 <div className="project-item__boards">
                   <div className="project-item__empty-boards">
                     <p>No boards in this project yet</p>

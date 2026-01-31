@@ -6,18 +6,15 @@
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTRPC } from "../lib/trpc";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import type { Board } from "@/lib/types";
+import type { Id } from "../../convex/_generated/dataModel";
 import "./Dashboard.scss";
 
 export const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
-  const trpc = useTRPC();
-
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<Id<"workspaces"> | null>(null);
 
   // Convex queries - real-time data!
   const workspaces = useQuery(api.workspaces.listMine);
@@ -34,7 +31,7 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const savedWorkspaceId = localStorage.getItem("selectedWorkspaceId");
     if (savedWorkspaceId) {
-      setSelectedWorkspaceId(savedWorkspaceId);
+      setSelectedWorkspaceId(savedWorkspaceId as Id<"workspaces">);
     }
   }, []);
 
@@ -69,7 +66,6 @@ export const Dashboard: React.FC = () => {
       const boardId = await createBoard({
         workspaceId: selectedWorkspaceId,
         name: "Untitled Board",
-        isPublic: false,
       });
 
       // Navigate to the new board
@@ -190,7 +186,7 @@ export const Dashboard: React.FC = () => {
             <select
               value={selectedWorkspaceId || ""}
               onChange={(e) => {
-                const newWorkspaceId = e.target.value;
+                const newWorkspaceId = e.target.value as Id<"workspaces">;
                 setSelectedWorkspaceId(newWorkspaceId);
                 localStorage.setItem("selectedWorkspaceId", newWorkspaceId);
               }}

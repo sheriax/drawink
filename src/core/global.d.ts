@@ -8,6 +8,7 @@ interface Window {
   gtag: Function;
   sa_event: Function;
   fathom: { trackEvent: Function };
+  h: any;
 }
 
 interface CanvasRenderingContext2D {
@@ -113,7 +114,8 @@ declare namespace jest {
 }
 
 // Allow CSS custom properties (CSS variables like --swatch-color, --padding, etc.)
-declare module 'react' {
+import "react";
+declare module "react" {
   interface CSSProperties {
     [key: `--${string}`]: string | number | undefined;
   }
