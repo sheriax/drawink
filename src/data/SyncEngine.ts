@@ -123,42 +123,62 @@ export class SyncEngine {
         this.cloudAdapter.getBoards(),
       ]);
 
-      const localMap = new Map(localBoards.map((b) => [b.id, b]));
+      // Build a set of all cloud IDs that local boards already reference.
+      // Local boards use their own IDs but store a `cloudId` that maps to
+      // the Convex-generated ID.  We need this to avoid re-downloading
+      // boards that were uploaded from this device.
+      const knownCloudIds = new Set<string>();
+      for (const lb of localBoards) {
+        if (lb.cloudId) {
+          knownCloudIds.add(lb.cloudId);
+        }
+        // Also add the local ID itself — in case a cloud board was
+        // previously downloaded using the cloud ID as the local ID.
+        knownCloudIds.add(lb.id);
+      }
+
       const cloudMap = new Map(cloudBoards.map((b) => [b.id, b]));
 
       // Download cloud boards that don't exist locally
-      for (const [id, board] of cloudMap) {
-        if (!localMap.has(id)) {
-          console.log(`[SyncEngine] Downloading cloud board: ${id}`);
+      for (const [cloudId, board] of cloudMap) {
+        if (!knownCloudIds.has(cloudId)) {
+          console.log(`[SyncEngine] Downloading cloud board: ${cloudId} (${board.name})`);
           try {
-            await this.localAdapter.createBoardWithId(id, board.name);
-            const content = await this.cloudAdapter.getBoardContent(id);
+            // Store the cloud board locally using the cloud ID as the local ID
+            await this.localAdapter.createBoardWithId(cloudId, board.name);
+            // Also store the cloudId mapping so future syncs recognise it
+            await this.localAdapter.updateBoard(cloudId, { cloudId });
+            const content = await this.cloudAdapter.getBoardContent(cloudId);
             if (content.elements.length > 0) {
-              await this.localAdapter.saveBoardContent(id, content);
+              await this.localAdapter.saveBoardContent(cloudId, content);
             }
           } catch (error) {
-            console.error(`[SyncEngine] Failed to download board ${id}:`, error);
+            console.error(`[SyncEngine] Failed to download board ${cloudId}:`, error);
           }
         }
       }
 
       // Upload local boards that don't exist in cloud
-      for (const [id, board] of localMap) {
-        if (!cloudMap.has(id)) {
-          console.log(`[SyncEngine] Uploading local board: ${id}`);
-          try {
-            // Create board in cloud and get the cloud board ID
-            const cloudBoardId = await this.cloudAdapter.createBoardWithId(id, board.name);
-            // Store the cloud ID mapping in the local board
-            await this.localAdapter.updateBoard(id, { cloudId: cloudBoardId });
-            // Use the cloud board ID for content operations
-            const content = await this.localAdapter.getBoardContent(id);
-            if (content.elements.length > 0) {
-              await this.cloudAdapter.saveBoardContent(cloudBoardId, content);
-            }
-          } catch (error) {
-            console.error(`[SyncEngine] Failed to upload board ${id}:`, error);
+      for (const lb of localBoards) {
+        // Skip boards that already have a cloud counterpart
+        if (lb.cloudId && cloudMap.has(lb.cloudId)) {
+          continue;
+        }
+        // Skip boards whose local ID is already a cloud ID (downloaded boards)
+        if (cloudMap.has(lb.id)) {
+          continue;
+        }
+
+        console.log(`[SyncEngine] Uploading local board: ${lb.id} (${lb.name})`);
+        try {
+          const cloudBoardId = await this.cloudAdapter.createBoardWithId(lb.id, lb.name);
+          await this.localAdapter.updateBoard(lb.id, { cloudId: cloudBoardId });
+          const content = await this.localAdapter.getBoardContent(lb.id);
+          if (content.elements.length > 0) {
+            await this.cloudAdapter.saveBoardContent(cloudBoardId, content);
           }
+        } catch (error) {
+          console.error(`[SyncEngine] Failed to upload board ${lb.id}:`, error);
         }
       }
 
@@ -198,26 +218,42 @@ export class SyncEngine {
   }
 
   /**
-   * Sync content for a specific board to cloud
+   * Sync content for a specific board to cloud.
+   * If the board doesn't exist locally or in Convex, it will be created.
    */
   async syncBoardContent(boardId: string): Promise<void> {
     if (this.isStopped) return;
 
     try {
-      // Get the local board to find the cloud ID mapping
       const boards = await this.localAdapter.getBoards();
-      const board = boards.find((b) => b.id === boardId);
+      let board = boards.find((b) => b.id === boardId);
 
+      // Board ID exists (e.g. in currentBoardId) but not in the local boards list.
+      // This can happen after a fresh deployment or if the board was created
+      // before the boards list feature existed. Register it locally.
       if (!board) {
-        console.error(`[SyncEngine] Board not found: ${boardId}`);
-        return;
+        const content = await this.localAdapter.getBoardContent(boardId);
+        if (content.elements.length === 0) {
+          // No local content either — truly stale reference, skip
+          console.warn(`[SyncEngine] No local data for board ${boardId}, skipping`);
+          return;
+        }
+        console.log(`[SyncEngine] Registering orphaned board locally: ${boardId}`);
+        await this.localAdapter.createBoardWithId(boardId, "Untitled Board");
+        board = (await this.localAdapter.getBoards()).find((b) => b.id === boardId)!;
       }
 
-      // Use cloud ID if available, otherwise skip (board hasn't been synced yet)
-      const cloudBoardId = board.cloudId;
+      // If the board hasn't been synced to Convex yet, upload it now
+      let cloudBoardId = board.cloudId;
       if (!cloudBoardId) {
-        console.log(`[SyncEngine] Board ${boardId} not yet synced to cloud, skipping content sync`);
-        return;
+        console.log(`[SyncEngine] Uploading board ${boardId} to cloud...`);
+        try {
+          cloudBoardId = await this.cloudAdapter.createBoardWithId(boardId, board.name);
+          await this.localAdapter.updateBoard(boardId, { cloudId: cloudBoardId });
+        } catch (error) {
+          console.error(`[SyncEngine] Failed to create cloud board for ${boardId}:`, error);
+          return;
+        }
       }
 
       const localContent = await this.localAdapter.getBoardContent(boardId);
