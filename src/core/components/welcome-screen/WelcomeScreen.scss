@@ -104,6 +104,11 @@
       align-items: flex-end;
       gap: 0.5rem;
 
+      // Offset arrow when dashboard button is visible (logged in state)
+      .canvas-actions-wrapper--with-dashboard & {
+        margin-inline-start: 2.75rem;
+      }
+
       svg {
         width: 41px;
         height: 94px;
