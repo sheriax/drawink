@@ -424,7 +424,7 @@ export const BOARDS_SIDEBAR_TAB = "boards";
 
 export const DEFAULT_SIDEBAR = {
   name: "default",
-  defaultTab: BOARDS_SIDEBAR_TAB,
+  defaultTab: LIBRARY_SIDEBAR_TAB,
 } as const;
 
 export const LIBRARY_DISABLED_TYPES = new Set([
