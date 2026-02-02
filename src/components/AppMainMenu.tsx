@@ -1,4 +1,5 @@
-import { ExcalLogo, eyeIcon } from "@/core/components/icons";
+import { useUser } from "@clerk/clerk-react";
+import { eyeIcon } from "@/core/components/icons";
 import { MainMenu } from "@/core/index";
 import React from "react";
 
@@ -7,7 +8,6 @@ import { isDevEnv } from "@/lib/common";
 import type { Theme } from "@/lib/elements/types";
 
 import { LanguageList } from "../app-language/LanguageList";
-// import { isDrawinkPlusSignedUser } from "../app_constants";
 
 import { CloudSyncMenuItem } from "./CloudSyncMenuItem";
 import { saveDebugState } from "./DebugCanvas";
@@ -20,6 +20,7 @@ export const AppMainMenu: React.FC<{
   setTheme: (theme: Theme | "system") => void;
   refresh: () => void;
 }> = React.memo((props) => {
+  const { isSignedIn } = useUser();
   return (
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
@@ -40,16 +41,10 @@ export const AppMainMenu: React.FC<{
       {/* Cloud Sync Login/Logout */}
       <CloudSyncMenuItem />
       <MainMenu.Separator />
-      {/* Dashboard Link */}
-      <MainMenu.ItemLink href="/dashboard">Dashboard</MainMenu.ItemLink>
-      <MainMenu.Separator />
-      <MainMenu.ItemLink
-        icon={ExcalLogo}
-        href="/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger"
-        className=""
-      >
-        Drawink Pro
-      </MainMenu.ItemLink>
+      {/* Dashboard Link (signed-in users only) */}
+      {isSignedIn && (
+        <MainMenu.ItemLink href="/dashboard">Dashboard</MainMenu.ItemLink>
+      )}
       <MainMenu.DefaultItems.Socials disabled />
       {/* <MainMenu.ItemLink
         icon={loginIcon}

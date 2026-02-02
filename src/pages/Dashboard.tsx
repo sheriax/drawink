@@ -1,9 +1,10 @@
 /**
  * Dashboard Page
- * Shows recent boards, quick create button, and team activity
+ * Shows recent boards, quick create button, and workspace overview.
+ * Styled to match the Drawink application theme.
  */
 
-import { useUser } from "@clerk/clerk-react";
+import { useUser, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
@@ -12,22 +13,33 @@ import type { Id } from "../../convex/_generated/dataModel";
 import "./Dashboard.scss";
 
 export const Dashboard: React.FC = () => {
-  const { user, isLoaded } = useUser();
-  const navigate = useNavigate();
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<Id<"workspaces"> | null>(null);
+  return (
+    <>
+      <SignedIn>
+        <DashboardContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
+};
 
-  // Convex queries - real-time data!
+const DashboardContent: React.FC = () => {
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const [selectedWorkspaceId, setSelectedWorkspaceId] =
+    useState<Id<"workspaces"> | null>(null);
+
   const workspaces = useQuery(api.workspaces.listMine);
   const recentBoards = useQuery(
     api.boards.listByWorkspace,
-    selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : "skip"
+    selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : "skip",
   );
 
-  // Convex mutations
   const createBoard = useMutation(api.boards.create);
   const ensureDefaultWorkspace = useMutation(api.workspaces.ensureDefault);
 
-  // Load selected workspace from localStorage
   useEffect(() => {
     const savedWorkspaceId = localStorage.getItem("selectedWorkspaceId");
     if (savedWorkspaceId) {
@@ -35,40 +47,30 @@ export const Dashboard: React.FC = () => {
     }
   }, []);
 
-  // Ensure user has a default workspace
   useEffect(() => {
-    if (!isLoaded || !user) return;
+    if (!user) return;
 
-    // If no workspace is selected and we have workspaces loaded
     if (!selectedWorkspaceId && workspaces && workspaces.length > 0) {
       const defaultWorkspace = workspaces[0];
       setSelectedWorkspaceId(defaultWorkspace._id);
       localStorage.setItem("selectedWorkspaceId", defaultWorkspace._id);
     }
 
-    // If no workspaces exist, create a default one
     if (workspaces && workspaces.length === 0) {
       ensureDefaultWorkspace({}).then((workspaceId) => {
         setSelectedWorkspaceId(workspaceId);
         localStorage.setItem("selectedWorkspaceId", workspaceId);
       });
     }
-  }, [isLoaded, user, workspaces, selectedWorkspaceId, ensureDefaultWorkspace]);
+  }, [user, workspaces, selectedWorkspaceId, ensureDefaultWorkspace]);
 
   const handleCreateBoard = async () => {
-    if (!selectedWorkspaceId) {
-      console.error("No workspace selected");
-      return;
-    }
-
+    if (!selectedWorkspaceId) return;
     try {
-      // Create board in Convex
       const boardId = await createBoard({
         workspaceId: selectedWorkspaceId,
         name: "Untitled Board",
       });
-
-      // Navigate to the new board
       navigate(`/#${boardId}`);
     } catch (error) {
       console.error("Failed to create board:", error);
@@ -91,116 +93,180 @@ export const Dashboard: React.FC = () => {
     return d.toLocaleDateString();
   };
 
-  // Loading state
-  const isLoadingBoards = recentBoards === undefined || workspaces === undefined;
-
-  if (!isLoaded) {
-    return (
-      <div className="dashboard-loading">
-        <div className="spinner"></div>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="dashboard-empty">
-        <h2>Welcome to Drawink</h2>
-        <p>Please sign in to access your boards</p>
-        <button onClick={() => navigate("/sign-in")} className="btn-primary">
-          Sign In
-        </button>
-      </div>
-    );
-  }
+  const isLoadingBoards =
+    recentBoards === undefined || workspaces === undefined;
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <div className="dashboard-header__title">
-          <h1>Dashboard</h1>
-          <p>Welcome back, {user.firstName || user.username || "there"}!</p>
-        </div>
-        <button onClick={handleCreateBoard} className="btn-primary">
-          + New Board
+    <div className="drawink-dashboard">
+      {/* Top nav bar */}
+      <header className="drawink-dashboard__nav">
+        <button
+          className="drawink-dashboard__back-btn"
+          onClick={() => navigate("/")}
+          title="Back to canvas"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
         </button>
-      </div>
+        <span className="drawink-dashboard__logo">Drawink</span>
 
-      <div className="dashboard-content">
-        {/* Recent Boards Section */}
-        <section className="dashboard-section">
-          <h2>Recent Boards</h2>
-
-          {isLoadingBoards ? (
-            <div className="dashboard-loading-inline">
-              <div className="spinner-small"></div>
-              <span>Loading boards...</span>
-            </div>
-          ) : !recentBoards || recentBoards.length === 0 ? (
-            <div className="dashboard-empty-state">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3>No boards yet</h3>
-              <p>Create your first board to get started</p>
-              <button onClick={handleCreateBoard} className="btn-secondary">
-                Create Board
-              </button>
-            </div>
-          ) : (
-            <div className="dashboard-boards-grid">
-              {recentBoards.map((board) => (
-                <div
-                  key={board._id}
-                  className="board-card"
-                  onClick={() => handleOpenBoard(board._id)}
-                >
-                  <div className="board-card__thumbnail">
-                    {board.thumbnailUrl ? (
-                      <img src={board.thumbnailUrl} alt={board.name} />
-                    ) : (
-                      <div className="board-card__thumbnail-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="board-card__info">
-                    <h3>{board.name}</h3>
-                    <p className="board-card__date">
-                      {formatDate(board._creationTime)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Workspace Selector */}
         {workspaces && workspaces.length > 1 && (
-          <section className="dashboard-section">
-            <h2>Workspace</h2>
-            <select
-              value={selectedWorkspaceId || ""}
-              onChange={(e) => {
-                const newWorkspaceId = e.target.value as Id<"workspaces">;
-                setSelectedWorkspaceId(newWorkspaceId);
-                localStorage.setItem("selectedWorkspaceId", newWorkspaceId);
-              }}
-              className="workspace-selector"
-            >
-              {workspaces.map((workspace) => (
-                <option key={workspace._id} value={workspace._id}>
-                  {workspace.name}
-                </option>
-              ))}
-            </select>
-          </section>
+          <select
+            className="drawink-dashboard__workspace-select"
+            value={selectedWorkspaceId || ""}
+            onChange={(e) => {
+              const id = e.target.value as Id<"workspaces">;
+              setSelectedWorkspaceId(id);
+              localStorage.setItem("selectedWorkspaceId", id);
+            }}
+          >
+            {workspaces.map((ws) => (
+              <option key={ws._id} value={ws._id}>
+                {ws.name}
+              </option>
+            ))}
+          </select>
         )}
-      </div>
+
+        <div className="drawink-dashboard__nav-right">
+          <span className="drawink-dashboard__greeting">
+            {user?.firstName || user?.username || ""}
+          </span>
+          {user?.imageUrl && (
+            <img
+              src={user.imageUrl}
+              alt=""
+              className="drawink-dashboard__avatar"
+            />
+          )}
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="drawink-dashboard__main">
+        <div className="drawink-dashboard__toolbar">
+          <h1 className="drawink-dashboard__title">Your Boards</h1>
+          <button
+            className="drawink-dashboard__create-btn"
+            onClick={handleCreateBoard}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            New Board
+          </button>
+        </div>
+
+        {isLoadingBoards ? (
+          <div className="drawink-dashboard__loading">
+            <div className="drawink-dashboard__spinner" />
+            <span>Loading boards...</span>
+          </div>
+        ) : !recentBoards || recentBoards.length === 0 ? (
+          <div className="drawink-dashboard__empty">
+            <div className="drawink-dashboard__empty-icon">
+              <svg
+                width="56"
+                height="56"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 21V9" />
+              </svg>
+            </div>
+            <h2>No boards yet</h2>
+            <p>Create your first board to start drawing</p>
+            <button
+              className="drawink-dashboard__create-btn"
+              onClick={handleCreateBoard}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Create Board
+            </button>
+          </div>
+        ) : (
+          <div className="drawink-dashboard__grid">
+            {/* New board card */}
+            <button
+              className="drawink-dashboard__card drawink-dashboard__card--new"
+              onClick={handleCreateBoard}
+            >
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              <span>New Board</span>
+            </button>
+
+            {recentBoards.map((board) => (
+              <div
+                key={board._id}
+                className="drawink-dashboard__card"
+                onClick={() => handleOpenBoard(board._id)}
+              >
+                <div className="drawink-dashboard__card-thumb">
+                  {board.thumbnailUrl ? (
+                    <img src={board.thumbnailUrl} alt={board.name} />
+                  ) : (
+                    <svg
+                      width="36"
+                      height="36"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    >
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <path d="M3 9h18M9 21V9" />
+                    </svg>
+                  )}
+                </div>
+                <div className="drawink-dashboard__card-info">
+                  <span className="drawink-dashboard__card-name">
+                    {board.name}
+                  </span>
+                  <span className="drawink-dashboard__card-date">
+                    {formatDate(board._creationTime)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 };
