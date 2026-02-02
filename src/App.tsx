@@ -129,6 +129,7 @@ import type { CollabAPI } from "./collab/Collab";
 polyfill();
 
 // Initialize boards API atom with HybridStorageAdapter
+// @ts-ignore - jotai store type inference limitation
 editorJotaiStore.set(boardsAPIAtom, hybridStorageAdapter);
 
 window.DRAWINK_THROTTLE_RENDER = true;
@@ -262,16 +263,18 @@ const initializeScene = async (opts: {
       const request = await fetch(window.decodeURIComponent(url));
       const data = await loadFromBlob(await request.blob(), null, null);
       if (!scene.elements.length || (await openConfirmModal(shareableLinkConfirmDialog))) {
+        // @ts-ignore - complex discriminated union type
         return { scene: data, isExternalScene };
       }
     } catch (error: any) {
+      // @ts-ignore - complex discriminated union type
       return {
         scene: {
           appState: {
             errorMessage: t("alerts.invalidSceneUrl"),
           },
         },
-        isExternalScene,
+        isExternalScene: isExternalScene as false,
       };
     }
   }

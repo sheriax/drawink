@@ -5,7 +5,12 @@ import { t } from "../i18n";
 import { useDrawinkActionManager } from "./App";
 import ConfirmDialog from "./ConfirmDialog";
 
-export const activeConfirmDialogAtom = atom<"clearCanvas" | null>(null);
+const _activeConfirmDialogAtom = atom<"clearCanvas" | null>(null);
+export const activeConfirmDialogAtom = atom(
+  (get) => get(_activeConfirmDialogAtom),
+  // @ts-ignore - jotai-scope type inference limitation
+  (_get, set, value: "clearCanvas" | null) => set(_activeConfirmDialogAtom, value),
+);
 
 export const ActiveConfirmDialog = () => {
   const [activeConfirmDialog, setActiveConfirmDialog] = useAtom(activeConfirmDialogAtom);

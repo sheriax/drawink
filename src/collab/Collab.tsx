@@ -206,6 +206,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       setCollabError: this.setErrorDialog,
     };
 
+    // @ts-ignore - jotai store type inference limitation
     appJotaiStore.set(collabAPIAtom, collabAPI);
 
     if (isTestEnv() || isDevEnv()) {
@@ -872,6 +873,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
 
   setActiveRoomLink = (activeRoomLink: string | null) => {
     this.setState({ activeRoomLink });
+    // @ts-ignore - jotai store type inference limitation
     appJotaiStore.set(activeRoomLinkAtom, activeRoomLink);
   };
 

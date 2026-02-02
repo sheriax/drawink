@@ -6,7 +6,7 @@ interface Window {
   sa_event: ((event: string, properties?: Record<string, unknown>) => void) | undefined;
   DEBUG_FRACTIONAL_INDICES: boolean | undefined;
   visualDebug?: {
-    data: unknown[];
-    currentFrame?: unknown[];
+    data: import("@/lib/common/visualdebug").DebugElement[][];
+    currentFrame?: number;
   };
 }
