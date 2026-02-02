@@ -1,67 +1,78 @@
 /**
- * HybridStorageAdapter
+ * HybridStorageAdapter (Cloud-First Architecture v3)
  *
  * The main storage interface for Drawink that orchestrates local and cloud storage.
- * Follows a local-first approach: always reads from local first for instant response,
- * then syncs with cloud in the background when authenticated.
  *
- * This is the ONLY file that calls LocalStorageAdapter and CloudStorageAdapter.
+ * ARCHITECTURE:
+ * - Anonymous users: localStorage only (full offline support)
+ * - Logged-in users: Cloud-first with local cache for offline support
+ *
+ * KEY PRINCIPLES:
+ * 1. Cloud is source of truth for logged-in users
+ * 2. Local storage is cache only (for logged-in users)
+ * 3. Offline operations are queued and synced when online
+ * 4. Anonymous data is isolated and preserved
  */
 
-import type { BoardContent, StorageAdapter, SyncStatus, Workspace } from "@/core/storage/types";
+import type { BoardContent, StorageAdapter, Workspace } from "@/core/storage/types";
 import type { AppState, BinaryFiles, Board, BoardsAPI } from "@/core/types";
 import type { DrawinkElement } from "@/lib/elements/types";
 
 import { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import { type LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
+import { offlineQueue, type QueuedOperation } from "./OfflineQueue";
 import { SyncEngine } from "./SyncEngine";
+
+// Storage keys
+const ANONYMOUS_BOARDS_BACKUP = "drawink-anonymous-backup";
+
+// Sync status type for UI
+export interface CloudSyncStatus {
+  isOnline: boolean;
+  isCloudEnabled: boolean;
+  pendingOperations: number;
+  lastSyncTimestamp: number | null;
+}
 
 /**
  * HybridStorageAdapter orchestrates between local and cloud storage.
- * - For anonymous users: only local storage is used
- * - For authenticated users: local-first with background cloud sync
- *
- * Also implements BoardsAPI for use as the boards atom provider.
+ * - Anonymous users: only local storage is used
+ * - Logged-in users: cloud-first with local cache
  */
 export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   private localAdapter: LocalStorageAdapter;
   private cloudAdapter: ConvexStorageAdapter | null = null;
   private syncEngine: SyncEngine | null = null;
 
-  private _cloudEnabled = false;
   private _userId: string | null = null;
-  private _syncStatus: SyncStatus = "idle";
-  private _onSyncStatusChange: ((status: SyncStatus) => void) | null = null;
+  private _onSyncStatusChange: ((status: CloudSyncStatus) => void) | null = null;
 
   constructor(localAdapter?: LocalStorageAdapter) {
     this.localAdapter = localAdapter || localStorageAdapter;
+
+    // Set up offline queue operation handler
+    offlineQueue.setExecuteHandler(this.executeQueuedOperation.bind(this));
   }
 
   // =========================================================================
-  // Passthrough to LocalStorageAdapter
+  // Passthrough to LocalStorageAdapter (file storage, save methods)
   // =========================================================================
 
-  /**
-   * Get the local file storage manager
-   */
   get fileStorage() {
     return this.localAdapter.fileStorage;
   }
 
-  /**
-   * Save scene state. Calls local first, then syncs to cloud.
-   */
   save = (
     elements: readonly DrawinkElement[],
     appState: AppState,
     files: BinaryFiles,
     onFilesSaved: () => void,
   ) => {
-    // Save locally
+    // Save locally first
     this.localAdapter.save(elements, appState, files, () => {
       onFilesSaved();
 
-      // Trigger cloud sync for current board content
+      // For logged-in users, trigger cloud sync for current board content
       if (this.cloudAdapter && this.syncEngine) {
         this.localAdapter.getCurrentBoardId().then((boardId) => {
           if (boardId) {
@@ -72,40 +83,18 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     });
   };
 
-  /**
-   * Flush pending saves immediately
-   */
-  flushSave = () => {
-    this.localAdapter.flushSave();
-  };
-
-  /**
-   * Pause saving (used during collaboration)
-   */
-  pauseSave = (lockType: "collaboration") => {
-    this.localAdapter.pauseSave(lockType);
-  };
-
-  /**
-   * Resume saving
-   */
-  resumeSave = (lockType: "collaboration") => {
-    this.localAdapter.resumeSave(lockType);
-  };
-
-  /**
-   * Check if saving is paused
-   */
-  isSavePaused = () => {
-    return this.localAdapter.isSavePaused();
-  };
+  flushSave = () => this.localAdapter.flushSave();
+  pauseSave = (lockType: "collaboration") => this.localAdapter.pauseSave(lockType);
+  resumeSave = (lockType: "collaboration") => this.localAdapter.resumeSave(lockType);
+  isSavePaused = () => this.localAdapter.isSavePaused();
 
   // =========================================================================
-  // Cloud Sync Methods
+  // Auth State Management
   // =========================================================================
 
   /**
    * Enable cloud sync for an authenticated user.
+   * CLOUD-FIRST: Clears anonymous data, loads from cloud.
    */
   enableCloudSync(userId: string, fetchToken?: () => Promise<string | null>): void {
     this._userId = userId;
@@ -113,166 +102,197 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     // Check if Convex URL is configured
     const convexUrl = import.meta.env.VITE_CONVEX_URL;
     if (!convexUrl) {
-      console.warn(
-        "[HybridStorageAdapter] Cloud sync disabled - VITE_CONVEX_URL is not set. " +
-          "App will work in local-only mode. To enable cloud sync, configure Convex in .env.local",
-      );
-      this._cloudEnabled = false;
+      console.warn("[HybridStorageAdapter] Cloud sync disabled - VITE_CONVEX_URL not set");
       return;
     }
 
-    this._cloudEnabled = true;
+    // STEP 1: Backup anonymous boards for potential future migration
+    this.backupAnonymousBoards();
 
-    // Initialize ConvexStorageAdapter with auth
+    // STEP 2: Clear anonymous data to prevent phantom boards
+    this.localAdapter.clearCache();
+    this.localAdapter.clearDeletedBoardIds();
+    localStorage.removeItem("drawink-deleted-boards"); // Legacy cleanup
+
+    // STEP 3: Initialize cloud adapter
     this.cloudAdapter = new ConvexStorageAdapter(userId, convexUrl, fetchToken);
 
-    // Initialize SyncEngine
+    // STEP 4: Initialize SyncEngine (simplified: pull only, no upload)
     this.syncEngine = new SyncEngine(this.localAdapter, this.cloudAdapter);
+    this.syncEngine.setOnStateChange(() => this.notifySyncStatusChange());
 
-    // Wire up sync status changes
-    this.syncEngine.setOnStateChange((state) => {
-      this._syncStatus = state.status;
-      this._onSyncStatusChange?.(state.status);
-    });
-
-    // Start sync engine with automatic workspace creation
+    // STEP 5: Start sync engine
     this.syncEngine.start().catch((error) => {
       console.error("[HybridStorageAdapter] Sync engine failed to start:", error);
-
-      // If workspace creation failed, try to recover
-      if (error.message?.includes("workspace") || error.message?.includes("Unauthorized")) {
-        console.log("[HybridStorageAdapter] Attempting to recover by creating workspace...");
-        this.cloudAdapter
-          .ensureDefaultWorkspace()
-          .then(() => {
-            console.log("[HybridStorageAdapter] ✅ Workspace created successfully on retry");
-            // Restart sync engine
-            return this.syncEngine?.start();
-          })
-          .catch((retryError) => {
-            console.error(
-              "[HybridStorageAdapter] ❌ Failed to create workspace on retry:",
-              retryError,
-            );
-          });
-      }
     });
 
-    console.log("[HybridStorageAdapter] Cloud sync enabled for user (using Convex):", userId);
+    // STEP 6: Process any pending offline operations
+    offlineQueue.processQueue();
+
+    console.log("[HybridStorageAdapter] Cloud sync enabled for user:", userId);
   }
 
   /**
    * Disable cloud sync (called on logout).
+   * Clears cached cloud data for security.
    */
   disableCloudSync(): void {
-    // Stop sync engine
     this.syncEngine?.stop();
     this.syncEngine = null;
-
-    // Clear cloud adapter
     this.cloudAdapter = null;
-    this._cloudEnabled = false;
     this._userId = null;
-    this._syncStatus = "idle";
 
-    console.log("[HybridStorageAdapter] Cloud sync disabled");
+    // Clear cached cloud data (security: don't expose data after logout)
+    this.localAdapter.clearCache();
+    offlineQueue.clear();
+
+    console.log("[HybridStorageAdapter] Cloud sync disabled, cache cleared");
   }
 
   /**
-   * Check if cloud sync is currently enabled.
+   * Backup anonymous boards before login (for potential future migration)
    */
+  private backupAnonymousBoards(): void {
+    try {
+      const anonymousBoards = localStorage.getItem("drawink-boards");
+      if (anonymousBoards) {
+        const boards: Board[] = JSON.parse(anonymousBoards);
+        // Only backup if they look like anonymous boards (no cloudId)
+        if (boards.length > 0 && !boards[0].cloudId) {
+          localStorage.setItem(ANONYMOUS_BOARDS_BACKUP, anonymousBoards);
+          console.log(`[HybridStorageAdapter] Backed up ${boards.length} anonymous boards`);
+        }
+      }
+    } catch (error) {
+      console.error("[HybridStorageAdapter] Failed to backup anonymous boards:", error);
+    }
+  }
+
   isCloudSyncEnabled(): boolean {
-    return this._cloudEnabled;
+    return this.cloudAdapter !== null;
   }
 
-  /**
-   * Get the current user ID (if authenticated).
-   */
   getUserId(): string | null {
     return this._userId;
   }
 
-  /**
-   * Get the current sync status.
-   */
-  getSyncStatus(): SyncStatus {
-    return this._syncStatus;
+  // =========================================================================
+  // Sync Status
+  // =========================================================================
+
+  getSyncStatus(): CloudSyncStatus {
+    return {
+      isOnline: navigator.onLine,
+      isCloudEnabled: this.isCloudSyncEnabled(),
+      pendingOperations: offlineQueue.getPendingCount(),
+      lastSyncTimestamp: this.localAdapter.getLastSyncTimestamp(),
+    };
   }
 
-  /**
-   * Register callback for sync status changes.
-   */
-  onSyncStatusChange(callback: (status: SyncStatus) => void): void {
+  onSyncStatusChange(callback: (status: CloudSyncStatus) => void): void {
     this._onSyncStatusChange = callback;
   }
 
-  /**
-   * Manually ensure workspace exists and restart sync
-   * This can be called when workspace is missing or sync fails
-   */
-  async ensureWorkspaceAndSync(): Promise<boolean> {
-    if (!this.cloudAdapter || !this.syncEngine) {
-      console.warn("[HybridStorageAdapter] Cannot ensure workspace - cloud sync not enabled");
-      return false;
-    }
-
-    try {
-      console.log("[HybridStorageAdapter] Ensuring workspace exists...");
-      await this.cloudAdapter.ensureDefaultWorkspace();
-      console.log("[HybridStorageAdapter] ✅ Workspace ensured");
-
-      // Restart sync engine
-      this.syncEngine.stop();
-      await this.syncEngine.start();
-      console.log("[HybridStorageAdapter] ✅ Sync restarted");
-
-      return true;
-    } catch (error) {
-      console.error("[HybridStorageAdapter] ❌ Failed to ensure workspace:", error);
-      return false;
-    }
+  private notifySyncStatusChange(): void {
+    this._onSyncStatusChange?.(this.getSyncStatus());
   }
 
   // =========================================================================
-  // StorageAdapter Implementation
+  // Board Operations (CLOUD-FIRST)
   // =========================================================================
 
   /**
-   * Get all boards. Always reads from local first for instant response.
+   * Get all boards.
+   * - Anonymous: local only
+   * - Logged-in: cloud-first with cache fallback
    */
   async getBoards(): Promise<Board[]> {
+    // Anonymous: local only
+    if (!this.cloudAdapter) {
+      return this.localAdapter.getBoards();
+    }
+
+    // Logged-in + Online: cloud-first
+    if (navigator.onLine) {
+      try {
+        const cloudBoards = await this.cloudAdapter.getBoards();
+        // Update local cache (cloud is truth)
+        await this.localAdapter.updateBoardCache(cloudBoards);
+        return cloudBoards;
+      } catch (error) {
+        console.warn("[HybridStorageAdapter] Cloud fetch failed, using cache:", error);
+        return this.localAdapter.getBoards();
+      }
+    }
+
+    // Logged-in + Offline: use cache
     return this.localAdapter.getBoards();
   }
 
   /**
-   * Create a new board. Creates locally first, then syncs to cloud.
+   * Create a new board.
+   * - Anonymous: local only
+   * - Logged-in + Online: cloud-first
+   * - Logged-in + Offline: queue operation
    */
   async createBoard(name: string): Promise<string> {
-    const boardId = await this.localAdapter.createBoard(name);
-
-    // Sync to cloud directly
-    if (this.cloudAdapter) {
-      this.cloudAdapter.createBoardWithId(boardId, name).catch(console.error);
+    // Anonymous: local only
+    if (!this.cloudAdapter) {
+      return this.localAdapter.createBoard(name);
     }
 
-    return boardId;
+    const idempotencyKey = crypto.randomUUID();
+
+    // Logged-in + Online: cloud-first
+    if (navigator.onLine) {
+      try {
+        const cloudId = await this.cloudAdapter.createBoardWithId(idempotencyKey, name);
+
+        // Cache locally (non-fatal if fails)
+        try {
+          await this.localAdapter.createBoardWithId(cloudId, name);
+        } catch (cacheError) {
+          console.warn("[HybridStorageAdapter] Cache update failed:", cacheError);
+        }
+
+        return cloudId;
+      } catch (error) {
+        console.error("[HybridStorageAdapter] Cloud create failed:", error);
+        throw error;
+      }
+    }
+
+    // Logged-in + Offline: queue operation
+    const tempId = `local_${idempotencyKey}`;
+
+    // Optimistic local update
+    await this.localAdapter.createBoardWithId(tempId, name);
+
+    // Queue for sync
+    offlineQueue.enqueue({
+      type: "create",
+      entityType: "board",
+      entityId: tempId,
+      payload: { name },
+      idempotencyKey,
+    });
+
+    this.notifySyncStatusChange();
+    return tempId;
   }
 
   /**
    * Create a board with a specific ID (used for sync operations).
-   * Returns the cloud board ID if created in cloud, otherwise the local ID.
    */
   async createBoardWithId(id: string, name: string): Promise<string> {
     await this.localAdapter.createBoardWithId(id, name);
 
-    // Sync to cloud and return the cloud board ID
-    if (this.cloudAdapter) {
+    if (this.cloudAdapter && navigator.onLine) {
       try {
         const cloudBoardId = await this.cloudAdapter.createBoardWithId(id, name);
         return cloudBoardId || id;
       } catch (error) {
         console.error("[HybridStorageAdapter] Failed to create board in cloud:", error);
-        return id;
       }
     }
 
@@ -281,78 +301,160 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
 
   /**
    * Update a board's metadata.
+   * - Always updates local immediately (optimistic)
+   * - Syncs to cloud or queues if offline
    */
   async updateBoard(id: string, data: Partial<Board>): Promise<void> {
+    // Always update local cache immediately (optimistic)
     await this.localAdapter.updateBoard(id, data);
 
-    // Sync metadata to cloud directly
-    if (this.cloudAdapter) {
-      this.cloudAdapter.updateBoard(id, data).catch(console.error);
+    // Anonymous: done
+    if (!this.cloudAdapter) return;
+
+    // Logged-in + Online: sync to cloud
+    if (navigator.onLine) {
+      try {
+        await this.cloudAdapter.updateBoard(id, data);
+      } catch (error) {
+        console.warn("[HybridStorageAdapter] Cloud update failed, queuing:", error);
+        this.queueUpdate(id, data);
+      }
+    } else {
+      // Logged-in + Offline: queue
+      this.queueUpdate(id, data);
     }
+  }
+
+  private queueUpdate(id: string, updates: Partial<Board>): void {
+    // Check for existing queued update and merge
+    const existing = offlineQueue.getPendingForEntity("board", id);
+    if (existing && existing.type === "update") {
+      offlineQueue.updatePending("board", id, {
+        payload: { ...existing.payload, ...updates },
+        timestamp: Date.now(),
+      });
+    } else {
+      offlineQueue.enqueue({
+        type: "update",
+        entityType: "board",
+        entityId: id,
+        payload: updates,
+      });
+    }
+    this.notifySyncStatusChange();
   }
 
   /**
    * Delete a board.
+   * - Anonymous: local only
+   * - Logged-in + Online: cloud-first
+   * - Logged-in + Offline: queue operation
    */
   async deleteBoard(id: string): Promise<void> {
-    await this.localAdapter.deleteBoard(id);
+    // Anonymous: local only
+    if (!this.cloudAdapter) {
+      await this.localAdapter.deleteBoard(id);
+      return;
+    }
 
-    // Sync deletion to cloud directly
-    if (this.cloudAdapter) {
-      this.cloudAdapter.deleteBoard(id).catch(console.error);
+    // Logged-in + Online: cloud-first
+    if (navigator.onLine) {
+      try {
+        await this.cloudAdapter.deleteBoard(id);
+        await this.localAdapter.deleteBoard(id);
+      } catch (error) {
+        console.error("[HybridStorageAdapter] Cloud delete failed:", error);
+        throw error;
+      }
+    } else {
+      // Logged-in + Offline: queue deletion
+      await this.localAdapter.markBoardPendingDelete(id);
+
+      offlineQueue.enqueue({
+        type: "delete",
+        entityType: "board",
+        entityId: id,
+        payload: {},
+      });
+
+      this.notifySyncStatusChange();
     }
   }
 
-  /**
-   * Get the current board ID.
-   */
+  // =========================================================================
+  // Offline Queue Handler
+  // =========================================================================
+
+  private async executeQueuedOperation(op: QueuedOperation): Promise<void> {
+    if (!this.cloudAdapter) {
+      throw new Error("Cloud adapter not available");
+    }
+
+    switch (op.type) {
+      case "create":
+        if (op.entityType === "board") {
+          const cloudId = await this.cloudAdapter.createBoardWithId(
+            op.idempotencyKey || op.entityId,
+            op.payload.name,
+          );
+          // Update local cache: replace temp ID with cloud ID
+          const boards = await this.localAdapter.getBoards();
+          const board = boards.find((b) => b.id === op.entityId);
+          if (board) {
+            board.id = cloudId;
+            board.cloudId = cloudId;
+            await this.localAdapter.updateBoardCache(boards);
+          }
+        }
+        break;
+
+      case "update":
+        if (op.entityType === "board") {
+          await this.cloudAdapter.updateBoard(op.entityId, op.payload);
+        }
+        break;
+
+      case "delete":
+        if (op.entityType === "board") {
+          await this.cloudAdapter.deleteBoard(op.entityId);
+          await this.localAdapter.deleteBoard(op.entityId);
+        }
+        break;
+    }
+  }
+
+  // =========================================================================
+  // Other StorageAdapter Methods
+  // =========================================================================
+
   async getCurrentBoardId(): Promise<string | null> {
     return this.localAdapter.getCurrentBoardId();
   }
 
-  /**
-   * Set the current board ID.
-   */
   async setCurrentBoardId(id: string): Promise<void> {
     await this.localAdapter.setCurrentBoardId(id);
   }
 
-  /**
-   * Switch to a different board (BoardsAPI method).
-   */
   async switchBoard(id: string): Promise<void> {
     await this.setCurrentBoardId(id);
   }
 
-  /**
-   * Update a board's name (BoardsAPI method).
-   */
   async updateBoardName(id: string, name: string): Promise<void> {
     await this.updateBoard(id, { name });
   }
 
-  /**
-   * Get board content. Reads local first for instant display.
-   */
   async getBoardContent(boardId: string): Promise<BoardContent> {
     return this.localAdapter.getBoardContent(boardId);
   }
 
-  /**
-   * Save board content to local (and optionally cloud).
-   */
   async saveBoardContent(boardId: string, content: BoardContent): Promise<void> {
     await this.localAdapter.saveBoardContent(boardId, content);
 
-    // Sync to cloud
-    if (this.cloudAdapter) {
+    if (this.cloudAdapter && navigator.onLine) {
       this.cloudAdapter.saveBoardContent(boardId, content).catch(console.error);
     }
   }
 
-  /**
-   * Get available workspaces (cloud only).
-   */
   async getWorkspaces(): Promise<Workspace[]> {
     if (!this.cloudAdapter) {
       return [
@@ -365,21 +467,41 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
         },
       ];
     }
-
     return this.cloudAdapter.getWorkspaces();
   }
 
-  /**
-   * Convenience method for synchronous board data loading.
-   * Used by App.tsx for board switching.
-   */
   loadBoardData(boardId: string): { elements: any[]; appState: any } {
     return this.localAdapter.loadBoardData(boardId);
   }
+
+  /**
+   * Manually trigger workspace sync (for recovery scenarios)
+   */
+  async ensureWorkspaceAndSync(): Promise<boolean> {
+    if (!this.cloudAdapter || !this.syncEngine) {
+      return false;
+    }
+
+    try {
+      await this.cloudAdapter.ensureDefaultWorkspace();
+      this.syncEngine.stop();
+      await this.syncEngine.start();
+      return true;
+    } catch (error) {
+      console.error("[HybridStorageAdapter] Failed to ensure workspace:", error);
+      return false;
+    }
+  }
 }
 
-// Export a singleton instance
+// ============================================================================
+// Singleton Export
+// ============================================================================
+
 export const hybridStorageAdapter = new HybridStorageAdapter();
 
-// Re-export localStorageQuotaExceededAtom for backwards compatibility
+// Re-export for backwards compatibility
 export { localStorageQuotaExceededAtom } from "./LocalStorageAdapter";
+
+// Legacy type alias
+export type SyncStatus = "idle" | "syncing" | "error";

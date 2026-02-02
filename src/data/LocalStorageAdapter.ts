@@ -373,6 +373,48 @@ export class LocalStorageAdapter implements StorageAdapter {
     localStorage.removeItem("drawink-deleted-boards");
   }
 
+  // =========================================================================
+  // Cache Management (for cloud-first architecture)
+  // =========================================================================
+
+  /**
+   * Replace entire board cache with cloud boards (cloud is truth)
+   */
+  async updateBoardCache(boards: Board[]): Promise<void> {
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+    localStorage.setItem("drawink-last-sync", Date.now().toString());
+  }
+
+  /**
+   * Clear all cached board data (used on logout for security)
+   */
+  async clearCache(): Promise<void> {
+    localStorage.removeItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS);
+    localStorage.removeItem("drawink-last-sync");
+    localStorage.removeItem("drawink-deleted-boards");
+    localStorage.removeItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
+  }
+
+  /**
+   * Mark a board as pending delete (for offline delete queuing)
+   */
+  async markBoardPendingDelete(id: string): Promise<void> {
+    const boards = await this.getBoards();
+    const board = boards.find((b) => b.id === id);
+    if (board) {
+      (board as any).pendingDelete = true;
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+    }
+  }
+
+  /**
+   * Get last sync timestamp
+   */
+  getLastSyncTimestamp(): number | null {
+    const timestamp = localStorage.getItem("drawink-last-sync");
+    return timestamp ? parseInt(timestamp, 10) : null;
+  }
+
   /**
    * Get the current board ID
    */

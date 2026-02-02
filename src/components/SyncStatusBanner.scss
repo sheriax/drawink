@@ -1,0 +1,55 @@
+.sync-status-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  &__offline {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__syncing {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__icon {
+    font-size: 16px;
+  }
+
+  &__text {
+    flex: 1;
+  }
+
+  &__last-sync {
+    opacity: 0.75;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+}
+
+// Animation for syncing state
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.sync-status-banner__syncing .sync-status-banner__icon {
+  animation: pulse 1.5s ease-in-out infinite;
+}

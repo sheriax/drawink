@@ -15,6 +15,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
+import { SyncStatusBanner } from "@/components/SyncStatusBanner";
 import "./Dashboard.scss";
 
 export const Dashboard: React.FC = () => {
@@ -264,6 +265,7 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="drawink-dashboard">
+      <SyncStatusBanner />
       {/* Nav bar */}
       <header className="drawink-dashboard__nav">
         <button
