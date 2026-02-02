@@ -5,7 +5,6 @@
  */
 
 import { useUser } from "@clerk/clerk-react";
-import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "@/core/editor-jotai";
 import {
@@ -20,14 +19,10 @@ import {
   boardsAPIAtom,
   refreshBoardsAtom,
 } from "@/core/atoms/boards";
-import { api } from "../../convex/_generated/api";
 import "./ProjectsSidebar.scss";
 
 export const ProjectsSidebar: React.FC = () => {
   const { user, isLoaded } = useUser();
-
-  // Convex workspaces (cloud)
-  const workspaces = useQuery(api.workspaces.listMine);
 
   // Local-first board state (jotai)
   const boards = useAtomValue(boardsAtom);
@@ -106,22 +101,6 @@ export const ProjectsSidebar: React.FC = () => {
 
   return (
     <div className="projects-sidebar">
-      {/* Workspace selector (only if multiple) */}
-      {workspaces && workspaces.length > 1 && (
-        <div className="projects-sidebar__workspace-selector">
-          <select
-            className="projects-sidebar__workspace-dropdown"
-            defaultValue={workspaces[0]?._id}
-          >
-            {workspaces.map((ws) => (
-              <option key={ws._id} value={ws._id}>
-                {ws.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
       {/* Header with create button */}
       <div className="projects-sidebar__header">
         <h3>Boards</h3>

@@ -46,6 +46,10 @@ export default defineSchema({
     // Organization link (if part of Clerk Organization)
     clerkOrgId: v.optional(v.string()),
 
+    // Customization
+    icon: v.optional(v.string()), // Emoji icon
+    color: v.optional(v.string()), // Hex color
+
     // Subscription (can be different from personal)
     subscriptionTier: v.union(
       v.literal("free"),

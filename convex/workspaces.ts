@@ -171,6 +171,8 @@ export const update = mutation({
   args: {
     workspaceId: v.id("workspaces"),
     name: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    color: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -242,5 +244,151 @@ export const ensureDefault = mutation({
     });
 
     return workspaceId;
+  },
+});
+
+/**
+ * Delete a workspace and all its boards (cascade).
+ * Owner-only. Requires confirmName to match workspace name.
+ */
+export const deleteWorkspace = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    confirmName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    if (workspace.ownerId !== identity.subject) {
+      throw new Error("Only the workspace owner can delete it");
+    }
+
+    if (args.confirmName !== workspace.name) {
+      throw new Error("Workspace name does not match");
+    }
+
+    // Get all boards in this workspace
+    const boards = await ctx.db
+      .query("boards")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+      .collect();
+
+    // For each board, delete related data
+    for (const board of boards) {
+      const contents = await ctx.db
+        .query("boardContent")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const c of contents) {
+        await ctx.db.delete(c._id);
+      }
+
+      const versions = await ctx.db
+        .query("boardVersions")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const ver of versions) {
+        await ctx.db.delete(ver._id);
+      }
+
+      const collabs = await ctx.db
+        .query("boardCollaborators")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const c of collabs) {
+        await ctx.db.delete(c._id);
+      }
+
+      const files = await ctx.db
+        .query("files")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const f of files) {
+        await ctx.db.delete(f._id);
+      }
+
+      await ctx.db.delete(board._id);
+    }
+
+    // Delete all workspace members
+    const members = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+      .collect();
+    for (const m of members) {
+      await ctx.db.delete(m._id);
+    }
+
+    // Delete the workspace
+    await ctx.db.delete(args.workspaceId);
+  },
+});
+
+/**
+ * Transfer workspace ownership to another member.
+ * Current owner becomes admin.
+ */
+export const transferOwnership = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    newOwnerUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    if (workspace.ownerId !== identity.subject) {
+      throw new Error("Only the workspace owner can transfer ownership");
+    }
+
+    if (args.newOwnerUserId === identity.subject) {
+      throw new Error("Cannot transfer ownership to yourself");
+    }
+
+    const newOwnerMembership = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", args.newOwnerUserId),
+      )
+      .first();
+
+    if (!newOwnerMembership) {
+      throw new Error("New owner must be a workspace member");
+    }
+
+    await ctx.db.patch(args.workspaceId, {
+      ownerId: args.newOwnerUserId,
+      updatedAt: Date.now(),
+    });
+
+    const currentOwnerMembership = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+      )
+      .first();
+
+    if (currentOwnerMembership) {
+      await ctx.db.patch(currentOwnerMembership._id, { role: "admin" });
+    }
+
+    await ctx.db.patch(newOwnerMembership._id, { role: "owner" });
+
+    return args.workspaceId;
   },
 });
