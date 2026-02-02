@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";
 import { act, assertElements, render } from "../tests/test-utils";

@@ -14,11 +14,9 @@ import type { MakeBrand } from "@/lib/common/utility-types";
 
 import type { AppState } from "../types";
 
-export type ReconciledDrawinkElement = OrderedDrawinkElement &
-  MakeBrand<"ReconciledElement">;
+export type ReconciledDrawinkElement = OrderedDrawinkElement & MakeBrand<"ReconciledElement">;
 
-export type RemoteDrawinkElement = OrderedDrawinkElement &
-  MakeBrand<"RemoteDrawinkElement">;
+export type RemoteDrawinkElement = OrderedDrawinkElement & MakeBrand<"RemoteDrawinkElement">;
 
 export const shouldDiscardRemoteElement = (
   localAppState: AppState,
@@ -35,8 +33,7 @@ export const shouldDiscardRemoteElement = (
       local.version > remote.version ||
       // resolve conflicting edits deterministically by taking the one with
       // the lowest versionNonce
-      (local.version === remote.version &&
-        local.versionNonce < remote.versionNonce))
+      (local.version === remote.version && local.versionNonce < remote.versionNonce))
   ) {
     return true;
   }
@@ -51,9 +48,7 @@ const validateIndicesThrottled = throttle(
   ) => {
     if (isDevEnv() || isTestEnv() || window?.DEBUG_FRACTIONAL_INDICES) {
       // create new instances due to the mutation
-      const elements = syncInvalidIndices(
-        orderedElements.map((x) => ({ ...x })),
-      );
+      const elements = syncInvalidIndices(orderedElements.map((x) => ({ ...x })));
 
       validateFractionalIndices(elements, {
         // throw in dev & test only, to remain functional on `DEBUG_FRACTIONAL_INDICES`

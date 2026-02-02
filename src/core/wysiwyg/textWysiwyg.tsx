@@ -1,61 +1,47 @@
 import {
+  CLASSES,
   CODES,
   KEYS,
-  CLASSES,
-  POINTER_BUTTON,
-  isWritableElement,
-  getFontString,
-  getFontFamilyString,
-  isTestEnv,
   MIME_TYPES,
+  POINTER_BUTTON,
+  getFontFamilyString,
+  getFontString,
+  isTestEnv,
+  isWritableElement,
 } from "@/lib/common";
 
-import {
-  originalContainerCache,
-  updateOriginalContainerCache,
-} from "@/lib/elements";
+import { originalContainerCache, updateOriginalContainerCache } from "@/lib/elements";
 
 import { LinearElementEditor } from "@/lib/elements";
 import { bumpVersion } from "@/lib/elements";
 import {
+  computeBoundTextPosition,
+  computeContainerDimensionForBoundText,
+  getBoundTextElement,
   getBoundTextElementId,
+  getBoundTextMaxHeight,
+  getBoundTextMaxWidth,
   getContainerElement,
   getTextElementAngle,
   redrawTextBoundingBox,
-  getBoundTextMaxHeight,
-  getBoundTextMaxWidth,
-  computeContainerDimensionForBoundText,
-  computeBoundTextPosition,
-  getBoundTextElement,
 } from "@/lib/elements";
 import { getTextWidth } from "@/lib/elements";
 import { normalizeText } from "@/lib/elements";
 import { wrapText } from "@/lib/elements";
-import {
-  isArrowElement,
-  isBoundToContainer,
-  isTextElement,
-} from "@/lib/elements";
+import { isArrowElement, isBoundToContainer, isTextElement } from "@/lib/elements";
 
 import type {
   DrawinkElement,
   DrawinkLinearElement,
-  DrawinkTextElementWithContainer,
   DrawinkTextElement,
+  DrawinkTextElementWithContainer,
 } from "@/lib/elements/types";
 
 import { actionSaveToActiveFile } from "../actions";
 
+import { actionResetZoom, actionZoomIn, actionZoomOut } from "../actions/actionCanvas";
+import { actionDecreaseFontSize, actionIncreaseFontSize } from "../actions/actionProperties";
 import { parseDataTransferEvent } from "../clipboard";
-import {
-  actionDecreaseFontSize,
-  actionIncreaseFontSize,
-} from "../actions/actionProperties";
-import {
-  actionResetZoom,
-  actionZoomIn,
-  actionZoomOut,
-} from "../actions/actionCanvas";
 
 import type App from "../components/App";
 import type { AppState } from "../types";
@@ -118,10 +104,7 @@ export const textWysiwyg = ({
       return false;
     }
     const currentFont = editable.style.fontFamily.replace(/"/g, "");
-    if (
-      getFontFamilyString({ fontFamily: updatedTextElement.fontFamily }) !==
-      currentFont
-    ) {
+    if (getFontFamilyString({ fontFamily: updatedTextElement.fontFamily }) !== currentFont) {
       return true;
     }
     if (`${updatedTextElement.fontSize}px` !== editable.style.fontSize) {
@@ -158,33 +141,23 @@ export const textWysiwyg = ({
 
       if (container && updatedTextElement.containerId) {
         if (isArrowElement(container)) {
-          const boundTextCoords =
-            LinearElementEditor.getBoundTextElementPosition(
-              container,
-              updatedTextElement as DrawinkTextElementWithContainer,
-              elementsMap,
-            );
+          const boundTextCoords = LinearElementEditor.getBoundTextElementPosition(
+            container,
+            updatedTextElement as DrawinkTextElementWithContainer,
+            elementsMap,
+          );
           coordX = boundTextCoords.x;
           coordY = boundTextCoords.y;
         }
-        const propertiesUpdated = textPropertiesUpdated(
-          updatedTextElement,
-          editable,
-        );
+        const propertiesUpdated = textPropertiesUpdated(updatedTextElement, editable);
 
         let originalContainerData;
         if (propertiesUpdated) {
-          originalContainerData = updateOriginalContainerCache(
-            container.id,
-            container.height,
-          );
+          originalContainerData = updateOriginalContainerCache(container.id, container.height);
         } else {
           originalContainerData = originalContainerCache[container.id];
           if (!originalContainerData) {
-            originalContainerData = updateOriginalContainerCache(
-              container.id,
-              container.height,
-            );
+            originalContainerData = updateOriginalContainerCache(container.id, container.height);
           }
         }
 
@@ -240,8 +213,7 @@ export const textWysiwyg = ({
       const font = getFontString(updatedTextElement);
 
       // Make sure text editor height doesn't go beyond viewport
-      const editorMaxHeight =
-        (appState.height - viewportY) / appState.zoom.value;
+      const editorMaxHeight = (appState.height - viewportY) / appState.zoom.value;
       Object.assign(editable.style, {
         font,
         // must be defined *after* font ¯\_(ツ)_/¯
@@ -317,9 +289,7 @@ export const textWysiwyg = ({
 
   if (onChange) {
     editable.onpaste = async (event) => {
-      const textItem = (await parseDataTransferEvent(event)).findByType(
-        MIME_TYPES.text,
-      );
+      const textItem = (await parseDataTransferEvent(event)).findByType(MIME_TYPES.text);
       if (!textItem) {
         return;
       }
@@ -327,10 +297,7 @@ export const textWysiwyg = ({
       if (!text) {
         return;
       }
-      const container = getContainerElement(
-        element,
-        app.scene.getNonDeletedElementsMap(),
-      );
+      const container = getContainerElement(element, app.scene.getNonDeletedElementsMap());
 
       const font = getFontString({
         fontSize: app.state.currentItemFontSize,
@@ -400,8 +367,7 @@ export const textWysiwyg = ({
     } else if (
       event.key === KEYS.TAB ||
       (event[KEYS.CTRL_OR_CMD] &&
-        (event.code === CODES.BRACKET_LEFT ||
-          event.code === CODES.BRACKET_RIGHT))
+        (event.code === CODES.BRACKET_LEFT || event.code === CODES.BRACKET_RIGHT))
     ) {
       event.preventDefault();
       if (event.isComposing) {
@@ -444,9 +410,7 @@ export const textWysiwyg = ({
 
     let value = editable.value;
     linesStartIndices.forEach((startIndex) => {
-      const tabMatch = value
-        .slice(startIndex, startIndex + TAB_SIZE)
-        .match(RE_LEADING_TAB);
+      const tabMatch = value.slice(startIndex, startIndex + TAB_SIZE).match(RE_LEADING_TAB);
 
       if (tabMatch) {
         const startValue = value.slice(0, startIndex);
@@ -488,8 +452,7 @@ export const textWysiwyg = ({
     let { selectionStart, selectionEnd, value } = editable;
 
     // chars before selectionStart on the same line
-    const startOffset = value.slice(0, selectionStart).match(/[^\n]*$/)![0]
-      .length;
+    const startOffset = value.slice(0, selectionStart).match(/[^\n]*$/)![0].length;
     // put caret at the start of the line
     selectionStart = selectionStart - startOffset;
 
@@ -532,16 +495,11 @@ export const textWysiwyg = ({
     // it'd get stuck in an infinite loop of blur→onSubmit after we re-focus the
     // wysiwyg on update
     cleanup();
-    const updateElement = app.scene.getElement(
-      element.id,
-    ) as DrawinkTextElement;
+    const updateElement = app.scene.getElement(element.id) as DrawinkTextElement;
     if (!updateElement) {
       return;
     }
-    const container = getContainerElement(
-      updateElement,
-      app.scene.getNonDeletedElementsMap(),
-    );
+    const container = getContainerElement(updateElement, app.scene.getNonDeletedElementsMap());
 
     if (container) {
       if (editable.value.trim()) {
@@ -560,8 +518,7 @@ export const textWysiwyg = ({
       } else {
         app.scene.mutateElement(container, {
           boundElements: container.boundElements?.filter(
-            (ele) =>
-              !isTextElement(ele as DrawinkTextElement | DrawinkLinearElement),
+            (ele) => !isTextElement(ele as DrawinkTextElement | DrawinkLinearElement),
           ),
         });
       }
@@ -606,8 +563,7 @@ export const textWysiwyg = ({
     const target = event?.target;
 
     const isPropertiesTrigger =
-      target instanceof HTMLElement &&
-      target.classList.contains("properties-trigger");
+      target instanceof HTMLElement && target.classList.contains("properties-trigger");
     const isPropertiesContent =
       (target instanceof HTMLElement || target instanceof SVGElement) &&
       !!(target as Element).closest(".properties-content");
@@ -654,18 +610,14 @@ export const textWysiwyg = ({
     }
 
     const isPropertiesTrigger =
-      target instanceof HTMLElement &&
-      target.classList.contains("properties-trigger");
+      target instanceof HTMLElement && target.classList.contains("properties-trigger");
     const isPropertiesContent =
       (target instanceof HTMLElement || target instanceof SVGElement) &&
       !!(target as Element).closest(".properties-content");
 
     if (
-      ((event.target instanceof HTMLElement ||
-        event.target instanceof SVGElement) &&
-        (event.target.closest(
-          `.${CLASSES.SHAPE_ACTIONS_MENU}, .${CLASSES.ZOOM_ACTIONS}`,
-        ) ||
+      ((event.target instanceof HTMLElement || event.target instanceof SVGElement) &&
+        (event.target.closest(`.${CLASSES.SHAPE_ACTIONS_MENU}, .${CLASSES.ZOOM_ACTIONS}`) ||
           event.target.closest(".compact-shape-actions-island")) &&
         !isWritableElement(event.target)) ||
       isPropertiesTrigger ||
@@ -693,9 +645,7 @@ export const textWysiwyg = ({
   // handle updates of textElement properties of editing element
   const unbindUpdate = app.scene.onUpdate(() => {
     updateWysiwygStyle();
-    const isPopupOpened = !!document.activeElement?.closest(
-      ".properties-content",
-    );
+    const isPopupOpened = !!document.activeElement?.closest(".properties-content");
     if (!isPopupOpened) {
       editable.focus();
     }
@@ -736,9 +686,7 @@ export const textWysiwyg = ({
     window.addEventListener("pointerdown", onPointerDown, { capture: true });
   });
   window.addEventListener("beforeunload", handleSubmit);
-  drawinkContainer
-    ?.querySelector(".drawink-textEditorContainer")!
-    .appendChild(editable);
+  drawinkContainer?.querySelector(".drawink-textEditorContainer")!.appendChild(editable);
 
   return handleSubmit;
 };

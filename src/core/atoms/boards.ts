@@ -59,10 +59,7 @@ export const refreshBoardsAtom = atom(null, async (get, set) => {
 
   set(isLoadingBoardsAtom, true);
   try {
-    const [boards, currentId] = await Promise.all([
-      api.getBoards(),
-      api.getCurrentBoardId(),
-    ]);
+    const [boards, currentId] = await Promise.all([api.getBoards(), api.getCurrentBoardId()]);
     set(boardsAtom, boards);
     set(currentBoardIdAtom, currentId);
   } catch (error) {

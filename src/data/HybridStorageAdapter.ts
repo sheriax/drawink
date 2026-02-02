@@ -20,7 +20,7 @@ import type { DrawinkElement } from "@/lib/elements/types";
 
 import { ConvexStorageAdapter } from "./ConvexStorageAdapter";
 import { type LocalStorageAdapter, localStorageAdapter } from "./LocalStorageAdapter";
-import { offlineQueue, type QueuedOperation } from "./OfflineQueue";
+import { type QueuedOperation, offlineQueue } from "./OfflineQueue";
 import { SyncEngine } from "./SyncEngine";
 
 // Storage keys

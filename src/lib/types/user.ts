@@ -2,7 +2,7 @@
  * User types
  */
 
-import type { Timestamp } from './db';
+import type { Timestamp } from "./db";
 
 export interface User {
   id: string;
@@ -12,7 +12,7 @@ export interface User {
   createdAt: Timestamp;
   lastLoginAt: Timestamp;
   subscription: {
-    tier: 'free' | 'pro' | 'team';
+    tier: "free" | "pro" | "team";
     stripeCustomerId?: string;
     stripeSubscriptionId?: string;
     expiresAt?: Timestamp;

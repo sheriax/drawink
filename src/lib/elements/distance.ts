@@ -1,8 +1,4 @@
-import {
-  curvePointDistance,
-  distanceToLineSegment,
-  pointRotateRads,
-} from "@/lib/math";
+import { curvePointDistance, distanceToLineSegment, pointRotateRads } from "@/lib/math";
 
 import { ellipse, ellipseDistanceFromPoint } from "@/lib/math/ellipse";
 
@@ -17,13 +13,13 @@ import {
 import { elementCenterPoint } from "./bounds";
 
 import type {
-  ElementsMap,
   DrawinkDiamondElement,
   DrawinkElement,
   DrawinkEllipseElement,
   DrawinkFreeDrawElement,
   DrawinkLinearElement,
   DrawinkRectanguloidElement,
+  ElementsMap,
 } from "./types";
 
 export const distanceToElement = (

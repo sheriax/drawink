@@ -3,37 +3,25 @@ import { isPointWithinBounds, pointFrom } from "@/lib/math";
 import { doLineSegmentsIntersect } from "@/lib/utils/bbox";
 import { elementsOverlappingBBox } from "@/lib/utils/withinBounds";
 
-import type {
-  AppClassProperties,
-  AppState,
-  StaticCanvasAppState,
-} from "@/core/types";
+import type { AppClassProperties, AppState, StaticCanvasAppState } from "@/core/types";
 
 import type { ReadonlySetLike } from "@/lib/common/utility-types";
 
-import { getElementsWithinSelection, getSelectedElements } from "./selection";
 import { getElementsInGroup, selectGroupsFromGivenElements } from "./groups";
+import { getElementsWithinSelection, getSelectedElements } from "./selection";
 
-import {
-  getElementLineSegments,
-  getCommonBounds,
-  getElementAbsoluteCoords,
-} from "./bounds";
+import { getCommonBounds, getElementAbsoluteCoords, getElementLineSegments } from "./bounds";
 import { mutateElement } from "./mutateElement";
 import { getBoundTextElement, getContainerElement } from "./textElement";
-import {
-  isFrameElement,
-  isFrameLikeElement,
-  isTextElement,
-} from "./typeChecks";
+import { isFrameElement, isFrameLikeElement, isTextElement } from "./typeChecks";
 
 import type { DrawinkElementsIncludingDeleted } from "./Scene";
 
 import type {
-  ElementsMap,
-  ElementsMapOrArray,
   DrawinkElement,
   DrawinkFrameLikeElement,
+  ElementsMap,
+  ElementsMapOrArray,
   NonDeleted,
   NonDeletedDrawinkElement,
 } from "./types";
@@ -44,10 +32,7 @@ export const bindElementsToFramesAfterDuplication = (
   origElements: readonly DrawinkElement[],
   origIdToDuplicateId: Map<DrawinkElement["id"], DrawinkElement["id"]>,
 ) => {
-  const nextElementMap = arrayToMap(nextElements) as Map<
-    DrawinkElement["id"],
-    DrawinkElement
-  >;
+  const nextElementMap = arrayToMap(nextElements) as Map<DrawinkElement["id"], DrawinkElement>;
 
   for (const element of origElements) {
     if (element.frameId) {
@@ -90,9 +75,7 @@ export const getElementsCompletelyInFrame = (
   omitGroupsContainingFrameLikes(
     getElementsWithinSelection(elements, frame, elementsMap, false),
   ).filter(
-    (element) =>
-      (!isFrameLikeElement(element) && !element.frameId) ||
-      element.frameId === frame.id,
+    (element) => (!isFrameLikeElement(element) && !element.frameId) || element.frameId === frame.id,
   );
 
 export const isElementContainingFrame = (
@@ -100,9 +83,7 @@ export const isElementContainingFrame = (
   frame: DrawinkFrameLikeElement,
   elementsMap: ElementsMap,
 ) => {
-  return getElementsWithinSelection([frame], element, elementsMap).some(
-    (e) => e.id === frame.id,
-  );
+  return getElementsWithinSelection([frame], element, elementsMap).some((e) => e.id === frame.id);
 };
 
 export const getElementsIntersectingFrame = (
@@ -110,9 +91,7 @@ export const getElementsIntersectingFrame = (
   frame: DrawinkFrameLikeElement,
 ) => {
   const elementsMap = arrayToMap(elements);
-  return elements.filter((element) =>
-    isElementIntersectingFrame(element, frame, elementsMap),
-  );
+  return elements.filter((element) => isElementIntersectingFrame(element, frame, elementsMap));
 };
 
 export const elementsAreInFrameBounds = (
@@ -120,19 +99,12 @@ export const elementsAreInFrameBounds = (
   frame: DrawinkFrameLikeElement,
   elementsMap: ElementsMap,
 ) => {
-  const [frameX1, frameY1, frameX2, frameY2] = getElementAbsoluteCoords(
-    frame,
-    elementsMap,
-  );
+  const [frameX1, frameY1, frameX2, frameY2] = getElementAbsoluteCoords(frame, elementsMap);
 
-  const [elementX1, elementY1, elementX2, elementY2] =
-    getCommonBounds(elements);
+  const [elementX1, elementY1, elementX2, elementY2] = getCommonBounds(elements);
 
   return (
-    frameX1 <= elementX1 &&
-    frameY1 <= elementY1 &&
-    frameX2 >= elementX2 &&
-    frameY2 >= elementY2
+    frameX1 <= elementX1 && frameY1 <= elementY1 && frameX2 >= elementX2 && frameY2 >= elementY2
   );
 };
 
@@ -171,9 +143,7 @@ export const groupsAreAtLeastIntersectingTheFrame = (
   frame: DrawinkFrameLikeElement,
 ) => {
   const elementsMap = arrayToMap(elements);
-  const elementsInGroup = groupIds.flatMap((groupId) =>
-    getElementsInGroup(elements, groupId),
-  );
+  const elementsInGroup = groupIds.flatMap((groupId) => getElementsInGroup(elements, groupId));
 
   if (elementsInGroup.length === 0) {
     return true;
@@ -192,9 +162,7 @@ export const groupsAreCompletelyOutOfFrame = (
   frame: DrawinkFrameLikeElement,
 ) => {
   const elementsMap = arrayToMap(elements);
-  const elementsInGroup = groupIds.flatMap((groupId) =>
-    getElementsInGroup(elements, groupId),
-  );
+  const elementsInGroup = groupIds.flatMap((groupId) => getElementsInGroup(elements, groupId));
 
   if (elementsInGroup.length === 0) {
     return true;
@@ -227,10 +195,7 @@ export const groupByFrameLikes = (elements: readonly DrawinkElement[]) => {
   return frameElementsMap;
 };
 
-export const getFrameChildren = (
-  allElements: ElementsMapOrArray,
-  frameId: string,
-) => {
+export const getFrameChildren = (allElements: ElementsMapOrArray, frameId: string) => {
   const frameChildren: DrawinkElement[] = [];
   for (const element of allElements.values()) {
     if (element.frameId === frameId) {
@@ -256,15 +221,11 @@ export const getFrameLikeElements = (
  *
  * Considers non-frame bound elements (container or arrow labels) as root.
  */
-export const getRootElements = (
-  allElements: DrawinkElementsIncludingDeleted,
-) => {
+export const getRootElements = (allElements: DrawinkElementsIncludingDeleted) => {
   const frameElements = arrayToMap(getFrameLikeElements(allElements));
   return allElements.filter(
     (element) =>
-      frameElements.has(element.id) ||
-      !element.frameId ||
-      !frameElements.has(element.frameId),
+      frameElements.has(element.id) || !element.frameId || !frameElements.has(element.frameId),
   );
 };
 
@@ -292,9 +253,7 @@ export const getElementsInResizingFrame = (
   // if they are part of some groups, then those groups are still
   // considered to belong to the frame
   const groupsToKeep = new Set<string>(
-    Array.from(elementsCompletelyInFrame).flatMap(
-      (element) => element.groupIds,
-    ),
+    Array.from(elementsCompletelyInFrame).flatMap((element) => element.groupIds),
   );
 
   for (const element of elementsNotCompletelyInFrame) {
@@ -327,22 +286,19 @@ export const getElementsInResizingFrame = (
     }
   }
 
-  const individualElementsCompletelyInFrame = Array.from(
-    elementsCompletelyInFrame,
-  ).filter((element) => element.groupIds.length === 0);
+  const individualElementsCompletelyInFrame = Array.from(elementsCompletelyInFrame).filter(
+    (element) => element.groupIds.length === 0,
+  );
 
   for (const element of individualElementsCompletelyInFrame) {
     nextElementsInFrame.add(element);
   }
 
-  const newGroupElementsCompletelyInFrame = Array.from(
-    elementsCompletelyInFrame,
-  ).filter((element) => element.groupIds.length > 0);
-
-  const groupIds = selectGroupsFromGivenElements(
-    newGroupElementsCompletelyInFrame,
-    appState,
+  const newGroupElementsCompletelyInFrame = Array.from(elementsCompletelyInFrame).filter(
+    (element) => element.groupIds.length > 0,
   );
+
+  const groupIds = selectGroupsFromGivenElements(newGroupElementsCompletelyInFrame, appState);
 
   // new group elements
   for (const [id, isSelected] of Object.entries(groupIds)) {
@@ -393,9 +349,7 @@ export const omitPartialGroups = (
         shouldOmit = true;
       } else {
         const allElementsInGroup = new Set(
-          element.groupIds.flatMap((gid) =>
-            getElementsInGroup(allElementsMap, gid),
-          ),
+          element.groupIds.flatMap((gid) => getElementsInGroup(allElementsMap, gid)),
         );
 
         shouldOmit = !elementsAreInFrameBounds(
@@ -418,15 +372,11 @@ export const omitPartialGroups = (
   return elementsToReturn;
 };
 
-export const getContainingFrame = (
-  element: DrawinkElement,
-  elementsMap: ElementsMap,
-) => {
+export const getContainingFrame = (element: DrawinkElement, elementsMap: ElementsMap) => {
   if (!element.frameId) {
     return null;
   }
-  return (elementsMap.get(element.frameId) ||
-    null) as null | DrawinkFrameLikeElement;
+  return (elementsMap.get(element.frameId) || null) as null | DrawinkFrameLikeElement;
 };
 
 // --------------------------- Frame Operations -------------------------------
@@ -452,10 +402,7 @@ export const filterElementsEligibleAsFrameChildren = (
 
   for (const element of elements) {
     // don't add frames or their children
-    if (
-      isFrameLikeElement(element) ||
-      (element.frameId && otherFrames.has(element.frameId))
-    ) {
+    if (isFrameLikeElement(element) || (element.frameId && otherFrames.has(element.frameId))) {
       continue;
     }
 
@@ -464,11 +411,7 @@ export const filterElementsEligibleAsFrameChildren = (
       if (!processedGroups.has(shallowestGroupId)) {
         processedGroups.add(shallowestGroupId);
         const groupElements = getElementsInGroup(elements, shallowestGroupId);
-        if (
-          groupElements.some((el) =>
-            elementOverlapsWithFrame(el, frame, elementsMap),
-          )
-        ) {
+        if (groupElements.some((el) => elementOverlapsWithFrame(el, frame, elementsMap))) {
           for (const child of groupElements) {
             eligibleElements.push(child);
           }
@@ -520,15 +463,9 @@ export const addElementsToFrame = <T extends ElementsMapOrArray>(
 
   // - add bound text elements if not already in the array
   // - filter out elements that are already in the frame
-  for (const element of omitGroupsContainingFrameLikes(
-    allElements,
-    elementsToAdd,
-  )) {
+  for (const element of omitGroupsContainingFrameLikes(allElements, elementsToAdd)) {
     // don't add frames or their children
-    if (
-      isFrameLikeElement(element) ||
-      (element.frameId && otherFrames.has(element.frameId))
-    ) {
+    if (isFrameLikeElement(element) || (element.frameId && otherFrames.has(element.frameId))) {
       continue;
     }
 
@@ -572,10 +509,7 @@ export const removeElementsFromFrame = (
 ) => {
   const _elementsToRemove = new Map<DrawinkElement["id"], DrawinkElement>();
 
-  const toRemoveElementsByFrame = new Map<
-    DrawinkFrameLikeElement["id"],
-    DrawinkElement[]
-  >();
+  const toRemoveElementsByFrame = new Map<DrawinkFrameLikeElement["id"], DrawinkElement[]>();
 
   for (const element of elementsToRemove) {
     if (element.frameId) {
@@ -625,9 +559,7 @@ export const replaceAllElementsInFrame = <T extends DrawinkElement>(
 };
 
 /** does not mutate elements, but returns new ones */
-export const updateFrameMembershipOfSelectedElements = <
-  T extends ElementsMapOrArray,
->(
+export const updateFrameMembershipOfSelectedElements = <T extends ElementsMapOrArray>(
   allElements: T,
   appState: AppState,
   app: AppClassProperties,
@@ -694,11 +626,7 @@ export const omitGroupsContainingFrameLikes = (
 
   const rejectedGroupIds = new Set<string>();
   for (const groupId of uniqueGroupIds) {
-    if (
-      getElementsInGroup(allElements, groupId).some((el) =>
-        isFrameLikeElement(el),
-      )
-    ) {
+    if (getElementsInGroup(allElements, groupId).some((el) => isFrameLikeElement(el))) {
       rejectedGroupIds.add(groupId);
     }
   }
@@ -737,8 +665,7 @@ export const getTargetFrame = (
     return getContainingFrame(_element, elementsMap);
   }
 
-  return appState.selectedElementIds[_element.id] &&
-    appState.selectedElementsAreBeingDragged
+  return appState.selectedElementIds[_element.id] && appState.selectedElementsAreBeingDragged
     ? appState.frameToHighlight
     : getContainingFrame(_element, elementsMap);
 };
@@ -754,8 +681,7 @@ export const isElementInFrame = (
     checkedGroups?: Map<string, boolean>;
   },
 ) => {
-  const frame =
-    opts?.targetFrame ?? getTargetFrame(element, allElementsMap, appState);
+  const frame = opts?.targetFrame ?? getTargetFrame(element, allElementsMap, appState);
 
   if (!frame) {
     return false;
@@ -779,8 +705,7 @@ export const isElementInFrame = (
     !appState.selectedElementIds[_element.id] ||
     !appState.selectedElementsAreBeingDragged ||
     // if both frame and element are selected, won't update membership, so return true
-    (appState.selectedElementIds[_element.id] &&
-      appState.selectedElementIds[frame.id])
+    (appState.selectedElementIds[_element.id] && appState.selectedElementIds[frame.id])
   ) {
     return true;
   }
@@ -791,7 +716,7 @@ export const isElementInFrame = (
 
   for (const gid of _element.groupIds) {
     if (opts?.checkedGroups?.has(gid)) {
-      return opts.checkedGroups.get(gid)!!;
+      return opts.checkedGroups.get(gid)!;
     }
   }
 
@@ -807,9 +732,7 @@ export const isElementInFrame = (
   );
 
   if (appState.editingGroupId && appState.selectedElementsAreBeingDragged) {
-    const selectedElements = new Set(
-      getSelectedElements(allElementsMap, appState),
-    );
+    const selectedElements = new Set(getSelectedElements(allElementsMap, appState));
 
     const editingGroupOverlapsFrame = appState.frameToHighlight !== null;
 
@@ -927,15 +850,11 @@ export const getElementsOverlappingFrame = (
   );
 };
 
-export const frameAndChildrenSelectedTogether = (
-  selectedElements: readonly DrawinkElement[],
-) => {
+export const frameAndChildrenSelectedTogether = (selectedElements: readonly DrawinkElement[]) => {
   const selectedElementsMap = arrayToMap(selectedElements);
 
   return (
     selectedElements.length > 1 &&
-    selectedElements.some(
-      (element) => element.frameId && selectedElementsMap.has(element.frameId),
-    )
+    selectedElements.some((element) => element.frameId && selectedElementsMap.has(element.frameId))
   );
 };

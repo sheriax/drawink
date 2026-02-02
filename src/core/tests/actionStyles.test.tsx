@@ -1,18 +1,10 @@
-import React from "react";
-
 import { CODES } from "@/lib/common";
 
 import { copiedStyles } from "../actions/actionStyles";
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";
 import { Keyboard, Pointer, UI } from "../tests/helpers/ui";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  togglePopover,
-} from "../tests/test-utils";
+import { act, fireEvent, render, screen, togglePopover } from "../tests/test-utils";
 
 const { h } = window;
 

@@ -2,7 +2,7 @@
  * Project types (folders)
  */
 
-import type { Timestamp } from './db';
+import type { Timestamp } from "./db";
 
 export interface Project {
   id: string;

@@ -1,12 +1,12 @@
 import {
   ORIG_ID,
-  randomId,
-  randomInteger,
   arrayToMap,
   castArray,
   findLastIndex,
   getUpdatedTimestamp,
   isTestEnv,
+  randomId,
+  randomInteger,
 } from "@/lib/common";
 
 import type { Mutable } from "@/lib/common/utility-types";
@@ -19,31 +19,19 @@ import {
   getSelectedGroupForElement,
 } from "./groups";
 
-import {
-  bindElementsToFramesAfterDuplication,
-  getFrameChildren,
-} from "./frame";
+import { bindElementsToFramesAfterDuplication, getFrameChildren } from "./frame";
 
 import { normalizeElementOrder } from "./sortElements";
 
 import { bumpVersion } from "./mutateElement";
 
-import {
-  hasBoundTextElement,
-  isBoundToContainer,
-  isFrameLikeElement,
-} from "./typeChecks";
+import { hasBoundTextElement, isBoundToContainer, isFrameLikeElement } from "./typeChecks";
 
 import { getBoundTextElement, getContainerElement } from "./textElement";
 
 import { fixDuplicatedBindingsAfterDuplication } from "./binding";
 
-import type {
-  ElementsMap,
-  DrawinkElement,
-  GroupId,
-  NonDeletedSceneElementsMap,
-} from "./types";
+import type { DrawinkElement, ElementsMap, GroupId, NonDeletedSceneElementsMap } from "./types";
 
 /**
  * Duplicate an element, often used in the alt-drag operation.
@@ -77,16 +65,12 @@ export const duplicateElement = <TElement extends DrawinkElement>(
     bumpVersion(copy);
   }
 
-  copy.groupIds = getNewGroupIdsForDuplication(
-    copy.groupIds,
-    editingGroupId,
-    (groupId) => {
-      if (!groupIdMapForOperation.has(groupId)) {
-        groupIdMapForOperation.set(groupId, randomId());
-      }
-      return groupIdMapForOperation.get(groupId)!;
-    },
-  );
+  copy.groupIds = getNewGroupIdsForDuplication(copy.groupIds, editingGroupId, (groupId) => {
+    if (!groupIdMapForOperation.has(groupId)) {
+      groupIdMapForOperation.set(groupId, randomId());
+    }
+    return groupIdMapForOperation.get(groupId)!;
+  });
   return copy;
 };
 
@@ -150,14 +134,8 @@ export const duplicateElements = (
   const groupIdMap = new Map();
   const duplicatedElements: DrawinkElement[] = [];
   const origElements: DrawinkElement[] = [];
-  const origIdToDuplicateId = new Map<
-    DrawinkElement["id"],
-    DrawinkElement["id"]
-  >();
-  const duplicateIdToOrigElement = new Map<
-    DrawinkElement["id"],
-    DrawinkElement
-  >();
+  const origIdToDuplicateId = new Map<DrawinkElement["id"], DrawinkElement["id"]>();
+  const duplicateIdToOrigElement = new Map<DrawinkElement["id"], DrawinkElement>();
   const duplicateElementsMap = new Map<string, DrawinkElement>();
   const elementsMap = arrayToMap(elements) as ElementsMap;
   const _idsOfElementsToDuplicate =
@@ -239,9 +217,7 @@ export const duplicateElements = (
 
   const frameIdsToDuplicate = new Set(
     elements
-      .filter(
-        (el) => _idsOfElementsToDuplicate.has(el.id) && isFrameLikeElement(el),
-      )
+      .filter((el) => _idsOfElementsToDuplicate.has(el.id) && isFrameLikeElement(el))
       .map((el) => el.id),
   );
 
@@ -259,11 +235,10 @@ export const duplicateElements = (
 
     const groupId = getSelectedGroupForElement(appState, element);
     if (groupId) {
-      const groupElements = getElementsInGroup(elements, groupId).flatMap(
-        (element) =>
-          isFrameLikeElement(element)
-            ? [...getFrameChildren(elements, element.id), element]
-            : [element],
+      const groupElements = getElementsInGroup(elements, groupId).flatMap((element) =>
+        isFrameLikeElement(element)
+          ? [...getFrameChildren(elements, element.id), element]
+          : [element],
       );
 
       const targetIndex = findLastIndex(elementsWithDuplicates, (el) => {
@@ -290,10 +265,7 @@ export const duplicateElements = (
         return el.frameId === frameId || el.id === frameId;
       });
 
-      insertBeforeOrAfterIndex(
-        targetIndex,
-        copyElements([...frameChildren, element]),
-      );
+      insertBeforeOrAfterIndex(targetIndex, copyElements([...frameChildren, element]));
       continue;
     }
 
@@ -304,17 +276,11 @@ export const duplicateElements = (
       const boundTextElement = getBoundTextElement(element, elementsMap);
 
       const targetIndex = findLastIndex(elementsWithDuplicates, (el) => {
-        return (
-          el.id === element.id ||
-          ("containerId" in el && el.containerId === element.id)
-        );
+        return el.id === element.id || ("containerId" in el && el.containerId === element.id);
       });
 
       if (boundTextElement) {
-        insertBeforeOrAfterIndex(
-          targetIndex,
-          copyElements([element, boundTextElement]),
-        );
+        insertBeforeOrAfterIndex(targetIndex, copyElements([element, boundTextElement]));
       } else {
         insertBeforeOrAfterIndex(targetIndex, copyElements(element));
       }
@@ -330,10 +296,7 @@ export const duplicateElements = (
       });
 
       if (container) {
-        insertBeforeOrAfterIndex(
-          targetIndex,
-          copyElements([container, element]),
-        );
+        insertBeforeOrAfterIndex(targetIndex, copyElements([container, element]));
       } else {
         insertBeforeOrAfterIndex(targetIndex, copyElements(element));
       }
@@ -358,11 +321,7 @@ export const duplicateElements = (
     duplicateElementsMap as NonDeletedSceneElementsMap,
   );
 
-  bindElementsToFramesAfterDuplication(
-    elementsWithDuplicates,
-    origElements,
-    origIdToDuplicateId,
-  );
+  bindElementsToFramesAfterDuplication(elementsWithDuplicates, origElements, origIdToDuplicateId);
 
   if (opts.overrides) {
     for (const duplicateElement of duplicatedElements) {
@@ -397,7 +356,7 @@ export const duplicateElements = (
 //
 // The reason for `deepCopyElement()` wrapper is type safety (only allow
 // passing DrawinkElement as the top-level argument).
-const _deepCopyElement = (val: any, depth: number = 0) => {
+const _deepCopyElement = (val: any, depth = 0) => {
   // only clone non-primitives
   if (val == null || typeof val !== "object") {
     return val;
@@ -407,9 +366,7 @@ const _deepCopyElement = (val: any, depth: number = 0) => {
 
   if (objectType === "[object Object]") {
     const tmp =
-      typeof val.constructor === "function"
-        ? Object.create(Object.getPrototypeOf(val))
-        : {};
+      typeof val.constructor === "function" ? Object.create(Object.getPrototypeOf(val)) : {};
     for (const key in val) {
       if (val.hasOwnProperty(key)) {
         // don't copy non-serializable objects like these caches. They'll be
@@ -459,9 +416,7 @@ const _deepCopyElement = (val: any, depth: number = 0) => {
  * Only clones plain objects and arrays. Doesn't clone Date, RegExp, Map, Set,
  * Typed arrays and other non-null objects.
  */
-export const deepCopyElement = <T extends DrawinkElement>(
-  val: T,
-): Mutable<T> => {
+export const deepCopyElement = <T extends DrawinkElement>(val: T): Mutable<T> => {
   return _deepCopyElement(val);
 };
 

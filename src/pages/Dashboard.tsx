@@ -3,19 +3,14 @@
  * Left sidebar for workspace management + main area for board grid.
  */
 
-import {
-  useUser,
-  SignedIn,
-  SignedOut,
-  RedirectToSignIn,
-} from "@clerk/clerk-react";
+import { SyncStatusBanner } from "@/components/SyncStatusBanner";
+import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
+import { RedirectToSignIn, SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import { useMutation, useQuery } from "convex/react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
-import { SyncStatusBanner } from "@/components/SyncStatusBanner";
 import "./Dashboard.scss";
 
 export const Dashboard: React.FC = () => {
@@ -42,10 +37,7 @@ const WORKSPACE_COLORS = [
   "#546e7a",
 ];
 
-const WORKSPACE_ICONS = [
-  "📁", "🏠", "💼", "🎨", "🚀", "⚡",
-  "🔬", "📐", "🎯", "💡", "🌟", "🔧",
-];
+const WORKSPACE_ICONS = ["📁", "🏠", "💼", "🎨", "🚀", "⚡", "🔬", "📐", "🎯", "💡", "🌟", "🔧"];
 
 type ContextMenu = {
   workspaceId: Id<"workspaces">;
@@ -63,8 +55,7 @@ type BoardContextMenu = {
 const DashboardContent: React.FC = () => {
   const { user } = useUser();
   const navigate = useNavigate();
-  const [selectedWorkspaceId, setSelectedWorkspaceId] =
-    useState<Id<"workspaces"> | null>(null);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<Id<"workspaces"> | null>(null);
 
   const [contextMenu, setContextMenu] = useState<ContextMenu>(null);
   const [renamingId, setRenamingId] = useState<Id<"workspaces"> | null>(null);
@@ -184,17 +175,17 @@ const DashboardContent: React.FC = () => {
     try {
       // Get boards in this workspace to delete locally
       const boardsToDelete = recentBoards || [];
-      
+
       await deleteWorkspaceMut({
         workspaceId: deleteConfirm.id,
         confirmName: deleteInput,
       });
-      
+
       // Also delete all local board data for this workspace to prevent re-sync
       for (const board of boardsToDelete) {
         await hybridStorageAdapter.deleteBoard(board._id);
       }
-      
+
       if (selectedWorkspaceId === deleteConfirm.id) {
         localStorage.removeItem("selectedWorkspaceId");
         setSelectedWorkspaceId(null);
@@ -257,11 +248,8 @@ const DashboardContent: React.FC = () => {
     return d.toLocaleDateString();
   };
 
-  const selectedWorkspace = workspaces?.find(
-    (ws) => ws._id === selectedWorkspaceId,
-  );
-  const isLoadingBoards =
-    recentBoards === undefined || workspaces === undefined;
+  const selectedWorkspace = workspaces?.find((ws) => ws._id === selectedWorkspaceId);
+  const isLoadingBoards = recentBoards === undefined || workspaces === undefined;
 
   return (
     <div className="drawink-dashboard">
@@ -273,7 +261,14 @@ const DashboardContent: React.FC = () => {
           onClick={() => navigate("/")}
           title="Back to canvas"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
@@ -301,7 +296,14 @@ const DashboardContent: React.FC = () => {
               }}
               title="Create workspace"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </button>
@@ -399,23 +401,32 @@ const DashboardContent: React.FC = () => {
             className="drawink-dashboard__ctx-menu"
             style={{ top: contextMenu.y, left: contextMenu.x }}
           >
-            <button onClick={() => {
-              const ws = workspaces?.find((w) => w._id === contextMenu.workspaceId);
-              if (ws) { setRenamingId(ws._id); setRenameValue(ws.name); }
-              setContextMenu(null);
-            }}>
+            <button
+              onClick={() => {
+                const ws = workspaces?.find((w) => w._id === contextMenu.workspaceId);
+                if (ws) {
+                  setRenamingId(ws._id);
+                  setRenameValue(ws.name);
+                }
+                setContextMenu(null);
+              }}
+            >
               Rename
             </button>
-            <button onClick={() => {
-              setPickerFor({ id: contextMenu.workspaceId, type: "icon" });
-              setContextMenu(null);
-            }}>
+            <button
+              onClick={() => {
+                setPickerFor({ id: contextMenu.workspaceId, type: "icon" });
+                setContextMenu(null);
+              }}
+            >
               Change Icon
             </button>
-            <button onClick={() => {
-              setPickerFor({ id: contextMenu.workspaceId, type: "color" });
-              setContextMenu(null);
-            }}>
+            <button
+              onClick={() => {
+                setPickerFor({ id: contextMenu.workspaceId, type: "color" });
+                setContextMenu(null);
+              }}
+            >
               Change Color
             </button>
             <div className="drawink-dashboard__ctx-divider" />
@@ -473,9 +484,12 @@ const DashboardContent: React.FC = () => {
             <div className="drawink-dashboard__modal" onClick={(e) => e.stopPropagation()}>
               <h3>Delete Workspace</h3>
               <p>
-                This will permanently delete <strong>{deleteConfirm.name}</strong> and all its boards. This cannot be undone.
+                This will permanently delete <strong>{deleteConfirm.name}</strong> and all its
+                boards. This cannot be undone.
               </p>
-              <p>Type <strong>{deleteConfirm.name}</strong> to confirm:</p>
+              <p>
+                Type <strong>{deleteConfirm.name}</strong> to confirm:
+              </p>
               <input
                 type="text"
                 value={deleteInput}
@@ -487,7 +501,10 @@ const DashboardContent: React.FC = () => {
                 }}
               />
               <div className="drawink-dashboard__modal-actions">
-                <button className="drawink-dashboard__modal-cancel" onClick={() => setDeleteConfirm(null)}>
+                <button
+                  className="drawink-dashboard__modal-cancel"
+                  onClick={() => setDeleteConfirm(null)}
+                >
                   Cancel
                 </button>
                 <button
@@ -512,7 +529,14 @@ const DashboardContent: React.FC = () => {
               {selectedWorkspace?.name || "Boards"}
             </h1>
             <button className="drawink-dashboard__create-btn" onClick={handleCreateBoard}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <path d="M12 5v14M5 12h14" />
               </svg>
               New Board
@@ -527,7 +551,14 @@ const DashboardContent: React.FC = () => {
           ) : !recentBoards || recentBoards.length === 0 ? (
             <div className="drawink-dashboard__empty">
               <div className="drawink-dashboard__empty-icon">
-                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <svg
+                  width="56"
+                  height="56"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                >
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <path d="M3 9h18M9 21V9" />
                 </svg>
@@ -535,7 +566,14 @@ const DashboardContent: React.FC = () => {
               <h2>No boards yet</h2>
               <p>Create your first board to start drawing</p>
               <button className="drawink-dashboard__create-btn" onClick={handleCreateBoard}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M12 5v14M5 12h14" />
                 </svg>
                 Create Board
@@ -548,7 +586,14 @@ const DashboardContent: React.FC = () => {
                   className="drawink-dashboard__card drawink-dashboard__card--new"
                   onClick={handleCreateBoard}
                 >
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
                   <span>New Board</span>
@@ -577,7 +622,14 @@ const DashboardContent: React.FC = () => {
                       {board.thumbnailUrl ? (
                         <img src={board.thumbnailUrl} alt={board.name} />
                       ) : (
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                        <svg
+                          width="36"
+                          height="36"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1"
+                        >
                           <rect x="3" y="3" width="18" height="18" rx="2" />
                           <path d="M3 9h18M9 21V9" />
                         </svg>
@@ -619,7 +671,9 @@ const DashboardContent: React.FC = () => {
                       ) : (
                         <span className="drawink-dashboard__card-name">{board.name}</span>
                       )}
-                      <span className="drawink-dashboard__card-date">{formatDate(board._creationTime)}</span>
+                      <span className="drawink-dashboard__card-date">
+                        {formatDate(board._creationTime)}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -632,11 +686,13 @@ const DashboardContent: React.FC = () => {
                   className="drawink-dashboard__ctx-menu"
                   style={{ top: boardContextMenu.y, left: boardContextMenu.x }}
                 >
-                  <button onClick={() => {
-                    setRenamingBoardId(boardContextMenu.boardId);
-                    setBoardRenameValue(boardContextMenu.boardName);
-                    setBoardContextMenu(null);
-                  }}>
+                  <button
+                    onClick={() => {
+                      setRenamingBoardId(boardContextMenu.boardId);
+                      setBoardRenameValue(boardContextMenu.boardName);
+                      setBoardContextMenu(null);
+                    }}
+                  >
                     Rename
                   </button>
                   <div className="drawink-dashboard__ctx-divider" />
@@ -667,14 +723,21 @@ const DashboardContent: React.FC = () => {
 
               {/* Board delete confirmation modal */}
               {deleteBoardConfirm && (
-                <div className="drawink-dashboard__modal-overlay" onClick={() => setDeleteBoardConfirm(null)}>
+                <div
+                  className="drawink-dashboard__modal-overlay"
+                  onClick={() => setDeleteBoardConfirm(null)}
+                >
                   <div className="drawink-dashboard__modal" onClick={(e) => e.stopPropagation()}>
                     <h3>Delete Board</h3>
                     <p>
-                      Are you sure you want to delete <strong>{deleteBoardConfirm.name}</strong>? This cannot be undone.
+                      Are you sure you want to delete <strong>{deleteBoardConfirm.name}</strong>?
+                      This cannot be undone.
                     </p>
                     <div className="drawink-dashboard__modal-actions">
-                      <button className="drawink-dashboard__modal-cancel" onClick={() => setDeleteBoardConfirm(null)}>
+                      <button
+                        className="drawink-dashboard__modal-cancel"
+                        onClick={() => setDeleteBoardConfirm(null)}
+                      >
                         Cancel
                       </button>
                       <button

@@ -34,7 +34,7 @@ export const createPublicShare = mutation({
       viewCount: 0,
 
       // Optional: Add expiration (30 days for free tier)
-      expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000),
+      expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
     });
 
     return { shareId };

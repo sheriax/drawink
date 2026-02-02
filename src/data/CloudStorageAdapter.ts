@@ -33,7 +33,9 @@ import type { Board } from "@/core/types";
 // TODO: Migrate to Convex - getFirestoreInstance was removed
 // import { getFirestoreInstance } from "./firebase";
 const getFirestoreInstance = (): any => {
-  throw new Error("CloudStorageAdapter: Firestore is deprecated. Use ConvexStorageAdapter instead.");
+  throw new Error(
+    "CloudStorageAdapter: Firestore is deprecated. Use ConvexStorageAdapter instead.",
+  );
 };
 
 // Cache for derived encryption keys

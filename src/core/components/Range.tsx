@@ -36,8 +36,7 @@ export const Range = ({ updateData, app, testId }: RangeProps) => {
       const valueElement = valueRef.current;
       const inputWidth = rangeElement.offsetWidth;
       const thumbWidth = 15; // 15 is the width of the thumb
-      const position =
-        (value / 100) * (inputWidth - thumbWidth) + thumbWidth / 2;
+      const position = (value / 100) * (inputWidth - thumbWidth) + thumbWidth / 2;
       valueElement.style.left = `${position}px`;
       rangeElement.style.background = `linear-gradient(to right, var(--color-slider-track) 0%, var(--color-slider-track) ${value}%, var(--button-bg) ${value}%, var(--button-bg) 100%)`;
     }
@@ -49,9 +48,7 @@ export const Range = ({ updateData, app, testId }: RangeProps) => {
       <div className="range-wrapper">
         <input
           style={{
-            ["--color-slider-track" as string]: hasCommonOpacity
-              ? undefined
-              : "var(--button-bg)",
+            ["--color-slider-track" as string]: hasCommonOpacity ? undefined : "var(--button-bg)",
           }}
           ref={rangeRef}
           type="range"

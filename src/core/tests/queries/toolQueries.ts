@@ -1,4 +1,4 @@
-import { queries, buildQueries } from "@testing-library/react";
+import { buildQueries, queries } from "@testing-library/react";
 
 import { TOOL_TYPE } from "@/lib/common";
 
@@ -14,14 +14,5 @@ const getMultipleError = (_container: any, tool: any) =>
 const getMissingError = (_container: any, tool: any) =>
   `Unable to find an element with tool name: ${tool}`;
 
-export const [
-  queryByToolName,
-  getAllByToolName,
-  getByToolName,
-  findAllByToolName,
-  findByToolName,
-] = buildQueries<(ToolType | "lock")[]>(
-  _getAllByToolName,
-  getMultipleError,
-  getMissingError,
-);
+export const [queryByToolName, getAllByToolName, getByToolName, findAllByToolName, findByToolName] =
+  buildQueries<(ToolType | "lock")[]>(_getAllByToolName, getMultipleError, getMissingError);

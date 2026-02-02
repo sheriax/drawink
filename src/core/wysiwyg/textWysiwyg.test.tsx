@@ -1,37 +1,23 @@
 import { queryByText } from "@testing-library/react";
 
-import { pointFrom } from "@/lib/math";
 import { getOriginalContainerHeightFromCache } from "@/lib/elements";
+import { pointFrom } from "@/lib/math";
 
-import {
-  CODES,
-  KEYS,
-  FONT_FAMILY,
-  TEXT_ALIGN,
-  VERTICAL_ALIGN,
-} from "@/lib/common";
+import { CODES, FONT_FAMILY, KEYS, TEXT_ALIGN, VERTICAL_ALIGN } from "@/lib/common";
 
-import type {
-  DrawinkTextElement,
-  DrawinkTextElementWithContainer,
-} from "@/lib/elements/types";
+import type { DrawinkTextElement, DrawinkTextElementWithContainer } from "@/lib/elements/types";
 
+import { actionBindText } from "../actions";
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";
 import { Keyboard, Pointer, UI } from "../tests/helpers/ui";
 import { getTextEditor, updateTextEditor } from "../tests/queries/dom";
-import {
-  GlobalTestState,
-  render,
-  screen,
-  unmountComponent,
-} from "../tests/test-utils";
+import { GlobalTestState, render, screen, unmountComponent } from "../tests/test-utils";
 import {
   fireEvent,
   mockBoundingClientRect,
   restoreOriginalGetBoundingClientRect,
 } from "../tests/test-utils";
-import { actionBindText } from "../actions";
 
 unmountComponent();
 
@@ -69,9 +55,7 @@ describe("textWysiwyg", () => {
       Keyboard.keyPress(KEYS.ENTER);
 
       expect(h.state.editingTextElement?.id).toBe(text.id);
-      expect(
-        (h.state.editingTextElement as DrawinkTextElement).containerId,
-      ).toBe(null);
+      expect((h.state.editingTextElement as DrawinkTextElement).containerId).toBe(null);
     });
 
     it("should prefer editing selected text element (bindable container present)", async () => {
@@ -602,18 +586,14 @@ describe("textWysiwyg", () => {
       const text = h.elements[1] as DrawinkTextElementWithContainer;
       expect(text.type).toBe("text");
       expect(text.containerId).toBe(rectangle.id);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
       mouse.down();
       const editor = await getTextEditor();
 
       updateTextEditor(editor, "Hello World!");
 
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("should set the text element angle to same as container angle when binding to rotated container", async () => {
@@ -628,9 +608,7 @@ describe("textWysiwyg", () => {
       const text = h.elements[1] as DrawinkTextElementWithContainer;
       expect(text.type).toBe("text");
       expect(text.containerId).toBe(rectangle.id);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
       expect(text.angle).toBe(rectangle.angle);
       mouse.down();
       const editor = await getTextEditor();
@@ -638,9 +616,7 @@ describe("textWysiwyg", () => {
       updateTextEditor(editor, "Hello World!");
 
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("should compute the container height correctly and not throw error when height is updated while editing the text", async () => {
@@ -664,9 +640,7 @@ describe("textWysiwyg", () => {
       const value = new Array(1000).fill("1").join("\n");
 
       // Pasting large text to simulate height increase
-      expect(() =>
-        fireEvent.input(editor, { target: { value } }),
-      ).not.toThrow();
+      expect(() => fireEvent.input(editor, { target: { value } })).not.toThrow();
 
       expect(diamond.height).toBe(50020);
 
@@ -696,10 +670,7 @@ describe("textWysiwyg", () => {
       let editor = await getTextEditor();
       Keyboard.exitTextEditor(editor);
 
-      mouse.doubleClickAt(
-        rectangle.x + rectangle.width / 2,
-        rectangle.y + rectangle.height / 2,
-      );
+      mouse.doubleClickAt(rectangle.x + rectangle.width / 2, rectangle.y + rectangle.height / 2);
       expect(h.elements.length).toBe(3);
 
       text = h.elements[1] as DrawinkTextElementWithContainer;
@@ -712,9 +683,7 @@ describe("textWysiwyg", () => {
       updateTextEditor(editor, "Hello World!");
       Keyboard.exitTextEditor(editor);
 
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("should bind text to container when clicked on container and enter pressed", async () => {
@@ -732,9 +701,7 @@ describe("textWysiwyg", () => {
 
       updateTextEditor(editor, "Hello World!");
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("should bind text to container when double clicked on container stroke", async () => {
@@ -757,17 +724,13 @@ describe("textWysiwyg", () => {
       const text = h.elements[1] as DrawinkTextElementWithContainer;
       expect(text.type).toBe("text");
       expect(text.containerId).toBe(rectangle.id);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
       mouse.down();
       const editor = await getTextEditor();
       updateTextEditor(editor, "Hello World!");
 
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("shouldn't bind to non-text-bindable containers", async () => {
@@ -780,10 +743,7 @@ describe("textWysiwyg", () => {
 
       UI.clickTool("text");
 
-      mouse.clickAt(
-        freedraw.x + freedraw.width / 2,
-        freedraw.y + freedraw.height / 2,
-      );
+      mouse.clickAt(freedraw.x + freedraw.width / 2, freedraw.y + freedraw.height / 2);
 
       const editor = await getTextEditor();
       updateTextEditor(editor, "Hello World!");
@@ -835,10 +795,7 @@ describe("textWysiwyg", () => {
       mouse.clickAt(20, 30);
       const editor = await getTextEditor();
 
-      updateTextEditor(
-        editor,
-        "Drawink is an opensource virtual collaborative whiteboard",
-      );
+      updateTextEditor(editor, "Drawink is an opensource virtual collaborative whiteboard");
       expect(h.elements.length).toBe(2);
       expect(h.elements[1].type).toBe("text");
 
@@ -849,31 +806,20 @@ describe("textWysiwyg", () => {
         clientY: 30,
       });
       const contextMenu = document.querySelector(".context-menu");
-      fireEvent.click(
-        queryByText(contextMenu as HTMLElement, "Bind text to the container")!,
-      );
+      fireEvent.click(queryByText(contextMenu as HTMLElement, "Bind text to the container")!);
       const text = h.elements[1] as DrawinkTextElementWithContainer;
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: h.elements[1].id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: h.elements[1].id, type: "text" }]);
       expect(text.containerId).toBe(rectangle.id);
       expect(text.verticalAlign).toBe(VERTICAL_ALIGN.MIDDLE);
       expect(text.textAlign).toBe(TEXT_ALIGN.CENTER);
-      expect(text.x).toBe(
-        h.elements[0].x + h.elements[0].width / 2 - text.width / 2,
-      );
-      expect(text.y).toBe(
-        h.elements[0].y + h.elements[0].height / 2 - text.height / 2,
-      );
+      expect(text.x).toBe(h.elements[0].x + h.elements[0].width / 2 - text.width / 2);
+      expect(text.y).toBe(h.elements[0].y + h.elements[0].height / 2 - text.height / 2);
     });
 
     it("should update font family correctly on undo/redo by selecting bounded text when font family was updated", async () => {
       expect(h.elements.length).toBe(1);
 
-      mouse.doubleClickAt(
-        rectangle.x + rectangle.width / 2,
-        rectangle.y + rectangle.height / 2,
-      );
+      mouse.doubleClickAt(rectangle.x + rectangle.width / 2, rectangle.y + rectangle.height / 2);
 
       const text = h.elements[1] as DrawinkTextElementWithContainer;
       const editor = await getTextEditor();
@@ -890,25 +836,25 @@ describe("textWysiwyg", () => {
 
       fireEvent.click(screen.getByTitle(/code/i));
 
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY["Comic Shanns"],
+      );
 
       //undo
       Keyboard.withModifierKeys({ ctrl: true }, () => {
         Keyboard.keyPress(KEYS.Z);
       });
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY.Excalifont);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY.Excalifont,
+      );
 
       //redo
       Keyboard.withModifierKeys({ ctrl: true, shift: true }, () => {
         Keyboard.keyPress(KEYS.Z);
       });
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY["Comic Shanns"],
+      );
     });
 
     it("should wrap text and vertcially center align once text submitted", async () => {
@@ -924,9 +870,7 @@ describe("textWysiwyg", () => {
       text = h.elements[1] as DrawinkTextElementWithContainer;
       expect(text.text).toBe("Hello\nWorld!");
       expect(text.originalText).toBe("Hello World!");
-      expect(text.y).toBe(
-        rectangle.y + h.elements[0].height / 2 - text.height / 2,
-      );
+      expect(text.y).toBe(rectangle.y + h.elements[0].height / 2 - text.height / 2);
       expect(text.x).toBe(25);
       expect(text.height).toBe(50);
       expect(text.width).toBe(60);
@@ -946,9 +890,7 @@ describe("textWysiwyg", () => {
       expect(text.originalText).toBe("Hello");
       expect(text.height).toBe(25);
       expect(text.width).toBe(50);
-      expect(text.y).toBe(
-        rectangle.y + h.elements[0].height / 2 - text.height / 2,
-      );
+      expect(text.y).toBe(rectangle.y + h.elements[0].height / 2 - text.height / 2);
       expect(text.x).toBe(30);
     });
 
@@ -967,9 +909,7 @@ describe("textWysiwyg", () => {
 
       updateTextEditor(editor, "Hello World!");
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
       mouse.reset();
       UI.clickTool("selection");
       mouse.clickAt(10, 20);
@@ -999,17 +939,13 @@ describe("textWysiwyg", () => {
       const editor = await getTextEditor();
       updateTextEditor(editor, "Hello World!");
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
 
       mouse.select(rectangle);
       Keyboard.keyPress(KEYS.ENTER);
       expect(h.elements.length).toBe(2);
 
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: h.elements[1].id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: h.elements[1].id, type: "text" }]);
       expect(text.containerId).toBe(rectangle.id);
     });
 
@@ -1093,9 +1029,7 @@ describe("textWysiwyg", () => {
 
       Keyboard.exitTextEditor(editor);
       expect(rectangle2.boundElements).toBeNull();
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
     });
 
     it("should scale font size correctly when resizing using shift", async () => {
@@ -1135,9 +1069,7 @@ describe("textWysiwyg", () => {
       const duplicatedText = h.elements[1] as DrawinkTextElementWithContainer;
       const originalRect = h.elements[2];
       const originalText = h.elements[3] as DrawinkTextElementWithContainer;
-      expect(originalRect.boundElements).toStrictEqual([
-        { id: originalText.id, type: "text" },
-      ]);
+      expect(originalRect.boundElements).toStrictEqual([{ id: originalText.id, type: "text" }]);
 
       expect(originalText.containerId).toBe(originalRect.id);
 
@@ -1153,9 +1085,7 @@ describe("textWysiwyg", () => {
       const editor = await getTextEditor();
       updateTextEditor(editor, "Hello");
       Keyboard.exitTextEditor(editor);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: h.elements[1].id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: h.elements[1].id, type: "text" }]);
       let text = h.elements[1] as DrawinkTextElementWithContainer;
       const originalRectX = rectangle.x;
       const originalRectY = rectangle.y;
@@ -1178,9 +1108,7 @@ describe("textWysiwyg", () => {
       text = h.elements[1] as DrawinkTextElementWithContainer;
       expect(text.x).toBe(originalTextX);
       expect(text.y).toBe(originalTextY);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
       expect(text.containerId).toBe(rectangle.id);
     });
 
@@ -1221,9 +1149,7 @@ describe("textWysiwyg", () => {
       });
       let contextMenu = document.querySelector(".context-menu");
 
-      fireEvent.click(
-        queryByText(contextMenu as HTMLElement, "Bind text to the container")!,
-      );
+      fireEvent.click(queryByText(contextMenu as HTMLElement, "Bind text to the container")!);
 
       expect((h.elements[1] as DrawinkTextElementWithContainer).text).toBe(
         "Online\nwhiteboa\nrd\ncollabor\nation\nmade\neasy",
@@ -1260,10 +1186,7 @@ describe("textWysiwyg", () => {
       Keyboard.exitTextEditor(editor);
       expect(rectangle.height).toBeCloseTo(155, 8);
       // cache updated again
-      expect(getOriginalContainerHeightFromCache(rectangle.id)).toBeCloseTo(
-        155,
-        8,
-      );
+      expect(getOriginalContainerHeightFromCache(rectangle.id)).toBeCloseTo(155, 8);
     });
 
     it("should reset the container height cache when font properties updated", async () => {
@@ -1279,15 +1202,13 @@ describe("textWysiwyg", () => {
 
       fireEvent.click(screen.getByTitle(/code/i));
 
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY["Comic Shanns"],
+      );
       expect(getOriginalContainerHeightFromCache(rectangle.id)).toBe(75);
 
       fireEvent.click(screen.getByTitle(/Very large/i));
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontSize,
-      ).toEqual(36);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontSize).toEqual(36);
       expect(getOriginalContainerHeightFromCache(rectangle.id)).toBe(100);
     });
 
@@ -1298,28 +1219,22 @@ describe("textWysiwyg", () => {
       const editor = await getTextEditor();
       updateTextEditor(editor, "Hello World!");
       Keyboard.exitTextEditor(editor);
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).lineHeight,
-      ).toEqual(1.25);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).lineHeight).toEqual(1.25);
 
       mouse.select(rectangle);
       Keyboard.keyPress(KEYS.ENTER);
 
       fireEvent.click(screen.getByTitle(/code/i));
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).lineHeight,
-      ).toEqual(1.25);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY["Comic Shanns"],
+      );
+      expect((h.elements[1] as DrawinkTextElementWithContainer).lineHeight).toEqual(1.25);
 
       fireEvent.click(screen.getByTitle(/normal/i));
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY.Nunito);
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).lineHeight,
-      ).toEqual(1.25);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).fontFamily).toEqual(
+        FONT_FAMILY.Nunito,
+      );
+      expect((h.elements[1] as DrawinkTextElementWithContainer).lineHeight).toEqual(1.25);
     });
 
     describe("should align correctly", () => {
@@ -1445,10 +1360,7 @@ describe("textWysiwyg", () => {
       mouse.clickAt(20, 30);
       const editor = await getTextEditor();
 
-      updateTextEditor(
-        editor,
-        "Drawink is an opensource virtual collaborative whiteboard",
-      );
+      updateTextEditor(editor, "Drawink is an opensource virtual collaborative whiteboard");
 
       editor.select();
       fireEvent.click(screen.getByTitle("Left"));
@@ -1472,9 +1384,7 @@ describe("textWysiwyg", () => {
       });
 
       const contextMenu = document.querySelector(".context-menu");
-      fireEvent.click(
-        queryByText(contextMenu as HTMLElement, "Wrap text in a container")!,
-      );
+      fireEvent.click(queryByText(contextMenu as HTMLElement, "Wrap text in a container")!);
       expect(h.elements.length).toBe(3);
 
       expect(h.elements[1]).toEqual(
@@ -1529,35 +1439,28 @@ describe("textWysiwyg", () => {
       expect(text.containerId).toBe(rectangle.id);
       let editor = await getTextEditor();
       updateTextEditor(editor, "Hello!");
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).verticalAlign,
-      ).toBe(VERTICAL_ALIGN.MIDDLE);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).verticalAlign).toBe(
+        VERTICAL_ALIGN.MIDDLE,
+      );
 
       fireEvent.click(screen.getByTitle("Align bottom"));
 
       Keyboard.exitTextEditor(editor);
 
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: text.id, type: "text" },
-      ]);
-      expect(
-        (h.elements[1] as DrawinkTextElementWithContainer).verticalAlign,
-      ).toBe(VERTICAL_ALIGN.BOTTOM);
+      expect(rectangle.boundElements).toStrictEqual([{ id: text.id, type: "text" }]);
+      expect((h.elements[1] as DrawinkTextElementWithContainer).verticalAlign).toBe(
+        VERTICAL_ALIGN.BOTTOM,
+      );
 
       // Attempt to Bind 2nd text using text tool
       UI.clickTool("text");
-      mouse.clickAt(
-        rectangle.x + rectangle.width / 2,
-        rectangle.y + rectangle.height / 2,
-      );
+      mouse.clickAt(rectangle.x + rectangle.width / 2, rectangle.y + rectangle.height / 2);
       editor = await getTextEditor();
       updateTextEditor(editor, "Drawink");
       Keyboard.exitTextEditor(editor);
 
       expect(h.elements.length).toBe(3);
-      expect(rectangle.boundElements).toStrictEqual([
-        { id: h.elements[1].id, type: "text" },
-      ]);
+      expect(rectangle.boundElements).toStrictEqual([{ id: h.elements[1].id, type: "text" }]);
       text = h.elements[2] as DrawinkTextElementWithContainer;
       expect(text.containerId).toBe(null);
       expect(text.text).toBe("Drawink");
@@ -1620,10 +1523,7 @@ describe("textWysiwyg", () => {
       API.setElements([arrow]);
       API.setSelectedElements([arrow]);
 
-      mouse.doubleClickAt(
-        arrow.x + arrow.width / 2,
-        arrow.y + arrow.height / 2,
-      );
+      mouse.doubleClickAt(arrow.x + arrow.width / 2, arrow.y + arrow.height / 2);
 
       const editor = await getTextEditor();
 
@@ -1645,10 +1545,7 @@ describe("textWysiwyg", () => {
       API.setElements([rectangle]);
       API.setSelectedElements([rectangle]);
 
-      mouse.doubleClickAt(
-        rectangle.x + rectangle.width / 2,
-        rectangle.y + rectangle.height / 2,
-      );
+      mouse.doubleClickAt(rectangle.x + rectangle.width / 2, rectangle.y + rectangle.height / 2);
 
       const editor = await getTextEditor();
 

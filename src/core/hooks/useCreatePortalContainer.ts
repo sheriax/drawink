@@ -1,8 +1,8 @@
-import { useState, useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 
 import { THEME } from "@/lib/common";
 
-import { useEditorInterface, useDrawinkContainer } from "../components/App";
+import { useDrawinkContainer, useEditorInterface } from "../components/App";
 import { useUIAppState } from "../context/ui-appState";
 
 export const useCreatePortalContainer = (opts?: {
@@ -20,10 +20,7 @@ export const useCreatePortalContainer = (opts?: {
     if (div) {
       div.className = "";
       div.classList.add("drawink", ...(opts?.className?.split(/\s+/) || []));
-      div.classList.toggle(
-        "drawink--mobile",
-        editorInterface.formFactor === "phone",
-      );
+      div.classList.toggle("drawink--mobile", editorInterface.formFactor === "phone");
       div.classList.toggle("theme--dark", theme === THEME.DARK);
     }
   }, [div, theme, editorInterface.formFactor, opts?.className]);

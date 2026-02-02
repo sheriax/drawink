@@ -1,4 +1,3 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { KEYS, reseed } from "@/lib/common";
@@ -10,19 +9,16 @@ import * as InteractiveScene from "../renderer/interactiveScene";
 import * as StaticScene from "../renderer/staticScene";
 
 import {
-  render,
   fireEvent,
   mockBoundingClientRect,
+  render,
   restoreOriginalGetBoundingClientRect,
   unmountComponent,
 } from "./test-utils";
 
 unmountComponent();
 
-const renderInteractiveScene = vi.spyOn(
-  InteractiveScene,
-  "renderInteractiveScene",
-);
+const renderInteractiveScene = vi.spyOn(InteractiveScene, "renderInteractiveScene");
 const renderStaticScene = vi.spyOn(StaticScene, "renderStaticScene");
 
 beforeEach(() => {
@@ -53,9 +49,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
 
@@ -87,9 +81,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
 
       expect(h.state.selectionElement).toBeNull();
@@ -122,9 +114,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
 
@@ -156,9 +146,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `6`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(h.state.selectionElement).toBeNull();
 
@@ -194,9 +182,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `6`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(h.state.selectionElement).toBeNull();
 
@@ -237,9 +223,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(0);
@@ -259,9 +243,7 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(0);
@@ -281,18 +263,14 @@ describe("Test dragCreate", () => {
       // finish (position does not matter)
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(0);
     });
 
     it("arrow", async () => {
-      const { getByToolName, container } = await render(
-        <Drawink handleKeyboardGlobally={true} />,
-      );
+      const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
       // select tool
       const tool = getByToolName("arrow");
       fireEvent.click(tool);
@@ -310,9 +288,7 @@ describe("Test dragCreate", () => {
         key: KEYS.ENTER,
       });
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `6`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements).toEqual([
@@ -324,9 +300,7 @@ describe("Test dragCreate", () => {
     });
 
     it("line", async () => {
-      const { getByToolName, container } = await render(
-        <Drawink handleKeyboardGlobally={true} />,
-      );
+      const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
       // select tool
       const tool = getByToolName("line");
       fireEvent.click(tool);
@@ -344,9 +318,7 @@ describe("Test dragCreate", () => {
         key: KEYS.ENTER,
       });
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `6`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`6`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements).toEqual([

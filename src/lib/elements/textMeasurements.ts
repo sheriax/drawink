@@ -1,13 +1,13 @@
 import {
   BOUND_TEXT_PADDING,
-  DEFAULT_FONT_SIZE,
   DEFAULT_FONT_FAMILY,
+  DEFAULT_FONT_SIZE,
   getFontString,
   isTestEnv,
   normalizeEOL,
 } from "@/lib/common";
 
-import type { FontString, DrawinkTextElement } from "./types";
+import type { DrawinkTextElement, FontString } from "./types";
 
 export const measureText = (
   text: string,
@@ -20,7 +20,7 @@ export const measureText = (
     // lines would be stripped from computation
     .map((x) => x || " ")
     .join("\n");
-  const fontSize = parseFloat(font);
+  const fontSize = Number.parseFloat(font);
   const height = getTextHeight(_text, fontSize, lineHeight);
   const width = getTextWidth(_text, font);
   return { width, height };
@@ -36,8 +36,7 @@ export const getApproxMinLineWidth = (
   const maxCharWidth = getMaxCharWidth(font);
   if (maxCharWidth === 0) {
     return (
-      measureText(DUMMY_TEXT.split("").join("\n"), font, lineHeight).width +
-      BOUND_TEXT_PADDING * 2
+      measureText(DUMMY_TEXT.split("").join("\n"), font, lineHeight).width + BOUND_TEXT_PADDING * 2
     );
   }
   return maxCharWidth + BOUND_TEXT_PADDING * 2;

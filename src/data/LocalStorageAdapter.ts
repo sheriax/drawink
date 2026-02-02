@@ -412,7 +412,7 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   getLastSyncTimestamp(): number | null {
     const timestamp = localStorage.getItem("drawink-last-sync");
-    return timestamp ? parseInt(timestamp, 10) : null;
+    return timestamp ? Number.parseInt(timestamp, 10) : null;
   }
 
   /**

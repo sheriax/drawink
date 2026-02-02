@@ -6,22 +6,24 @@
   createElement: () => ({
     getContext: () => null,
     style: {},
-    setAttribute: () => { },
-    appendChild: () => { },
+    setAttribute: () => {},
+    appendChild: () => {},
   }),
-  body: { appendChild: () => { }, removeChild: () => { } },
-  head: { appendChild: () => { } },
+  body: { appendChild: () => {}, removeChild: () => {} },
+  head: { appendChild: () => {} },
 };
 (globalThis as any).navigator = { userAgent: "node" };
-(globalThis as any).matchMedia = () => ({ matches: false, addListener: () => { }, removeListener: () => { } });
-
-import { DEFAULT_FONT_FAMILY } from "@/lib/common";
+(globalThis as any).matchMedia = () => ({
+  matches: false,
+  addListener: () => {},
+  removeListener: () => {},
+});
+import { createWriteStream } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import type { Radians } from "@/lib/math";
 import { getDefaultAppState } from "./appState";
 import { exportToCanvas } from "./scene/export";
-import { createWriteStream } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 
 // node-canvas 3.x is Bun compatible
 // @ts-ignore - canvas types not installed
@@ -97,7 +99,7 @@ const createCanvas = (width: number, height: number) => {
   return { canvas: canvas as unknown as HTMLCanvasElement, scale: 1 };
 };
 
-// Skip font loading in node environment  
+// Skip font loading in node environment
 const loadFonts = async () => {
   console.log("⚠️  Skipping font loading (node-canvas requires TTF fonts)");
 };

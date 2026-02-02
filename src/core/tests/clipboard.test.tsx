@@ -1,4 +1,3 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { getLineHeightInPx } from "@/lib/elements";
@@ -13,13 +12,8 @@ import { Drawink } from "../index";
 
 import { API } from "./helpers/api";
 import { mockMermaidToDrawink } from "./helpers/mocks";
-import { Pointer, Keyboard } from "./helpers/ui";
-import {
-  render,
-  waitFor,
-  GlobalTestState,
-  unmountComponent,
-} from "./test-utils";
+import { Keyboard, Pointer } from "./helpers/ui";
+import { GlobalTestState, render, unmountComponent, waitFor } from "./test-utils";
 
 import type { NormalizedZoomValue } from "../types";
 

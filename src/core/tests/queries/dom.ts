@@ -1,10 +1,7 @@
 import { waitFor } from "@testing-library/dom";
 import { fireEvent } from "@testing-library/react";
 
-import {
-  stripIgnoredNodesFromErrorMessage,
-  trimErrorStack,
-} from "../test-utils";
+import { stripIgnoredNodesFromErrorMessage, trimErrorStack } from "../test-utils";
 
 export const TEXT_EDITOR_SELECTOR = ".drawink-textEditorContainer > textarea";
 
@@ -27,10 +24,7 @@ export const getTextEditor = async ({
   }
 };
 
-export const updateTextEditor = (
-  editor: HTMLTextAreaElement | HTMLInputElement,
-  value: string,
-) => {
+export const updateTextEditor = (editor: HTMLTextAreaElement | HTMLInputElement, value: string) => {
   fireEvent.change(editor, { target: { value } });
   fireEvent.input(editor);
 };

@@ -4,11 +4,11 @@
  * Uses Convex workspaces as the data source.
  */
 
+import DropdownMenu from "@/core/components/dropdownMenu/DropdownMenu";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../convex/_generated/api";
-import DropdownMenu from "@/core/components/dropdownMenu/DropdownMenu";
 
 interface OrganizationSelectorProps {
   onOrganizationChange?: (organizationId: string | null) => void;
@@ -28,9 +28,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
     return null;
   }
 
-  const selectedWorkspace = workspaces?.find(
-    (w) => w._id === selectedWorkspaceId,
-  );
+  const selectedWorkspace = workspaces?.find((w) => w._id === selectedWorkspaceId);
   const displayName = selectedWorkspace?.name || "Personal";
 
   const handleSelect = (workspaceId: string | null) => {
@@ -60,12 +58,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
                   {selectedWorkspace.name[0].toUpperCase()}
                 </span>
               ) : (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6z" />
                 </svg>
               )}
@@ -78,12 +71,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
               fill="currentColor"
               className="organization-selector__chevron"
             >
-              <path
-                d="M2 4l4 4 4-4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-              />
+              <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" />
             </svg>
           </div>
         </DropdownMenu.Trigger>
@@ -94,18 +82,9 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
         >
           <DropdownMenu.Item
             onSelect={() => handleSelect(null)}
-            className={
-              !selectedWorkspace
-                ? "organization-selector__item--active"
-                : ""
-            }
+            className={!selectedWorkspace ? "organization-selector__item--active" : ""}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-            >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6z" />
             </svg>
             <span>Personal</span>
@@ -119,9 +98,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
                   key={ws._id}
                   onSelect={() => handleSelect(ws._id)}
                   className={
-                    selectedWorkspaceId === ws._id
-                      ? "organization-selector__item--active"
-                      : ""
+                    selectedWorkspaceId === ws._id ? "organization-selector__item--active" : ""
                   }
                 >
                   <span className="organization-selector__org-icon-small">

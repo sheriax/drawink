@@ -4,9 +4,9 @@
  * Shows upgrade prompt if user doesn't have access
  */
 
-import React from 'react';
-import { useFeatureAccess } from '../hooks/useSubscription';
-import UpgradeBanner from './UpgradeBanner';
+import type React from "react";
+import { useFeatureAccess } from "../hooks/useSubscription";
+import UpgradeBanner from "./UpgradeBanner";
 
 interface FeatureGateProps {
   feature: string;

@@ -1,6 +1,6 @@
-import { useUser } from "@clerk/clerk-react";
 import { eyeIcon } from "@/core/components/icons";
 import { MainMenu } from "@/core/index";
+import { useUser } from "@clerk/clerk-react";
 import React from "react";
 
 import { isDevEnv } from "@/lib/common";
@@ -46,7 +46,16 @@ export const AppMainMenu: React.FC<{
         <MainMenu.ItemLink
           href="/dashboard"
           icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <rect x="3" y="3" width="7" height="7" rx="1" />
               <rect x="14" y="3" width="7" height="7" rx="1" />
               <rect x="3" y="14" width="7" height="7" rx="1" />

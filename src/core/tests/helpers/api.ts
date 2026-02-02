@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import util from "util";
 
-import { pointFrom, type LocalPoint, type Radians } from "@/lib/math";
+import { type LocalPoint, type Radians, pointFrom } from "@/lib/math";
 
 import { DEFAULT_VERTICAL_ALIGN, ROUNDNESS, assertNever } from "@/lib/common";
 
@@ -24,32 +24,31 @@ import { getSelectedElements } from "@/lib/elements";
 import { selectGroupsForSelectedElements } from "@/lib/elements";
 
 import type {
-  DrawinkElement,
-  DrawinkGenericElement,
-  DrawinkTextElement,
-  DrawinkLinearElement,
-  DrawinkFreeDrawElement,
-  DrawinkImageElement,
-  FileId,
-  DrawinkFrameElement,
-  DrawinkElementType,
-  DrawinkMagicFrameElement,
-  DrawinkElbowArrowElement,
   DrawinkArrowElement,
+  DrawinkElbowArrowElement,
+  DrawinkElement,
+  DrawinkElementType,
+  DrawinkFrameElement,
+  DrawinkFreeDrawElement,
+  DrawinkGenericElement,
+  DrawinkImageElement,
+  DrawinkLinearElement,
+  DrawinkMagicFrameElement,
+  DrawinkTextElement,
+  FileId,
   FixedSegment,
 } from "@/lib/elements/types";
 
 import type { Mutable } from "@/lib/common/utility-types";
 
-import { getMimeType } from "../../data/blob";
-import { createTestHook } from "../../components/App";
 import { getDefaultAppState } from "../../appState";
-import { GlobalTestState, createEvent, fireEvent, act } from "../test-utils";
+import { createTestHook } from "../../components/App";
+import { getMimeType } from "../../data/blob";
+import { GlobalTestState, act, createEvent, fireEvent } from "../test-utils";
 
 import type { Action } from "../../actions/types";
 import type App from "../../components/App";
 import type { AppState } from "../../types";
-
 
 const readFile = util.promisify(fs.readFile);
 // so that window.h is available when App.tsx is not imported as well.
@@ -63,10 +62,7 @@ export class API {
       h.app.updateScene(...args);
     });
   };
-  static setAppState: React.Component<any, AppState>["setState"] = (
-    state,
-    cb,
-  ) => {
+  static setAppState: React.Component<any, AppState>["setState"] = (state, cb) => {
     act(() => {
       h.setState(state, cb);
     });
@@ -84,15 +80,18 @@ export class API {
         ...selectGroupsForSelectedElements(
           {
             editingGroupId: editingGroupId ?? null,
-            selectedElementIds: elements.reduce((acc, element) => {
-              acc[element.id] = true;
-              return acc;
-            }, {} as Record<DrawinkElement["id"], true>),
+            selectedElementIds: elements.reduce(
+              (acc, element) => {
+                acc[element.id] = true;
+                return acc;
+              },
+              {} as Record<DrawinkElement["id"], true>,
+            ),
           },
           elements,
           h.state,
           h.app,
-        )
+        ),
       });
     });
   };
@@ -107,8 +106,8 @@ export class API {
   };
 
   static getSelectedElements = (
-    includeBoundTextElement: boolean = false,
-    includeElementsInFrames: boolean = false,
+    includeBoundTextElement = false,
+    includeElementsInFrames = false,
   ): DrawinkElement[] => {
     return getSelectedElements(h.elements, h.state, {
       includeBoundTextElement,
@@ -119,9 +118,7 @@ export class API {
   static getSelectedElement = (): DrawinkElement => {
     const selectedElements = API.getSelectedElements();
     if (selectedElements.length !== 1) {
-      throw new Error(
-        `expected 1 selected element; got ${selectedElements.length}`,
-      );
+      throw new Error(`expected 1 selected element; got ${selectedElements.length}`);
     }
     return selectedElements[0];
   };
@@ -149,12 +146,10 @@ export class API {
   };
 
   static getElement = <T extends DrawinkElement>(element: T): T => {
-    return h.app.scene.getElementsMapIncludingDeleted().get(element.id) as T || element;
-  }
+    return (h.app.scene.getElementsMapIncludingDeleted().get(element.id) as T) || element;
+  };
 
-  static createElement = <
-    T extends Exclude<DrawinkElementType, "selection"> = "rectangle",
-  >({
+  static createElement = <T extends Exclude<DrawinkElementType, "selection"> = "rectangle">({
     // @ts-ignore
     type = "rectangle",
     id,
@@ -191,59 +186,48 @@ export class API {
     fontSize?: T extends "text" ? DrawinkTextElement["fontSize"] : never;
     fontFamily?: T extends "text" ? DrawinkTextElement["fontFamily"] : never;
     textAlign?: T extends "text" ? DrawinkTextElement["textAlign"] : never;
-    verticalAlign?: T extends "text"
-    ? DrawinkTextElement["verticalAlign"]
-    : never;
+    verticalAlign?: T extends "text" ? DrawinkTextElement["verticalAlign"] : never;
     boundElements?: DrawinkGenericElement["boundElements"];
-    containerId?: T extends "text"
-    ? DrawinkTextElement["containerId"]
-    : never;
+    containerId?: T extends "text" ? DrawinkTextElement["containerId"] : never;
     points?: T extends "arrow" | "line" | "freedraw" ? readonly LocalPoint[] : never;
     locked?: boolean;
     fileId?: T extends "image" ? string : never;
     scale?: T extends "image" ? DrawinkImageElement["scale"] : never;
     status?: T extends "image" ? DrawinkImageElement["status"] : never;
     startBinding?: T extends "arrow"
-    ? DrawinkArrowElement["startBinding"] | DrawinkElbowArrowElement["startBinding"]
-    : never;
+      ? DrawinkArrowElement["startBinding"] | DrawinkElbowArrowElement["startBinding"]
+      : never;
     endBinding?: T extends "arrow"
-    ? DrawinkArrowElement["endBinding"] | DrawinkElbowArrowElement["endBinding"]
-    : never;
+      ? DrawinkArrowElement["endBinding"] | DrawinkElbowArrowElement["endBinding"]
+      : never;
     startArrowhead?: T extends "arrow"
-    ? DrawinkArrowElement["startArrowhead"] | DrawinkElbowArrowElement["startArrowhead"]
-    : never;
+      ? DrawinkArrowElement["startArrowhead"] | DrawinkElbowArrowElement["startArrowhead"]
+      : never;
     endArrowhead?: T extends "arrow"
-    ? DrawinkArrowElement["endArrowhead"] | DrawinkElbowArrowElement["endArrowhead"]
-    : never;
+      ? DrawinkArrowElement["endArrowhead"] | DrawinkElbowArrowElement["endArrowhead"]
+      : never;
     elbowed?: boolean;
     fixedSegments?: FixedSegment[] | null;
   }): T extends "arrow" | "line"
     ? DrawinkLinearElement
     : T extends "freedraw"
-    ? DrawinkFreeDrawElement
-    : T extends "text"
-    ? DrawinkTextElement
-    : T extends "image"
-    ? DrawinkImageElement
-    : T extends "frame"
-    ? DrawinkFrameElement
-    : T extends "magicframe"
-    ? DrawinkMagicFrameElement
-    : DrawinkGenericElement => {
+      ? DrawinkFreeDrawElement
+      : T extends "text"
+        ? DrawinkTextElement
+        : T extends "image"
+          ? DrawinkImageElement
+          : T extends "frame"
+            ? DrawinkFrameElement
+            : T extends "magicframe"
+              ? DrawinkMagicFrameElement
+              : DrawinkGenericElement => {
     let element: Mutable<DrawinkElement> = null!;
 
     const appState = h?.state || getDefaultAppState();
 
     const base: Omit<
       DrawinkGenericElement,
-      | "id"
-      | "type"
-      | "version"
-      | "versionNonce"
-      | "isDeleted"
-      | "groupIds"
-      | "link"
-      | "updated"
+      "id" | "type" | "version" | "versionNonce" | "isDeleted" | "groupIds" | "link" | "updated"
     > = {
       seed: 1,
       x,
@@ -254,8 +238,7 @@ export class API {
       index: rest.index ?? null,
       angle: (rest.angle ?? 0) as Radians,
       strokeColor: rest.strokeColor ?? appState.currentItemStrokeColor,
-      backgroundColor:
-        rest.backgroundColor ?? appState.currentItemBackgroundColor,
+      backgroundColor: rest.backgroundColor ?? appState.currentItemBackgroundColor,
       fillStyle: rest.fillStyle ?? appState.currentItemFillStyle,
       strokeWidth: rest.strokeWidth ?? appState.currentItemStrokeWidth,
       strokeStyle: rest.strokeStyle ?? appState.currentItemStrokeStyle,
@@ -265,10 +248,10 @@ export class API {
           : rest.roundness
       )
         ? {
-          type: isLinearElementType(type)
-            ? ROUNDNESS.PROPORTIONAL_RADIUS
-            : ROUNDNESS.ADAPTIVE_RADIUS,
-        }
+            type: isLinearElementType(type)
+              ? ROUNDNESS.PROPORTIONAL_RADIUS
+              : ROUNDNESS.ADAPTIVE_RADIUS,
+          }
         : null,
       roughness: rest.roughness ?? appState.currentItemRoughness,
       opacity: rest.opacity ?? appState.currentItemOpacity,
@@ -325,10 +308,7 @@ export class API {
           width,
           height,
           type,
-          points: rest.points ?? [
-            pointFrom<LocalPoint>(0, 0),
-            pointFrom<LocalPoint>(100, 100),
-          ],
+          points: rest.points ?? [pointFrom<LocalPoint>(0, 0), pointFrom<LocalPoint>(100, 100)],
           elbowed: rest.elbowed ?? false,
         });
         break;
@@ -338,10 +318,7 @@ export class API {
           width,
           height,
           type,
-          points: rest.points ?? [
-            pointFrom<LocalPoint>(0, 0),
-            pointFrom<LocalPoint>(100, 100),
-          ],
+          points: rest.points ?? [pointFrom<LocalPoint>(0, 0), pointFrom<LocalPoint>(100, 100)],
         });
         break;
       case "image":
@@ -362,10 +339,7 @@ export class API {
         element = newMagicFrameElement({ ...base, width, height });
         break;
       default:
-        assertNever(
-          type,
-          `API.createElement: unimplemented element type ${type}}`,
-        );
+        assertNever(type, `API.createElement: unimplemented element type ${type}}`);
         break;
     }
     if (element.type === "arrow") {
@@ -410,20 +384,14 @@ export class API {
       containerId: rectangle.id,
       frameId:
         opts?.label?.frameId === undefined
-          ? opts?.frameId ?? null
-          : opts?.label?.frameId ?? null,
-      groupIds: opts?.label?.groupIds === undefined
-        ? opts?.groupIds
-        : opts?.label?.groupIds,
-
+          ? (opts?.frameId ?? null)
+          : (opts?.label?.frameId ?? null),
+      groupIds: opts?.label?.groupIds === undefined ? opts?.groupIds : opts?.label?.groupIds,
     });
 
-    h.app.scene.mutateElement(
-      rectangle,
-      {
-        boundElements: [{ type: "text", id: text.id }],
-      },
-    );
+    h.app.scene.mutateElement(rectangle, {
+      boundElements: [{ type: "text", id: text.id }],
+    });
 
     return [rectangle, text];
   };
@@ -447,16 +415,13 @@ export class API {
       containerId: arrow.id,
       frameId:
         opts?.label?.frameId === undefined
-          ? opts?.frameId ?? null
-          : opts?.label?.frameId ?? null,
+          ? (opts?.frameId ?? null)
+          : (opts?.label?.frameId ?? null),
     });
 
-    h.app.scene.mutateElement(
-      arrow,
-      {
-        boundElements: [{ type: "text", id: text.id }],
-      },
-    );
+    h.app.scene.mutateElement(arrow, {
+      boundElements: [{ type: "text", id: text.id }],
+    });
 
     return [arrow, text];
   };
@@ -478,13 +443,23 @@ export class API {
     });
   };
 
-  static drop = async (items: ({ kind: "string", value: string, type: string } | { kind: "file", file: File | Blob, type?: string })[]) => {
-
+  static drop = async (
+    items: (
+      | { kind: "string"; value: string; type: string }
+      | { kind: "file"; file: File | Blob; type?: string }
+    )[],
+  ) => {
     const fileDropEvent = createEvent.drop(GlobalTestState.interactiveCanvas);
 
-    const dataTransferFileItems = items.filter(i => i.kind === "file") as { kind: "file", file: File | Blob, type: string }[];
+    const dataTransferFileItems = items.filter((i) => i.kind === "file") as {
+      kind: "file";
+      file: File | Blob;
+      type: string;
+    }[];
 
-    const files = dataTransferFileItems.map(item => item.file) as File[] & { item: (index: number) => File };
+    const files = dataTransferFileItems.map((item) => item.file) as File[] & {
+      item: (index: number) => File;
+    };
     // https://developer.mozilla.org/en-US/docs/Web/API/FileList/item
     files.item = (index: number) => files[index];
 
@@ -514,7 +489,9 @@ export class API {
           return items.find((item) => item.type === "string" && item.type === type) || "";
         },
         // https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/types
-        types: Array.from(new Set(items.map((item) => item.kind === "file" ? "Files" : item.type))),
+        types: Array.from(
+          new Set(items.map((item) => (item.kind === "file" ? "Files" : item.type))),
+        ),
       },
     });
     Object.defineProperty(fileDropEvent, "clientX", {

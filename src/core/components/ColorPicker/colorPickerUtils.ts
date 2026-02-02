@@ -2,7 +2,7 @@ import { MAX_CUSTOM_COLORS_USED_IN_CANVAS } from "@/lib/common";
 
 import type { DrawinkElement } from "@/lib/elements/types";
 
-import type { ColorPickerColor, ColorPaletteCustom } from "@/lib/common";
+import type { ColorPaletteCustom, ColorPickerColor } from "@/lib/common";
 
 import { atom } from "../../editor-jotai";
 
@@ -64,16 +64,14 @@ export const getMostUsedCustomColors = (
       return false;
     }
 
-    const color =
-      element[elementColorTypeMap[type] as "backgroundColor" | "strokeColor"];
+    const color = element[elementColorTypeMap[type] as "backgroundColor" | "strokeColor"];
 
     return isCustomColor({ color, palette });
   });
 
   const colorCountMap = new Map<string, number>();
   colors.forEach((element) => {
-    const color =
-      element[elementColorTypeMap[type] as "backgroundColor" | "strokeColor"];
+    const color = element[elementColorTypeMap[type] as "backgroundColor" | "strokeColor"];
     if (colorCountMap.has(color)) {
       colorCountMap.set(color, colorCountMap.get(color)! + 1);
     } else {
@@ -87,14 +85,8 @@ export const getMostUsedCustomColors = (
     .slice(0, MAX_CUSTOM_COLORS_USED_IN_CANVAS);
 };
 
-export type ActiveColorPickerSectionAtomType =
-  | "custom"
-  | "baseColors"
-  | "shades"
-  | "hex"
-  | null;
-export const activeColorPickerSectionAtom =
-  atom<ActiveColorPickerSectionAtomType>(null);
+export type ActiveColorPickerSectionAtomType = "custom" | "baseColors" | "shades" | "hex" | null;
+export const activeColorPickerSectionAtom = atom<ActiveColorPickerSectionAtomType>(null);
 
 const calculateContrast = (r: number, g: number, b: number): number => {
   const yiq = (r * 299 + g * 587 + b * 114) / 1000;
@@ -136,9 +128,9 @@ export const isColorDark = (color: string, threshold = 160): boolean => {
         .replace(/\)$/, "")
         .replace(/\s/g, "")
         .split(",");
-      const r = parseInt(rgb[0]);
-      const g = parseInt(rgb[1]);
-      const b = parseInt(rgb[2]);
+      const r = Number.parseInt(rgb[0]);
+      const g = Number.parseInt(rgb[1]);
+      const b = Number.parseInt(rgb[2]);
 
       return calculateContrast(r, g, b) < threshold;
     }
@@ -146,14 +138,11 @@ export const isColorDark = (color: string, threshold = 160): boolean => {
     return true;
   }
 
-  const r = parseInt(color.slice(1, 3), 16);
-  const g = parseInt(color.slice(3, 5), 16);
-  const b = parseInt(color.slice(5, 7), 16);
+  const r = Number.parseInt(color.slice(1, 3), 16);
+  const g = Number.parseInt(color.slice(3, 5), 16);
+  const b = Number.parseInt(color.slice(5, 7), 16);
 
   return calculateContrast(r, g, b) < threshold;
 };
 
-export type ColorPickerType =
-  | "canvasBackground"
-  | "elementBackground"
-  | "elementStroke";
+export type ColorPickerType = "canvasBackground" | "elementBackground" | "elementStroke";

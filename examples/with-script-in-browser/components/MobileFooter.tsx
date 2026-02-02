@@ -1,5 +1,3 @@
-import React from "react";
-
 import type * as TDrawink from "@/core";
 import type { DrawinkImperativeAPI } from "@/core/types";
 

@@ -1,47 +1,43 @@
 import { pointFrom, pointRotateRads } from "@/lib/math";
 
-import {
-  elementCenterPoint,
-  getCommonBounds,
-  getElementPointsCoords,
-} from "@/lib/elements";
+import { KEYS, arrayToMap } from "@/lib/common";
+import { elementCenterPoint, getCommonBounds, getElementPointsCoords } from "@/lib/elements";
 import { cropElement } from "@/lib/elements";
 import {
-  getTransformHandles,
-  getTransformHandlesFromCoords,
   OMIT_SIDES_FOR_FRAME,
   OMIT_SIDES_FOR_MULTIPLE_ELEMENTS,
   type TransformHandle,
   type TransformHandleDirection,
+  getTransformHandles,
+  getTransformHandlesFromCoords,
 } from "@/lib/elements";
 import {
-  isLinearElement,
-  isFreeDrawElement,
-  isTextElement,
   isFrameLikeElement,
+  isFreeDrawElement,
+  isLinearElement,
+  isTextElement,
 } from "@/lib/elements";
-import { KEYS, arrayToMap } from "@/lib/common";
 
 import type { GlobalPoint, LocalPoint, Radians } from "@/lib/math";
 
 import type { TransformHandleType } from "@/lib/elements";
 import type {
-  DrawinkElement,
-  DrawinkLinearElement,
-  DrawinkTextElement,
   DrawinkArrowElement,
-  DrawinkRectangleElement,
-  DrawinkEllipseElement,
   DrawinkDiamondElement,
-  DrawinkTextContainer,
-  DrawinkTextElementWithContainer,
+  DrawinkElement,
+  DrawinkEllipseElement,
   DrawinkImageElement,
+  DrawinkLinearElement,
+  DrawinkRectangleElement,
+  DrawinkTextContainer,
+  DrawinkTextElement,
+  DrawinkTextElementWithContainer,
   ElementsMap,
 } from "@/lib/elements/types";
 
 import { createTestHook } from "../../components/App";
-import { getTextEditor, TEXT_EDITOR_SELECTOR } from "../queries/dom";
-import { act, fireEvent, GlobalTestState, screen } from "../test-utils";
+import { TEXT_EDITOR_SELECTOR, getTextEditor } from "../queries/dom";
+import { GlobalTestState, act, fireEvent, screen } from "../test-utils";
 
 import { API } from "./api";
 
@@ -80,10 +76,7 @@ export class Keyboard {
     }
   };
 
-  static keyDown = (
-    key: string,
-    target: HTMLElement | Document | Window = document,
-  ) => {
+  static keyDown = (key: string, target: HTMLElement | Document | Window = document) => {
     fireEvent.keyDown(target, {
       key,
       ctrlKey,
@@ -92,10 +85,7 @@ export class Keyboard {
     });
   };
 
-  static keyUp = (
-    key: string,
-    target: HTMLElement | Document | Window = document,
-  ) => {
+  static keyUp = (key: string, target: HTMLElement | Document | Window = document) => {
     fireEvent.keyUp(target, {
       key,
       ctrlKey,
@@ -155,18 +145,14 @@ const getElementPointForSelection = (
 ): GlobalPoint => {
   const { x, y, width, angle } = element;
   const target = pointFrom<GlobalPoint>(
-    x +
-      (isLinearElement(element) || isFreeDrawElement(element) ? 0 : width / 2),
+    x + (isLinearElement(element) || isFreeDrawElement(element) ? 0 : width / 2),
     y,
   );
   let center: GlobalPoint;
 
   if (isLinearElement(element)) {
     const bounds = getElementPointsCoords(element, element.points);
-    center = pointFrom(
-      (bounds[0] + bounds[2]) / 2,
-      (bounds[1] + bounds[3]) / 2,
-    );
+    center = pointFrom((bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2);
   } else {
     center = elementCenterPoint(element, elementsMap);
   }
@@ -306,10 +292,7 @@ export class Pointer {
       elements.forEach((element) => {
         this.reset();
         this.click(
-          ...getElementPointForSelection(
-            element,
-            h.app.scene.getElementsMapIncludingDeleted(),
-          ),
+          ...getElementPointForSelection(element, h.app.scene.getElementsMapIncludingDeleted()),
         );
       });
     });
@@ -320,10 +303,7 @@ export class Pointer {
   clickOn(element: DrawinkElement) {
     this.reset();
     this.click(
-      ...getElementPointForSelection(
-        element,
-        h.app.scene.getElementsMapIncludingDeleted(),
-      ),
+      ...getElementPointForSelection(element, h.app.scene.getElementsMapIncludingDeleted()),
     );
     this.reset();
   }
@@ -331,10 +311,7 @@ export class Pointer {
   doubleClickOn(element: DrawinkElement) {
     this.reset();
     this.doubleClick(
-      ...getElementPointForSelection(
-        element,
-        h.app.scene.getElementsMapIncludingDeleted(),
-      ),
+      ...getElementPointForSelection(element, h.app.scene.getElementsMapIncludingDeleted()),
     );
     this.reset();
   }
@@ -408,9 +385,7 @@ const proxy = <T extends DrawinkElement>(
     {},
     {
       get(target, prop) {
-        const currentElement = h.elements.find(
-          ({ id }) => id === element.id,
-        ) as any;
+        const currentElement = h.elements.find(({ id }) => id === element.id) as any;
         if (prop === "get") {
           if (currentElement.hasOwnProperty("get")) {
             throw new Error(
@@ -426,24 +401,21 @@ const proxy = <T extends DrawinkElement>(
 };
 
 /** Tools that can be used to draw shapes */
-type DrawingToolName = Exclude<
-  ToolType,
-  "lock" | "selection" | "eraser" | "lasso"
->;
+type DrawingToolName = Exclude<ToolType, "lock" | "selection" | "eraser" | "lasso">;
 
 type Element<T extends DrawingToolName> = T extends "line" | "freedraw"
   ? DrawinkLinearElement
   : T extends "arrow"
-  ? DrawinkArrowElement
-  : T extends "text"
-  ? DrawinkTextElement
-  : T extends "rectangle"
-  ? DrawinkRectangleElement
-  : T extends "ellipse"
-  ? DrawinkEllipseElement
-  : T extends "diamond"
-  ? DrawinkDiamondElement
-  : DrawinkElement;
+    ? DrawinkArrowElement
+    : T extends "text"
+      ? DrawinkTextElement
+      : T extends "rectangle"
+        ? DrawinkRectangleElement
+        : T extends "ellipse"
+          ? DrawinkEllipseElement
+          : T extends "diamond"
+            ? DrawinkDiamondElement
+            : DrawinkElement;
 
 export class UI {
   static clickTool = (toolName: ToolType | "lock") => {
@@ -508,10 +480,7 @@ export class UI {
   } {
     const width = initialWidth ?? initialHeight ?? size;
     const height = initialHeight ?? size;
-    const points: LocalPoint[] = initialPoints ?? [
-      pointFrom(0, 0),
-      pointFrom(width, height),
-    ];
+    const points: LocalPoint[] = initialPoints ?? [pointFrom(0, 0), pointFrom(width, height)];
 
     UI.clickTool(type);
 
@@ -528,9 +497,7 @@ export class UI {
       const firstPoint = points[0];
       mouse.reset();
       mouse.down(x + firstPoint[0], y + firstPoint[1]);
-      points
-        .slice(1)
-        .forEach((point) => mouse.moveTo(x + point[0], y + point[1]));
+      points.slice(1).forEach((point) => mouse.moveTo(x + point[0], y + point[1]));
       mouse.upAt();
       Keyboard.keyPress(KEYS.ESCAPE);
     } else {
@@ -554,8 +521,7 @@ export class UI {
     element: T,
     text: string,
   ) {
-    const openedEditor =
-      document.querySelector<HTMLTextAreaElement>(TEXT_EDITOR_SELECTOR);
+    const openedEditor = document.querySelector<HTMLTextAreaElement>(TEXT_EDITOR_SELECTOR);
 
     if (!openedEditor) {
       mouse.select(element);
@@ -574,9 +540,7 @@ export class UI {
 
     return isTextElement(element)
       ? element
-      : proxy(
-          h.elements[h.elements.length - 1] as DrawinkTextElementWithContainer,
-        );
+      : proxy(h.elements[h.elements.length - 1] as DrawinkTextElementWithContainer);
   }
 
   static updateInput = (input: HTMLInputElement, value: string | number) => {
@@ -658,9 +622,7 @@ export class UI {
   };
 
   static queryStats = () => {
-    return GlobalTestState.renderResult.container.querySelector(
-      ".exc-stats",
-    ) as HTMLElement | null;
+    return GlobalTestState.renderResult.container.querySelector(".exc-stats") as HTMLElement | null;
   };
 
   static queryStatsProperty = (label: string) => {

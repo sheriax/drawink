@@ -1,4 +1,3 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { DEFAULT_SIDEBAR } from "@/lib/common";
@@ -14,10 +13,7 @@ import {
   withDrawinkDimensions,
 } from "../../tests/test-utils";
 
-import {
-  assertDrawinkWithSidebar,
-  assertSidebarDockButton,
-} from "./siderbar.test.helpers";
+import { assertDrawinkWithSidebar, assertSidebarDockButton } from "./siderbar.test.helpers";
 
 const toggleSidebar = (
   ...args: Parameters<typeof window.h.app.toggleSidebar>
@@ -31,9 +27,7 @@ describe("Sidebar", () => {
   describe("General behavior", () => {
     it("should render custom sidebar", async () => {
       const { container } = await render(
-        <Drawink
-          initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}
-        >
+        <Drawink initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}>
           <Sidebar name="customSidebar">
             <div id="test-sidebar-content">42</div>
           </Sidebar>
@@ -46,9 +40,7 @@ describe("Sidebar", () => {
 
     it("should render only one sidebar and prefer the custom one", async () => {
       const { container } = await render(
-        <Drawink
-          initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}
-        >
+        <Drawink initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}>
           <Sidebar name="customSidebar">
             <div id="test-sidebar-content">42</div>
           </Sidebar>
@@ -102,9 +94,7 @@ describe("Sidebar", () => {
 
       // force-toggle sidebar off (=> still hidden)
       // -------------------------------------------------------------------------
-      expect(await toggleSidebar({ name: "customSidebar", force: false })).toBe(
-        false,
-      );
+      expect(await toggleSidebar({ name: "customSidebar", force: false })).toBe(false);
 
       await waitFor(() => {
         const node = container.querySelector("#test-sidebar-content");
@@ -113,12 +103,8 @@ describe("Sidebar", () => {
 
       // force-toggle sidebar on
       // -------------------------------------------------------------------------
-      expect(await toggleSidebar({ name: "customSidebar", force: true })).toBe(
-        true,
-      );
-      expect(await toggleSidebar({ name: "customSidebar", force: true })).toBe(
-        true,
-      );
+      expect(await toggleSidebar({ name: "customSidebar", force: true })).toBe(true);
+      expect(await toggleSidebar({ name: "customSidebar", force: true })).toBe(true);
 
       await waitFor(() => {
         const node = container.querySelector("#test-sidebar-content");
@@ -157,9 +143,7 @@ describe("Sidebar", () => {
   describe("<Sidebar.Header/>", () => {
     it("should render custom sidebar header", async () => {
       const { container } = await render(
-        <Drawink
-          initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}
-        >
+        <Drawink initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}>
           <Sidebar name="customSidebar">
             <Sidebar.Header>
               <div id="test-sidebar-header-content">42</div>
@@ -207,11 +191,7 @@ describe("Sidebar", () => {
               appState: { openSidebar: { name: "customSidebar" } },
             }}
           >
-            <Sidebar
-              name="customSidebar"
-              className="test-sidebar"
-              onStateChange={onStateChange}
-            >
+            <Sidebar name="customSidebar" className="test-sidebar" onStateChange={onStateChange}>
               <Sidebar.Header />
             </Sidebar>
           </Drawink>
@@ -230,9 +210,7 @@ describe("Sidebar", () => {
 
       fireEvent.click(closeButton);
       await waitFor(() => {
-        expect(container.querySelector<HTMLElement>(".test-sidebar")).toBe(
-          null,
-        );
+        expect(container.querySelector<HTMLElement>(".test-sidebar")).toBe(null);
         expect(onStateChange).toHaveBeenCalledWith(null);
       });
     });
@@ -277,15 +255,8 @@ describe("Sidebar", () => {
 
     it("should be user-dockable when both `onDock` and `docked` supplied", async () => {
       await render(
-        <Drawink
-          initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}
-        >
-          <Sidebar
-            name="customSidebar"
-            className="test-sidebar"
-            onDock={() => {}}
-            docked
-          >
+        <Drawink initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}>
+          <Sidebar name="customSidebar" className="test-sidebar" onDock={() => {}} docked>
             <Sidebar.Header />
           </Sidebar>
         </Drawink>,
@@ -301,14 +272,8 @@ describe("Sidebar", () => {
       const mock = jest.spyOn(console, "warn").mockImplementation(() => {});
 
       await render(
-        <Drawink
-          initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}
-        >
-          <Sidebar
-            name="customSidebar"
-            className="test-sidebar"
-            onDock={() => {}}
-          >
+        <Drawink initialData={{ appState: { openSidebar: { name: "customSidebar" } } }}>
+          <Sidebar name="customSidebar" className="test-sidebar" onDock={() => {}}>
             <Sidebar.Header />
           </Sidebar>
         </Drawink>,
@@ -337,49 +302,31 @@ describe("Sidebar", () => {
 
       await withDrawinkDimensions({ width: 1920, height: 1080 }, async () => {
         expect(
-          container.querySelector<HTMLElement>(
-            "[role=tabpanel][data-testid=library]",
-          ),
+          container.querySelector<HTMLElement>("[role=tabpanel][data-testid=library]"),
         ).toBeNull();
 
         // open library sidebar
-        expect(await toggleSidebar({ name: "custom", tab: "library" })).toBe(
-          true,
-        );
+        expect(await toggleSidebar({ name: "custom", tab: "library" })).toBe(true);
         expect(
-          container.querySelector<HTMLElement>(
-            "[role=tabpanel][data-testid=library]",
-          ),
+          container.querySelector<HTMLElement>("[role=tabpanel][data-testid=library]"),
         ).not.toBeNull();
 
         // switch to comments tab
-        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-          true,
-        );
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(true);
         expect(
-          container.querySelector<HTMLElement>(
-            "[role=tabpanel][data-testid=comments]",
-          ),
+          container.querySelector<HTMLElement>("[role=tabpanel][data-testid=comments]"),
         ).not.toBeNull();
 
         // toggle sidebar closed
-        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-          false,
-        );
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(false);
         expect(
-          container.querySelector<HTMLElement>(
-            "[role=tabpanel][data-testid=comments]",
-          ),
+          container.querySelector<HTMLElement>("[role=tabpanel][data-testid=comments]"),
         ).toBeNull();
 
         // toggle sidebar open
-        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(
-          true,
-        );
+        expect(await toggleSidebar({ name: "custom", tab: "comments" })).toBe(true);
         expect(
-          container.querySelector<HTMLElement>(
-            "[role=tabpanel][data-testid=comments]",
-          ),
+          container.querySelector<HTMLElement>("[role=tabpanel][data-testid=comments]"),
         ).not.toBeNull();
       });
     });

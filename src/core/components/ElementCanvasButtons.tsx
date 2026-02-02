@@ -1,10 +1,7 @@
 import { sceneCoordsToViewportCoords } from "@/lib/common";
 import { getElementAbsoluteCoords } from "@/lib/elements";
 
-import type {
-  ElementsMap,
-  NonDeletedDrawinkElement,
-} from "@/lib/elements/types";
+import type { ElementsMap, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { useDrawinkAppState } from "../components/App";
 

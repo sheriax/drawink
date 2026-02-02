@@ -1,5 +1,3 @@
-import React from "react";
-
 import { KEYS } from "@/lib/common";
 
 import { Drawink } from "../index";

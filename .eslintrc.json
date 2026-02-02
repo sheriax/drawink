@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "@drawink/eslint-config",
-    "react-app"
-  ],
+  "extends": ["@drawink/eslint-config", "react-app"],
   "rules": {
     "import/order": [
       "warn",

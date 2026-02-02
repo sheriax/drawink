@@ -2,13 +2,13 @@ import * as Popover from "@radix-ui/react-popover";
 import clsx from "clsx";
 import React, { useEffect } from "react";
 
-import { isArrowKey, KEYS } from "@/lib/common";
+import { KEYS, isArrowKey } from "@/lib/common";
 
 import { atom, useAtom } from "../editor-jotai";
 import { getLanguage, t } from "../i18n";
 
+import { useDrawinkContainer, useEditorInterface } from "./App";
 import Collapsible from "./Stats/Collapsible";
-import { useEditorInterface, useDrawinkContainer } from "./App";
 
 import "./IconPicker.scss";
 
@@ -42,9 +42,7 @@ function Picker<T>({
   const { container } = useDrawinkContainer();
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    const pressedOption = options.find(
-      (option) => option.keyBinding === event.key.toLowerCase(),
-    )!;
+    const pressedOption = options.find((option) => option.keyBinding === event.key.toLowerCase())!;
 
     if (!(event.metaKey || event.altKey || event.ctrlKey) && pressedOption) {
       // Keybinding navigation
@@ -81,8 +79,7 @@ function Picker<T>({
           }
           // Go the previous row
           case KEYS.ARROW_UP: {
-            nextIndex =
-              (length + index - (numberOfOptionsToAlwaysShow ?? 1)) % length;
+            nextIndex = (length + index - (numberOfOptionsToAlwaysShow ?? 1)) % length;
             break;
           }
         }
@@ -128,9 +125,7 @@ function Picker<T>({
             onClick={(event) => {
               onChange(option.value);
             }}
-            title={`${option.text} ${
-              option.keyBinding && `— ${option.keyBinding.toUpperCase()}`
-            }`}
+            title={`${option.text} ${option.keyBinding && `— ${option.keyBinding.toUpperCase()}`}`}
             aria-label={option.text || "none"}
             aria-keyshortcuts={option.keyBinding || undefined}
             key={option.text}
@@ -144,9 +139,7 @@ function Picker<T>({
             }}
           >
             {option.icon}
-            {option.keyBinding && (
-              <span className="picker-keybinding">{option.keyBinding}</span>
-            )}
+            {option.keyBinding && <span className="picker-keybinding">{option.keyBinding}</span>}
           </button>
         ))}
       </div>
@@ -164,12 +157,7 @@ function Picker<T>({
       onKeyDown={handleKeyDown}
       collisionBoundary={container ?? undefined}
     >
-      <div
-        className={`picker`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={label}
-      >
+      <div className={`picker`} role="dialog" aria-modal="true" aria-label={label}>
         {renderOptions(alwaysVisibleOptions)}
 
         {moreOptions.length > 0 && (

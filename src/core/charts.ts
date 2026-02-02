@@ -3,15 +3,15 @@ import { pointFrom } from "@/lib/math";
 import {
   COLOR_PALETTE,
   DEFAULT_CHART_COLOR_INDEX,
-  getAllColorsSpecificShade,
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
   VERTICAL_ALIGN,
-  randomId,
+  getAllColorsSpecificShade,
   isDevEnv,
+  randomId,
 } from "@/lib/common";
 
-import { newTextElement, newLinearElement, newElement } from "@/lib/elements";
+import { newElement, newLinearElement, newTextElement } from "@/lib/elements";
 
 import type { Radians } from "@/lib/math";
 
@@ -45,7 +45,7 @@ export const tryParseNumber = (s: string): number | null => {
   if (!match) {
     return null;
   }
-  return parseFloat(`${(match[1] || match[2]) + match[3]}`.replace(/,/g, ""));
+  return Number.parseFloat(`${(match[1] || match[2]) + match[3]}`.replace(/,/g, ""));
 };
 
 const isNumericColumn = (lines: string[][], columnIndex: number) =>
@@ -67,9 +67,7 @@ export const tryParseCells = (cells: string[][]): ParseSpreadsheetResult => {
     }
 
     const hasHeader = tryParseNumber(cells[0][0]) === null;
-    const values = (hasHeader ? cells.slice(1) : cells).map((line) =>
-      tryParseNumber(line[0]),
-    );
+    const values = (hasHeader ? cells.slice(1) : cells).map((line) => tryParseNumber(line[0]));
 
     if (values.length < 2) {
       return { type: NOT_SPREADSHEET, reason: "Less than two rows" };
@@ -92,9 +90,7 @@ export const tryParseCells = (cells: string[][]): ParseSpreadsheetResult => {
     return { type: NOT_SPREADSHEET, reason: "Value is not numeric" };
   }
 
-  const [labelColumnIndex, valueColumnIndex] = valueColumnNumeric
-    ? [0, 1]
-    : [1, 0];
+  const [labelColumnIndex, valueColumnIndex] = valueColumnNumeric ? [0, 1] : [1, 0];
   const hasHeader = tryParseNumber(cells[0][valueColumnIndex]) === null;
   const rows = hasHeader ? cells.slice(1) : cells;
 
@@ -185,8 +181,7 @@ const commonProps = {
 } as const;
 
 const getChartDimensions = (spreadsheet: Spreadsheet) => {
-  const chartWidth =
-    (BAR_WIDTH + BAR_GAP) * spreadsheet.values.length + BAR_GAP;
+  const chartWidth = (BAR_WIDTH + BAR_GAP) * spreadsheet.values.length + BAR_GAP;
   const chartHeight = BAR_HEIGHT + BAR_GAP * 2;
   return { chartWidth, chartHeight };
 };
@@ -342,11 +337,7 @@ const chartBaseElements = (
   ];
 };
 
-const chartTypeBar = (
-  spreadsheet: Spreadsheet,
-  x: number,
-  y: number,
-): ChartElements => {
+const chartTypeBar = (spreadsheet: Spreadsheet, x: number, y: number): ChartElements => {
   const max = Math.max(...spreadsheet.values);
   const groupId = randomId();
   const backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
@@ -365,24 +356,10 @@ const chartTypeBar = (
     });
   });
 
-  return [
-    ...bars,
-    ...chartBaseElements(
-      spreadsheet,
-      x,
-      y,
-      groupId,
-      backgroundColor,
-      isDevEnv(),
-    ),
-  ];
+  return [...bars, ...chartBaseElements(spreadsheet, x, y, groupId, backgroundColor, isDevEnv())];
 };
 
-const chartTypeLine = (
-  spreadsheet: Spreadsheet,
-  x: number,
-  y: number,
-): ChartElements => {
+const chartTypeLine = (spreadsheet: Spreadsheet, x: number, y: number): ChartElements => {
   const max = Math.max(...spreadsheet.values);
   const groupId = randomId();
   const backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)];
@@ -449,14 +426,7 @@ const chartTypeLine = (
   });
 
   return [
-    ...chartBaseElements(
-      spreadsheet,
-      x,
-      y,
-      groupId,
-      backgroundColor,
-      isDevEnv(),
-    ),
+    ...chartBaseElements(spreadsheet, x, y, groupId, backgroundColor, isDevEnv()),
     line,
     ...lines,
     ...dots,

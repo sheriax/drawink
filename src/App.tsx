@@ -117,7 +117,7 @@ import { useHandleAppTheme } from "./useHandleAppTheme";
 import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
-import { type AuthUser, authStateAtom, cloudEnabledAtom, syncStatusAtom } from "@/core/atoms/auth";
+import { type AuthUser, authStateAtom, cloudEnabledAtom } from "@/core/atoms/auth";
 import { boardsAPIAtom } from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
@@ -436,19 +436,14 @@ const DrawinkWrapper = () => {
       hybridStorageAdapter.enableCloudSync(clerkUser.id, fetchConvexToken);
       editorJotaiStore.set(cloudEnabledAtom, true);
 
-      // Wire up sync status updates
-      hybridStorageAdapter.onSyncStatusChange((status) => {
-        editorJotaiStore.set(syncStatusAtom, status);
-      });
-
       console.log("[Auth] User signed in:", authUser.email);
 
       // Ensure workspace exists after a short delay (give sync engine time to try first)
       setTimeout(() => {
         // Check if sync is in error state or if we should ensure workspace
         const currentStatus = hybridStorageAdapter.getSyncStatus();
-        if (currentStatus === "error") {
-          console.log("[Auth] Sync in error state - ensuring workspace...");
+        if (!currentStatus.isOnline || currentStatus.pendingOperations > 0) {
+          console.log("[Auth] Sync status indicates issues - ensuring workspace...");
           hybridStorageAdapter.ensureWorkspaceAndSync().catch(console.error);
         }
       }, 3000); // Wait 3 seconds for initial sync attempt

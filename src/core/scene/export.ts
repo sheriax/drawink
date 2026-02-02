@@ -2,13 +2,13 @@ import rough from "roughjs/bin/rough";
 
 import {
   DEFAULT_EXPORT_PADDING,
-  FRAME_STYLE,
+  EXPORT_DATA_TYPES,
   FONT_FAMILY,
+  FRAME_STYLE,
+  MIME_TYPES,
   SVG_NS,
   THEME,
   THEME_FILTER,
-  MIME_TYPES,
-  EXPORT_DATA_TYPES,
   arrayToMap,
   distance,
   getFontString,
@@ -17,10 +17,7 @@ import {
 
 import { getCommonBounds, getElementAbsoluteCoords } from "@/lib/elements";
 
-import {
-  getInitializedImageElements,
-  updateImageCache,
-} from "@/lib/elements";
+import { getInitializedImageElements, updateImageCache } from "@/lib/elements";
 
 import { newElementWith } from "@/lib/elements";
 
@@ -35,7 +32,7 @@ import {
 
 import { syncInvalidIndices } from "@/lib/elements";
 
-import { type Mutable } from "@/lib/common/utility-types";
+import type { Mutable } from "@/lib/common/utility-types";
 
 import { newTextElement } from "@/lib/elements";
 
@@ -111,8 +108,7 @@ const addFrameLabelsAsTextElements = (
         y: element.y - FRAME_STYLE.nameOffsetY,
         fontFamily: FONT_FAMILY.Helvetica,
         fontSize: FRAME_STYLE.nameFontSize,
-        lineHeight:
-          FRAME_STYLE.nameLineHeight as DrawinkTextElement["lineHeight"],
+        lineHeight: FRAME_STYLE.nameLineHeight as DrawinkTextElement["lineHeight"],
         strokeColor: opts.exportWithDarkMode
           ? FRAME_STYLE.nameColorDarkTheme
           : FRAME_STYLE.nameColorLightTheme,
@@ -184,10 +180,10 @@ export const exportToCanvas = async (
     viewBackgroundColor: string;
     exportingFrame?: DrawinkFrameLikeElement | null;
   },
-  createCanvas: (
-    width: number,
-    height: number,
-  ) => { canvas: HTMLCanvasElement; scale: number } = (width, height) => {
+  createCanvas: (width: number, height: number) => { canvas: HTMLCanvasElement; scale: number } = (
+    width,
+    height,
+  ) => {
     const canvas = document.createElement("canvas");
     canvas.width = width * appState.exportScale;
     canvas.height = height * appState.exportScale;
@@ -232,18 +228,14 @@ export const exportToCanvas = async (
 
   const { imageCache } = await updateImageCache({
     imageCache: new Map(),
-    fileIds: getInitializedImageElements(elementsForRender).map(
-      (element) => element.fileId,
-    ),
+    fileIds: getInitializedImageElements(elementsForRender).map((element) => element.fileId),
     files,
   });
 
   renderStaticScene({
     canvas,
     rc: rough.canvas(canvas),
-    elementsMap: toBrandedType<RenderableElementsMap>(
-      arrayToMap(elementsForRender),
-    ),
+    elementsMap: toBrandedType<RenderableElementsMap>(arrayToMap(elementsForRender)),
     allElementsMap: toBrandedType<NonDeletedSceneElementsMap>(
       arrayToMap(syncInvalidIndices(elements)),
     ),
@@ -354,10 +346,7 @@ export const exportToSvg = async (
 
   const defsElement = svgRoot.ownerDocument.createElementNS(SVG_NS, "defs");
 
-  const metadataElement = svgRoot.ownerDocument.createElementNS(
-    SVG_NS,
-    "metadata",
-  );
+  const metadataElement = svgRoot.ownerDocument.createElementNS(SVG_NS, "metadata");
 
   svgRoot.appendChild(createHTMLComment("svg-source:drawink"));
   svgRoot.appendChild(metadataElement);
@@ -394,10 +383,7 @@ export const exportToSvg = async (
     const elementsMap = arrayToMap(elements);
 
     for (const frame of frameElements) {
-      const clipPath = svgRoot.ownerDocument.createElementNS(
-        SVG_NS,
-        "clipPath",
-      );
+      const clipPath = svgRoot.ownerDocument.createElementNS(SVG_NS, "clipPath");
 
       clipPath.setAttribute("id", frame.id);
 
@@ -408,9 +394,7 @@ export const exportToSvg = async (
       const rect = svgRoot.ownerDocument.createElementNS(SVG_NS, "rect");
       rect.setAttribute(
         "transform",
-        `translate(${frame.x + offsetX} ${frame.y + offsetY}) rotate(${
-          frame.angle
-        } ${cx} ${cy})`,
+        `translate(${frame.x + offsetX} ${frame.y + offsetY}) rotate(${frame.angle} ${cx} ${cy})`,
       );
       rect.setAttribute("width", `${frame.width}`);
       rect.setAttribute("height", `${frame.height}`);
@@ -438,9 +422,7 @@ export const exportToSvg = async (
 
   const style = svgRoot.ownerDocument.createElementNS(SVG_NS, "style");
   style.classList.add("style-fonts");
-  style.appendChild(
-    document.createTextNode(`${delimiter}${fontFaces.join(delimiter)}`),
-  );
+  style.appendChild(document.createTextNode(`${delimiter}${fontFaces.join(delimiter)}`));
 
   defsElement.appendChild(style);
 
@@ -509,9 +491,7 @@ export const encodeSvgBase64Payload = ({
     true /* is already byte string */,
   );
 
-  metadataElement.appendChild(
-    createHTMLComment(`payload-type:${MIME_TYPES.drawink}`),
-  );
+  metadataElement.appendChild(createHTMLComment(`payload-type:${MIME_TYPES.drawink}`));
   metadataElement.appendChild(createHTMLComment("payload-version:2"));
   metadataElement.appendChild(createHTMLComment("payload-start"));
   metadataElement.appendChild(document.createTextNode(base64));
@@ -520,9 +500,7 @@ export const encodeSvgBase64Payload = ({
 
 export const decodeSvgBase64Payload = ({ svg }: { svg: string }) => {
   if (svg.includes(`payload-type:${MIME_TYPES.drawink}`)) {
-    const match = svg.match(
-      /<!-- payload-start -->\s*(.+?)\s*<!-- payload-end -->/,
-    );
+    const match = svg.match(/<!-- payload-start -->\s*(.+?)\s*<!-- payload-end -->/);
     if (!match) {
       throw new Error("INVALID");
     }
@@ -535,10 +513,7 @@ export const decodeSvgBase64Payload = ({ svg }: { svg: string }) => {
       const encodedData = JSON.parse(json);
       if (!("encoded" in encodedData)) {
         // legacy, un-encoded scene JSON
-        if (
-          "type" in encodedData &&
-          encodedData.type === EXPORT_DATA_TYPES.drawink
-        ) {
+        if ("type" in encodedData && encodedData.type === EXPORT_DATA_TYPES.drawink) {
           return json;
         }
         throw new Error("FAILED");
@@ -569,8 +544,8 @@ export const getExportSize = (
   exportPadding: number,
   scale: number,
 ): [number, number] => {
-  const [, , width, height] = getCanvasSize(elements, exportPadding).map(
-    (dimension) => Math.trunc(dimension * scale),
+  const [, , width, height] = getCanvasSize(elements, exportPadding).map((dimension) =>
+    Math.trunc(dimension * scale),
   );
 
   return [width, height];

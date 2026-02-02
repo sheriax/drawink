@@ -1,5 +1,4 @@
-import { queryByTestId, fireEvent } from "@testing-library/react";
-import React from "react";
+import { fireEvent, queryByTestId } from "@testing-library/react";
 
 import { Drawink } from "../index";
 import { API } from "../tests/helpers/api";

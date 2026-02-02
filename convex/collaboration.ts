@@ -8,10 +8,10 @@
  * - Automatic stale session cleanup
  */
 
-import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { getUserId } from "./users";
 import type { Doc, Id } from "./_generated/dataModel";
+import { type QueryCtx, mutation, query } from "./_generated/server";
+import { getUserId } from "./users";
 
 /**
  * Internal helper to get active users for a board
@@ -22,14 +22,12 @@ import type { Doc, Id } from "./_generated/dataModel";
  */
 async function getActiveUsersInternal(
   ctx: QueryCtx,
-  boardId: Id<"boards">
+  boardId: Id<"boards">,
 ): Promise<Doc<"collaborationSessions">[]> {
   // Get all sessions for this board
   const sessions = await ctx.db
     .query("collaborationSessions")
-    .withIndex("by_board_active", (q) =>
-      q.eq("boardId", boardId).eq("isActive", true)
-    )
+    .withIndex("by_board_active", (q) => q.eq("boardId", boardId).eq("isActive", true))
     .collect();
 
   // Filter out stale sessions (no heartbeat in last 30 seconds)
@@ -38,7 +36,7 @@ async function getActiveUsersInternal(
   const activeThreshold = 30 * 1000; // 30 seconds
 
   const activeSessions = sessions.filter(
-    (session) => now - session.lastHeartbeat < activeThreshold
+    (session) => now - session.lastHeartbeat < activeThreshold,
   );
 
   return activeSessions;
@@ -59,9 +57,7 @@ export const join = mutation({
     // Check if user already has a session for this board
     const existing = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (existing) {
@@ -102,9 +98,7 @@ export const leave = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {
@@ -129,9 +123,7 @@ export const updateCursor = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {
@@ -156,9 +148,7 @@ export const heartbeat = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {

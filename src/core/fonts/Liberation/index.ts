@@ -1,4 +1,4 @@
-import { type DrawinkFontFaceDescriptor } from "../Fonts";
+import type { DrawinkFontFaceDescriptor } from "../Fonts";
 
 import LiberationSansRegular from "./LiberationSans-Regular.woff2";
 

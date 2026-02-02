@@ -1,4 +1,4 @@
-import { promiseTry, LOCAL_FONT_PROTOCOL } from "@/lib/common";
+import { LOCAL_FONT_PROTOCOL, promiseTry } from "@/lib/common";
 
 import { subsetWoff2GlyphsByCodepoints } from "../subset/subset-main";
 
@@ -40,13 +40,10 @@ export class DrawinkFontFace {
       return;
     }
 
-    const codepoints = Array.from(characters).map(
-      (char) => char.codePointAt(0)!,
-    );
+    const codepoints = Array.from(characters).map((char) => char.codePointAt(0)!);
 
     return this.getContent(codepoints).then(
-      (content) =>
-        `@font-face { font-family: ${this.fontFace.family}; src: url(${content}); }`,
+      (content) => `@font-face { font-family: ${this.fontFace.family}; src: url(${content}); }`,
     );
   }
 
@@ -64,10 +61,7 @@ export class DrawinkFontFace {
 
       try {
         const arrayBuffer = await this.fetchFont(url);
-        const base64 = await subsetWoff2GlyphsByCodepoints(
-          arrayBuffer,
-          codePoints,
-        );
+        const base64 = await subsetWoff2GlyphsByCodepoints(arrayBuffer, codePoints);
 
         return base64;
       } catch (e) {
@@ -101,9 +95,7 @@ export class DrawinkFontFace {
 
       if (!response.ok) {
         const urlString = url instanceof URL ? url.toString() : "dataurl";
-        throw new Error(
-          `Failed to fetch "${urlString}": ${response.statusText}`,
-        );
+        throw new Error(`Failed to fetch "${urlString}": ${response.statusText}`);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -151,9 +143,7 @@ export class DrawinkFontFace {
     const urls: URL[] = [];
 
     if (typeof window.EXCALIDRAW_ASSET_PATH === "string") {
-      const normalizedBaseUrl = this.normalizeBaseUrl(
-        window.EXCALIDRAW_ASSET_PATH,
-      );
+      const normalizedBaseUrl = this.normalizeBaseUrl(window.EXCALIDRAW_ASSET_PATH);
 
       urls.push(new URL(assetUrl, normalizedBaseUrl));
     } else if (Array.isArray(window.EXCALIDRAW_ASSET_PATH)) {
@@ -195,10 +185,7 @@ export class DrawinkFontFace {
     // like "/" or "/some/path", or relative (starts with "./"),
     // prepend it with `location.origin`
     if (/^\.?\//.test(result)) {
-      result = new URL(
-        result.replace(/^\.?\/+/, ""),
-        window?.location?.origin,
-      ).toString();
+      result = new URL(result.replace(/^\.?\/+/, ""), window?.location?.origin).toString();
     }
 
     // ensure there is a trailing slash, otherwise url won't be correctly concatenated

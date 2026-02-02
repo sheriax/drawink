@@ -1,5 +1,3 @@
-import React from "react";
-
 import { resolvablePromise } from "@/lib/common";
 
 import { Drawink } from "../index";
@@ -18,9 +16,7 @@ describe("setActiveTool()", () => {
 
   beforeEach(async () => {
     const drawinkAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
-    await render(
-      <Drawink drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)} />,
-    );
+    await render(<Drawink drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)} />);
     drawinkAPI = await drawinkAPIPromise;
   });
 

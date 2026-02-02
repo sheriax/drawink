@@ -4,7 +4,4 @@
  */
 
 // Re-export styles
-import './styles/index.css';
-
-// Placeholder - components will be added as needed
-export {};
+import "./styles/index.css";

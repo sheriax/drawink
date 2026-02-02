@@ -23,5 +23,21 @@
     }
   },
   "include": ["src/**/*", "vite-env.d.ts", "global.d.ts", "vite.config.ts", "convex/**/*"],
-  "exclude": ["node_modules", "dist", "build", "config", "packages", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "**/*.test.helpers.*", "src/**/tests/**", "src/core/tests/**", "src/tests/**", "src/examples/**", "src/scripts/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "config",
+    "packages",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.helpers.*",
+    "src/**/tests/**",
+    "src/core/tests/**",
+    "src/tests/**",
+    "src/examples/**",
+    "src/scripts/**"
+  ]
 }

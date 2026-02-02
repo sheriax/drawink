@@ -1,7 +1,7 @@
 import {
+  CJK_HAND_DRAWN_FALLBACK_FONT,
   FONT_FAMILY,
   FONT_FAMILY_FALLBACKS,
-  CJK_HAND_DRAWN_FALLBACK_FONT,
   WINDOWS_EMOJI_FALLBACK_FONT,
   getFontFamilyFallbacks,
 } from "@/lib/common";
@@ -12,8 +12,8 @@ import { containsCJK } from "@/lib/elements";
 import {
   FONT_METADATA,
   type FontMetadata,
-  getFontString,
   PromisePool,
+  getFontString,
   promiseTry,
 } from "@/lib/common";
 
@@ -21,10 +21,7 @@ import { ShapeCache } from "@/lib/elements";
 
 import { isTextElement } from "@/lib/elements";
 
-import type {
-  DrawinkElement,
-  DrawinkTextElement,
-} from "@/lib/elements/types";
+import type { DrawinkElement, DrawinkTextElement } from "@/lib/elements/types";
 
 import type { ValueOf } from "@/lib/common/utility-types";
 
@@ -32,8 +29,8 @@ import type { Scene } from "@/lib/elements";
 
 import { CascadiaFontFaces } from "./Cascadia";
 import { ComicShannsFontFaces } from "./ComicShanns";
-import { EmojiFontFaces } from "./Emoji";
 import { DrawinkFontFace } from "./DrawinkFontFace";
+import { EmojiFontFaces } from "./Emoji";
 import { ExcalifontFontFaces } from "./Excalifont";
 import { HelveticaFontFaces } from "./Helvetica";
 import { LiberationFontFaces } from "./Liberation";
@@ -49,15 +46,15 @@ export class Fonts {
 
   private static _registered:
     | Map<
-      number,
-      {
-        metadata: FontMetadata;
-        fontFaces: DrawinkFontFace[];
-      }
-    >
+        number,
+        {
+          metadata: FontMetadata;
+          fontFaces: DrawinkFontFace[];
+        }
+      >
     | undefined;
 
-  private static _initialized: boolean = false;
+  private static _initialized = false;
 
   public static get registered() {
     // lazy load the font registration
@@ -66,10 +63,7 @@ export class Fonts {
     } else if (!Fonts._initialized) {
       // case when host app register fonts before they are lazy loaded
       // don't override whatever has been previously registered
-      Fonts._registered = new Map([
-        ...Fonts.init().entries(),
-        ...Fonts._registered.entries(),
-      ]);
+      Fonts._registered = new Map([...Fonts.init().entries(), ...Fonts._registered.entries()]);
     }
 
     return Fonts._registered;
@@ -149,9 +143,7 @@ export class Fonts {
    */
   public loadSceneFonts = async (): Promise<FontFace[]> => {
     const sceneFamilies = this.getSceneFamilies();
-    const charsPerFamily = Fonts.getCharsPerFamily(
-      this.scene.getNonDeletedElements(),
-    );
+    const charsPerFamily = Fonts.getCharsPerFamily(this.scene.getNonDeletedElements());
 
     return Fonts.loadFontFaces(sceneFamilies, charsPerFamily);
   };
@@ -171,9 +163,7 @@ export class Fonts {
   /**
    * Generate CSS @font-face declarations for the given elements.
    */
-  public static async generateFontFaceDeclarations(
-    elements: readonly DrawinkElement[],
-  ) {
+  public static async generateFontFaceDeclarations(elements: readonly DrawinkElement[]) {
     const families = Fonts.getUniqueFamilies(elements);
     const charsPerFamily = Fonts.getCharsPerFamily(elements);
 
@@ -326,11 +316,8 @@ export class Fonts {
     this:
       | Fonts
       | {
-        registered: Map<
-          number,
-          { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }
-        >;
-      },
+          registered: Map<number, { metadata: FontMetadata; fontFaces: DrawinkFontFace[] }>;
+        },
     family: string,
     metadata: FontMetadata,
     ...fontFacesDecriptors: DrawinkFontFaceDescriptor[]
@@ -346,8 +333,7 @@ export class Fonts {
       this.registered.set(fontFamily, {
         metadata,
         fontFaces: fontFacesDecriptors.map(
-          ({ uri, descriptors }) =>
-            new DrawinkFontFace(family, uri, descriptors),
+          ({ uri, descriptors }) => new DrawinkFontFace(family, uri, descriptors),
         ),
       });
     }
@@ -375,8 +361,7 @@ export class Fonts {
         FONT_FAMILY_FALLBACKS[family as keyof typeof FONT_FAMILY_FALLBACKS];
 
       // default to Virgil metrics
-      const metadata =
-        FONT_METADATA[fontFamily] ?? FONT_METADATA[FONT_FAMILY.Virgil];
+      const metadata = FONT_METADATA[fontFamily] ?? FONT_METADATA[FONT_FAMILY.Virgil];
 
       Fonts.register.call(fonts, family, metadata, ...fontFacesDescriptors);
     };
@@ -446,13 +431,8 @@ export class Fonts {
   /**
    * Get characters for a given family.
    */
-  private static getCharacters(
-    charsPerFamily: Record<number, Set<string>>,
-    family: number,
-  ) {
-    return charsPerFamily[family]
-      ? Array.from(charsPerFamily[family]).join("")
-      : "";
+  private static getCharacters(charsPerFamily: Record<number, Set<string>>, family: number) {
+    return charsPerFamily[family] ? Array.from(charsPerFamily[family]).join("") : "";
   }
 
   /**

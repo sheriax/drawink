@@ -15,21 +15,17 @@ import { withInternalFallback } from "../hoc/withInternalFallback";
 import { ArrowRightIcon } from "../icons";
 
 import MermaidToDrawink from "./MermaidToDrawink";
-import TTDDialogTabs from "./TTDDialogTabs";
-import { TTDDialogTabTriggers } from "./TTDDialogTabTriggers";
-import { TTDDialogTabTrigger } from "./TTDDialogTabTrigger";
-import { TTDDialogTab } from "./TTDDialogTab";
 import { TTDDialogInput } from "./TTDDialogInput";
 import { TTDDialogOutput } from "./TTDDialogOutput";
 import { TTDDialogPanel } from "./TTDDialogPanel";
 import { TTDDialogPanels } from "./TTDDialogPanels";
+import { TTDDialogTab } from "./TTDDialogTab";
+import { TTDDialogTabTrigger } from "./TTDDialogTabTrigger";
+import { TTDDialogTabTriggers } from "./TTDDialogTabTriggers";
+import TTDDialogTabs from "./TTDDialogTabs";
 
-import {
-  convertMermaidToDrawink,
-  insertToEditor,
-  saveMermaidDataToStorage,
-} from "./common";
 import { TTDDialogSubmitShortcut } from "./TTDDialogSubmitShortcut";
+import { convertMermaidToDrawink, insertToEditor, saveMermaidDataToStorage } from "./common";
 
 import "./TTDDialog.scss";
 
@@ -55,18 +51,18 @@ type OnTestSubmitRetValue = {
   rateLimit?: number | null;
   rateLimitRemaining?: number | null;
 } & (
-    | { generatedResponse: string | undefined; error?: null | undefined }
-    | {
+  | { generatedResponse: string | undefined; error?: null | undefined }
+  | {
       error: Error;
       generatedResponse?: null | undefined;
     }
-  );
+);
 
 export const TTDDialog = (
   props:
     | {
-      onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
-    }
+        onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
+      }
     | { __fallback: true },
 ) => {
   const appState = useUIAppState();
@@ -89,11 +85,11 @@ export const TTDDialogBase = withInternalFallback(
   }: {
     tab: "text-to-diagram" | "mermaid";
   } & (
-      | {
+    | {
         onTextSubmit(value: string): Promise<OnTestSubmitRetValue>;
       }
-      | { __fallback: true }
-    )) => {
+    | { __fallback: true }
+  )) => {
     const app = useApp();
     const setAppState = useDrawinkSetAppState();
 
@@ -105,9 +101,7 @@ export const TTDDialogBase = withInternalFallback(
 
     const prompt = text.trim();
 
-    const handleTextChange: ChangeEventHandler<HTMLTextAreaElement> = (
-      event,
-    ) => {
+    const handleTextChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
       setText(event.target.value);
       setTtdGeneration((s) => ({
         generatedResponse: s?.generatedResponse ?? null,
@@ -128,18 +122,10 @@ export const TTDDialogBase = withInternalFallback(
         "__fallback" in rest
       ) {
         if (prompt.length < MIN_PROMPT_LENGTH) {
-          setError(
-            new Error(
-              `Prompt is too short (min ${MIN_PROMPT_LENGTH} characters)`,
-            ),
-          );
+          setError(new Error(`Prompt is too short (min ${MIN_PROMPT_LENGTH} characters)`));
         }
         if (prompt.length > MAX_PROMPT_LENGTH) {
-          setError(
-            new Error(
-              `Prompt is too long (max ${MAX_PROMPT_LENGTH} characters)`,
-            ),
-          );
+          setError(new Error(`Prompt is too long (max ${MAX_PROMPT_LENGTH} characters)`));
         }
 
         return;
@@ -183,19 +169,14 @@ export const TTDDialogBase = withInternalFallback(
           });
           trackEvent("ai", "mermaid parse success", "ttd");
         } catch (error: any) {
-          console.info(
-            `%cTTD mermaid render errror: ${error.message}`,
-            "color: red",
-          );
+          console.info(`%cTTD mermaid render errror: ${error.message}`, "color: red");
           console.info(
             `>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nTTD mermaid definition render errror: ${error.message}`,
             "color: yellow",
           );
           trackEvent("ai", "mermaid parse failed", "ttd");
           setError(
-            new Error(
-              "Generated an invalid diagram :(. You may also try a different prompt.",
-            ),
+            new Error("Generated an invalid diagram :(. You may also try a different prompt."),
           );
         }
       } catch (error: any) {
@@ -212,11 +193,10 @@ export const TTDDialogBase = withInternalFallback(
     const refOnGenerate = useRef(onGenerate);
     refOnGenerate.current = onGenerate;
 
-    const [mermaidToDrawinkLib, setMermaidToDrawinkLib] =
-      useState<MermaidToDrawinkLibProps>({
-        loaded: false,
-        api: import("@excalidraw/mermaid-to-excalidraw"),
-      });
+    const [mermaidToDrawinkLib, setMermaidToDrawinkLib] = useState<MermaidToDrawinkLibProps>({
+      loaded: false,
+      api: import("@excalidraw/mermaid-to-excalidraw"),
+    });
 
     useEffect(() => {
       const fn = async () => {
@@ -257,7 +237,7 @@ export const TTDDialogBase = withInternalFallback(
               <TTDDialogTabTrigger
                 tab="text-to-diagram"
                 style={{
-                  cursor: 'not-allowed',
+                  cursor: "not-allowed",
                   opacity: 0.5,
                 }}
                 disabled
@@ -292,9 +272,8 @@ export const TTDDialogBase = withInternalFallback(
           {!("__fallback" in rest) && (
             <TTDDialogTab className="ttd-dialog-content" tab="text-to-diagram">
               <div className="ttd-dialog-desc">
-                Currently we use Mermaid as a middle step, so you'll get best
-                results if you describe a diagram, workflow, flow chart, and
-                similar.
+                Currently we use Mermaid as a middle step, so you'll get best results if you
+                describe a diagram, workflow, flow chart, and similar.
               </div>
               <TTDDialogPanels>
                 <TTDDialogPanel
@@ -306,8 +285,7 @@ export const TTDDialogBase = withInternalFallback(
                   }}
                   onTextSubmitInProgess={onTextSubmitInProgess}
                   panelActionDisabled={
-                    prompt.length > MAX_PROMPT_LENGTH ||
-                    rateLimits?.rateLimitRemaining === 0
+                    prompt.length > MAX_PROMPT_LENGTH || rateLimits?.rateLimitRemaining === 0
                   }
                   renderTopRight={() => {
                     if (!rateLimits) {
@@ -321,9 +299,7 @@ export const TTDDialogBase = withInternalFallback(
                           fontSize: 12,
                           marginLeft: "auto",
                           color:
-                            rateLimits.rateLimitRemaining === 0
-                              ? "var(--color-danger)"
-                              : undefined,
+                            rateLimits.rateLimitRemaining === 0 ? "var(--color-danger)" : undefined,
                         }}
                       >
                         {rateLimits.rateLimitRemaining} requests left today
@@ -338,13 +314,8 @@ export const TTDDialogBase = withInternalFallback(
                           className="drawink-link"
                           style={{ marginLeft: "auto", fontSize: 14 }}
                           onClick={() => {
-                            if (
-                              typeof ttdGeneration?.generatedResponse ===
-                              "string"
-                            ) {
-                              saveMermaidDataToStorage(
-                                ttdGeneration.generatedResponse,
-                              );
+                            if (typeof ttdGeneration?.generatedResponse === "string") {
+                              saveMermaidDataToStorage(ttdGeneration.generatedResponse);
                               setAppState({
                                 openDialog: { name: "ttd", tab: "mermaid" },
                               });
@@ -364,8 +335,7 @@ export const TTDDialogBase = withInternalFallback(
                             marginLeft: "auto",
                             fontSize: 12,
                             fontFamily: "monospace",
-                            color:
-                              ratio > 1 ? "var(--color-danger)" : undefined,
+                            color: ratio > 1 ? "var(--color-danger)" : undefined,
                           }}
                         >
                           Length: {prompt.length}/{MAX_PROMPT_LENGTH}

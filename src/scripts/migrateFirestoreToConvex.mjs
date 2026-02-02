@@ -19,12 +19,12 @@
  *   - Detailed logging of all operations
  */
 
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from "firebase/firestore";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import { ConvexHttpClient } from "convex/browser";
 import { config } from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { initializeApp } from "firebase/app";
+import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 
 // Load environment variables
 const __filename = fileURLToPath(import.meta.url);
@@ -116,12 +116,7 @@ async function migrateWorkspace(firestoreWorkspaceId, workspaceData) {
 /**
  * Migrate a single board
  */
-async function migrateBoard(
-  firestoreWorkspaceId,
-  convexWorkspaceId,
-  firestoreBoardId,
-  boardData
-) {
+async function migrateBoard(firestoreWorkspaceId, convexWorkspaceId, firestoreBoardId, boardData) {
   stats.boards.attempted++;
 
   try {
@@ -156,11 +151,7 @@ async function migrateBoard(
 /**
  * Migrate board content (encrypted elements and appState)
  */
-async function migrateBoardContent(
-  firestoreWorkspaceId,
-  firestoreBoardId,
-  convexBoardId
-) {
+async function migrateBoardContent(firestoreWorkspaceId, firestoreBoardId, convexBoardId) {
   stats.boardContent.attempted++;
 
   try {
@@ -172,7 +163,7 @@ async function migrateBoardContent(
       "boards",
       firestoreBoardId,
       "content",
-      "current"
+      "current",
     );
 
     const contentSnap = await getDoc(contentRef);
@@ -256,7 +247,7 @@ async function migrate() {
           workspaceId,
           convexWorkspaceId,
           boardId,
-          boardData
+          boardData,
         );
 
         if (!convexBoardId) {
@@ -273,7 +264,6 @@ async function migrate() {
 
     // Step 5: Print migration report
     printMigrationReport();
-
   } catch (error) {
     log("💥 Migration failed with fatal error:", error.message);
     console.error(error);

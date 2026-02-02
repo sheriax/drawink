@@ -1,4 +1,5 @@
-import React, { useLayoutEffect, useRef, useEffect } from "react";
+import type React from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { unstable_batchedUpdates } from "react-dom";
 
 import { KEYS, queryFocusableElements } from "@/lib/common";
@@ -53,9 +54,7 @@ export const Popover = ({
       if (event.key === KEYS.TAB) {
         const focusableElements = queryFocusableElements(container);
         const { activeElement } = document;
-        const currentIndex = focusableElements.findIndex(
-          (element) => element === activeElement,
-        );
+        const currentIndex = focusableElements.findIndex((element) => element === activeElement);
 
         if (activeElement === container) {
           if (event.shiftKey) {
@@ -69,10 +68,7 @@ export const Popover = ({
           focusableElements[focusableElements.length - 1]?.focus();
           event.preventDefault();
           event.stopImmediatePropagation();
-        } else if (
-          currentIndex === focusableElements.length - 1 &&
-          !event.shiftKey
-        ) {
+        } else if (currentIndex === focusableElements.length - 1 && !event.shiftKey) {
           focusableElements[0]?.focus();
           event.preventDefault();
           event.stopImmediatePropagation();
@@ -85,9 +81,7 @@ export const Popover = ({
     return () => container.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const lastInitializedPosRef = useRef<{ top: number; left: number } | null>(
-    null,
-  );
+  const lastInitializedPosRef = useRef<{ top: number; left: number } | null>(null);
 
   // ensure the popover doesn't overflow the viewport
   useLayoutEffect(() => {
@@ -127,15 +121,7 @@ export const Popover = ({
         container.style.top = `${top}px`;
       }
     }
-  }, [
-    top,
-    left,
-    fitInViewport,
-    viewportWidth,
-    viewportHeight,
-    offsetLeft,
-    offsetTop,
-  ]);
+  }, [top, left, fitInViewport, viewportWidth, viewportHeight, offsetLeft, offsetTop]);
 
   useEffect(() => {
     if (onCloseRequest) {

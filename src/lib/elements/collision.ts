@@ -19,7 +19,6 @@ import type { Curve, GlobalPoint, LineSegment, Radians } from "@/lib/math";
 
 import type { FrameNameBounds } from "@/core/types";
 
-import { isPathALoop } from "./utils";
 import {
   type Bounds,
   doBoundsIntersect,
@@ -40,6 +39,7 @@ import {
   isLinearElement,
   isTextElement,
 } from "./typeChecks";
+import { isPathALoop } from "./utils";
 import {
   deconstructDiamondElement,
   deconstructLinearOrFreeDrawElement,
@@ -53,7 +53,6 @@ import { LinearElementEditor } from "./linearElementEditor";
 import { distanceToElement } from "./distance";
 
 import type {
-  ElementsMap,
   DrawinkBindableElement,
   DrawinkDiamondElement,
   DrawinkElement,
@@ -61,6 +60,7 @@ import type {
   DrawinkFreeDrawElement,
   DrawinkLinearElement,
   DrawinkRectanguloidElement,
+  ElementsMap,
   NonDeleted,
   NonDeletedDrawinkElement,
   NonDeletedSceneElementsMap,
@@ -122,11 +122,7 @@ export const hitElementItself = ({
   const bounds = getElementBounds(element, elementsMap, true);
   const hitBounds = isPointWithinBounds(
     pointFrom(bounds[0] - threshold, bounds[1] - threshold),
-    pointRotateRads(
-      point,
-      getCenterForBounds(bounds),
-      -element.angle as Radians,
-    ),
+    pointRotateRads(point, getCenterForBounds(bounds), -element.angle as Radians),
     pointFrom(bounds[2] + threshold, bounds[3] + threshold),
   );
 
@@ -137,9 +133,7 @@ export const hitElementItself = ({
   }
 
   // Do the precise (and relatively costly) hit test
-  const hitElement = (
-    overrideShouldTestInside ? true : shouldTestInside(element)
-  )
+  const hitElement = (overrideShouldTestInside ? true : shouldTestInside(element))
     ? // Since `inShape` tests STRICTLY againt the insides of a shape
       // we would need `onShape` as well to include the "borders"
       isPointInElement(point, element, elementsMap) ||
@@ -163,10 +157,7 @@ export const hitElementBoundingBox = (
   return isPointWithinBounds(pointFrom(x1, y1), point, pointFrom(x2, y2));
 };
 
-export const hitElementBoundingBoxOnly = (
-  hitArgs: HitTestArgs,
-  elementsMap: ElementsMap,
-) =>
+export const hitElementBoundingBoxOnly = (hitArgs: HitTestArgs, elementsMap: ElementsMap) =>
   !hitElementItself(hitArgs) &&
   // bound text is considered part of the element (even if it's outside the bounding box)
   !hitElementBoundText(hitArgs.point, hitArgs.element, elementsMap) &&
@@ -202,7 +193,7 @@ const bindingBorderTest = (
   element: NonDeleted<DrawinkBindableElement>,
   [x, y]: Readonly<GlobalPoint>,
   elementsMap: NonDeletedSceneElementsMap,
-  tolerance: number = 0,
+  tolerance = 0,
 ): boolean => {
   const p = pointFrom<GlobalPoint>(x, y);
   const shouldTestInside =
@@ -223,10 +214,7 @@ const bindingBorderTest = (
   if (element.frameId) {
     const enclosingFrame = elementsMap.get(element.frameId);
     if (enclosingFrame && isFrameLikeElement(enclosingFrame)) {
-      const enclosingFrameBounds = getElementBounds(
-        enclosingFrame,
-        elementsMap,
-      );
+      const enclosingFrameBounds = getElementBounds(enclosingFrame, elementsMap);
       if (!pointInsideBounds(p, enclosingFrameBounds)) {
         return false;
       }
@@ -285,12 +273,7 @@ export const getHoveredElementForBinding = (
   elementsMap: NonDeletedSceneElementsMap,
   toleranceFn?: (element: DrawinkBindableElement) => number,
 ): NonDeleted<DrawinkBindableElement> | null => {
-  const candidateElements = getAllHoveredElementAtPoint(
-    point,
-    elements,
-    elementsMap,
-    toleranceFn,
-  );
+  const candidateElements = getAllHoveredElementAtPoint(point, elements, elementsMap, toleranceFn);
 
   if (!candidateElements || candidateElements.length === 0) {
     return null;
@@ -302,9 +285,7 @@ export const getHoveredElementForBinding = (
 
   // Prefer smaller shapes
   return candidateElements
-    .sort(
-      (a, b) => b.width ** 2 + b.height ** 2 - (a.width ** 2 + a.height ** 2),
-    )
+    .sort((a, b) => b.width ** 2 + b.height ** 2 - (a.width ** 2 + a.height ** 2))
     .pop() as NonDeleted<DrawinkBindableElement>;
 };
 
@@ -320,7 +301,7 @@ export const intersectElementWithLineSegment = (
   element: DrawinkElement,
   elementsMap: ElementsMap,
   line: LineSegment<GlobalPoint>,
-  offset: number = 0,
+  offset = 0,
   onlyFirst = false,
 ): GlobalPoint[] => {
   // First check if the line intersects the element's axis-aligned bounding box
@@ -347,28 +328,11 @@ export const intersectElementWithLineSegment = (
     case "frame":
     case "selection":
     case "magicframe":
-      return intersectRectanguloidWithLineSegment(
-        element,
-        elementsMap,
-        line,
-        offset,
-        onlyFirst,
-      );
+      return intersectRectanguloidWithLineSegment(element, elementsMap, line, offset, onlyFirst);
     case "diamond":
-      return intersectDiamondWithLineSegment(
-        element,
-        elementsMap,
-        line,
-        offset,
-        onlyFirst,
-      );
+      return intersectDiamondWithLineSegment(element, elementsMap, line, offset, onlyFirst);
     case "ellipse":
-      return intersectEllipseWithLineSegment(
-        element,
-        elementsMap,
-        line,
-        offset,
-      );
+      return intersectEllipseWithLineSegment(element, elementsMap, line, offset);
     case "line":
     case "freedraw":
     case "arrow":
@@ -489,22 +453,14 @@ const intersectRectanguloidWithLineSegment = (
   element: DrawinkRectanguloidElement,
   elementsMap: ElementsMap,
   segment: LineSegment<GlobalPoint>,
-  offset: number = 0,
+  offset = 0,
   onlyFirst = false,
 ): GlobalPoint[] => {
   const center = elementCenterPoint(element, elementsMap);
   // To emulate a rotated rectangle we rotate the point in the inverse angle
   // instead. It's all the same distance-wise.
-  const rotatedA = pointRotateRads<GlobalPoint>(
-    segment[0],
-    center,
-    -element.angle as Radians,
-  );
-  const rotatedB = pointRotateRads<GlobalPoint>(
-    segment[1],
-    center,
-    -element.angle as Radians,
-  );
+  const rotatedA = pointRotateRads<GlobalPoint>(segment[0], center, -element.angle as Radians);
+  const rotatedB = pointRotateRads<GlobalPoint>(segment[1], center, -element.angle as Radians);
   const rotatedIntersector = lineSegment(rotatedA, rotatedB);
 
   // Get the element's building components we can test against
@@ -512,27 +468,13 @@ const intersectRectanguloidWithLineSegment = (
 
   const intersections: GlobalPoint[] = [];
 
-  lineIntersections(
-    sides,
-    rotatedIntersector,
-    intersections,
-    center,
-    element.angle,
-    onlyFirst,
-  );
+  lineIntersections(sides, rotatedIntersector, intersections, center, element.angle, onlyFirst);
 
   if (onlyFirst && intersections.length > 0) {
     return intersections;
   }
 
-  curveIntersections(
-    corners,
-    rotatedIntersector,
-    intersections,
-    center,
-    element.angle,
-    onlyFirst,
-  );
+  curveIntersections(corners, rotatedIntersector, intersections, center, element.angle, onlyFirst);
 
   return intersections;
 };
@@ -548,7 +490,7 @@ const intersectDiamondWithLineSegment = (
   element: DrawinkDiamondElement,
   elementsMap: ElementsMap,
   l: LineSegment<GlobalPoint>,
-  offset: number = 0,
+  offset = 0,
   onlyFirst = false,
 ): GlobalPoint[] => {
   const center = elementCenterPoint(element, elementsMap);
@@ -562,27 +504,13 @@ const intersectDiamondWithLineSegment = (
   const [sides, corners] = deconstructDiamondElement(element, offset);
   const intersections: GlobalPoint[] = [];
 
-  lineIntersections(
-    sides,
-    rotatedIntersector,
-    intersections,
-    center,
-    element.angle,
-    onlyFirst,
-  );
+  lineIntersections(sides, rotatedIntersector, intersections, center, element.angle, onlyFirst);
 
   if (onlyFirst && intersections.length > 0) {
     return intersections;
   }
 
-  curveIntersections(
-    corners,
-    rotatedIntersector,
-    intersections,
-    center,
-    element.angle,
-    onlyFirst,
-  );
+  curveIntersections(corners, rotatedIntersector, intersections, center, element.angle, onlyFirst);
 
   return intersections;
 };
@@ -598,7 +526,7 @@ const intersectEllipseWithLineSegment = (
   element: DrawinkEllipseElement,
   elementsMap: ElementsMap,
   l: LineSegment<GlobalPoint>,
-  offset: number = 0,
+  offset = 0,
 ): GlobalPoint[] => {
   const center = elementCenterPoint(element, elementsMap);
 
@@ -638,10 +566,7 @@ export const isPointInElement = (
   element: DrawinkElement,
   elementsMap: ElementsMap,
 ) => {
-  if (
-    (isLinearElement(element) || isFreeDrawElement(element)) &&
-    !isPathALoop(element.points)
-  ) {
+  if ((isLinearElement(element) || isFreeDrawElement(element)) && !isPathALoop(element.points)) {
     // There isn't any "inside" for a non-looping path
     return false;
   }
@@ -661,11 +586,9 @@ export const isPointInElement = (
     center,
   );
   const intersector = lineSegment(point, otherPoint);
-  const intersections = intersectElementWithLineSegment(
-    element,
-    elementsMap,
-    intersector,
-  ).filter((p, pos, arr) => arr.findIndex((q) => pointsEqual(q, p)) === pos);
+  const intersections = intersectElementWithLineSegment(element, elementsMap, intersector).filter(
+    (p, pos, arr) => arr.findIndex((q) => pointsEqual(q, p)) === pos,
+  );
 
   return intersections.length % 2 === 1;
 };
@@ -676,10 +599,7 @@ export const isBindableElementInsideOtherBindable = (
   elementsMap: ElementsMap,
 ): boolean => {
   // Get corner points of the inner element based on its type
-  const getCornerPoints = (
-    element: DrawinkElement,
-    offset: number,
-  ): GlobalPoint[] => {
+  const getCornerPoints = (element: DrawinkElement, offset: number): GlobalPoint[] => {
     const { x, y, width, height, angle } = element;
     const center = elementCenterPoint(element, elementsMap);
 
@@ -723,7 +643,5 @@ export const isBindableElementInsideOtherBindable = (
   const innerCorners = getCornerPoints(innerElement, offset);
 
   // Check if all corner points of the inner element are inside the outer element
-  return innerCorners.every((corner) =>
-    isPointInElement(corner, outerElement, elementsMap),
-  );
+  return innerCorners.every((corner) => isPointInElement(corner, outerElement, elementsMap));
 };

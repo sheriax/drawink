@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 import { Drawink } from "../..";
 import {
@@ -15,10 +15,7 @@ export const assertSidebarDockButton = async <T extends boolean>(
     ? { dockButton: null; sidebar: HTMLElement }
     : { dockButton: HTMLElement; sidebar: HTMLElement }
 > => {
-  const sidebar =
-    GlobalTestState.renderResult.container.querySelector<HTMLElement>(
-      ".sidebar",
-    );
+  const sidebar = GlobalTestState.renderResult.container.querySelector<HTMLElement>(".sidebar");
   expect(sidebar).not.toBe(null);
   const dockButton = queryByTestId(sidebar!, "sidebar-dock");
   if (hasDockButton) {
@@ -34,10 +31,6 @@ export const assertDrawinkWithSidebar = async (
   name: string,
   test: () => void,
 ) => {
-  await render(
-    <Drawink initialData={{ appState: { openSidebar: { name } } }}>
-      {sidebar}
-    </Drawink>,
-  );
+  await render(<Drawink initialData={{ appState: { openSidebar: { name } } }}>{sidebar}</Drawink>);
   await withDrawinkDimensions({ width: 1920, height: 1080 }, test);
 };

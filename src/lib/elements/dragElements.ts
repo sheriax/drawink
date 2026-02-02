@@ -1,8 +1,8 @@
 import {
-  TEXT_AUTOWRAP_THRESHOLD,
-  getGridPoint,
-  getFontString,
   DRAGGING_THRESHOLD,
+  TEXT_AUTOWRAP_THRESHOLD,
+  getFontString,
+  getGridPoint,
 } from "@/lib/common";
 
 import type {
@@ -56,9 +56,7 @@ export const dragSelectedElements = (
       const startElement = _selectedElements.find(
         (el) => el.id === element.startBinding?.elementId,
       );
-      const endElement = _selectedElements.find(
-        (el) => el.id === element.endBinding?.elementId,
-      );
+      const endElement = _selectedElements.find((el) => el.id === element.endBinding?.elementId);
 
       return startElement && endElement;
     }
@@ -70,9 +68,7 @@ export const dragSelectedElements = (
   // but when it happens (due to some bug), we want to avoid updating element
   // in the frame twice, hence the use of set
   const elementsToUpdate = new Set<NonDeletedDrawinkElement>(selectedElements);
-  const frames = selectedElements
-    .filter((e) => isFrameLikeElement(e))
-    .map((f) => f.id);
+  const frames = selectedElements.filter((e) => isFrameLikeElement(e)).map((f) => f.id);
 
   if (frames.length > 0) {
     for (const element of scene.getNonDeletedElements()) {
@@ -101,38 +97,24 @@ export const dragSelectedElements = (
     gridSize,
   );
 
-  const elementsToUpdateIds = new Set(
-    Array.from(elementsToUpdate, (el) => el.id),
-  );
+  const elementsToUpdateIds = new Set(Array.from(elementsToUpdate, (el) => el.id));
 
   elementsToUpdate.forEach((element) => {
     const isArrow = !isArrowElement(element);
     const isStartBoundElementSelected =
       isArrow ||
-      (element.startBinding
-        ? elementsToUpdateIds.has(element.startBinding.elementId)
-        : false);
+      (element.startBinding ? elementsToUpdateIds.has(element.startBinding.elementId) : false);
     const isEndBoundElementSelected =
       isArrow ||
-      (element.endBinding
-        ? elementsToUpdateIds.has(element.endBinding.elementId)
-        : false);
+      (element.endBinding ? elementsToUpdateIds.has(element.endBinding.elementId) : false);
 
     if (!isArrowElement(element)) {
       updateElementCoords(pointerDownState, element, scene, adjustedOffset);
 
       // skip arrow labels since we calculate its position during render
-      const textElement = getBoundTextElement(
-        element,
-        scene.getNonDeletedElementsMap(),
-      );
+      const textElement = getBoundTextElement(element, scene.getNonDeletedElementsMap());
       if (textElement) {
-        updateElementCoords(
-          pointerDownState,
-          textElement,
-          scene,
-          adjustedOffset,
-        );
+        updateElementCoords(pointerDownState, textElement, scene, adjustedOffset);
       }
       updateBoundElements(element, scene, {
         simultaneouslyUpdated: Array.from(elementsToUpdate),
@@ -143,14 +125,12 @@ export const dragSelectedElements = (
       // the arrow when the user just wants to select it.
 
       elementsToUpdate.size > 1 ||
-      Math.max(Math.abs(adjustedOffset.x), Math.abs(adjustedOffset.y)) >
-        DRAGGING_THRESHOLD ||
+      Math.max(Math.abs(adjustedOffset.x), Math.abs(adjustedOffset.y)) > DRAGGING_THRESHOLD ||
       (!element.startBinding && !element.endBinding)
     ) {
       updateElementCoords(pointerDownState, element, scene, adjustedOffset);
 
-      const shouldUnbindStart =
-        element.startBinding && !isStartBoundElementSelected;
+      const shouldUnbindStart = element.startBinding && !isStartBoundElementSelected;
       const shouldUnbindEnd = element.endBinding && !isEndBoundElementSelected;
       if (shouldUnbindStart || shouldUnbindEnd) {
         // NOTE: Moving the bound arrow should unbind it, otherwise we would
@@ -179,11 +159,7 @@ const calculateOffset = (
   let nextY = y + dragOffset.y + snapOffset.y;
 
   if (snapOffset.x === 0 || snapOffset.y === 0) {
-    const [nextGridX, nextGridY] = getGridPoint(
-      x + dragOffset.x,
-      y + dragOffset.y,
-      gridSize,
-    );
+    const [nextGridX, nextGridY] = getGridPoint(x + dragOffset.x, y + dragOffset.y, gridSize);
 
     if (snapOffset.x === 0) {
       nextX = nextGridX;
@@ -205,8 +181,7 @@ const updateElementCoords = (
   scene: Scene,
   dragOffset: { x: number; y: number },
 ) => {
-  const originalElement =
-    pointerDownState.originalElements.get(element.id) ?? element;
+  const originalElement = pointerDownState.originalElements.get(element.id) ?? element;
 
   const nextX = originalElement.x + dragOffset.x;
   const nextY = originalElement.y + dragOffset.y;

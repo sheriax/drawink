@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 import { THEME } from "@/lib/common";
 
@@ -7,10 +8,7 @@ import type { ValueOf } from "@/lib/common/utility-types";
 import { useDrawinkAppState } from "../App";
 
 import MenuItemContent from "./DropdownMenuItemContent";
-import {
-  getDropdownMenuItemClassName,
-  useHandleDropdownMenuItemClick,
-} from "./common";
+import { getDropdownMenuItemClassName, useHandleDropdownMenuItemClick } from "./common";
 
 import type { JSX } from "react";
 

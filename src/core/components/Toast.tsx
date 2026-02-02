@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import { CloseIcon } from "./icons";
 import { ToolButton } from "./ToolButton";
+import { CloseIcon } from "./icons";
 
 import "./Toast.scss";
 
@@ -24,7 +24,7 @@ export const Toast = ({
   style?: CSSProperties;
 }) => {
   const timerRef = useRef<number>(0);
-  const shouldAutoClose = duration !== Infinity;
+  const shouldAutoClose = duration !== Number.POSITIVE_INFINITY;
   const scheduleTimeout = useCallback(() => {
     if (!shouldAutoClose) {
       return;
@@ -40,17 +40,10 @@ export const Toast = ({
     return () => clearTimeout(timerRef.current);
   }, [scheduleTimeout, message, duration, shouldAutoClose]);
 
-  const onMouseEnter = shouldAutoClose
-    ? () => clearTimeout(timerRef?.current)
-    : undefined;
+  const onMouseEnter = shouldAutoClose ? () => clearTimeout(timerRef?.current) : undefined;
   const onMouseLeave = shouldAutoClose ? scheduleTimeout : undefined;
   return (
-    <div
-      className="Toast"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      style={style}
-    >
+    <div className="Toast" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style}>
       <p className="Toast__message">{message}</p>
       {closable && (
         <ToolButton

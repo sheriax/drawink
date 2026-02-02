@@ -7,12 +7,7 @@ import {
   isLinearElement,
   isTextElement,
 } from "@/lib/elements";
-import {
-  rangeIncludesValue,
-  pointFrom,
-  pointRotateRads,
-  rangeInclusive,
-} from "@/lib/math";
+import { pointFrom, pointRotateRads, rangeIncludesValue, rangeInclusive } from "@/lib/math";
 
 import type { Bounds } from "@/lib/elements";
 import type {
@@ -31,12 +26,7 @@ type Points = readonly LocalPoint[];
 /** @returns vertices relative to element's top-left [0,0] position  */
 const getNonLinearElementRelativePoints = (
   element: Exclude<Element, DrawinkLinearElement | DrawinkFreeDrawElement>,
-): [
-  TopLeft: LocalPoint,
-  TopRight: LocalPoint,
-  BottomRight: LocalPoint,
-  BottomLeft: LocalPoint,
-] => {
+): [TopLeft: LocalPoint, TopRight: LocalPoint, BottomRight: LocalPoint, BottomLeft: LocalPoint] => {
   if (element.type === "diamond") {
     return [
       pointFrom(element.width / 2, 0),
@@ -73,10 +63,10 @@ const getMinMaxPoints = (points: Points) => {
       return limits;
     },
     {
-      minX: Infinity,
-      minY: Infinity,
-      maxX: -Infinity,
-      maxY: -Infinity,
+      minX: Number.POSITIVE_INFINITY,
+      minY: Number.POSITIVE_INFINITY,
+      maxX: Number.NEGATIVE_INFINITY,
+      maxY: Number.NEGATIVE_INFINITY,
       cx: 0,
       cy: 0,
     },
@@ -94,17 +84,10 @@ const getRotatedBBox = (element: Element): Bounds => {
   const { cx, cy } = getMinMaxPoints(points);
   const centerPoint = pointFrom<LocalPoint>(cx, cy);
 
-  const rotatedPoints = points.map((p) =>
-    pointRotateRads(p, centerPoint, element.angle),
-  );
+  const rotatedPoints = points.map((p) => pointRotateRads(p, centerPoint, element.angle));
   const { minX, minY, maxX, maxY } = getMinMaxPoints(rotatedPoints);
 
-  return [
-    minX + element.x,
-    minY + element.y,
-    maxX + element.x,
-    maxY + element.y,
-  ];
+  return [minX + element.x, minY + element.y, maxX + element.x, maxY + element.y];
 };
 
 export const isElementInsideBBox = (
@@ -144,15 +127,9 @@ export const elementPartiallyOverlapsWithOrContainsBBox = (
 
   return (
     (rangeIncludesValue(elementBBox[0], rangeInclusive(bbox[0], bbox[2])) ||
-      rangeIncludesValue(
-        bbox[0],
-        rangeInclusive(elementBBox[0], elementBBox[2]),
-      )) &&
+      rangeIncludesValue(bbox[0], rangeInclusive(elementBBox[0], elementBBox[2]))) &&
     (rangeIncludesValue(elementBBox[1], rangeInclusive(bbox[1], bbox[3])) ||
-      rangeIncludesValue(
-        bbox[1],
-        rangeInclusive(elementBBox[1], elementBBox[3]),
-      ))
+      rangeIncludesValue(bbox[1], rangeInclusive(elementBBox[1], elementBBox[3])))
   );
 };
 
@@ -194,8 +171,8 @@ export const elementsOverlappingBBox = ({
       type === "overlap"
         ? elementPartiallyOverlapsWithOrContainsBBox(element, adjustedBBox)
         : type === "inside"
-        ? isElementInsideBBox(element, adjustedBBox)
-        : isElementInsideBBox(element, adjustedBBox, true);
+          ? isElementInsideBBox(element, adjustedBBox)
+          : isElementInsideBBox(element, adjustedBBox, true);
 
     if (isOverlaping) {
       includedElementSet.add(element.id);

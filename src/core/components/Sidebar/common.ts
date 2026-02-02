@@ -1,7 +1,7 @@
 import React from "react";
 
-import type { AppState, SidebarName, SidebarTabName } from "../../types";
 import type { JSX } from "react";
+import type { AppState, SidebarName, SidebarTabName } from "../../types";
 
 export type SidebarTriggerProps = {
   name: SidebarName;
@@ -34,10 +34,11 @@ export type SidebarProps<P = {}> = {
   __fallback?: boolean;
 } & P;
 
-export type SidebarPropsContextValue = Pick<
-  SidebarProps,
-  "onDock" | "docked"
-> & { onCloseRequest: () => void; shouldRenderDockButton: boolean };
+export type SidebarPropsContextValue = Pick<SidebarProps, "onDock" | "docked"> & {
+  onCloseRequest: () => void;
+  shouldRenderDockButton: boolean;
+};
 
-export const SidebarPropsContext =
-  React.createContext<SidebarPropsContextValue>({} as SidebarPropsContextValue);
+export const SidebarPropsContext = React.createContext<SidebarPropsContextValue>(
+  {} as SidebarPropsContextValue,
+);

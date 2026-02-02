@@ -19,10 +19,10 @@
  *   - Detailed logging of all operations
  */
 
-import { getFirestoreInstance } from "../data/firebase";
-import { collection, getDocs, doc, getDoc, query, where, orderBy } from "firebase/firestore";
 import { ConvexHttpClient } from "convex/browser";
+import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { api } from "../../convex/_generated/api";
+import { getFirestoreInstance } from "../data/firebase";
 
 // Initialize Convex client
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
@@ -110,7 +110,7 @@ async function migrateBoard(
   firestoreWorkspaceId: string,
   convexWorkspaceId: string,
   firestoreBoardId: string,
-  boardData: any
+  boardData: any,
 ) {
   stats.boards.attempted++;
 
@@ -157,7 +157,7 @@ async function migrateBoardContent(
   firestoreWorkspaceId: string,
   firestoreBoardId: string,
   convexBoardId: string,
-  firestore: ReturnType<typeof getFirestoreInstance>
+  firestore: ReturnType<typeof getFirestoreInstance>,
 ) {
   stats.boardContent.attempted++;
 
@@ -170,7 +170,7 @@ async function migrateBoardContent(
       "boards",
       firestoreBoardId,
       "content",
-      "current"
+      "current",
     );
 
     const contentSnap = await getDoc(contentRef);
@@ -280,7 +280,7 @@ async function migrate() {
           workspaceId,
           convexWorkspaceId,
           boardId,
-          boardData
+          boardData,
         );
 
         if (!convexBoardId) {
@@ -297,7 +297,6 @@ async function migrate() {
 
     // Step 5: Print migration report
     printMigrationReport();
-
   } catch (error: any) {
     log("💥 Migration failed with fatal error:", error.message);
     console.error(error);
@@ -309,9 +308,9 @@ async function migrate() {
  * Print final migration report
  */
 function printMigrationReport() {
-  log("=" .repeat(80));
+  log("=".repeat(80));
   log("📊 MIGRATION REPORT");
-  log("=" .repeat(80));
+  log("=".repeat(80));
   log("");
   log(`Mode: ${isDryRun ? "DRY RUN" : "LIVE"}`);
   log("");
@@ -341,7 +340,7 @@ function printMigrationReport() {
   }
 
   log("");
-  log("=" .repeat(80));
+  log("=".repeat(80));
 
   if (isDryRun) {
     log("");

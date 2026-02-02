@@ -1,15 +1,3 @@
-import { APP_NAME, EVENT } from "@/lib/common";
-import {
-  ACTIVE_THRESHOLD,
-  IDLE_THRESHOLD,
-  UserIdleState,
-  assertNever,
-  isDevEnv,
-  isTestEnv,
-  preventUnload,
-  resolvablePromise,
-  throttleRAF,
-} from "@/lib/common";
 import {
   CaptureUpdateAction,
   getSceneVersion,
@@ -22,6 +10,18 @@ import { decryptData } from "@/core/data/encryption";
 import { AbortError } from "@/core/errors";
 import { t } from "@/core/i18n";
 import { withBatchedUpdates } from "@/core/reactUtils";
+import { APP_NAME, EVENT } from "@/lib/common";
+import {
+  ACTIVE_THRESHOLD,
+  IDLE_THRESHOLD,
+  UserIdleState,
+  assertNever,
+  isDevEnv,
+  isTestEnv,
+  preventUnload,
+  resolvablePromise,
+  throttleRAF,
+} from "@/lib/common";
 import { getVisibleSceneBounds } from "@/lib/elements";
 import { newElementWith } from "@/lib/elements";
 import { isImageElement, isInitializedImageElement } from "@/lib/elements";
@@ -29,11 +29,7 @@ import { isImageElement, isInitializedImageElement } from "@/lib/elements";
 import throttle from "lodash.throttle";
 import { PureComponent } from "react";
 
-import type { Mutable, ValueOf } from "@/lib/common/utility-types";
-import type {
-  ReconciledDrawinkElement,
-  RemoteDrawinkElement,
-} from "@/core/data/reconcile";
+import type { ReconciledDrawinkElement, RemoteDrawinkElement } from "@/core/data/reconcile";
 import type { ImportedDataState } from "@/core/data/types";
 import type {
   BinaryFileData,
@@ -42,6 +38,7 @@ import type {
   Gesture,
   SocketId,
 } from "@/core/types";
+import type { Mutable, ValueOf } from "@/lib/common/utility-types";
 import type {
   DrawinkElement,
   FileId,
@@ -63,15 +60,8 @@ import {
 import { generateCollaborationLinkData, getCollaborationLink, getSyncableElements } from "../data";
 import { FileManager, encodeFilesForUpload, updateStaleImageStatuses } from "../data/FileManager";
 import { hybridStorageAdapter } from "../data/HybridStorageAdapter";
-import {
-  loadFilesFromFirebase,
-  saveFilesToFirebase,
-} from "../data/firebase";
-import {
-  isSavedToConvex,
-  loadFromConvex,
-  saveToConvex,
-} from "../data/convexCollab";
+import { isSavedToConvex, loadFromConvex, saveToConvex } from "../data/convexCollab";
+import { loadFilesFromFirebase, saveFilesToFirebase } from "../data/firebase";
 import { importUsernameFromLocalStorage, saveUsernameToLocalStorage } from "../data/localStorage";
 import { resetBrowserStateVersions } from "../data/tabSync";
 

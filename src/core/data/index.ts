@@ -2,10 +2,10 @@ import {
   DEFAULT_EXPORT_PADDING,
   DEFAULT_FILENAME,
   IMAGE_MIME_TYPES,
-  isFirefox,
   MIME_TYPES,
-  cloneJSON,
   SVG_DOCUMENT_PREAMBLE,
+  cloneJSON,
+  isFirefox,
 } from "@/lib/common";
 
 import { getNonDeletedElements } from "@/lib/elements";
@@ -20,10 +20,7 @@ import type {
   NonDeletedDrawinkElement,
 } from "@/lib/elements/types";
 
-import {
-  copyBlobToClipboardAsPng,
-  copyTextToSystemClipboard,
-} from "../clipboard";
+import { copyBlobToClipboardAsPng, copyTextToSystemClipboard } from "../clipboard";
 
 import { t } from "../i18n";
 import { getSelectedElements, isSomeElementSelected } from "../scene";
@@ -53,8 +50,7 @@ export const prepareElementsForExport = (
   elements = getNonDeletedElements(elements);
 
   const isExportingSelection =
-    exportSelectionOnly &&
-    isSomeElementSelected(elements, { selectedElementIds });
+    exportSelectionOnly && isSomeElementSelected(elements, { selectedElementIds });
 
   let exportingFrame: DrawinkFrameLikeElement | null = null;
   let exportedElements = isExportingSelection
@@ -68,10 +64,7 @@ export const prepareElementsForExport = (
     : elements;
 
   if (isExportingSelection) {
-    if (
-      exportedElements.length === 1 &&
-      isFrameLikeElement(exportedElements[0])
-    ) {
+    if (exportedElements.length === 1 && isFrameLikeElement(exportedElements[0])) {
       exportingFrame = exportedElements[0];
       exportedElements = getElementsOverlappingFrame(elements, exportingFrame);
     } else if (exportedElements.length > 1) {
@@ -201,9 +194,7 @@ export const exportCanvas = async (
       // people on Firefox can enable through a flag, so let's tell them.
       if (isFirefox && error.name === "TypeError") {
         throw new Error(
-          `${t("alerts.couldNotCopyToClipboard")}\n\n${t(
-            "hints.firefox_clipboard_write",
-          )}`,
+          `${t("alerts.couldNotCopyToClipboard")}\n\n${t("hints.firefox_clipboard_write")}`,
         );
       } else {
         throw new Error(t("alerts.couldNotCopyToClipboard"));

@@ -4,8 +4,8 @@ import { memoize, toBrandedType } from "@/lib/common";
 
 import type {
   DrawinkElement,
-  NonDeletedElementsMap,
   NonDeletedDrawinkElement,
+  NonDeletedElementsMap,
 } from "@/lib/elements/types";
 
 import type { Scene } from "@/lib/elements";

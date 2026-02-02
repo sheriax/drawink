@@ -85,9 +85,9 @@ export const strokeRectWithRotation_simple = (
   cx: number,
   cy: number,
   angle: number,
-  fill: boolean = false,
+  fill = false,
   /** should account for zoom */
-  radius: number = 0,
+  radius = 0,
 ) => {
   context.save();
   context.translate(cx, cy);

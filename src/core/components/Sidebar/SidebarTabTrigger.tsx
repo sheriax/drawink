@@ -14,11 +14,7 @@ export const SidebarTabTrigger = ({
 } & Omit<React.HTMLAttributes<HTMLButtonElement>, "onSelect">) => {
   return (
     <RadixTabs.Trigger value={tab} asChild onSelect={onSelect}>
-      <button
-        type={"button"}
-        className={`drawink-button sidebar-tab-trigger`}
-        {...rest}
-      >
+      <button type={"button"} className={`drawink-button sidebar-tab-trigger`} {...rest}>
         {children}
       </button>
     </RadixTabs.Trigger>

@@ -11,8 +11,8 @@
  * - Proven at scale
  */
 
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { initializeApp } from "firebase/app";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 // =========================================================================
 // Firebase Initialization (Storage Only)
@@ -52,7 +52,7 @@ export interface UploadOptions {
  */
 export const uploadFile = async (
   file: File | Blob,
-  options: UploadOptions
+  options: UploadOptions,
 ): Promise<{ url: string; path: string }> => {
   const storageInstance = getStorageInstance();
   const storageRef = ref(storageInstance, options.path);
@@ -75,7 +75,7 @@ export const uploadFile = async (
  */
 export const uploadImage = async (
   file: File,
-  options: Omit<UploadOptions, "path"> & { boardId: string; fileId: string }
+  options: Omit<UploadOptions, "path"> & { boardId: string; fileId: string },
 ): Promise<{ url: string; path: string }> => {
   const path = `boards/${options.boardId}/images/${options.fileId}`;
 
@@ -94,7 +94,7 @@ export const uploadImage = async (
  */
 export const uploadThumbnail = async (
   blob: Blob,
-  boardId: string
+  boardId: string,
 ): Promise<{ url: string; path: string }> => {
   const path = `boards/${boardId}/thumbnail.png`;
 
@@ -186,7 +186,7 @@ export const isImageFile = (file: File): boolean => {
 /**
  * Validate file size (default 10MB max)
  */
-export const validateFileSize = (file: File, maxSizeMB: number = 10): boolean => {
+export const validateFileSize = (file: File, maxSizeMB = 10): boolean => {
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
   return file.size <= maxSizeBytes;
 };
@@ -211,7 +211,7 @@ export const uploadFileWithMetadata = async (
     firebaseStoragePath: string;
     mimeType: string;
     sizeBytes: number;
-  }) => Promise<any>
+  }) => Promise<any>,
 ): Promise<{ fileId: string; url: string }> => {
   // Validate file
   if (!validateFileSize(file)) {

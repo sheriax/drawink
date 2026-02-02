@@ -1,5 +1,5 @@
 import { Center } from "./WelcomeScreen.Center";
-import { MenuHint, ToolbarHint, HelpHint } from "./WelcomeScreen.Hints";
+import { HelpHint, MenuHint, ToolbarHint } from "./WelcomeScreen.Hints";
 
 import "./WelcomeScreen.scss";
 

@@ -78,10 +78,7 @@ describe("Test Transform", () => {
       },
     ];
 
-    convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    ).forEach((ele) => {
+    convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts).forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),
@@ -107,10 +104,7 @@ describe("Test Transform", () => {
         strokeColor: "#5f3dc4",
       },
     ];
-    convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    ).forEach((ele) => {
+    convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts).forEach((ele) => {
       expect(ele).toMatchSnapshot({
         seed: expect.any(Number),
         versionNonce: expect.any(Number),
@@ -149,10 +143,7 @@ describe("Test Transform", () => {
         strokeStyle: "dotted",
       },
     ];
-    const drawinkElements = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    );
+    const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
     expect(drawinkElements.length).toBe(4);
 
@@ -232,10 +223,7 @@ describe("Test Transform", () => {
         },
       },
     ];
-    const drawinkElements = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    );
+    const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
     expect(drawinkElements.length).toBe(12);
 
@@ -290,10 +278,7 @@ describe("Test Transform", () => {
         },
       },
     ];
-    const drawinkElements = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    );
+    const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
     expect(drawinkElements.length).toBe(8);
 
@@ -404,10 +389,7 @@ describe("Test Transform", () => {
           },
         },
       ];
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
       expect(drawinkElements.length).toBe(4);
       const [arrow, text, rectangle, ellipse] = drawinkElements;
@@ -485,10 +467,7 @@ describe("Test Transform", () => {
         },
       ];
 
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
       expect(drawinkElements.length).toBe(4);
       const [arrow, text1, text2, text3] = drawinkElements;
@@ -598,10 +577,7 @@ describe("Test Transform", () => {
         },
       ];
 
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
       expect(drawinkElements.length).toBe(5);
 
@@ -647,10 +623,7 @@ describe("Test Transform", () => {
         },
       ];
 
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
       expect(drawinkElements.length).toBe(4);
 
@@ -664,9 +637,7 @@ describe("Test Transform", () => {
     });
 
     it("should bind arrows to existing elements if ids are correct", () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementationOnce(() => void 0);
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementationOnce(() => void 0);
       const elements = [
         {
           x: 100,
@@ -701,10 +672,7 @@ describe("Test Transform", () => {
         },
       ];
 
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
       expect(drawinkElements.length).toBe(4);
       const [, , arrow, text] = drawinkElements;
@@ -752,10 +720,7 @@ describe("Test Transform", () => {
           backgroundColor: "#bac8ff",
         },
       ];
-      const drawinkElements = convertToDrawinkElements(
-        elements as DrawinkElementSkeleton[],
-        opts,
-      );
+      const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
       expect(drawinkElements.length).toBe(2);
       const [arrow, rect] = drawinkElements;
       expect((arrow as DrawinkArrowElement).endBinding).toStrictEqual({
@@ -773,9 +738,7 @@ describe("Test Transform", () => {
   });
 
   it("should not allow duplicate ids", () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementationOnce(() => void 0);
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementationOnce(() => void 0);
     const elements = [
       {
         type: "rectangle",
@@ -795,19 +758,14 @@ describe("Test Transform", () => {
         height: 200,
       },
     ];
-    const drawinkElements = convertToDrawinkElements(
-      elements as DrawinkElementSkeleton[],
-      opts,
-    );
+    const drawinkElements = convertToDrawinkElements(elements as DrawinkElementSkeleton[], opts);
 
     expect(drawinkElements.length).toBe(1);
     expect(drawinkElements[0]).toMatchSnapshot({
       seed: expect.any(Number),
       versionNonce: expect.any(Number),
     });
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Duplicate id found for rect-1",
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Duplicate id found for rect-1");
   });
 
   it("should contains customData if provided", () => {
@@ -819,10 +777,7 @@ describe("Test Transform", () => {
         customData: { createdBy: "user01" },
       },
     ];
-    const convertedElements = convertToDrawinkElements(
-      rawData as DrawinkElementSkeleton[],
-      opts,
-    );
+    const convertedElements = convertToDrawinkElements(rawData as DrawinkElementSkeleton[], opts);
     expect(convertedElements[0].customData).toStrictEqual({
       createdBy: "user01",
     });

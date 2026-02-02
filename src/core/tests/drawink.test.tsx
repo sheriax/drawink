@@ -1,5 +1,4 @@
-import { queryByText, queryByTestId } from "@testing-library/react";
-import React from "react";
+import { queryByTestId, queryByText } from "@testing-library/react";
 import { useMemo } from "react";
 
 import { THEME } from "@/lib/common";
@@ -7,7 +6,7 @@ import { THEME } from "@/lib/common";
 import { t } from "../i18n";
 import { Drawink, Footer, MainMenu } from "../index";
 
-import { fireEvent, GlobalTestState, toggleMenu, render } from "./test-utils";
+import { GlobalTestState, fireEvent, render, toggleMenu } from "./test-utils";
 
 const { h } = window;
 
@@ -22,9 +21,7 @@ describe("<Drawink/>", () => {
   describe("Test zenModeEnabled prop", () => {
     it('should show exit zen mode button when zen mode is set and zen mode option in context menu when zenModeEnabled is "undefined"', async () => {
       const { container } = await render(<Drawink />);
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(0);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(0);
       expect(h.state.zenModeEnabled).toBe(false);
 
       fireEvent.contextMenu(GlobalTestState.interactiveCanvas, {
@@ -35,16 +32,12 @@ describe("<Drawink/>", () => {
       const contextMenu = document.querySelector(".context-menu");
       fireEvent.click(queryByText(contextMenu as HTMLElement, "Zen mode")!);
       expect(h.state.zenModeEnabled).toBe(true);
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(1);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(1);
     });
 
     it("should not show exit zen mode button and zen mode option in context menu when zenModeEnabled is set", async () => {
       const { container } = await render(<Drawink zenModeEnabled={true} />);
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(0);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(0);
       expect(h.state.zenModeEnabled).toBe(true);
 
       fireEvent.contextMenu(GlobalTestState.interactiveCanvas, {
@@ -55,9 +48,7 @@ describe("<Drawink/>", () => {
       const contextMenu = document.querySelector(".context-menu");
       expect(queryByText(contextMenu as HTMLElement, "Zen mode")).toBe(null);
       expect(h.state.zenModeEnabled).toBe(true);
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(0);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(0);
     });
   });
 
@@ -96,9 +87,7 @@ describe("<Drawink/>", () => {
       const { container } = await render(<Drawink />);
       expect(h.state.gridModeEnabled).toBe(false);
 
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(0);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(0);
       fireEvent.contextMenu(GlobalTestState.interactiveCanvas, {
         button: 2,
         clientX: 1,
@@ -113,9 +102,7 @@ describe("<Drawink/>", () => {
       const { container } = await render(<Drawink gridModeEnabled={false} />);
       expect(h.state.gridModeEnabled).toBe(false);
 
-      expect(
-        container.getElementsByClassName("disable-zen-mode--visible").length,
-      ).toBe(0);
+      expect(container.getElementsByClassName("disable-zen-mode--visible").length).toBe(0);
       fireEvent.contextMenu(GlobalTestState.interactiveCanvas, {
         button: 2,
         clientX: 1,
@@ -173,9 +160,7 @@ describe("<Drawink/>", () => {
 
       it("should hide save as button when saveFileToDisk is false", async () => {
         const { container } = await render(
-          <Drawink
-            UIOptions={{ canvasActions: { export: { saveFileToDisk: false } } }}
-          />,
+          <Drawink UIOptions={{ canvasActions: { export: { saveFileToDisk: false } } }} />,
         );
         //open menu
         toggleMenu(container);
@@ -184,9 +169,7 @@ describe("<Drawink/>", () => {
 
       it("should hide save button when saveToActiveFile is false", async () => {
         const { container } = await render(
-          <Drawink
-            UIOptions={{ canvasActions: { saveToActiveFile: false } }}
-          />,
+          <Drawink UIOptions={{ canvasActions: { saveToActiveFile: false } }} />,
         );
         //open menu
         toggleMenu(container);
@@ -195,9 +178,7 @@ describe("<Drawink/>", () => {
 
       it("should hide the canvas background picker when changeViewBackgroundColor is false", async () => {
         const { container } = await render(
-          <Drawink
-            UIOptions={{ canvasActions: { changeViewBackgroundColor: false } }}
-          />,
+          <Drawink UIOptions={{ canvasActions: { changeViewBackgroundColor: false } }} />,
         );
         //open menu
         toggleMenu(container);
@@ -207,9 +188,7 @@ describe("<Drawink/>", () => {
 
       it("should hide the canvas background picker even if passed if the `canvasActions.changeViewBackgroundColor` is set to false", async () => {
         const { container } = await render(
-          <Drawink
-            UIOptions={{ canvasActions: { changeViewBackgroundColor: false } }}
-          >
+          <Drawink UIOptions={{ canvasActions: { changeViewBackgroundColor: false } }}>
             <MainMenu>
               <MainMenu.DefaultItems.ChangeCanvasBackground />
             </MainMenu>
@@ -235,10 +214,7 @@ describe("<Drawink/>", () => {
           <Drawink UIOptions={{ canvasActions: { loadScene: false } }}>
             <MainMenu>
               <MainMenu.ItemCustom>
-                <button
-                  style={{ height: "2rem" }}
-                  onClick={() => window.alert("custom menu item")}
-                >
+                <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
                   custom item
                 </button>
               </MainMenu.ItemCustom>
@@ -275,10 +251,7 @@ describe("<Drawink/>", () => {
 
     it("should show theme mode toggle when `UIOptions.canvasActions.toggleTheme` is true", async () => {
       const { container } = await render(
-        <Drawink
-          theme={THEME.DARK}
-          UIOptions={{ canvasActions: { toggleTheme: true } }}
-        />,
+        <Drawink theme={THEME.DARK} UIOptions={{ canvasActions: { toggleTheme: true } }} />,
       );
       expect(h.state.theme).toBe(THEME.DARK);
       //open menu
@@ -289,10 +262,7 @@ describe("<Drawink/>", () => {
 
     it("should not show theme toggle when `UIOptions.canvasActions.toggleTheme` is false", async () => {
       const { container } = await render(
-        <Drawink
-          UIOptions={{ canvasActions: { toggleTheme: false } }}
-          theme={THEME.DARK}
-        />,
+        <Drawink UIOptions={{ canvasActions: { toggleTheme: false } }} theme={THEME.DARK} />,
       );
       expect(h.state.theme).toBe(THEME.DARK);
       //open menu
@@ -333,17 +303,13 @@ describe("<Drawink/>", () => {
     it("should not focus when autoFocus is false", async () => {
       const { container } = await render(<Drawink />);
 
-      expect(
-        container.querySelector(".drawink") === document.activeElement,
-      ).toBe(false);
+      expect(container.querySelector(".drawink") === document.activeElement).toBe(false);
     });
 
     it("should focus when autoFocus is true", async () => {
       const { container } = await render(<Drawink autoFocus={true} />);
 
-      expect(
-        container.querySelector(".drawink") === document.activeElement,
-      ).toBe(true);
+      expect(container.querySelector(".drawink") === document.activeElement).toBe(true);
     });
   });
 
@@ -352,17 +318,10 @@ describe("<Drawink/>", () => {
       const { container } = await render(
         <Drawink>
           <MainMenu>
-            <MainMenu.Item onSelect={() => window.alert("Clicked")}>
-              Click me
-            </MainMenu.Item>
-            <MainMenu.ItemLink href="blog.excalidaw.com">
-              Drawink blog
-            </MainMenu.ItemLink>
+            <MainMenu.Item onSelect={() => window.alert("Clicked")}>Click me</MainMenu.Item>
+            <MainMenu.ItemLink href="blog.excalidaw.com">Drawink blog</MainMenu.ItemLink>
             <MainMenu.ItemCustom>
-              <button
-                style={{ height: "2rem" }}
-                onClick={() => window.alert("custom menu item")}
-              >
+              <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
                 custom menu item
               </button>
             </MainMenu.ItemCustom>
@@ -394,15 +353,15 @@ describe("<Drawink/>", () => {
 
       expect(h.state.theme).toBe(THEME.LIGHT);
 
-      expect(
-        queryByTestId(container, "toggle-dark-mode")?.textContent,
-      ).toContain(t("buttons.darkMode"));
+      expect(queryByTestId(container, "toggle-dark-mode")?.textContent).toContain(
+        t("buttons.darkMode"),
+      );
 
       fireEvent.click(queryByTestId(container, "toggle-dark-mode")!);
 
-      expect(
-        queryByTestId(container, "toggle-dark-mode")?.textContent,
-      ).toContain(t("buttons.lightMode"));
+      expect(queryByTestId(container, "toggle-dark-mode")?.textContent).toContain(
+        t("buttons.lightMode"),
+      );
     });
   });
 });

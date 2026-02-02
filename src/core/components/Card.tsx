@@ -10,16 +10,11 @@ export const Card: React.FC<{
     <div
       className="Card"
       style={{
-        ["--card-color" as any]:
-          color === "primary" ? "var(--color-primary)" : OpenColor[color][7],
+        ["--card-color" as any]: color === "primary" ? "var(--color-primary)" : OpenColor[color][7],
         ["--card-color-darker" as any]:
-          color === "primary"
-            ? "var(--color-primary-darker)"
-            : OpenColor[color][8],
+          color === "primary" ? "var(--color-primary-darker)" : OpenColor[color][8],
         ["--card-color-darkest" as any]:
-          color === "primary"
-            ? "var(--color-primary-darkest)"
-            : OpenColor[color][9],
+          color === "primary" ? "var(--color-primary-darkest)" : OpenColor[color][9],
       }}
     >
       {children}

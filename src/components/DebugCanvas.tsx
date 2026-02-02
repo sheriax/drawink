@@ -1,7 +1,7 @@
-import { arrayToMap, throttleRAF } from "@/lib/common";
 import { ArrowheadArrowIcon, CloseIcon, TrashIcon } from "@/core/components/icons";
 import { bootstrapCanvas, getNormalizedCanvasDimensions } from "@/core/renderer/helpers";
 import type { AppState } from "@/core/types";
+import { arrayToMap, throttleRAF } from "@/lib/common";
 import { useCallback } from "react";
 
 import {

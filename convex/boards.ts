@@ -32,7 +32,7 @@ export const listByWorkspace = query({
     const boards = await ctx.db
       .query("boards")
       .withIndex("by_workspace_not_archived", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("archivedAt", undefined)
+        q.eq("workspaceId", args.workspaceId).eq("archivedAt", undefined),
       )
       .order("desc")
       .collect();
@@ -57,9 +57,7 @@ export const listRecent = query({
 
     const boards = await ctx.db
       .query("boards")
-      .withIndex("by_workspace_recent", (q) =>
-        q.eq("workspaceId", args.workspaceId)
-      )
+      .withIndex("by_workspace_recent", (q) => q.eq("workspaceId", args.workspaceId))
       .order("desc")
       .take(args.limit || 10);
 
@@ -343,7 +341,9 @@ export const permanentDelete = mutation({
     const activeBoards = boardsInWorkspace.filter((b) => !b.archivedAt);
 
     if (activeBoards.length <= 1) {
-      throw new Error("Cannot delete the last board in a workspace. Each workspace must have at least one board.");
+      throw new Error(
+        "Cannot delete the last board in a workspace. Each workspace must have at least one board.",
+      );
     }
 
     // TODO: Check if user is owner

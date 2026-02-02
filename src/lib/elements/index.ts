@@ -4,9 +4,9 @@ import { isInvisiblySmallElement } from "./sizeHelpers";
 
 import type {
   DrawinkElement,
-  NonDeletedDrawinkElement,
-  NonDeleted,
   ElementsMapOrArray,
+  NonDeleted,
+  NonDeletedDrawinkElement,
 } from "./types";
 
 /**
@@ -32,7 +32,7 @@ export const hashElementsVersion = (elements: ElementsMapOrArray): number => {
 // but for hashing purposes this is fine as it iterates through every code unit
 // (as such, no need to encode to byte string first)
 export const hashString = (s: string): number => {
-  let hash: number = 5381;
+  let hash = 5381;
   for (let i = 0; i < s.length; i++) {
     const char: number = s.charCodeAt(i);
     hash = (hash << 5) + hash + char;
@@ -45,9 +45,7 @@ export const getVisibleElements = (elements: readonly DrawinkElement[]) =>
     (el) => !el.isDeleted && !isInvisiblySmallElement(el),
   ) as readonly NonDeletedDrawinkElement[];
 
-export const getNonDeletedElements = <T extends DrawinkElement>(
-  elements: readonly T[],
-) =>
+export const getNonDeletedElements = <T extends DrawinkElement>(elements: readonly T[]) =>
   elements.filter((element) => !element.isDeleted) as readonly NonDeleted<T>[];
 
 export const isNonDeletedElement = <T extends DrawinkElement>(

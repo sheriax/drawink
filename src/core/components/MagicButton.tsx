@@ -2,8 +2,8 @@ import clsx from "clsx";
 
 import "./ToolIcon.scss";
 
-import type { ToolButtonSize } from "./ToolButton";
 import type { JSX } from "react";
+import type { ToolButtonSize } from "./ToolButton";
 
 const DEFAULT_SIZE: ToolButtonSize = "small";
 
@@ -17,13 +17,9 @@ export const ElementCanvasButton = (props: {
 }) => {
   return (
     <label
-      className={clsx(
-        "ToolIcon ToolIcon__MagicButton",
-        `ToolIcon_size_${DEFAULT_SIZE}`,
-        {
-          "is-mobile": props.isMobile,
-        },
-      )}
+      className={clsx("ToolIcon ToolIcon__MagicButton", `ToolIcon_size_${DEFAULT_SIZE}`, {
+        "is-mobile": props.isMobile,
+      })}
       title={`${props.title}`}
     >
       <input

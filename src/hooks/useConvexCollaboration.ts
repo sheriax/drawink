@@ -9,14 +9,18 @@
  */
 
 import { useConvex, useMutation, useQuery } from "convex/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Hook to manage collaboration session for a board
  */
-export function useCollaborationSession(boardId: Id<"boards"> | null, userName: string, userPhotoUrl?: string) {
+export function useCollaborationSession(
+  boardId: Id<"boards"> | null,
+  userName: string,
+  userPhotoUrl?: string,
+) {
   const convex = useConvex();
   const join = useMutation(api.collaboration.join);
   const leave = useMutation(api.collaboration.leave);
@@ -32,13 +36,15 @@ export function useCollaborationSession(boardId: Id<"boards"> | null, userName: 
     let isActive = true;
 
     // Join the board
-    join({ boardId, userName, userPhotoUrl }).then((id) => {
-      if (isActive) {
-        setSessionId(id);
-      }
-    }).catch((error) => {
-      console.error("[Collab] Failed to join board:", error);
-    });
+    join({ boardId, userName, userPhotoUrl })
+      .then((id) => {
+        if (isActive) {
+          setSessionId(id);
+        }
+      })
+      .catch((error) => {
+        console.error("[Collab] Failed to join board:", error);
+      });
 
     // Cleanup: leave board when component unmounts
     return () => {
@@ -80,10 +86,7 @@ export function useCollaborationSession(boardId: Id<"boards"> | null, userName: 
  * Hook to track active collaborators on a board (real-time!)
  */
 export function useActiveCollaborators(boardId: Id<"boards"> | null) {
-  const activeUsers = useQuery(
-    api.collaboration.getActiveUsers,
-    boardId ? { boardId } : "skip"
-  );
+  const activeUsers = useQuery(api.collaboration.getActiveUsers, boardId ? { boardId } : "skip");
 
   return {
     collaborators: activeUsers || [],
@@ -95,10 +98,7 @@ export function useActiveCollaborators(boardId: Id<"boards"> | null) {
  * Hook to track all cursor positions (real-time!)
  */
 export function useCursorTracking(boardId: Id<"boards"> | null) {
-  const cursors = useQuery(
-    api.collaboration.getCursors,
-    boardId ? { boardId } : "skip"
-  );
+  const cursors = useQuery(api.collaboration.getCursors, boardId ? { boardId } : "skip");
 
   return cursors || [];
 }
@@ -125,7 +125,7 @@ export function useCursorUpdate(boardId: Id<"boards"> | null) {
         console.error("[Collab] Failed to update cursor:", error);
       });
     },
-    [boardId, updateCursor]
+    [boardId, updateCursor],
   );
 
   return update;
@@ -135,22 +135,25 @@ export function useCursorUpdate(boardId: Id<"boards"> | null) {
  * Hook to get collaboration statistics
  */
 export function useCollaborationStats(boardId: Id<"boards"> | null) {
-  const stats = useQuery(
-    api.collaboration.getStats,
-    boardId ? { boardId } : "skip"
-  );
+  const stats = useQuery(api.collaboration.getStats, boardId ? { boardId } : "skip");
 
-  return stats || {
-    activeCount: 0,
-    totalCollaborators: 0,
-    currentSessions: [],
-  };
+  return (
+    stats || {
+      activeCount: 0,
+      totalCollaborators: 0,
+      currentSessions: [],
+    }
+  );
 }
 
 /**
  * All-in-one hook for complete collaboration features
  */
-export function useCollaboration(boardId: Id<"boards"> | null, userName: string, userPhotoUrl?: string) {
+export function useCollaboration(
+  boardId: Id<"boards"> | null,
+  userName: string,
+  userPhotoUrl?: string,
+) {
   const session = useCollaborationSession(boardId, userName, userPhotoUrl);
   const { collaborators, count } = useActiveCollaborators(boardId);
   const cursors = useCursorTracking(boardId);

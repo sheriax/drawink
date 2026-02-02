@@ -2,7 +2,7 @@ import { Emitter } from "@/lib/common";
 
 import { CaptureUpdateAction, StoreChange, StoreDelta } from "@/lib/elements";
 
-import type { StoreSnapshot, Store } from "@/lib/elements";
+import type { Store, StoreSnapshot } from "@/lib/elements";
 
 import type { SceneElementsMap } from "@/lib/elements/types";
 
@@ -35,8 +35,7 @@ export class HistoryDelta extends StoreDelta {
       nextElements,
     );
 
-    const appliedVisibleChanges =
-      elementsContainVisibleChange || appStateContainsVisibleChange;
+    const appliedVisibleChanges = elementsContainVisibleChange || appStateContainsVisibleChange;
 
     return [nextElements, nextAppState, appliedVisibleChanges];
   }
@@ -44,10 +43,7 @@ export class HistoryDelta extends StoreDelta {
   /**
    * Overriding once to avoid type casting everywhere.
    */
-  public static override calculate(
-    prevSnapshot: StoreSnapshot,
-    nextSnapshot: StoreSnapshot,
-  ) {
+  public static override calculate(prevSnapshot: StoreSnapshot, nextSnapshot: StoreSnapshot) {
     return super.calculate(prevSnapshot, nextSnapshot) as HistoryDelta;
   }
 
@@ -84,9 +80,7 @@ export class HistoryChangedEvent {
 }
 
 export class History {
-  public readonly onHistoryChangedEmitter = new Emitter<
-    [HistoryChangedEvent]
-  >();
+  public readonly onHistoryChangedEmitter = new Emitter<[HistoryChangedEvent]>();
 
   public readonly undoStack: HistoryDelta[] = [];
   public readonly redoStack: HistoryDelta[] = [];
@@ -174,22 +168,17 @@ export class History {
       // iterate through the history entries in case they result in no visible changes
       while (historyDelta) {
         try {
-          [nextElements, nextAppState, containsVisibleChange] =
-            historyDelta.applyTo(nextElements, nextAppState, prevSnapshot);
-
-          const prevElements = prevSnapshot.elements;
-          const nextSnapshot = prevSnapshot.maybeClone(
-            action,
+          [nextElements, nextAppState, containsVisibleChange] = historyDelta.applyTo(
             nextElements,
             nextAppState,
+            prevSnapshot,
           );
 
+          const prevElements = prevSnapshot.elements;
+          const nextSnapshot = prevSnapshot.maybeClone(action, nextElements, nextAppState);
+
           const change = StoreChange.create(prevSnapshot, nextSnapshot);
-          const delta = HistoryDelta.applyLatestChanges(
-            historyDelta,
-            prevElements,
-            nextElements,
-          );
+          const delta = HistoryDelta.applyLatestChanges(historyDelta, prevElements, nextElements);
 
           if (!delta.isEmpty()) {
             // schedule immediate capture, so that it's emitted for the sync purposes

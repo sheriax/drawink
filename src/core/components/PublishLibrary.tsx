@@ -25,7 +25,7 @@ import "./PublishLibrary.scss";
 
 import type { ReactNode } from "react";
 import type { ExportedLibraryData } from "../data/types";
-import type { LibraryItems, LibraryItem, UIAppState } from "../types";
+import type { LibraryItem, LibraryItems, UIAppState } from "../types";
 
 interface PublishLibraryDataParams {
   authorName: string;
@@ -47,13 +47,8 @@ const generatePreviewImage = async (libraryItems: LibraryItems) => {
   const canvas = document.createElement("canvas");
 
   canvas.width =
-    rows[0].length * BOX_SIZE +
-    (rows[0].length + 1) * (BOX_PADDING * 2) -
-    BOX_PADDING * 2;
-  canvas.height =
-    rows.length * BOX_SIZE +
-    (rows.length + 1) * (BOX_PADDING * 2) -
-    BOX_PADDING * 2;
+    rows[0].length * BOX_SIZE + (rows[0].length + 1) * (BOX_PADDING * 2) - BOX_PADDING * 2;
+  canvas.height = rows.length * BOX_SIZE + (rows.length + 1) * (BOX_PADDING * 2) - BOX_PADDING * 2;
 
   const ctx = canvas.getContext("2d")!;
 
@@ -73,10 +68,8 @@ const generatePreviewImage = async (libraryItems: LibraryItems) => {
 
     // draw item
     // -------------------------------------------------------------------------
-    const rowOffset =
-      Math.floor(index / MAX_ITEMS_PER_ROW) * (BOX_SIZE + BOX_PADDING * 2);
-    const colOffset =
-      (index % MAX_ITEMS_PER_ROW) * (BOX_SIZE + BOX_PADDING * 2);
+    const rowOffset = Math.floor(index / MAX_ITEMS_PER_ROW) * (BOX_SIZE + BOX_PADDING * 2);
+    const colOffset = (index % MAX_ITEMS_PER_ROW) * (BOX_SIZE + BOX_PADDING * 2);
 
     ctx.drawImage(
       itemCanvas,
@@ -144,9 +137,7 @@ const SingleLibraryItem = ({
   return (
     <div className="single-library-item">
       {libItem.status === "published" && (
-        <span className="single-library-item-status">
-          {t("labels.statusPublished")}
-        </span>
+        <span className="single-library-item-status">{t("labels.statusPublished")}</span>
       )}
       <div ref={svgRef} className="single-library-item__svg" />
       <ToolButton
@@ -233,17 +224,13 @@ const PublishLibrary = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const data = EditorLocalStorage.get<PublishLibraryDataParams>(
-      EDITOR_LS_KEYS.PUBLISH_LIBRARY,
-    );
+    const data = EditorLocalStorage.get<PublishLibraryDataParams>(EDITOR_LS_KEYS.PUBLISH_LIBRARY);
     if (data) {
       setLibraryData(data);
     }
   }, []);
 
-  const [clonedLibItems, setClonedLibItems] = useState<LibraryItems>(
-    libraryItems.slice(),
-  );
+  const [clonedLibItems, setClonedLibItems] = useState<LibraryItems>(libraryItems.slice());
 
   useEffect(() => {
     setClonedLibItems(libraryItems.slice());
@@ -322,9 +309,7 @@ const PublishLibrary = ({
               throw new Error(response.statusText || "something went wrong");
             })
             .then((error) => {
-              throw new Error(
-                error.message || response.statusText || "something went wrong",
-              );
+              throw new Error(error.message || response.statusText || "something went wrong");
             });
         },
         (err) => {
@@ -370,9 +355,7 @@ const PublishLibrary = ({
 
   const shouldRenderForm = !!libraryItems.length;
 
-  const containsPublishedItems = libraryItems.some(
-    (item) => item.status === "published",
-  );
+  const containsPublishedItems = libraryItems.some((item) => item.status === "published");
 
   return (
     <Dialog
@@ -386,11 +369,7 @@ const PublishLibrary = ({
             <Trans
               i18nKey="publishDialog.noteDescription"
               link={(el) => (
-                <a
-                  href="https://libraries.drawink.app"
-                  target="_blank"
-                  rel="noopener"
-                >
+                <a href="https://libraries.drawink.app" target="_blank" rel="noreferrer noopener">
                   {el}
                 </a>
               )}
@@ -411,9 +390,7 @@ const PublishLibrary = ({
             />
           </span>
 
-          <div className="publish-library-note">
-            {t("publishDialog.noteItems")}
-          </div>
+          <div className="publish-library-note">{t("publishDialog.noteItems")}</div>
           {containsPublishedItems && (
             <span className="publish-library-note publish-library-warning">
               {t("publishDialog.republishWarning")}

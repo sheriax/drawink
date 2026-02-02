@@ -91,10 +91,7 @@ export const fileOpen = <M extends boolean | undefined = false>(opts: {
   }) as Promise<RetType>;
 };
 
-export const debounce = <T extends any[]>(
-  fn: (...args: T) => void,
-  timeout: number,
-) => {
+export const debounce = <T extends any[]>(fn: (...args: T) => void, timeout: number) => {
   let handle = 0;
   let lastArgs: T | null = null;
   const ret = (...args: T) => {
@@ -120,9 +117,7 @@ export const debounce = <T extends any[]>(
   return ret;
 };
 
-export const withBatchedUpdates = <
-  TFunction extends ((event: any) => void) | (() => void),
->(
+export const withBatchedUpdates = <TFunction extends ((event: any) => void) | (() => void)>(
   func: Parameters<TFunction>["length"] extends 0 | 1 ? TFunction : never,
 ) =>
   ((event) => {

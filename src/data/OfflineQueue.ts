@@ -30,7 +30,7 @@ export class OfflineQueue {
 
   constructor() {
     this.loadFromStorage();
-    
+
     // Process queue when coming online
     if (typeof window !== "undefined") {
       window.addEventListener("online", () => this.processQueue());
@@ -60,9 +60,7 @@ export class OfflineQueue {
   /**
    * Add an operation to the queue
    */
-  enqueue(
-    operation: Omit<QueuedOperation, "id" | "timestamp" | "retryCount">,
-  ): string {
+  enqueue(operation: Omit<QueuedOperation, "id" | "timestamp" | "retryCount">): string {
     const op: QueuedOperation = {
       ...operation,
       id: crypto.randomUUID(),
@@ -138,26 +136,15 @@ export class OfflineQueue {
   /**
    * Get pending operation for a specific entity
    */
-  getPendingForEntity(
-    entityType: string,
-    entityId: string,
-  ): QueuedOperation | undefined {
-    return this.queue.find(
-      (op) => op.entityType === entityType && op.entityId === entityId,
-    );
+  getPendingForEntity(entityType: string, entityId: string): QueuedOperation | undefined {
+    return this.queue.find((op) => op.entityType === entityType && op.entityId === entityId);
   }
 
   /**
    * Update an existing queued operation (for merging updates)
    */
-  updatePending(
-    entityType: string,
-    entityId: string,
-    updates: Partial<QueuedOperation>,
-  ): boolean {
-    const op = this.queue.find(
-      (op) => op.entityType === entityType && op.entityId === entityId,
-    );
+  updatePending(entityType: string, entityId: string, updates: Partial<QueuedOperation>): boolean {
+    const op = this.queue.find((op) => op.entityType === entityType && op.entityId === entityId);
     if (op) {
       Object.assign(op, updates);
       this.saveToStorage();

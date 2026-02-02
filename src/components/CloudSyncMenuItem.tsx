@@ -8,12 +8,7 @@
 import type React from "react";
 import { useSyncExternalStore } from "react";
 
-import {
-  type AuthState,
-  authStateAtom,
-  cloudEnabledAtom,
-  syncStatusAtom,
-} from "@/core/atoms/auth";
+import { type AuthState, authStateAtom, cloudEnabledAtom, syncStatusAtom } from "@/core/atoms/auth";
 import { checkIcon, usersIcon } from "@/core/components/icons";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { MainMenu } from "@/core/index";

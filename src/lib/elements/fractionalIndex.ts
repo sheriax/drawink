@@ -7,8 +7,8 @@ import { getBoundTextElement } from "./textElement";
 import { hasBoundTextElement } from "./typeChecks";
 
 import type {
-  ElementsMap,
   DrawinkElement,
+  ElementsMap,
   FractionalIndex,
   OrderedDrawinkElement,
   SceneElementsMap,
@@ -70,9 +70,7 @@ export const validateFractionalIndices = (
       errorMessages.push(
         `Fractional indices invariant has been compromised: "${stringifyElement(
           elements[i - 1],
-        )}", "${stringifyElement(elements[i])}", "${stringifyElement(
-          elements[i + 1],
-        )}"`,
+        )}", "${stringifyElement(elements[i])}", "${stringifyElement(elements[i + 1])}"`,
       );
     }
 
@@ -97,12 +95,8 @@ export const validateFractionalIndices = (
 
     if (reconciliationContext) {
       additionalContext.push("Additional reconciliation context:");
-      additionalContext.push(
-        reconciliationContext.localElements.map((x) => stringifyElement(x)),
-      );
-      additionalContext.push(
-        reconciliationContext.remoteElements.map((x) => stringifyElement(x)),
-      );
+      additionalContext.push(reconciliationContext.localElements.map((x) => stringifyElement(x)));
+      additionalContext.push(reconciliationContext.remoteElements.map((x) => stringifyElement(x)));
     }
 
     if (!ignoreLogs) {
@@ -236,10 +230,7 @@ export const syncInvalidIndicesImmutable = (
  *
  * NOTE: First and last elements within the groups are indices of lower and upper bounds.
  */
-const getMovedIndicesGroups = (
-  elements: readonly DrawinkElement[],
-  movedElements: ElementsMap,
-) => {
+const getMovedIndicesGroups = (elements: readonly DrawinkElement[], movedElements: ElementsMap) => {
   const indicesGroups: number[][] = [];
 
   let i = 0;
@@ -277,16 +268,12 @@ const getInvalidIndicesGroups = (elements: readonly DrawinkElement[]) => {
   // once we find lowerBound / upperBound, it cannot be lower than that, so we cache it for better perf.
   let lowerBound: DrawinkElement["index"] | undefined = undefined;
   let upperBound: DrawinkElement["index"] | undefined = undefined;
-  let lowerBoundIndex: number = -1;
-  let upperBoundIndex: number = 0;
+  let lowerBoundIndex = -1;
+  let upperBoundIndex = 0;
 
   /** @returns maybe valid lowerBound */
-  const getLowerBound = (
-    index: number,
-  ): [DrawinkElement["index"] | undefined, number] => {
-    const lowerBound = elements[lowerBoundIndex]
-      ? elements[lowerBoundIndex].index
-      : undefined;
+  const getLowerBound = (index: number): [DrawinkElement["index"] | undefined, number] => {
+    const lowerBound = elements[lowerBoundIndex] ? elements[lowerBoundIndex].index : undefined;
 
     // we are already iterating left to right, therefore there is no need for additional looping
     const candidate = elements[index - 1]?.index;
@@ -304,12 +291,8 @@ const getInvalidIndicesGroups = (elements: readonly DrawinkElement[]) => {
   };
 
   /** @returns always valid upperBound */
-  const getUpperBound = (
-    index: number,
-  ): [DrawinkElement["index"] | undefined, number] => {
-    const upperBound = elements[upperBoundIndex]
-      ? elements[upperBoundIndex].index
-      : undefined;
+  const getUpperBound = (index: number): [DrawinkElement["index"] | undefined, number] => {
+    const upperBound = elements[upperBoundIndex] ? elements[upperBoundIndex].index : undefined;
 
     // cache hit! don't let it find the upper bound again
     if (upperBound && index < upperBoundIndex) {
@@ -398,10 +381,7 @@ const isValidFractionalIndex = (
   return !!index;
 };
 
-const generateIndices = (
-  elements: readonly DrawinkElement[],
-  indicesGroups: number[][],
-) => {
+const generateIndices = (elements: readonly DrawinkElement[], indicesGroups: number[][]) => {
   const elementsUpdates = new Map<DrawinkElement, { index: FractionalIndex }>();
 
   for (const indices of indicesGroups) {
@@ -426,9 +406,7 @@ const generateIndices = (
   return elementsUpdates;
 };
 
-const isOrderedElement = (
-  element: DrawinkElement,
-): element is OrderedDrawinkElement => {
+const isOrderedElement = (element: DrawinkElement): element is OrderedDrawinkElement => {
   // for now it's sufficient whether the index is there
   // meaning, the element was already ordered in the past
   // meaning, it is not a newly inserted element, not an unrestored element, etc.

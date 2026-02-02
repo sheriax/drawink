@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 
 import type { Emitter } from "@/lib/common";
 
-export const useEmitter = <TEvent extends unknown>(
-  emitter: Emitter<[TEvent]>,
-  initialState: TEvent,
-) => {
+export const useEmitter = <TEvent>(emitter: Emitter<[TEvent]>, initialState: TEvent) => {
   const [event, setEvent] = useState<TEvent>(initialState);
 
   useEffect(() => {

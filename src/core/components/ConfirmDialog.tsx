@@ -3,10 +3,10 @@ import { flushSync } from "react-dom";
 import { useSetAtom } from "../editor-jotai";
 import { t } from "../i18n";
 
+import { useDrawinkContainer, useDrawinkSetAppState } from "./App";
 import { Dialog } from "./Dialog";
 import DialogActionButton from "./DialogActionButton";
 import { isLibraryMenuOpenAtom } from "./LibraryMenu";
-import { useDrawinkContainer, useDrawinkSetAppState } from "./App";
 
 import "./ConfirmDialog.scss";
 

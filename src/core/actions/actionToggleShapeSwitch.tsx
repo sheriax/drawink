@@ -3,8 +3,8 @@ import { CaptureUpdateAction } from "@/lib/elements";
 import type { DrawinkElement } from "@/lib/elements/types";
 
 import {
-  getConversionTypeFromElements,
   convertElementTypePopupAtom,
+  getConversionTypeFromElements,
 } from "../components/ConvertElementTypePopup";
 import { editorJotaiStore } from "../editor-jotai";
 

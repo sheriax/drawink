@@ -111,12 +111,9 @@ export const hasSyncErrorAtom = atom((get) => {
 /**
  * Update auth state (called by auth state listener)
  */
-export const setAuthStateAtom = atom(
-  null,
-  (get, set, authState: AuthState) => {
-    set(authStateAtom, authState);
-  },
-);
+export const setAuthStateAtom = atom(null, (get, set, authState: AuthState) => {
+  set(authStateAtom, authState);
+});
 
 /**
  * Update sync status

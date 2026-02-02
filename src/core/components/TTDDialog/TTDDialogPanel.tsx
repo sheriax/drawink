@@ -55,9 +55,7 @@ export const TTDDialogPanel = ({
           </div>
           {onTextSubmitInProgess && <Spinner />}
         </Button>
-        {!panelActionDisabled &&
-          !onTextSubmitInProgess &&
-          renderSubmitShortcut?.()}
+        {!panelActionDisabled && !onTextSubmitInProgess && renderSubmitShortcut?.()}
         {renderBottomRight?.()}
       </div>
     </div>

@@ -1,10 +1,6 @@
 import { simplify } from "points-on-curve";
 
-import {
-  polygonFromPoints,
-  lineSegment,
-  polygonIncludesPointNonZero,
-} from "@/lib/math";
+import { lineSegment, polygonFromPoints, polygonIncludesPointNonZero } from "@/lib/math";
 
 import {
   type Bounds,
@@ -15,8 +11,8 @@ import {
   intersectElementWithLineSegment,
 } from "@/lib/elements";
 
+import type { DrawinkElement, ElementsMap } from "@/lib/elements/types";
 import type { ElementsSegmentsMap, GlobalPoint } from "@/lib/math/types";
-import type { ElementsMap, DrawinkElement } from "@/lib/elements/types";
 
 export const getLassoSelectedElementIds = (input: {
   lassoPath: GlobalPoint[];
@@ -56,7 +52,12 @@ export const getLassoSelectedElementIds = (input: {
         Math.max(acc[3], item[1]),
       ];
     },
-    [Infinity, Infinity, -Infinity, -Infinity],
+    [
+      Number.POSITIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+    ],
   ) as Bounds;
   for (const element of unlockedElements) {
     // First check if the lasso segment intersects the element's axis-aligned
@@ -100,9 +101,7 @@ const enclosureTest = (
   }
 
   return segments.some((segment) => {
-    return segment.some((point) =>
-      polygonIncludesPointNonZero(point, lassoPolygon),
-    );
+    return segment.some((point) => polygonIncludesPointNonZero(point, lassoPolygon));
   });
 };
 
@@ -120,13 +119,7 @@ const intersectionTest = (
 
   return lassoSegments.some(
     (lassoSegment) =>
-      intersectElementWithLineSegment(
-        element,
-        elementsMap,
-        lassoSegment,
-        0,
-        true,
-      ).length > 0 ||
+      intersectElementWithLineSegment(element, elementsMap, lassoSegment, 0, true).length > 0 ||
       (!!boundTextElement &&
         intersectElementWithLineSegment(
           {

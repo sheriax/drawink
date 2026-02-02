@@ -1,7 +1,7 @@
 import { round } from "@/lib/math";
 import clsx from "clsx";
 import throttle from "lodash.throttle";
-import { useEffect, useMemo, useState, memo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { STATS_PANELS } from "@/lib/common";
 import { getCommonBounds } from "@/lib/elements";
@@ -128,18 +128,13 @@ export const StatsInner = memo(
     const elementsMap = scene.getNonDeletedElementsMap();
     const setAppState = useDrawinkSetAppState();
 
-    const singleElement =
-      selectedElements.length === 1 ? selectedElements[0] : null;
+    const singleElement = selectedElements.length === 1 ? selectedElements[0] : null;
 
-    const multipleElements =
-      selectedElements.length > 1 ? selectedElements : null;
+    const multipleElements = selectedElements.length > 1 ? selectedElements : null;
 
-    const cropMode =
-      appState.croppingElementId && isImageElement(singleElement);
+    const cropMode = appState.croppingElementId && isImageElement(singleElement);
 
-    const unCroppedDimension = cropMode
-      ? getUncroppedWidthAndHeight(singleElement)
-      : null;
+    const unCroppedDimension = cropMode ? getUncroppedWidthAndHeight(singleElement) : null;
 
     const [sceneDimension, setSceneDimension] = useState<{
       width: number;
@@ -165,10 +160,7 @@ export const StatsInner = memo(
       throttledSetSceneDimension(elements);
     }, [sceneNonce, elements, throttledSetSceneDimension]);
 
-    useEffect(
-      () => () => throttledSetSceneDimension.cancel(),
-      [throttledSetSceneDimension],
-    );
+    useEffect(() => () => throttledSetSceneDimension.cancel(), [throttledSetSceneDimension]);
 
     const atomicUnits = useMemo(() => {
       return getAtomicUnits(selectedElements, appState);
@@ -243,16 +235,13 @@ export const StatsInner = memo(
             >
               <Collapsible
                 label={<h3>{t("stats.elementProperties")}</h3>}
-                open={
-                  !!(appState.stats.panels & STATS_PANELS.elementProperties)
-                }
+                open={!!(appState.stats.panels & STATS_PANELS.elementProperties)}
                 openTrigger={() =>
                   setAppState((state) => {
                     return {
                       stats: {
                         open: true,
-                        panels:
-                          state.stats.panels ^ STATS_PANELS.elementProperties,
+                        panels: state.stats.panels ^ STATS_PANELS.elementProperties,
                       },
                     };
                   })
@@ -261,11 +250,7 @@ export const StatsInner = memo(
                 <StatsRows>
                   {singleElement && (
                     <>
-                      {cropMode && (
-                        <StatsRow heading>
-                          {t("labels.unCroppedDimension")}
-                        </StatsRow>
-                      )}
+                      {cropMode && <StatsRow heading>{t("labels.unCroppedDimension")}</StatsRow>}
 
                       {appState.croppingElementId &&
                         isImageElement(singleElement) &&

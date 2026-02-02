@@ -3,7 +3,7 @@ import { getShortcutFromShortcutName } from "../../actions/shortcuts";
 import { useTunnels } from "../../context/tunnels";
 import { useUIAppState } from "../../context/ui-appState";
 import { t, useI18n } from "../../i18n";
-import { useEditorInterface, useDrawinkActionManager } from "../App";
+import { useDrawinkActionManager, useEditorInterface } from "../App";
 import { DrawinkLogo } from "../DrawinkLogo";
 import { HelpIcon, LoadIcon, usersIcon } from "../icons";
 
@@ -78,7 +78,7 @@ const WelcomeScreenMenuItemLink = ({
       className={`welcome-screen-menu-item ${className}`}
       href={href}
       target="_blank"
-      rel="noopener"
+      rel="noreferrer noopener"
     >
       <WelcomeScreenMenuItemContent icon={icon} shortcut={shortcut}>
         {children}
@@ -120,9 +120,7 @@ Logo.displayName = "Logo";
 
 const Heading = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="welcome-screen-center__heading welcome-screen-decor excalifont">
-      {children}
-    </div>
+    <div className="welcome-screen-center__heading welcome-screen-decor excalifont">{children}</div>
   );
 };
 Heading.displayName = "Heading";
@@ -179,8 +177,7 @@ const MenuItemLiveCollaborationTrigger = ({
     </WelcomeScreenMenuItem>
   );
 };
-MenuItemLiveCollaborationTrigger.displayName =
-  "MenuItemLiveCollaborationTrigger";
+MenuItemLiveCollaborationTrigger.displayName = "MenuItemLiveCollaborationTrigger";
 
 // -----------------------------------------------------------------------------
 

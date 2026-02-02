@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import React, { useEffect, useRef } from "react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 import { EVENT, KEYS } from "@/lib/common";
 
@@ -36,11 +37,7 @@ const MenuContent = ({
 
   useOutsideClick(menuRef, (event) => {
     // prevents closing if clicking on the trigger button
-    if (
-      !menuRef.current
-        ?.closest(".dropdown-menu-container")
-        ?.contains(event.target)
-    ) {
+    if (!menuRef.current?.closest(".dropdown-menu-container")?.contains(event.target)) {
       callbacksRef.onClickOutside?.();
     }
   });
@@ -72,22 +69,13 @@ const MenuContent = ({
 
   return (
     <DropdownMenuContentPropsContext.Provider value={{ onSelect }}>
-      <div
-        ref={menuRef}
-        className={classNames}
-        style={style}
-        data-testid="dropdown-menu"
-      >
+      <div ref={menuRef} className={classNames} style={style} data-testid="dropdown-menu">
         {/* the zIndex ensures this menu has higher stacking order,
     see https://github.com/drawink/drawink/pull/1445 */}
         {editorInterface.formFactor === "phone" ? (
           <Stack.Col className="dropdown-menu-container">{children}</Stack.Col>
         ) : (
-          <Island
-            className="dropdown-menu-container"
-            padding={2}
-            style={{ zIndex: 2 }}
-          >
+          <Island className="dropdown-menu-container" padding={2} style={{ zIndex: 2 }}>
             {children}
           </Island>
         )}

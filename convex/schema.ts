@@ -20,11 +20,7 @@ export default defineSchema({
     photoUrl: v.optional(v.string()),
 
     // Subscription info
-    subscriptionTier: v.union(
-      v.literal("free"),
-      v.literal("pro"),
-      v.literal("team")
-    ),
+    subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
     stripeCustomerId: v.optional(v.string()),
     stripeSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),
@@ -51,11 +47,7 @@ export default defineSchema({
     color: v.optional(v.string()), // Hex color
 
     // Subscription (can be different from personal)
-    subscriptionTier: v.union(
-      v.literal("free"),
-      v.literal("pro"),
-      v.literal("team")
-    ),
+    subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
 
     // Metadata
     createdAt: v.number(),
@@ -71,12 +63,7 @@ export default defineSchema({
   workspaceMembers: defineTable({
     workspaceId: v.id("workspaces"),
     userId: v.string(), // Clerk user ID
-    role: v.union(
-      v.literal("owner"),
-      v.literal("admin"),
-      v.literal("member"),
-      v.literal("viewer")
-    ),
+    role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member"), v.literal("viewer")),
     joinedAt: v.number(),
   })
     .index("by_workspace", ["workspaceId"])
@@ -147,10 +134,7 @@ export default defineSchema({
   boardCollaborators: defineTable({
     boardId: v.id("boards"),
     userId: v.string(), // Clerk user ID
-    role: v.union(
-      v.literal("editor"),
-      v.literal("viewer")
-    ),
+    role: v.union(v.literal("editor"), v.literal("viewer")),
     addedAt: v.number(),
     addedBy: v.string(), // Clerk user ID
   })
@@ -174,8 +158,7 @@ export default defineSchema({
     updatedBy: v.string(), // Clerk user ID
     version: v.number(),
     checksum: v.string(), // SHA-256 for conflict detection
-  })
-    .index("by_board", ["boardId"]),
+  }).index("by_board", ["boardId"]),
 
   // =========================================================================
   // BOARD VERSIONS (Version history)
@@ -319,8 +302,7 @@ export default defineSchema({
     // Reset tracking
     lastDailyReset: v.number(),
     lastMonthlyReset: v.string(), // "2024-01" format
-  })
-    .index("by_user", ["userId"]),
+  }).index("by_user", ["userId"]),
 
   // =========================================================================
   // CONFLICT LOGS (for debugging sync issues)
@@ -338,7 +320,7 @@ export default defineSchema({
       v.literal("keep_local"),
       v.literal("keep_remote"),
       v.literal("merge"),
-      v.literal("restore")
+      v.literal("restore"),
     ),
 
     timestamp: v.number(),

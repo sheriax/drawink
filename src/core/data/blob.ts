@@ -1,11 +1,6 @@
 import { nanoid } from "nanoid";
 
-import {
-  IMAGE_MIME_TYPES,
-  MIME_TYPES,
-  bytesToHexString,
-  isPromiseLike,
-} from "@/lib/common";
+import { IMAGE_MIME_TYPES, MIME_TYPES, bytesToHexString, isPromiseLike } from "@/lib/common";
 
 import type { ValueOf } from "@/lib/common/utility-types";
 import type { DrawinkElement, FileId } from "@/lib/elements/types";
@@ -108,9 +103,7 @@ export const getFileHandleType = (handle: FileSystemHandle | null) => {
   return handle.name.match(/\.(json|drawink|png|svg)$/)?.[1] || null;
 };
 
-export const isImageFileHandleType = (
-  type: string | null,
-): type is "png" | "svg" => {
+export const isImageFileHandleType = (type: string | null): type is "png" | "svg" => {
   return type === "png" || type === "svg";
 };
 
@@ -162,9 +155,7 @@ export const loadSceneOrLibraryFromBlob = async (
               theme: localAppState?.theme,
               fileHandle: fileHandle || blob.handle || null,
               ...cleanAppStateForExport(data.appState || {}),
-              ...(localAppState
-                ? calculateScrollCenter(data.elements || [], localAppState)
-                : {}),
+              ...(localAppState ? calculateScrollCenter(data.elements || [], localAppState) : {}),
             },
             files: data.files,
           },
@@ -200,12 +191,7 @@ export const loadFromBlob = async (
   /** FileSystemHandle. Defaults to `blob.handle` if defined, otherwise null. */
   fileHandle?: FileSystemHandle | null,
 ) => {
-  const ret = await loadSceneOrLibraryFromBlob(
-    blob,
-    localAppState,
-    localElements,
-    fileHandle,
-  );
+  const ret = await loadSceneOrLibraryFromBlob(blob, localAppState, localElements, fileHandle);
   if (ret.type !== MIME_TYPES.drawink) {
     throw new Error("Error: invalid file");
   }
@@ -241,9 +227,7 @@ export const canvasToBlob = async (
       }
       canvas.toBlob((blob) => {
         if (!blob) {
-          return reject(
-            new CanvasError("Error: Canvas too big", "CANVAS_POSSIBLY_TOO_BIG"),
-          );
+          return reject(new CanvasError("Error: Canvas too big", "CANVAS_POSSIBLY_TOO_BIG"));
         }
         resolve(blob);
       });
@@ -257,10 +241,7 @@ export const canvasToBlob = async (
     to a 40-char base64 random id) */
 export const generateIdFromFile = async (file: File): Promise<FileId> => {
   try {
-    const hashBuffer = await window.crypto.subtle.digest(
-      "SHA-1",
-      await blobToArrayBuffer(file),
-    );
+    const hashBuffer = await window.crypto.subtle.digest("SHA-1", await blobToArrayBuffer(file));
     return bytesToHexString(new Uint8Array(hashBuffer)) as FileId;
   } catch (error: any) {
     console.error(error);
@@ -286,10 +267,7 @@ export const getDataURL_sync = (
   data: string | Uint8Array | ArrayBuffer,
   mimeType: ValueOf<typeof MIME_TYPES>,
 ): DataURL => {
-  return `data:${mimeType};base64,${stringToBase64(
-    toByteString(data),
-    true,
-  )}` as DataURL;
+  return `data:${mimeType};base64,${stringToBase64(toByteString(data), true)}` as DataURL;
 };
 
 export const dataURLToFile = (dataURL: DataURL, filename = "") => {
@@ -313,7 +291,7 @@ export const resizeImageFile = async (
   file: File,
   opts: {
     /** undefined indicates auto */
-    outputType?: typeof MIME_TYPES["jpg"];
+    outputType?: (typeof MIME_TYPES)["jpg"];
     maxWidthOrHeight: number;
   },
 ): Promise<File> => {
@@ -358,7 +336,7 @@ export const resizeImageFile = async (
   );
 };
 
-export const SVGStringToFile = (SVGString: string, filename: string = "") => {
+export const SVGStringToFile = (SVGString: string, filename = "") => {
   return new File([new TextEncoder().encode(SVGString)], filename, {
     type: MIME_TYPES.svg,
   }) as File & { type: typeof MIME_TYPES.svg };
@@ -366,7 +344,7 @@ export const SVGStringToFile = (SVGString: string, filename: string = "") => {
 
 export const ImageURLToFile = async (
   imageUrl: string,
-  filename: string = "",
+  filename = "",
 ): Promise<File | undefined> => {
   let response;
   try {
@@ -395,9 +373,7 @@ export const getFileHandle = async (
   if (nativeFileSystemSupported) {
     try {
       const dataTransferItem =
-        event instanceof DataTransferItem
-          ? event
-          : (event as DragEvent).dataTransfer?.items?.[0];
+        event instanceof DataTransferItem ? event : (event as DragEvent).dataTransfer?.items?.[0];
 
       const handle: FileSystemHandle | null =
         (await (dataTransferItem as any).getAsFileSystemHandle()) || null;
@@ -415,13 +391,9 @@ export const getFileHandle = async (
  * attempts to detect if a buffer is a valid image by checking its leading bytes
  */
 const getActualMimeTypeFromImage = async (file: Blob | File) => {
-  let mimeType: ValueOf<
-    Pick<typeof MIME_TYPES, "png" | "jpg" | "gif" | "webp">
-  > | null = null;
+  let mimeType: ValueOf<Pick<typeof MIME_TYPES, "png" | "jpg" | "gif" | "webp">> | null = null;
 
-  const leadingBytes = [
-    ...new Uint8Array(await blobToArrayBuffer(file.slice(0, 15))),
-  ].join(" ");
+  const leadingBytes = [...new Uint8Array(await blobToArrayBuffer(file.slice(0, 15)))].join(" ");
 
   // uint8 leading bytes
   const bytes = {

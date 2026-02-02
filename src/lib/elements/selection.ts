@@ -1,30 +1,19 @@
 import { arrayToMap, isShallowEqual } from "@/lib/common";
 
-import type {
-  AppState,
-  InteractiveCanvasAppState,
-} from "@/core/types";
+import type { AppState, InteractiveCanvasAppState } from "@/core/types";
 
 import { getElementAbsoluteCoords, getElementBounds } from "./bounds";
+import { elementOverlapsWithFrame, getContainingFrame, getFrameChildren } from "./frame";
 import { isElementInViewport } from "./sizeHelpers";
-import {
-  isBoundToContainer,
-  isFrameLikeElement,
-  isLinearElement,
-} from "./typeChecks";
-import {
-  elementOverlapsWithFrame,
-  getContainingFrame,
-  getFrameChildren,
-} from "./frame";
+import { isBoundToContainer, isFrameLikeElement, isLinearElement } from "./typeChecks";
 
-import { LinearElementEditor } from "./linearElementEditor";
 import { selectGroupsForSelectedElements } from "./groups";
+import { LinearElementEditor } from "./linearElementEditor";
 
 import type {
+  DrawinkElement,
   ElementsMap,
   ElementsMapOrArray,
-  DrawinkElement,
   NonDeletedDrawinkElement,
 } from "./types";
 
@@ -57,23 +46,19 @@ export const getElementsWithinSelection = (
   elements: readonly NonDeletedDrawinkElement[],
   selection: NonDeletedDrawinkElement,
   elementsMap: ElementsMap,
-  excludeElementsInFrames: boolean = true,
+  excludeElementsInFrames = true,
 ) => {
-  const [selectionX1, selectionY1, selectionX2, selectionY2] =
-    getElementAbsoluteCoords(selection, elementsMap);
+  const [selectionX1, selectionY1, selectionX2, selectionY2] = getElementAbsoluteCoords(
+    selection,
+    elementsMap,
+  );
 
   let elementsInSelection = elements.filter((element) => {
-    let [elementX1, elementY1, elementX2, elementY2] = getElementBounds(
-      element,
-      elementsMap,
-    );
+    let [elementX1, elementY1, elementX2, elementY2] = getElementBounds(element, elementsMap);
 
     const containingFrame = getContainingFrame(element, elementsMap);
     if (containingFrame) {
-      const [fx1, fy1, fx2, fy2] = getElementBounds(
-        containingFrame,
-        elementsMap,
-      );
+      const [fx1, fy1, fx2, fy2] = getElementBounds(containingFrame, elementsMap);
 
       elementX1 = Math.max(fx1, elementX1);
       elementY1 = Math.max(fy1, elementY1);
@@ -115,9 +100,7 @@ export const getVisibleAndNonSelectedElements = (
   appState: AppState,
   elementsMap: ElementsMap,
 ) => {
-  const selectedElementsSet = new Set(
-    selectedElements.map((element) => element.id),
-  );
+  const selectedElementsSet = new Set(selectedElements.map((element) => element.id));
   return elements.filter((element) => {
     const isVisible = isElementInViewport(
       element,
@@ -132,7 +115,7 @@ export const getVisibleAndNonSelectedElements = (
 };
 
 // FIXME move this into the editor instance to keep utility methods stateless
-export const isSomeElementSelected = (function () {
+export const isSomeElementSelected = (() => {
   let lastElements: readonly NonDeletedDrawinkElement[] | null = null;
   let lastSelectedElementIds: AppState["selectedElementIds"] | null = null;
   let isSelected: boolean | null = null;
@@ -149,9 +132,7 @@ export const isSomeElementSelected = (function () {
       return isSelected;
     }
 
-    isSelected = elements.some(
-      (element) => appState.selectedElementIds[element.id],
-    );
+    isSelected = elements.some((element) => appState.selectedElementIds[element.id]);
     lastElements = elements;
     lastSelectedElementIds = appState.selectedElementIds;
 
@@ -213,18 +194,15 @@ export const getSelectedElements = (
 
 export const getTargetElements = (
   elements: ElementsMapOrArray,
-  appState: Pick<
-    AppState,
-    "selectedElementIds" | "editingTextElement" | "newElement"
-  >,
+  appState: Pick<AppState, "selectedElementIds" | "editingTextElement" | "newElement">,
 ) =>
   appState.editingTextElement
     ? [appState.editingTextElement]
     : appState.newElement
-    ? [appState.newElement]
-    : getSelectedElements(elements, appState, {
-        includeBoundTextElement: true,
-      });
+      ? [appState.newElement]
+      : getSelectedElements(elements, appState, {
+          includeBoundTextElement: true,
+        });
 
 /**
  * returns prevState's selectedElementids if no change from previous, so as to
@@ -271,14 +249,15 @@ export const getSelectionStateForElements = (
     ...selectGroupsForSelectedElements(
       {
         editingGroupId: appState.editingGroupId,
-        selectedElementIds: excludeElementsInFramesFromSelection(
-          targetElements,
-        ).reduce((acc: Record<DrawinkElement["id"], true>, element) => {
-          if (!isBoundToContainer(element)) {
-            acc[element.id] = true;
-          }
-          return acc;
-        }, {}),
+        selectedElementIds: excludeElementsInFramesFromSelection(targetElements).reduce(
+          (acc: Record<DrawinkElement["id"], true>, element) => {
+            if (!isBoundToContainer(element)) {
+              acc[element.id] = true;
+            }
+            return acc;
+          },
+          {},
+        ),
       },
       allElements,
       appState,

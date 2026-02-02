@@ -1,12 +1,13 @@
 import {
   DEFAULT_ADAPTIVE_RADIUS,
   DEFAULT_PROPORTIONAL_RADIUS,
-  invariant,
   LINE_CONFIRM_THRESHOLD,
   ROUNDNESS,
+  invariant,
 } from "@/lib/common";
 
 import {
+  type GlobalPoint,
   curve,
   curveCatmullRomCubicApproxPoints,
   curveOffsetPoints,
@@ -22,7 +23,6 @@ import {
   vectorFromPoint,
   vectorNormalize,
   vectorScale,
-  type GlobalPoint,
 } from "@/lib/math";
 
 import type { Curve, LineSegment, LocalPoint } from "@/lib/math";
@@ -38,13 +38,13 @@ import { LinearElementEditor } from "./linearElementEditor";
 import { isRectangularElement } from "./typeChecks";
 
 import type {
-  ElementsMap,
   DrawinkArrowElement,
   DrawinkDiamondElement,
   DrawinkElement,
   DrawinkFreeDrawElement,
   DrawinkLinearElement,
   DrawinkRectanguloidElement,
+  ElementsMap,
 } from "./types";
 
 type ElementShape = [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]];
@@ -128,8 +128,7 @@ export function deconstructLinearOrFreeDrawElement(
 
   for (let idx = 0; idx < ops.length; idx += 1) {
     const op = ops[idx];
-    const prevPoint =
-      ops[idx - 1] && pointFromArray<LocalPoint>(ops[idx - 1].data.slice(-2));
+    const prevPoint = ops[idx - 1] && pointFromArray<LocalPoint>(ops[idx - 1].data.slice(-2));
     switch (op.op) {
       case "move":
         continue;
@@ -140,14 +139,8 @@ export function deconstructLinearOrFreeDrawElement(
 
         lines.push(
           lineSegment<GlobalPoint>(
-            pointFrom<GlobalPoint>(
-              element.x + prevPoint[0],
-              element.y + prevPoint[1],
-            ),
-            pointFrom<GlobalPoint>(
-              element.x + op.data[0],
-              element.y + op.data[1],
-            ),
+            pointFrom<GlobalPoint>(element.x + prevPoint[0], element.y + prevPoint[1]),
+            pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
           ),
         );
         continue;
@@ -158,22 +151,10 @@ export function deconstructLinearOrFreeDrawElement(
 
         curves.push(
           curve<GlobalPoint>(
-            pointFrom<GlobalPoint>(
-              element.x + prevPoint[0],
-              element.y + prevPoint[1],
-            ),
-            pointFrom<GlobalPoint>(
-              element.x + op.data[0],
-              element.y + op.data[1],
-            ),
-            pointFrom<GlobalPoint>(
-              element.x + op.data[2],
-              element.y + op.data[3],
-            ),
-            pointFrom<GlobalPoint>(
-              element.x + op.data[4],
-              element.y + op.data[5],
-            ),
+            pointFrom<GlobalPoint>(element.x + prevPoint[0], element.y + prevPoint[1]),
+            pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
+            pointFrom<GlobalPoint>(element.x + op.data[2], element.y + op.data[3]),
+            pointFrom<GlobalPoint>(element.x + op.data[4], element.y + op.data[5]),
           ),
         );
         continue;
@@ -199,7 +180,7 @@ export function deconstructLinearOrFreeDrawElement(
  */
 export function deconstructRectanguloidElement(
   element: DrawinkRectanguloidElement,
-  offset: number = 0,
+  offset = 0,
 ): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
   const cachedShape = getElementShapesCacheEntry(element, offset);
 
@@ -207,10 +188,7 @@ export function deconstructRectanguloidElement(
     return cachedShape;
   }
 
-  let radius = getCornerRadius(
-    Math.min(element.width, element.height),
-    element,
-  );
+  let radius = getCornerRadius(Math.min(element.width, element.height), element);
 
   if (radius === 0) {
     radius = 0.01;
@@ -292,35 +270,15 @@ export function deconstructRectanguloidElement(
   const corners =
     offset > 0
       ? baseCorners.map(
-          (corner) =>
-            curveCatmullRomCubicApproxPoints(
-              curveOffsetPoints(corner, offset),
-            )!,
+          (corner) => curveCatmullRomCubicApproxPoints(curveOffsetPoints(corner, offset))!,
         )
-      : [
-          [baseCorners[0]],
-          [baseCorners[1]],
-          [baseCorners[2]],
-          [baseCorners[3]],
-        ];
+      : [[baseCorners[0]], [baseCorners[1]], [baseCorners[2]], [baseCorners[3]]];
 
   const sides = [
-    lineSegment<GlobalPoint>(
-      corners[0][corners[0].length - 1][3],
-      corners[1][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[1][corners[1].length - 1][3],
-      corners[2][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[2][corners[2].length - 1][3],
-      corners[3][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[3][corners[3].length - 1][3],
-      corners[0][0][0],
-    ),
+    lineSegment<GlobalPoint>(corners[0][corners[0].length - 1][3], corners[1][0][0]),
+    lineSegment<GlobalPoint>(corners[1][corners[1].length - 1][3], corners[2][0][0]),
+    lineSegment<GlobalPoint>(corners[2][corners[2].length - 1][3], corners[3][0][0]),
+    lineSegment<GlobalPoint>(corners[3][corners[3].length - 1][3], corners[0][0][0]),
   ];
   const shape = [sides, corners.flat()] as ElementShape;
 
@@ -339,7 +297,7 @@ export function deconstructRectanguloidElement(
  */
 export function deconstructDiamondElement(
   element: DrawinkDiamondElement,
-  offset: number = 0,
+  offset = 0,
 ): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
   const cachedShape = getElementShapesCacheEntry(element, offset);
 
@@ -347,8 +305,7 @@ export function deconstructDiamondElement(
     return cachedShape;
   }
 
-  const [topX, topY, rightX, rightY, bottomX, bottomY, leftX, leftY] =
-    getDiamondPoints(element);
+  const [topX, topY, rightX, rightY, bottomX, bottomY, leftX, leftY] = getDiamondPoints(element);
   const verticalRadius = element.roundness
     ? getCornerRadius(Math.abs(topX - leftX), element)
     : (topX - leftX) * 0.01;
@@ -365,77 +322,40 @@ export function deconstructDiamondElement(
 
   const baseCorners = [
     curve(
-      pointFrom<GlobalPoint>(
-        right[0] - verticalRadius,
-        right[1] - horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(right[0] - verticalRadius, right[1] - horizontalRadius),
       right,
       right,
-      pointFrom<GlobalPoint>(
-        right[0] - verticalRadius,
-        right[1] + horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(right[0] - verticalRadius, right[1] + horizontalRadius),
     ), // RIGHT
     curve(
-      pointFrom<GlobalPoint>(
-        bottom[0] + verticalRadius,
-        bottom[1] - horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(bottom[0] + verticalRadius, bottom[1] - horizontalRadius),
       bottom,
       bottom,
-      pointFrom<GlobalPoint>(
-        bottom[0] - verticalRadius,
-        bottom[1] - horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(bottom[0] - verticalRadius, bottom[1] - horizontalRadius),
     ), // BOTTOM
     curve(
-      pointFrom<GlobalPoint>(
-        left[0] + verticalRadius,
-        left[1] + horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(left[0] + verticalRadius, left[1] + horizontalRadius),
       left,
       left,
-      pointFrom<GlobalPoint>(
-        left[0] + verticalRadius,
-        left[1] - horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(left[0] + verticalRadius, left[1] - horizontalRadius),
     ), // LEFT
     curve(
-      pointFrom<GlobalPoint>(
-        top[0] - verticalRadius,
-        top[1] + horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(top[0] - verticalRadius, top[1] + horizontalRadius),
       top,
       top,
-      pointFrom<GlobalPoint>(
-        top[0] + verticalRadius,
-        top[1] + horizontalRadius,
-      ),
+      pointFrom<GlobalPoint>(top[0] + verticalRadius, top[1] + horizontalRadius),
     ), // TOP
   ];
 
   const corners = baseCorners.map(
-    (corner) =>
-      curveCatmullRomCubicApproxPoints(curveOffsetPoints(corner, offset))!,
+    (corner) => curveCatmullRomCubicApproxPoints(curveOffsetPoints(corner, offset))!,
   );
 
   const sides = [
-    lineSegment<GlobalPoint>(
-      corners[0][corners[0].length - 1][3],
-      corners[1][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[1][corners[1].length - 1][3],
-      corners[2][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[2][corners[2].length - 1][3],
-      corners[3][0][0],
-    ),
-    lineSegment<GlobalPoint>(
-      corners[3][corners[3].length - 1][3],
-      corners[0][0][0],
-    ),
+    lineSegment<GlobalPoint>(corners[0][corners[0].length - 1][3], corners[1][0][0]),
+    lineSegment<GlobalPoint>(corners[1][corners[1].length - 1][3], corners[2][0][0]),
+    lineSegment<GlobalPoint>(corners[2][corners[2].length - 1][3], corners[3][0][0]),
+    lineSegment<GlobalPoint>(corners[3][corners[3].length - 1][3], corners[0][0][0]),
   ];
 
   const shape = [sides, corners.flat()] as ElementShape;
@@ -486,10 +406,7 @@ export const getCornerRadius = (x: number, element: DrawinkElement) => {
   return 0;
 };
 
-const getDiagonalsForBindableElement = (
-  element: DrawinkElement,
-  elementsMap: ElementsMap,
-) => {
+const getDiagonalsForBindableElement = (element: DrawinkElement, elementsMap: ElementsMap) => {
   // for rectangles, shrink the diagonals a bit because there's something
   // going on with the focus points around the corners. Ask Mark for details.
   const OFFSET_PX = element.type === "rectangle" ? 15 : 0;
@@ -506,16 +423,9 @@ const getDiagonalsForBindableElement = (
   const diagonalOne = shrinkSegment(
     isRectangularElement(element)
       ? lineSegment<GlobalPoint>(
+          pointRotateRads(pointFrom<GlobalPoint>(element.x, element.y), center, element.angle),
           pointRotateRads(
-            pointFrom<GlobalPoint>(element.x, element.y),
-            center,
-            element.angle,
-          ),
-          pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width,
-              element.y + element.height,
-            ),
+            pointFrom<GlobalPoint>(element.x + element.width, element.y + element.height),
             center,
             element.angle,
           ),
@@ -527,10 +437,7 @@ const getDiagonalsForBindableElement = (
             element.angle,
           ),
           pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width / 2,
-              element.y + element.height,
-            ),
+            pointFrom<GlobalPoint>(element.x + element.width / 2, element.y + element.height),
             center,
             element.angle,
           ),
@@ -557,10 +464,7 @@ const getDiagonalsForBindableElement = (
             element.angle,
           ),
           pointRotateRads(
-            pointFrom<GlobalPoint>(
-              element.x + element.width,
-              element.y + element.height / 2,
-            ),
+            pointFrom<GlobalPoint>(element.x + element.width, element.y + element.height / 2),
             center,
             element.angle,
           ),
@@ -582,10 +486,7 @@ export const projectFixedPointOntoDiagonal = (
     return null;
   }
 
-  const [diagonalOne, diagonalTwo] = getDiagonalsForBindableElement(
-    element,
-    elementsMap,
-  );
+  const [diagonalOne, diagonalTwo] = getDiagonalsForBindableElement(element, elementsMap);
 
   const a = LinearElementEditor.getPointAtIndexGlobalCoordinates(
     arrow,

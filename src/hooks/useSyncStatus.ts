@@ -5,15 +5,13 @@
  * Provides reactive updates for online/offline state and pending operations.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import { hybridStorageAdapter, type CloudSyncStatus } from "@/data/HybridStorageAdapter";
+import { type CloudSyncStatus, hybridStorageAdapter } from "@/data/HybridStorageAdapter";
 import { offlineQueue } from "@/data/OfflineQueue";
 
 export function useSyncStatus(): CloudSyncStatus {
-  const [status, setStatus] = useState<CloudSyncStatus>(() =>
-    hybridStorageAdapter.getSyncStatus(),
-  );
+  const [status, setStatus] = useState<CloudSyncStatus>(() => hybridStorageAdapter.getSyncStatus());
 
   useEffect(() => {
     // Listen for online/offline changes

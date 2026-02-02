@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 import type { Theme } from "@/lib/elements/types";
 
@@ -22,8 +23,7 @@ export const InitializeApp = (props: Props) => {
       await setLanguage(currentLang);
       setLoading(false);
     };
-    const currentLang =
-      languages.find((lang) => lang.code === props.langCode) || defaultLang;
+    const currentLang = languages.find((lang) => lang.code === props.langCode) || defaultLang;
     updateLang();
   }, [props.langCode]);
 

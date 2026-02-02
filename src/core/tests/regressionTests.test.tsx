@@ -1,13 +1,6 @@
-import React from "react";
 import { vi } from "vitest";
 
-import {
-  FONT_FAMILY,
-  CODES,
-  KEYS,
-  reseed,
-  MQ_MIN_WIDTH_DESKTOP,
-} from "@/lib/common";
+import { CODES, FONT_FAMILY, KEYS, MQ_MIN_WIDTH_DESKTOP, reseed } from "@/lib/common";
 
 import { setDateTimeForTests } from "@/lib/common";
 
@@ -42,14 +35,10 @@ const finger2 = new Pointer("touch", 2);
  * to debug where a test failure came from.
  */
 const checkpoint = (name: string) => {
-  expect(renderStaticScene.mock.calls.length).toMatchSnapshot(
-    `[${name}] number of renders`,
-  );
+  expect(renderStaticScene.mock.calls.length).toMatchSnapshot(`[${name}] number of renders`);
   expect(h.state).toMatchSnapshot(`[${name}] appState`);
   expect(h.elements.length).toMatchSnapshot(`[${name}] number of elements`);
-  h.elements.forEach((element, i) =>
-    expect(element).toMatchSnapshot(`[${name}] element ${i}`),
-  );
+  h.elements.forEach((element, i) => expect(element).toMatchSnapshot(`[${name}] element ${i}`));
 
   checkpointHistory(h.history, name);
 };
@@ -207,17 +196,13 @@ describe("regression tests", () => {
     mouse.down(10, 10);
     mouse.up(10, 10);
 
-    expect(
-      h.elements.filter((element) => element.type === "rectangle").length,
-    ).toBe(1);
+    expect(h.elements.filter((element) => element.type === "rectangle").length).toBe(1);
     Keyboard.withModifierKeys({ alt: true }, () => {
       mouse.down(-8, -8);
       mouse.up(10, 10);
     });
 
-    expect(
-      h.elements.filter((element) => element.type === "rectangle").length,
-    ).toBe(2);
+    expect(h.elements.filter((element) => element.type === "rectangle").length).toBe(2);
   });
 
   it("click-drag to select a group", () => {
@@ -240,10 +225,7 @@ describe("regression tests", () => {
     mouse.restorePosition(...finalPosition);
     mouse.up(5, 5);
 
-    expect(
-      h.elements.filter((element) => h.state.selectedElementIds[element.id])
-        .length,
-    ).toBe(2);
+    expect(h.elements.filter((element) => h.state.selectedElementIds[element.id]).length).toBe(2);
   });
 
   it("shift-click to multiselect, then drag", () => {
@@ -601,11 +583,7 @@ describe("regression tests", () => {
       Keyboard.keyPress(KEYS.G);
     });
 
-    expect(h.elements.map((element) => element.id)).toEqual([
-      ids[1],
-      ids[0],
-      ids[2],
-    ]);
+    expect(h.elements.map((element) => element.id)).toEqual([ids[1], ids[0], ids[2]]);
   });
 
   it("supports nested groups", () => {
@@ -744,82 +722,76 @@ describe("regression tests", () => {
     expect(API.getSelectedElement().y).toEqual(prevY + 25);
   });
 
-  it(
-    "given selected element A with lower z-index than unselected element B and given B is partially over A " +
-      "when clicking intersection between A and B " +
-      "B should be selected on pointer up",
-    () => {
-      // set background color since default is transparent
-      // and transparent elements can't be selected by clicking inside of them
-      const rect1 = API.createElement({
-        type: "rectangle",
-        backgroundColor: "red",
-        x: 0,
-        y: 0,
-        width: 1000,
-        height: 1000,
-      });
-      const rect2 = API.createElement({
-        type: "rectangle",
-        backgroundColor: "red",
-        x: 500,
-        y: 500,
-        width: 500,
-        height: 500,
-      });
-      API.setElements([rect1, rect2]);
+  it("given selected element A with lower z-index than unselected element B and given B is partially over A " +
+    "when clicking intersection between A and B " +
+    "B should be selected on pointer up", () => {
+    // set background color since default is transparent
+    // and transparent elements can't be selected by clicking inside of them
+    const rect1 = API.createElement({
+      type: "rectangle",
+      backgroundColor: "red",
+      x: 0,
+      y: 0,
+      width: 1000,
+      height: 1000,
+    });
+    const rect2 = API.createElement({
+      type: "rectangle",
+      backgroundColor: "red",
+      x: 500,
+      y: 500,
+      width: 500,
+      height: 500,
+    });
+    API.setElements([rect1, rect2]);
 
-      mouse.select(rect1);
+    mouse.select(rect1);
 
-      // pointerdown on rect2 covering rect1 while rect1 is selected should
-      // retain rect1 selection
-      mouse.down(900, 900);
-      expect(API.getSelectedElement().id).toBe(rect1.id);
+    // pointerdown on rect2 covering rect1 while rect1 is selected should
+    // retain rect1 selection
+    mouse.down(900, 900);
+    expect(API.getSelectedElement().id).toBe(rect1.id);
 
-      // pointerup should select rect2
-      mouse.up();
-      expect(API.getSelectedElement().id).toBe(rect2.id);
-    },
-  );
+    // pointerup should select rect2
+    mouse.up();
+    expect(API.getSelectedElement().id).toBe(rect2.id);
+  });
 
-  it(
-    "given selected element A with lower z-index than unselected element B and given B is partially over A " +
-      "when dragging on intersection between A and B " +
-      "A should be dragged and keep being selected",
-    () => {
-      const rect1 = API.createElement({
-        type: "rectangle",
-        backgroundColor: "red",
-        x: 0,
-        y: 0,
-        width: 1000,
-        height: 1000,
-      });
-      const rect2 = API.createElement({
-        type: "rectangle",
-        backgroundColor: "red",
-        x: 500,
-        y: 500,
-        width: 500,
-        height: 500,
-      });
-      API.setElements([rect1, rect2]);
+  it("given selected element A with lower z-index than unselected element B and given B is partially over A " +
+    "when dragging on intersection between A and B " +
+    "A should be dragged and keep being selected", () => {
+    const rect1 = API.createElement({
+      type: "rectangle",
+      backgroundColor: "red",
+      x: 0,
+      y: 0,
+      width: 1000,
+      height: 1000,
+    });
+    const rect2 = API.createElement({
+      type: "rectangle",
+      backgroundColor: "red",
+      x: 500,
+      y: 500,
+      width: 500,
+      height: 500,
+    });
+    API.setElements([rect1, rect2]);
 
-      mouse.select(rect1);
+    mouse.select(rect1);
 
-      expect(API.getSelectedElement().id).toBe(rect1.id);
+    expect(API.getSelectedElement().id).toBe(rect1.id);
 
-      const { x: prevX, y: prevY } = API.getSelectedElement();
+    const { x: prevX, y: prevY } = API.getSelectedElement();
 
-      // pointer down on intersection between ellipse and rectangle
-      mouse.down(900, 900);
-      mouse.up(100, 100);
+    // pointer down on intersection between ellipse and rectangle
+    mouse.down(900, 900);
+    mouse.up(100, 100);
 
-      expect(API.getSelectedElement().id).toBe(rect1.id);
-      expect(API.getSelectedElement().x).toEqual(prevX + 100);
-      expect(API.getSelectedElement().y).toEqual(prevY + 100);
-    },
-  );
+    expect(API.getSelectedElement().id).toBe(rect1.id);
+    expect(API.getSelectedElement().x).toEqual(prevX + 100);
+    expect(API.getSelectedElement().y).toEqual(prevY + 100);
+  });
 
   it("deselects group of selected elements on pointer down when pointer doesn't hit any element", () => {
     UI.clickTool("rectangle");
@@ -918,10 +890,8 @@ describe("regression tests", () => {
 
     expect(API.getSelectedElements().length).toBe(2);
 
-    const { x: firstElementPrevX, y: firstElementPrevY } =
-      API.getSelectedElements()[0];
-    const { x: secondElementPrevX, y: secondElementPrevY } =
-      API.getSelectedElements()[1];
+    const { x: firstElementPrevX, y: firstElementPrevY } = API.getSelectedElements()[0];
+    const { x: secondElementPrevX, y: secondElementPrevY } = API.getSelectedElements()[1];
 
     // drag elements from point on common bounding box that doesn't hit any of the elements
     mouse.reset();
@@ -937,73 +907,67 @@ describe("regression tests", () => {
     expect(API.getSelectedElements().length).toBe(2);
   });
 
-  it(
-    "given a group of selected elements with an element that is not selected inside the group common bounding box " +
-      "when element that is not selected is clicked " +
-      "should switch selection to not selected element on pointer up",
-    () => {
-      UI.clickTool("rectangle");
-      mouse.down();
-      mouse.up(10, 10);
+  it("given a group of selected elements with an element that is not selected inside the group common bounding box " +
+    "when element that is not selected is clicked " +
+    "should switch selection to not selected element on pointer up", () => {
+    UI.clickTool("rectangle");
+    mouse.down();
+    mouse.up(10, 10);
 
-      UI.clickTool("ellipse");
-      mouse.down(100, 100);
-      mouse.up(100, 100);
+    UI.clickTool("ellipse");
+    mouse.down(100, 100);
+    mouse.up(100, 100);
 
-      UI.clickTool("diamond");
-      mouse.down(100, 100);
-      mouse.up(100, 100);
+    UI.clickTool("diamond");
+    mouse.down(100, 100);
+    mouse.up(100, 100);
 
-      // Selects rectangle without deselecting the diamond
-      // Diamond is already selected because creating it was our last action
-      mouse.reset();
-      Keyboard.withModifierKeys({ shift: true }, () => {
-        mouse.click();
-      });
-
-      // pointer down on ellipse
-      mouse.down(110, 160);
-      expect(API.getSelectedElements().length).toBe(2);
-
-      mouse.up();
-      expect(API.getSelectedElement().type).toBe("ellipse");
-    },
-  );
-
-  it(
-    "given a selected element A and a not selected element B with higher z-index than A " +
-      "and given B partially overlaps A " +
-      "when there's a shift-click on the overlapped section B is added to the selection",
-    () => {
-      UI.clickTool("rectangle");
-      // change background color since default is transparent
-      // and transparent elements can't be selected by clicking inside of them
-      togglePopover("Background");
-      UI.clickOnTestId("color-red");
-      mouse.down();
-      mouse.up(1000, 1000);
-
-      // draw ellipse partially over rectangle.
-      // since ellipse was created after rectangle it has an higher z-index.
-      // we don't need to change background color again since change above
-      // affects next drawn elements.
-      UI.clickTool("ellipse");
-      mouse.reset();
-      mouse.down(500, 500);
-      mouse.up(1000, 1000);
-
-      // select rectangle
-      mouse.reset();
+    // Selects rectangle without deselecting the diamond
+    // Diamond is already selected because creating it was our last action
+    mouse.reset();
+    Keyboard.withModifierKeys({ shift: true }, () => {
       mouse.click();
+    });
 
-      // click on intersection between ellipse and rectangle
-      Keyboard.withModifierKeys({ shift: true }, () => {
-        mouse.click(900, 900);
-      });
+    // pointer down on ellipse
+    mouse.down(110, 160);
+    expect(API.getSelectedElements().length).toBe(2);
 
-      expect(API.getSelectedElements().length).toBe(2);
-    },
-  );
+    mouse.up();
+    expect(API.getSelectedElement().type).toBe("ellipse");
+  });
+
+  it("given a selected element A and a not selected element B with higher z-index than A " +
+    "and given B partially overlaps A " +
+    "when there's a shift-click on the overlapped section B is added to the selection", () => {
+    UI.clickTool("rectangle");
+    // change background color since default is transparent
+    // and transparent elements can't be selected by clicking inside of them
+    togglePopover("Background");
+    UI.clickOnTestId("color-red");
+    mouse.down();
+    mouse.up(1000, 1000);
+
+    // draw ellipse partially over rectangle.
+    // since ellipse was created after rectangle it has an higher z-index.
+    // we don't need to change background color again since change above
+    // affects next drawn elements.
+    UI.clickTool("ellipse");
+    mouse.reset();
+    mouse.down(500, 500);
+    mouse.up(1000, 1000);
+
+    // select rectangle
+    mouse.reset();
+    mouse.click();
+
+    // click on intersection between ellipse and rectangle
+    Keyboard.withModifierKeys({ shift: true }, () => {
+      mouse.click(900, 900);
+    });
+
+    expect(API.getSelectedElements().length).toBe(2);
+  });
 
   it("shift click on selected element should deselect it on pointer up", () => {
     UI.clickTool("rectangle");
@@ -1112,85 +1076,79 @@ describe("regression tests", () => {
   });
 });
 
-it(
-  "given element A and group of elements B and given both are selected " +
-    "when user clicks on B, on pointer up " +
-    "only elements from B should be selected",
-  () => {
-    const rect1 = UI.createElement("rectangle", { y: 0 });
-    const rect2 = UI.createElement("rectangle", { y: 30 });
-    const rect3 = UI.createElement("rectangle", { y: 60 });
+it("given element A and group of elements B and given both are selected " +
+  "when user clicks on B, on pointer up " +
+  "only elements from B should be selected", () => {
+  const rect1 = UI.createElement("rectangle", { y: 0 });
+  const rect2 = UI.createElement("rectangle", { y: 30 });
+  const rect3 = UI.createElement("rectangle", { y: 60 });
 
-    UI.group([rect1, rect3]);
+  UI.group([rect1, rect3]);
 
-    expect(API.getSelectedElements().length).toBe(2);
-    expect(Object.keys(h.state.selectedGroupIds).length).toBe(1);
+  expect(API.getSelectedElements().length).toBe(2);
+  expect(Object.keys(h.state.selectedGroupIds).length).toBe(1);
 
-    // Select second rectangle without deselecting group
-    Keyboard.withModifierKeys({ shift: true }, () => {
-      mouse.clickOn(rect2);
-    });
-    expect(API.getSelectedElements().length).toBe(3);
+  // Select second rectangle without deselecting group
+  Keyboard.withModifierKeys({ shift: true }, () => {
+    mouse.clickOn(rect2);
+  });
+  expect(API.getSelectedElements().length).toBe(3);
 
-    // clicking on first rectangle that is part of the group should select
-    // that group (exclusively)
-    mouse.clickOn(rect1);
-    expect(API.getSelectedElements().length).toBe(2);
-    expect(Object.keys(h.state.selectedGroupIds).length).toBe(1);
-  },
-);
+  // clicking on first rectangle that is part of the group should select
+  // that group (exclusively)
+  mouse.clickOn(rect1);
+  expect(API.getSelectedElements().length).toBe(2);
+  expect(Object.keys(h.state.selectedGroupIds).length).toBe(1);
+});
 
-it(
-  "given element A and group of elements B and given both are selected " +
-    "when user shift-clicks on B, on pointer up " +
-    "only element A should be selected",
-  () => {
-    UI.clickTool("rectangle");
+it("given element A and group of elements B and given both are selected " +
+  "when user shift-clicks on B, on pointer up " +
+  "only element A should be selected", () => {
+  UI.clickTool("rectangle");
+  mouse.down();
+  mouse.up(100, 100);
+
+  UI.clickTool("rectangle");
+  mouse.down(10, 10);
+  mouse.up(100, 100);
+
+  UI.clickTool("rectangle");
+  mouse.down(10, 10);
+  mouse.up(100, 100);
+
+  // Select first rectangle while keeping third one selected.
+  // Third rectangle is selected because it was the last element to be created.
+  mouse.reset();
+  Keyboard.withModifierKeys({ shift: true }, () => {
+    mouse.click();
+  });
+
+  // Create group with first and third rectangle
+  Keyboard.withModifierKeys({ ctrl: true }, () => {
+    Keyboard.keyPress(KEYS.G);
+  });
+
+  expect(API.getSelectedElements().length).toBe(2);
+  const selectedGroupIds = Object.keys(h.state.selectedGroupIds);
+  expect(selectedGroupIds.length).toBe(1);
+
+  // Select second rectangle without deselecting group
+  Keyboard.withModifierKeys({ shift: true }, () => {
+    mouse.click(110, 110);
+  });
+  expect(API.getSelectedElements().length).toBe(3);
+
+  // Pointer down o first rectangle that is part of the group
+  mouse.reset();
+  Keyboard.withModifierKeys({ shift: true }, () => {
     mouse.down();
-    mouse.up(100, 100);
-
-    UI.clickTool("rectangle");
-    mouse.down(10, 10);
-    mouse.up(100, 100);
-
-    UI.clickTool("rectangle");
-    mouse.down(10, 10);
-    mouse.up(100, 100);
-
-    // Select first rectangle while keeping third one selected.
-    // Third rectangle is selected because it was the last element to be created.
-    mouse.reset();
-    Keyboard.withModifierKeys({ shift: true }, () => {
-      mouse.click();
-    });
-
-    // Create group with first and third rectangle
-    Keyboard.withModifierKeys({ ctrl: true }, () => {
-      Keyboard.keyPress(KEYS.G);
-    });
-
-    expect(API.getSelectedElements().length).toBe(2);
-    const selectedGroupIds = Object.keys(h.state.selectedGroupIds);
-    expect(selectedGroupIds.length).toBe(1);
-
-    // Select second rectangle without deselecting group
-    Keyboard.withModifierKeys({ shift: true }, () => {
-      mouse.click(110, 110);
-    });
-    expect(API.getSelectedElements().length).toBe(3);
-
-    // Pointer down o first rectangle that is part of the group
-    mouse.reset();
-    Keyboard.withModifierKeys({ shift: true }, () => {
-      mouse.down();
-    });
-    expect(API.getSelectedElements().length).toBe(3);
-    Keyboard.withModifierKeys({ shift: true }, () => {
-      mouse.up();
-    });
-    expect(API.getSelectedElements().length).toBe(1);
-  },
-);
+  });
+  expect(API.getSelectedElements().length).toBe(3);
+  Keyboard.withModifierKeys({ shift: true }, () => {
+    mouse.up();
+  });
+  expect(API.getSelectedElements().length).toBe(1);
+});
 
 //
 // DEPRECATED: DO NOT ADD TESTS HERE

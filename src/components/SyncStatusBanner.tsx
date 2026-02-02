@@ -6,7 +6,7 @@
  * - Pending operations indicator
  */
 
-import { useSyncStatus, getLastSyncMessage } from "@/hooks/useSyncStatus";
+import { getLastSyncMessage, useSyncStatus } from "@/hooks/useSyncStatus";
 
 import "./SyncStatusBanner.scss";
 

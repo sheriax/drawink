@@ -1,4 +1,3 @@
-import { KEYS, getFrame } from "@/lib/common";
 import { trackEvent } from "@/core/analytics";
 import { copyTextToSystemClipboard } from "@/core/clipboard";
 import { Dialog } from "@/core/components/Dialog";
@@ -16,6 +15,7 @@ import {
 import { useUIAppState } from "@/core/context/ui-appState";
 import { useCopyStatus } from "@/core/hooks/useCopiedIndicator";
 import { useI18n } from "@/core/i18n";
+import { KEYS, getFrame } from "@/lib/common";
 import { useEffect, useRef, useState } from "react";
 
 import { atom, useAtom, useAtomValue } from "../app-jotai";

@@ -1,25 +1,11 @@
-import type {
-  DrawinkElement,
-  OrderedDrawinkElement,
-} from "@/lib/elements/types";
+import type { DrawinkElement, OrderedDrawinkElement } from "@/lib/elements/types";
 
 import type { CaptureUpdateActionType } from "@/lib/elements";
 
-import type {
-  AppClassProperties,
-  AppState,
-  DrawinkProps,
-  BinaryFiles,
-  UIAppState,
-} from "../types";
 import type React from "react";
+import type { AppClassProperties, AppState, BinaryFiles, DrawinkProps, UIAppState } from "../types";
 
-export type ActionSource =
-  | "ui"
-  | "keyboard"
-  | "contextMenu"
-  | "api"
-  | "commandPalette";
+export type ActionSource = "ui" | "keyboard" | "contextMenu" | "api" | "commandPalette";
 
 /** if false, the action should be prevented */
 export type ActionResult =
@@ -151,10 +137,7 @@ export type PanelComponentProps = {
   appProps: DrawinkProps;
   data?: Record<string, any>;
   app: AppClassProperties;
-  renderAction: (
-    name: ActionName,
-    data?: PanelComponentProps["data"],
-  ) => React.JSX.Element | null;
+  renderAction: (name: ActionName, data?: PanelComponentProps["data"]) => React.JSX.Element | null;
 };
 
 export interface Action<TData = any> {
@@ -169,10 +152,7 @@ export interface Action<TData = any> {
   keywords?: string[];
   icon?:
     | React.ReactNode
-    | ((
-        appState: UIAppState,
-        elements: readonly DrawinkElement[],
-      ) => React.ReactNode);
+    | ((appState: UIAppState, elements: readonly DrawinkElement[]) => React.ReactNode);
   PanelComponent?: React.FC<PanelComponentProps>;
   perform: ActionFn<TData>;
   keyPriority?: number;

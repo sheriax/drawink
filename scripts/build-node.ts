@@ -14,9 +14,9 @@
 //    # or directly:
 //    bun scripts/build-node.ts
 
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 import { spawnSync } from "child_process";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const polyfillsPath = resolve(__dirname, "browser-polyfills.ts");

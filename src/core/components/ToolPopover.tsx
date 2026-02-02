@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
 import clsx from "clsx";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 import { capitalizeString } from "@/lib/common";
 
