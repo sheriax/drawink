@@ -35,10 +35,17 @@ export const listMine = query({
     const memberWorkspaceIds = memberships.map((m) => m.workspaceId);
     const memberWorkspaces = await Promise.all(memberWorkspaceIds.map((id) => ctx.db.get(id)));
 
-    // Combine and deduplicate
-    const allWorkspaces = [...ownedWorkspaces, ...memberWorkspaces.filter((w) => w !== null)];
+    // Combine and deduplicate (owner is also a member)
+    const seen = new Set(ownedWorkspaces.map((w) => w._id));
+    const unique = [...ownedWorkspaces];
+    for (const w of memberWorkspaces) {
+      if (w && !seen.has(w._id)) {
+        seen.add(w._id);
+        unique.push(w);
+      }
+    }
 
-    return allWorkspaces;
+    return unique;
   },
 });
 
@@ -160,6 +167,18 @@ export const create = mutation({
       joinedAt: now,
     });
 
+    // Create default board for the workspace
+    await ctx.db.insert("boards", {
+      name: "Untitled Board",
+      workspaceId,
+      ownerId: identity.subject,
+      isPublic: false,
+      version: 0,
+      createdAt: now,
+      updatedAt: now,
+      lastOpenedAt: now,
+    });
+
     return workspaceId;
   },
 });
@@ -241,6 +260,18 @@ export const ensureDefault = mutation({
       userId: identity.subject,
       role: "owner",
       joinedAt: now,
+    });
+
+    // Create default board for the workspace
+    await ctx.db.insert("boards", {
+      name: "Untitled Board",
+      workspaceId,
+      ownerId: identity.subject,
+      isPublic: false,
+      version: 0,
+      createdAt: now,
+      updatedAt: now,
+      lastOpenedAt: now,
     });
 
     return workspaceId;

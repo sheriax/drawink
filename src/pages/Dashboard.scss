@@ -305,6 +305,16 @@
     }
   }
 
+  &__ctx-disabled {
+    color: var(--dash-text-secondary) !important;
+    opacity: 0.5;
+    cursor: not-allowed !important;
+
+    &:hover {
+      background: transparent !important;
+    }
+  }
+
   // ── Picker overlay ──
   &__picker-overlay {
     position: fixed;
@@ -575,6 +585,7 @@
 
   // ── Board card ──
   &__card {
+    position: relative;
     background: var(--dash-surface);
     border: 1px solid var(--dash-border);
     border-radius: 0.75rem;
@@ -656,6 +667,49 @@
   &__card-date {
     font-size: 0.75rem;
     color: var(--dash-text-secondary);
+  }
+
+  // Board card menu button
+  &__card-menu {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dash-text-secondary);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: var(--dash-surface);
+      color: var(--dash-primary);
+    }
+  }
+
+  &__card:hover &__card-menu {
+    opacity: 1;
+  }
+
+  // Board rename input
+  &__board-rename-input {
+    width: 100%;
+    padding: 0.25rem 0.375rem;
+    border: 1px solid var(--dash-primary);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: var(--dash-surface);
+    color: var(--dash-text);
+    outline: none;
+    box-sizing: border-box;
   }
 }
 

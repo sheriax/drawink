@@ -321,12 +321,56 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   async deleteBoard(id: string): Promise<void> {
     const boards = await this.getBoards();
+    const board = boards.find((b) => b.id === id);
     const newBoards = boards.filter((b) => b.id !== id);
     localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(newBoards));
     // Clean up associated data
     localStorage.removeItem(`drawink-board-${id}-elements`);
     localStorage.removeItem(`drawink-board-${id}-state`);
     localStorage.removeItem(`drawink-board-${id}-version`);
+    // Track as deleted to prevent re-sync from uploading this board again
+    this.addDeletedBoardId(id);
+    // Also track cloudId if present
+    if (board?.cloudId) {
+      this.addDeletedBoardId(board.cloudId);
+    }
+  }
+
+  // =========================================================================
+  // Deleted Board Tracking (prevents re-sync of deleted boards)
+  // =========================================================================
+
+  /**
+   * Get list of board IDs that have been explicitly deleted.
+   * SyncEngine uses this to avoid re-uploading deleted boards.
+   */
+  getDeletedBoardIds(): string[] {
+    try {
+      const ids = localStorage.getItem("drawink-deleted-boards");
+      return ids ? JSON.parse(ids) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Track a board ID as deleted to prevent re-sync
+   */
+  addDeletedBoardId(id: string): void {
+    const ids = this.getDeletedBoardIds();
+    if (!ids.includes(id)) {
+      ids.push(id);
+      // Keep only the last 100 deleted IDs to prevent unbounded growth
+      const trimmedIds = ids.slice(-100);
+      localStorage.setItem("drawink-deleted-boards", JSON.stringify(trimmedIds));
+    }
+  }
+
+  /**
+   * Clear the deleted board IDs list (used after full re-sync)
+   */
+  clearDeletedBoardIds(): void {
+    localStorage.removeItem("drawink-deleted-boards");
   }
 
   /**

@@ -315,7 +315,8 @@ export const archive = mutation({
 });
 
 /**
- * Permanently delete a board and its content
+ * Permanently delete a board and its content.
+ * Cannot delete the last board in a workspace.
  */
 export const permanentDelete = mutation({
   args: {
@@ -330,6 +331,19 @@ export const permanentDelete = mutation({
     const board = await ctx.db.get(args.boardId);
     if (!board) {
       throw new Error("Board not found");
+    }
+
+    // Check if this is the last board in the workspace
+    const boardsInWorkspace = await ctx.db
+      .query("boards")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", board.workspaceId))
+      .collect();
+
+    // Filter out archived boards
+    const activeBoards = boardsInWorkspace.filter((b) => !b.archivedAt);
+
+    if (activeBoards.length <= 1) {
+      throw new Error("Cannot delete the last board in a workspace. Each workspace must have at least one board.");
     }
 
     // TODO: Check if user is owner

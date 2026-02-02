@@ -159,7 +159,15 @@ export class SyncEngine {
       }
 
       // Upload local boards that don't exist in cloud
+      // Skip boards that were explicitly deleted to prevent re-uploading
+      const deletedIds = new Set(this.localAdapter.getDeletedBoardIds());
+      
       for (const lb of localBoards) {
+        // Skip boards that were explicitly deleted
+        if (deletedIds.has(lb.id) || (lb.cloudId && deletedIds.has(lb.cloudId))) {
+          console.log(`[SyncEngine] Skipping deleted board: ${lb.id} (${lb.name})`);
+          continue;
+        }
         // Skip boards that already have a cloud counterpart
         if (lb.cloudId && cloudMap.has(lb.cloudId)) {
           continue;

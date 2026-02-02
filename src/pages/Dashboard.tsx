@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
+import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
 import "./Dashboard.scss";
 
 export const Dashboard: React.FC = () => {
@@ -51,6 +52,13 @@ type ContextMenu = {
   y: number;
 } | null;
 
+type BoardContextMenu = {
+  boardId: Id<"boards">;
+  boardName: string;
+  x: number;
+  y: number;
+} | null;
+
 const DashboardContent: React.FC = () => {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -72,7 +80,17 @@ const DashboardContent: React.FC = () => {
     type: "icon" | "color";
   } | null>(null);
 
+  // Board management state
+  const [boardContextMenu, setBoardContextMenu] = useState<BoardContextMenu>(null);
+  const [renamingBoardId, setRenamingBoardId] = useState<Id<"boards"> | null>(null);
+  const [boardRenameValue, setBoardRenameValue] = useState("");
+  const [deleteBoardConfirm, setDeleteBoardConfirm] = useState<{
+    id: Id<"boards">;
+    name: string;
+  } | null>(null);
+
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  const boardContextMenuRef = useRef<HTMLDivElement>(null);
 
   const workspaces = useQuery(api.workspaces.listMine);
   const recentBoards = useQuery(
@@ -85,6 +103,8 @@ const DashboardContent: React.FC = () => {
   const createWorkspaceMut = useMutation(api.workspaces.create);
   const updateWorkspace = useMutation(api.workspaces.update);
   const deleteWorkspaceMut = useMutation(api.workspaces.deleteWorkspace);
+  const updateBoard = useMutation(api.boards.update);
+  const deleteBoard = useMutation(api.boards.permanentDelete);
 
   useEffect(() => {
     const saved = localStorage.getItem("selectedWorkspaceId");
@@ -105,18 +125,26 @@ const DashboardContent: React.FC = () => {
 
   // Close context menu on outside click
   useEffect(() => {
-    if (!contextMenu) return;
+    if (!contextMenu && !boardContextMenu) return;
     const handler = (e: MouseEvent) => {
       if (
+        contextMenu &&
         contextMenuRef.current &&
         !contextMenuRef.current.contains(e.target as Node)
       ) {
         setContextMenu(null);
       }
+      if (
+        boardContextMenu &&
+        boardContextMenuRef.current &&
+        !boardContextMenuRef.current.contains(e.target as Node)
+      ) {
+        setBoardContextMenu(null);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [contextMenu]);
+  }, [contextMenu, boardContextMenu]);
 
   const selectWorkspace = (id: Id<"workspaces">) => {
     setSelectedWorkspaceId(id);
@@ -153,10 +181,19 @@ const DashboardContent: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteConfirm) return;
     try {
+      // Get boards in this workspace to delete locally
+      const boardsToDelete = recentBoards || [];
+      
       await deleteWorkspaceMut({
         workspaceId: deleteConfirm.id,
         confirmName: deleteInput,
       });
+      
+      // Also delete all local board data for this workspace to prevent re-sync
+      for (const board of boardsToDelete) {
+        await hybridStorageAdapter.deleteBoard(board._id);
+      }
+      
       if (selectedWorkspaceId === deleteConfirm.id) {
         localStorage.removeItem("selectedWorkspaceId");
         setSelectedWorkspaceId(null);
@@ -179,6 +216,33 @@ const DashboardContent: React.FC = () => {
     } catch (error) {
       console.error("Failed to create board:", error);
     }
+  };
+
+  const handleBoardRename = async (id: Id<"boards">) => {
+    const name = boardRenameValue.trim();
+    if (!name) {
+      setRenamingBoardId(null);
+      return;
+    }
+    try {
+      await updateBoard({ boardId: id, name });
+    } catch (error) {
+      console.error("Failed to rename board:", error);
+    }
+    setRenamingBoardId(null);
+  };
+
+  const handleBoardDelete = async () => {
+    if (!deleteBoardConfirm) return;
+    try {
+      // Delete from cloud (Convex)
+      await deleteBoard({ boardId: deleteBoardConfirm.id });
+      // Also delete from local storage to prevent re-sync
+      await hybridStorageAdapter.deleteBoard(deleteBoardConfirm.id);
+    } catch (error) {
+      console.error("Failed to delete board:", error);
+    }
+    setDeleteBoardConfirm(null);
   };
 
   const formatDate = (timestamp: number) => {
@@ -476,40 +540,152 @@ const DashboardContent: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="drawink-dashboard__grid">
-              <button
-                className="drawink-dashboard__card drawink-dashboard__card--new"
-                onClick={handleCreateBoard}
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                <span>New Board</span>
-              </button>
-
-              {recentBoards.map((board) => (
-                <div
-                  key={board._id}
-                  className="drawink-dashboard__card"
-                  onClick={() => navigate(`/#${board._id}`)}
+            <>
+              <div className="drawink-dashboard__grid">
+                <button
+                  className="drawink-dashboard__card drawink-dashboard__card--new"
+                  onClick={handleCreateBoard}
                 >
-                  <div className="drawink-dashboard__card-thumb">
-                    {board.thumbnailUrl ? (
-                      <img src={board.thumbnailUrl} alt={board.name} />
-                    ) : (
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <path d="M3 9h18M9 21V9" />
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  <span>New Board</span>
+                </button>
+
+                {recentBoards.map((board) => (
+                  <div
+                    key={board._id}
+                    className="drawink-dashboard__card"
+                    onClick={() => {
+                      if (renamingBoardId !== board._id) {
+                        navigate(`/#${board._id}`);
+                      }
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setBoardContextMenu({
+                        boardId: board._id,
+                        boardName: board.name,
+                        x: e.clientX,
+                        y: e.clientY,
+                      });
+                    }}
+                  >
+                    <div className="drawink-dashboard__card-thumb">
+                      {board.thumbnailUrl ? (
+                        <img src={board.thumbnailUrl} alt={board.name} />
+                      ) : (
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <path d="M3 9h18M9 21V9" />
+                        </svg>
+                      )}
+                    </div>
+                    <button
+                      className="drawink-dashboard__card-menu"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setBoardContextMenu({
+                          boardId: board._id,
+                          boardName: board.name,
+                          x: e.clientX,
+                          y: e.clientY,
+                        });
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="5" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="12" cy="19" r="2" />
                       </svg>
-                    )}
+                    </button>
+                    <div className="drawink-dashboard__card-info">
+                      {renamingBoardId === board._id ? (
+                        <input
+                          className="drawink-dashboard__board-rename-input"
+                          type="text"
+                          value={boardRenameValue}
+                          onChange={(e) => setBoardRenameValue(e.target.value)}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleBoardRename(board._id);
+                            if (e.key === "Escape") setRenamingBoardId(null);
+                          }}
+                          onBlur={() => handleBoardRename(board._id)}
+                        />
+                      ) : (
+                        <span className="drawink-dashboard__card-name">{board.name}</span>
+                      )}
+                      <span className="drawink-dashboard__card-date">{formatDate(board._creationTime)}</span>
+                    </div>
                   </div>
-                  <div className="drawink-dashboard__card-info">
-                    <span className="drawink-dashboard__card-name">{board.name}</span>
-                    <span className="drawink-dashboard__card-date">{formatDate(board._creationTime)}</span>
+                ))}
+              </div>
+
+              {/* Board context menu */}
+              {boardContextMenu && (
+                <div
+                  ref={boardContextMenuRef}
+                  className="drawink-dashboard__ctx-menu"
+                  style={{ top: boardContextMenu.y, left: boardContextMenu.x }}
+                >
+                  <button onClick={() => {
+                    setRenamingBoardId(boardContextMenu.boardId);
+                    setBoardRenameValue(boardContextMenu.boardName);
+                    setBoardContextMenu(null);
+                  }}>
+                    Rename
+                  </button>
+                  <div className="drawink-dashboard__ctx-divider" />
+                  {recentBoards && recentBoards.length > 1 ? (
+                    <button
+                      className="drawink-dashboard__ctx-danger"
+                      onClick={() => {
+                        setDeleteBoardConfirm({
+                          id: boardContextMenu.boardId,
+                          name: boardContextMenu.boardName,
+                        });
+                        setBoardContextMenu(null);
+                      }}
+                    >
+                      Delete Board
+                    </button>
+                  ) : (
+                    <button
+                      className="drawink-dashboard__ctx-disabled"
+                      title="Cannot delete the last board"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      Delete Board
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Board delete confirmation modal */}
+              {deleteBoardConfirm && (
+                <div className="drawink-dashboard__modal-overlay" onClick={() => setDeleteBoardConfirm(null)}>
+                  <div className="drawink-dashboard__modal" onClick={(e) => e.stopPropagation()}>
+                    <h3>Delete Board</h3>
+                    <p>
+                      Are you sure you want to delete <strong>{deleteBoardConfirm.name}</strong>? This cannot be undone.
+                    </p>
+                    <div className="drawink-dashboard__modal-actions">
+                      <button className="drawink-dashboard__modal-cancel" onClick={() => setDeleteBoardConfirm(null)}>
+                        Cancel
+                      </button>
+                      <button
+                        className="drawink-dashboard__modal-delete"
+                        onClick={handleBoardDelete}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </main>
       </div>
