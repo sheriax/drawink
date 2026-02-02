@@ -2,7 +2,7 @@ import { atom } from "../editor-jotai";
 import type { Board, BoardsAPI } from "../types";
 
 // ============================================================================
-// Core State Atoms
+// Core State Atoms (Private primitives + Public derived for jotai-scope compat)
 // ============================================================================
 
 /**
@@ -14,22 +14,40 @@ export const boardsAPIAtom = atom<BoardsAPI | null>(null);
 /**
  * List of all boards.
  */
-export const boardsAtom = atom<Board[]>([]);
+const _boardsAtom = atom<Board[]>([]);
+export const boardsAtom = atom(
+  (get) => get(_boardsAtom),
+  (_get, set, value: Board[]) => set(_boardsAtom, value),
+);
 
 /**
  * ID of the currently active board.
  */
-export const currentBoardIdAtom = atom<string | null>(null);
+const _currentBoardIdAtom = atom<string | null>(null);
+export const currentBoardIdAtom = atom(
+  (get) => get(_currentBoardIdAtom),
+  // @ts-expect-error - jotai-scope type inference limitation with primitive atoms
+  (_get, set, value: string | null) => set(_currentBoardIdAtom, value),
+);
 
 /**
  * Loading state for board operations.
  */
-export const isLoadingBoardsAtom = atom<boolean>(true);
+const _isLoadingBoardsAtom = atom<boolean>(true);
+export const isLoadingBoardsAtom = atom(
+  (get) => get(_isLoadingBoardsAtom),
+  (_get, set, value: boolean) => set(_isLoadingBoardsAtom, value),
+);
 
 /**
  * ID of the board currently being edited (for inline rename).
  */
-export const editingBoardIdAtom = atom<string | null>(null);
+const _editingBoardIdAtom = atom<string | null>(null);
+export const editingBoardIdAtom = atom(
+  (get) => get(_editingBoardIdAtom),
+  // @ts-expect-error - jotai-scope type inference limitation with primitive atoms
+  (_get, set, value: string | null) => set(_editingBoardIdAtom, value),
+);
 
 // ============================================================================
 // Derived Atoms
@@ -39,8 +57,8 @@ export const editingBoardIdAtom = atom<string | null>(null);
  * The currently active board object.
  */
 export const currentBoardAtom = atom((get) => {
-  const boards = get(boardsAtom);
-  const currentId = get(currentBoardIdAtom);
+  const boards = get(_boardsAtom);
+  const currentId = get(_currentBoardIdAtom);
   return boards.find((b) => b.id === currentId) || null;
 });
 
@@ -57,15 +75,19 @@ export const refreshBoardsAtom = atom(null, async (get, set) => {
     return;
   }
 
-  set(isLoadingBoardsAtom, true);
+  // @ts-ignore - jotai-scope type inference limitation
+  set(_isLoadingBoardsAtom, true);
   try {
     const [boards, currentId] = await Promise.all([api.getBoards(), api.getCurrentBoardId()]);
-    set(boardsAtom, boards);
-    set(currentBoardIdAtom, currentId);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardsAtom, boards);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_currentBoardIdAtom, currentId);
   } catch (error) {
     console.error("Failed to load boards", error);
   } finally {
-    set(isLoadingBoardsAtom, false);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_isLoadingBoardsAtom, false);
   }
 });
 
@@ -94,7 +116,7 @@ export const createBoardAtom = atom(null, async (get, set, name: string) => {
  */
 export const switchBoardAtom = atom(null, async (get, set, boardId: string) => {
   const api = get(boardsAPIAtom);
-  const currentId = get(currentBoardIdAtom);
+  const currentId = get(_currentBoardIdAtom);
 
   if (!api || boardId === currentId) {
     return;
@@ -102,7 +124,8 @@ export const switchBoardAtom = atom(null, async (get, set, boardId: string) => {
 
   try {
     await api.switchBoard(boardId);
-    set(currentBoardIdAtom, boardId);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_currentBoardIdAtom, boardId);
 
     // Emit event for scene update - App.tsx will handle this
     window.dispatchEvent(
@@ -128,7 +151,8 @@ export const updateBoardNameAtom = atom(
 
     try {
       await api.updateBoardName(id, name);
-      set(editingBoardIdAtom, null);
+      // @ts-ignore - jotai-scope type inference limitation
+      set(_editingBoardIdAtom, null);
       // Refresh the boards list
       const refreshBoards = set(refreshBoardsAtom);
       await refreshBoards;
