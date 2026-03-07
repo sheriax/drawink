@@ -63,6 +63,7 @@
     "png-chunk-text": "1.0.0",
     "png-chunks-encode": "1.0.0",
     "png-chunks-extract": "1.0.0",
+    "points-on-curve": "0.2.0",
     "pwacompat": "2.0.17",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -72,7 +73,8 @@
     "socket.io": "4.8.3",
     "socket.io-client": "4.8.3",
     "tunnel-rat": "0.1.2",
-    "vite-plugin-html": "3.2.2"
+    "vite-plugin-html": "3.2.2",
+    "workbox-window": "^7.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

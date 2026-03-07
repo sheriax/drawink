@@ -6,7 +6,8 @@
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap; /* added line */
+  white-space: nowrap;
+  /* added line */
   user-select: none;
 }
 
@@ -34,6 +35,6 @@
 }
 
 .LoadingMessage--dark {
-  background-color: #121212;
+  background-color: #000000;
   color: #ced4da;
 }
