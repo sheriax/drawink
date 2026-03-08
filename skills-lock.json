@@ -45,6 +45,46 @@
       "source": "clerk/skills",
       "sourceType": "github",
       "computedHash": "6a13eea450dda0b57edc358970f53c55ad7a2eb237d31decbc38e312555ddac5"
+    },
+    "convex": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "caba6606a8008e28d5e27931cbdd8f561ebaff47e48db4f0178874588150fdda"
+    },
+    "convex-auth-setup": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "52372298515921eb0db28700ee404c1f49b38305c356aff169a08e5747d38449"
+    },
+    "convex-components-guide": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "6e9c1e8f176c808b9fafbdc77caa1fb5a800381de80fc3993566f1b24c525628"
+    },
+    "convex-function-creator": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "4f52d8d74003de7711d1fef08b4131c2b9d606347057295484bf148132a9496a"
+    },
+    "convex-helpers-guide": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "ec0d2a6c377de7ff644a65b4d2460afb941e30cf55c931eace9bf265495b84b6"
+    },
+    "convex-migration-helper": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "cb62287e4ddd83346fd63f585ffb295f9a3d687f6e163c632dcdcbfd5cabf863"
+    },
+    "convex-quickstart": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "d67828cdc9e96a143f4c2b6f259ab6effba2b7f43e7ebc4fbb742cf87d24a33a"
+    },
+    "convex-schema-builder": {
+      "source": "get-convex/convex-agent-plugins",
+      "sourceType": "github",
+      "computedHash": "85533aab561f5c340b58a9cd44cc01e2cf2c2d8f88012b31c2d5bdc09d41ac36"
     }
   }
 }
