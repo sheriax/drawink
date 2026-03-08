@@ -298,8 +298,12 @@ export const saveCollaborativeScene = mutation({
     lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
   },
   handler: async (ctx, args) => {
-    // Require authentication
-    const userId = await getUserId(ctx);
+    // Skip save if user is not authenticated (auto-save fires even when signed out)
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { success: false, roomId: args.roomId, version: args.sceneVersion };
+    }
+    const userId = identity.subject;
 
     // Check if room already exists
     const existingRoom = await ctx.db

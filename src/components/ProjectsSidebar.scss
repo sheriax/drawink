@@ -1,3 +1,6 @@
+// ProjectsSidebar styles
+// Uses theme-aware CSS vars from theme.scss for proper dark mode support
+
 .projects-sidebar {
   padding: 1rem;
   height: 100%;
@@ -12,16 +15,16 @@
   &__workspace-dropdown {
     width: 100%;
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border-primary, #e5e5e5);
+    border: 1px solid var(--color-surface-high);
     border-radius: 6px;
-    background: var(--color-surface-primary, #fff);
-    color: var(--color-text-primary, #1e1e1e);
+    background: var(--island-bg-color);
+    color: var(--color-on-surface);
     font-size: 0.875rem;
     cursor: pointer;
 
     &:focus {
       outline: none;
-      border-color: var(--color-primary, #6366f1);
+      border-color: var(--color-primary);
     }
   }
 
@@ -31,13 +34,13 @@
     align-items: center;
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--color-border-primary, #e5e5e5);
+    border-bottom: 1px solid var(--color-surface-high);
 
     h3 {
       margin: 0;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--color-text-primary, #1e1e1e);
+      color: var(--color-on-surface);
     }
   }
 
@@ -47,8 +50,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary, #6366f1);
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-icon-white);
     border: none;
     border-radius: 6px;
     font-size: 1.25rem;
@@ -57,7 +60,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--color-primary-hover, #4f46e5);
+      background: var(--color-primary-hover);
       transform: scale(1.05);
     }
 
@@ -71,13 +74,13 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem;
-    color: var(--color-text-secondary, #6b7280);
+    color: var(--color-muted-darker);
 
     .spinner-small {
       width: 20px;
       height: 20px;
-      border: 2px solid var(--color-border-primary, #e5e5e5);
-      border-top-color: var(--color-primary, #6366f1);
+      border: 2px solid var(--color-surface-high);
+      border-top-color: var(--color-primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -97,22 +100,22 @@
     flex: 1;
 
     svg {
-      color: var(--color-text-secondary, #9ca3af);
+      color: var(--color-muted-darker);
       margin-bottom: 1rem;
       opacity: 0.5;
     }
 
     p {
       margin: 0 0 1rem 0;
-      color: var(--color-text-secondary, #6b7280);
+      color: var(--color-muted-darker);
       font-size: 0.875rem;
     }
 
     .btn-small {
       padding: 0.5rem 1rem;
-      background: var(--color-surface-secondary, #f3f4f6);
-      color: var(--color-text-primary, #1e1e1e);
-      border: 1px solid var(--color-border-primary, #e5e5e5);
+      background: var(--default-bg-color);
+      color: var(--color-on-surface);
+      border: 1px solid var(--color-surface-high);
       border-radius: 6px;
       font-size: 0.875rem;
       font-weight: 500;
@@ -120,8 +123,8 @@
       transition: all 0.2s ease;
 
       &:hover {
-        background: var(--color-surface-tertiary, #e5e7eb);
-        border-color: var(--color-border-secondary, #d1d5db);
+        background: var(--button-hover-bg);
+        border-color: var(--color-border-outline-variant);
       }
     }
   }
@@ -140,13 +143,22 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--color-border-primary, #e5e5e5);
+      background: var(--scrollbar-thumb);
       border-radius: 3px;
 
       &:hover {
-        background: var(--color-border-secondary, #d1d5db);
+        background: var(--scrollbar-thumb-hover);
       }
     }
+  }
+
+  &__error {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--color-danger-background);
+    color: var(--color-danger-color);
+    border-radius: 6px;
+    font-size: 0.8rem;
   }
 }
 
@@ -162,7 +174,7 @@
   margin-bottom: 2px;
 
   &:hover {
-    background: var(--color-surface-secondary, #f3f4f6);
+    background: var(--button-hover-bg);
 
     .board-item__actions {
       opacity: 1;
@@ -170,29 +182,29 @@
   }
 
   &--active {
-    background: var(--color-primary-light, #eef2ff);
-    border: 1px solid var(--color-primary, #6366f1);
+    background: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
 
     .board-item__name {
-      color: var(--color-primary, #6366f1);
+      color: var(--color-primary);
       font-weight: 600;
     }
 
     .board-item__icon {
-      color: var(--color-primary, #6366f1);
+      color: var(--color-primary);
     }
   }
 
   &__icon {
     flex-shrink: 0;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-muted-darker);
   }
 
   &__name {
     flex: 1;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-primary, #1e1e1e);
+    color: var(--color-on-surface);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -214,18 +226,18 @@
     background: none;
     border: none;
     border-radius: 4px;
-    color: var(--color-text-secondary, #9ca3af);
+    color: var(--color-muted-darker);
     cursor: pointer;
     transition: all 0.15s ease;
 
     &:hover {
-      background: var(--color-surface-tertiary, #e5e7eb);
-      color: var(--color-text-primary, #1e1e1e);
+      background: var(--button-hover-bg);
+      color: var(--color-on-surface);
     }
 
     &--delete:hover {
-      background: #fee2e2;
-      color: #ef4444;
+      background: var(--color-danger-background);
+      color: var(--color-danger);
     }
   }
 
@@ -235,15 +247,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary, #6366f1);
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-icon-white);
     border: none;
     border-radius: 4px;
     cursor: pointer;
     flex-shrink: 0;
 
     &:hover {
-      background: var(--color-primary-hover, #4f46e5);
+      background: var(--color-primary-hover);
     }
   }
 
@@ -256,11 +268,11 @@
     input {
       flex: 1;
       padding: 0.375rem 0.5rem;
-      border: 1px solid var(--color-primary, #6366f1);
+      border: 1px solid var(--color-primary);
       border-radius: 4px;
       font-size: 0.875rem;
-      background: var(--color-surface-primary, #fff);
-      color: var(--color-text-primary, #1e1e1e);
+      background: var(--input-bg-color);
+      color: var(--color-on-surface);
       outline: none;
     }
   }
