@@ -42,6 +42,13 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ["import", "global-builtin", "color-functions"],
+        },
+      },
+    },
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),
