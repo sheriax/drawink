@@ -23,7 +23,7 @@ export const SyncStatusBanner: React.FC = () => {
     <div className="sync-status-banner">
       {!isOnline && (
         <div className="sync-status-banner__offline">
-          <span className="sync-status-banner__icon">⚠️</span>
+          <span className="sync-status-banner__icon" role="img" aria-label="Warning">⚠️</span>
           <span className="sync-status-banner__text">
             You're offline. Changes will sync when you reconnect.
           </span>
@@ -34,7 +34,7 @@ export const SyncStatusBanner: React.FC = () => {
       )}
       {isOnline && pendingOperations > 0 && (
         <div className="sync-status-banner__syncing">
-          <span className="sync-status-banner__icon">⏳</span>
+          <span className="sync-status-banner__icon" role="img" aria-label="Syncing">⏳</span>
           <span className="sync-status-banner__text">
             Syncing {pendingOperations} change{pendingOperations > 1 ? "s" : ""}...
           </span>

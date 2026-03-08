@@ -7,6 +7,7 @@
 import {
   boardsAPIAtom,
   boardsAtom,
+  boardErrorAtom,
   createBoardAtom,
   currentBoardIdAtom,
   deleteBoardAtom,
@@ -37,6 +38,7 @@ export const ProjectsSidebar: React.FC = () => {
   const switchBoard = useSetAtom(switchBoardAtom);
   const updateBoardName = useSetAtom(updateBoardNameAtom);
   const deleteBoard = useSetAtom(deleteBoardAtom);
+  const boardError = useAtomValue(boardErrorAtom);
 
   // Refresh boards on mount
   useEffect(() => {
@@ -46,20 +48,32 @@ export const ProjectsSidebar: React.FC = () => {
   }, [boardsAPI, refreshBoards]);
 
   const handleCreateBoard = async () => {
-    const name = `Untitled Board ${boards.length + 1}`;
-    await createBoard(name);
+    try {
+      const name = `Untitled Board ${boards.length + 1}`;
+      await createBoard(name);
+    } catch (error) {
+      console.error("Failed to create board:", error);
+    }
   };
 
   const handleSwitchBoard = async (id: string) => {
     if (id === currentBoardId) return;
-    await switchBoard(id);
-    refreshBoards();
+    try {
+      await switchBoard(id);
+      await refreshBoards();
+    } catch (error) {
+      console.error("Failed to switch board:", error);
+    }
   };
 
   const handleDeleteBoard = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (window.confirm("Delete this board? This cannot be undone.")) {
-      await deleteBoard(id);
+      try {
+        await deleteBoard(id);
+      } catch (error) {
+        console.error("Failed to delete board:", error);
+      }
     }
   };
 
@@ -137,12 +151,26 @@ export const ProjectsSidebar: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="projects-sidebar__list">
+        <div className="projects-sidebar__list" role="listbox" aria-label="Boards">
+          {boardError && (
+            <div className="projects-sidebar__error" role="alert">
+              {boardError}
+            </div>
+          )}
           {boards.map((board) => (
             <div
               key={board.id}
               className={`board-item ${board.id === currentBoardId ? "board-item--active" : ""}`}
               onClick={() => handleSwitchBoard(board.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSwitchBoard(board.id);
+                }
+              }}
+              role="option"
+              aria-selected={board.id === currentBoardId}
+              tabIndex={0}
             >
               {editingBoardId === board.id ? (
                 <div className="board-item__edit" onClick={(e) => e.stopPropagation()}>

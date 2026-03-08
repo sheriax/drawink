@@ -55,7 +55,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
             <div className="organization-selector__icon">
               {selectedWorkspace ? (
                 <span className="organization-selector__org-icon">
-                  {selectedWorkspace.name[0].toUpperCase()}
+                  {(selectedWorkspace.name?.[0] || "?").toUpperCase()}
                 </span>
               ) : (
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -102,7 +102,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
                   }
                 >
                   <span className="organization-selector__org-icon-small">
-                    {ws.name[0].toUpperCase()}
+                    {(ws.name?.[0] || "?").toUpperCase()}
                   </span>
                   <span>{ws.name}</span>
                 </DropdownMenu.Item>

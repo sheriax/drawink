@@ -67,7 +67,7 @@ export const exportToDrawinkPlus = async (
     });
   }
 
-  window.open(`${import.meta.env.VITE_APP_PLUS_APP}/import?drawink=${id},${encryptionKey}`);
+  window.open(`${import.meta.env.VITE_APP_PLUS_APP}/import#drawink=${id},${encryptionKey}`);
 };
 
 export const ExportToDrawinkPlus: React.FC<{

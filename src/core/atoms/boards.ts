@@ -6,6 +6,16 @@ import type { Board, BoardsAPI } from "../types";
 // ============================================================================
 
 /**
+ * Error state for board operations.
+ * UI components can subscribe to this to show error feedback.
+ */
+const _boardErrorAtom = atom<string | null>(null);
+export const boardErrorAtom = atom(
+  (get) => get(_boardErrorAtom),
+  (_get: any, set: any, value: string | null) => set(_boardErrorAtom, value),
+);
+
+/**
  * The BoardsAPI implementation provided by the host app.
  * This should be set once during app initialization.
  */
@@ -83,8 +93,12 @@ export const refreshBoardsAtom = atom(null, async (get, set) => {
     set(_boardsAtom, boards);
     // @ts-ignore - jotai-scope type inference limitation
     set(_currentBoardIdAtom, currentId);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, null);
   } catch (error) {
     console.error("Failed to load boards", error);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, "Failed to load boards");
   } finally {
     // @ts-ignore - jotai-scope type inference limitation
     set(_isLoadingBoardsAtom, false);
@@ -105,8 +119,12 @@ export const createBoardAtom = atom(null, async (get, set, name: string) => {
     // Refresh the boards list
     const refreshBoards = set(refreshBoardsAtom);
     await refreshBoards;
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, null);
   } catch (error) {
     console.error("Failed to create board", error);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, "Failed to create board");
   }
 });
 
@@ -133,8 +151,12 @@ export const switchBoardAtom = atom(null, async (get, set, boardId: string) => {
         detail: { boardId },
       }),
     );
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, null);
   } catch (error) {
     console.error("Failed to switch board", error);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, "Failed to switch board");
   }
 });
 
@@ -156,8 +178,12 @@ export const updateBoardNameAtom = atom(
       // Refresh the boards list
       const refreshBoards = set(refreshBoardsAtom);
       await refreshBoards;
+      // @ts-ignore - jotai-scope type inference limitation
+      set(_boardErrorAtom, null);
     } catch (error) {
       console.error("Failed to update board name", error);
+      // @ts-ignore - jotai-scope type inference limitation
+      set(_boardErrorAtom, "Failed to update board name");
     }
   },
 );
@@ -176,7 +202,11 @@ export const deleteBoardAtom = atom(null, async (get, set, boardId: string) => {
     // Refresh the boards list
     const refreshBoards = set(refreshBoardsAtom);
     await refreshBoards;
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, null);
   } catch (error) {
     console.error("Failed to delete board", error);
+    // @ts-ignore - jotai-scope type inference limitation
+    set(_boardErrorAtom, "Failed to delete board");
   }
 });

@@ -104,13 +104,27 @@ export const getMembers = query({
       throw new Error("Workspace not found");
     }
 
+    // Verify caller is a member of the workspace
+    const callerMembership =
+      workspace.ownerId === identity.subject ||
+      (await ctx.db
+        .query("workspaceMembers")
+        .withIndex("by_workspace_and_user", (q) =>
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+        )
+        .first()) !== null;
+
+    if (!callerMembership) {
+      throw new Error("Access denied: not a workspace member");
+    }
+
     // Get members
     const members = await ctx.db
       .query("workspaceMembers")
       .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
       .collect();
 
-    // Get user details for each member
+    // Get user details — return only non-sensitive fields
     const membersWithDetails = await Promise.all(
       members.map(async (member) => {
         const user = await ctx.db
@@ -120,7 +134,15 @@ export const getMembers = query({
 
         return {
           ...member,
-          user: user || null,
+          user: user
+            ? {
+                _id: user._id,
+                clerkId: user.clerkId,
+                name: user.name,
+                email: user.email,
+                photoUrl: user.photoUrl,
+              }
+            : null,
         };
       }),
     );
@@ -347,6 +369,27 @@ export const deleteWorkspace = mutation({
       }
 
       await ctx.db.delete(board._id);
+    }
+
+    // Delete all collaboration sessions for boards in this workspace
+    // (sessions reference boards, which are now deleted)
+    for (const board of boards) {
+      const sessions = await ctx.db
+        .query("collaborationSessions")
+        .withIndex("by_board", (q) => q.eq("boardId", board._id))
+        .collect();
+      for (const s of sessions) {
+        await ctx.db.delete(s._id);
+      }
+    }
+
+    // Delete all projects in this workspace
+    const projects = await ctx.db
+      .query("projects")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+      .collect();
+    for (const p of projects) {
+      await ctx.db.delete(p._id);
     }
 
     // Delete all workspace members

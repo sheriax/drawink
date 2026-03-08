@@ -32,6 +32,7 @@ export function useSyncStatus(): CloudSyncStatus {
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
+      hybridStorageAdapter.offSyncStatusChange();
       unsubscribeQueue();
     };
   }, []);

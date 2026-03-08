@@ -10,7 +10,7 @@
 
 import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import { type QueryCtx, mutation, query } from "./_generated/server";
+import { type QueryCtx, internalMutation, mutation, query } from "./_generated/server";
 import { getUserId } from "./users";
 
 /**
@@ -162,24 +162,36 @@ export const heartbeat = mutation({
 
 /**
  * Get all active users on a board (real-time!)
+ * Requires authentication.
  */
 export const getActiveUsers = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     return await getActiveUsersInternal(ctx, args.boardId);
   },
 });
 
 /**
  * Get all cursor positions for active users (real-time!)
+ * Requires authentication.
  */
 export const getCursors = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Assign colors to users (deterministic based on userId)
@@ -208,12 +220,18 @@ export const getCursors = query({
 
 /**
  * Get collaboration statistics for a board
+ * Requires authentication.
  */
 export const getStats = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Get all-time collaboration sessions for this board
@@ -236,9 +254,9 @@ export const getStats = query({
 
 /**
  * Cleanup stale sessions (called by scheduled function)
- * This can be run periodically to clean up old sessions
+ * Internal only — not callable from the client.
  */
-export const cleanupStaleSessions = mutation({
+export const cleanupStaleSessions = internalMutation({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();
@@ -269,6 +287,7 @@ export const cleanupStaleSessions = mutation({
 /**
  * Save collaborative scene to Convex
  * Replaces Firebase's saveToFirebase() function
+ * Requires authentication.
  */
 export const saveCollaborativeScene = mutation({
   args: {
@@ -279,6 +298,9 @@ export const saveCollaborativeScene = mutation({
     lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
   },
   handler: async (ctx, args) => {
+    // Require authentication
+    const userId = await getUserId(ctx);
+
     // Check if room already exists
     const existingRoom = await ctx.db
       .query("collaborativeRooms")
@@ -295,7 +317,7 @@ export const saveCollaborativeScene = mutation({
         iv: args.iv,
         sceneVersion: args.sceneVersion,
         updatedAt: now,
-        lastEditedBy: args.lastEditedBy,
+        lastEditedBy: userId, // Use authenticated userId, not client-supplied value
         expiresAt, // Reset expiry on update
       });
 
@@ -309,7 +331,7 @@ export const saveCollaborativeScene = mutation({
         sceneVersion: args.sceneVersion,
         createdAt: now,
         updatedAt: now,
-        lastEditedBy: args.lastEditedBy,
+        lastEditedBy: userId, // Use authenticated userId
         expiresAt,
       });
 

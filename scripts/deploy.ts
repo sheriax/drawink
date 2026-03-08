@@ -246,8 +246,8 @@ async function main() {
   console.log(`Custom Domain: https://drawink.app`);
 }
 
-main().catch((error) => {
+main().catch((err) => {
   error("Fatal error during deployment");
-  console.error(error);
+  console.error(err);
   process.exit(1);
 });

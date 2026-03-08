@@ -703,8 +703,8 @@ const DrawinkWrapper = () => {
 
       // Load images for the new board
       const fileIds = (elements || [])
-        .filter((el: any) => el.type === "image" && el.fileId)
-        .map((el: any) => el.fileId);
+        .filter((el) => isInitializedImageElement(el))
+        .map((el) => (el as any).fileId);
 
       if (fileIds.length > 0) {
         hybridStorageAdapter.fileStorage.getFiles(fileIds).then(({ loadedFiles, erroredFiles }) => {
@@ -997,7 +997,7 @@ const DrawinkWrapper = () => {
 
         <TTDDialogTrigger />
         {isCollaborating && isOffline && (
-          <div className="alertalert--warning">{t("alerts.collabOfflineWarning")}</div>
+          <div className="alert alert--warning">{t("alerts.collabOfflineWarning")}</div>
         )}
         {localStorageQuotaExceeded && (
           <div className="alert alert--danger">{t("alerts.localStorageQuotaExceeded")}</div>

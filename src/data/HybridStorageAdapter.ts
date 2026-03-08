@@ -193,6 +193,10 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     this._onSyncStatusChange = callback;
   }
 
+  offSyncStatusChange(): void {
+    this._onSyncStatusChange = null;
+  }
+
   private notifySyncStatusChange(): void {
     this._onSyncStatusChange?.(this.getSyncStatus());
   }

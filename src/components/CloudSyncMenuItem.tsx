@@ -6,7 +6,7 @@
  */
 
 import type React from "react";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { type AuthState, authStateAtom, cloudEnabledAtom, syncStatusAtom } from "@/core/atoms/auth";
 import { checkIcon, usersIcon } from "@/core/components/icons";
@@ -102,16 +102,21 @@ export const CloudSyncMenuItem: React.FC = () => {
   // Clerk auth hook
   const { signOut } = useClerk();
 
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
   const handleSignInClick = () => {
     setAuthDialogState({ isOpen: true });
   };
 
   const handleLogout = async () => {
+    if (isSigningOut) return;
+    setIsSigningOut(true);
     try {
       await signOut();
       console.log("Logged out");
     } catch (error: any) {
       console.error("Logout failed:", error);
+      setIsSigningOut(false);
     }
   };
 
@@ -133,8 +138,12 @@ export const CloudSyncMenuItem: React.FC = () => {
                   : "Synced"}
           </MainMenu.Item>
         )}
-        <MainMenu.Item icon={LogoutIcon} onClick={handleLogout}>
-          Sign out
+        <MainMenu.Item
+          icon={isSigningOut ? SpinnerIcon : LogoutIcon}
+          onClick={handleLogout}
+          disabled={isSigningOut}
+        >
+          {isSigningOut ? "Signing out..." : "Sign out"}
         </MainMenu.Item>
       </>
     );

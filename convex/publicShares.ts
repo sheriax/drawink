@@ -24,10 +24,21 @@ export const createPublicShare = mutation({
   handler: async (ctx, args) => {
     // NO AUTH CHECK - Allow anonymous sharing!
 
+    // Validate payload size (max 5MB)
+    const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+    if (args.payload.byteLength > MAX_PAYLOAD_BYTES) {
+      throw new Error(
+        `Payload too large: ${args.payload.byteLength} bytes exceeds maximum of ${MAX_PAYLOAD_BYTES} bytes`,
+      );
+    }
+
+    // Validate title length (max 200 chars)
+    const title = args.title ? args.title.slice(0, 200) : "Untitled";
+
     // Generate a unique public link ID (Convex auto-generates IDs)
     const shareId = await ctx.db.insert("publicShares", {
       payload: args.payload,
-      title: args.title || "Untitled",
+      title,
 
       // Metadata
       createdAt: Date.now(),

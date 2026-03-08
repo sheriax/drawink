@@ -6,7 +6,79 @@
  */
 
 import { v } from "convex/values";
+import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
+
+// =========================================================================
+// AUTH HELPERS
+// =========================================================================
+
+/**
+ * Assert that the current user has access to a board.
+ * Checks: board owner, workspace member, or direct board collaborator.
+ * Returns the board document if access is granted.
+ */
+async function assertBoardAccess(
+  ctx: QueryCtx | MutationCtx,
+  boardId: any,
+  requiredRole?: "owner" | "editor",
+) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    throw new Error("Unauthorized");
+  }
+
+  const board = await ctx.db.get(boardId);
+  if (!board) {
+    throw new Error("Board not found");
+  }
+
+  const userId = identity.subject;
+
+  // Owner always has full access
+  if (board.ownerId === userId) {
+    return { board, identity, role: "owner" as const };
+  }
+
+  // Check workspace membership
+  const workspaceMember = await ctx.db
+    .query("workspaceMembers")
+    .withIndex("by_workspace_and_user", (q) =>
+      q.eq("workspaceId", board.workspaceId).eq("userId", userId),
+    )
+    .first();
+
+  if (workspaceMember) {
+    // For owner-only operations, workspace admins also qualify
+    if (
+      requiredRole === "owner" &&
+      !["owner", "admin"].includes(workspaceMember.role)
+    ) {
+      throw new Error("Access denied: requires owner or admin role");
+    }
+    return { board, identity, role: workspaceMember.role };
+  }
+
+  // Check board-level collaborator
+  const boardCollaborator = await ctx.db
+    .query("boardCollaborators")
+    .withIndex("by_board_and_user", (q) =>
+      q.eq("boardId", boardId).eq("userId", userId),
+    )
+    .first();
+
+  if (boardCollaborator) {
+    if (requiredRole === "owner") {
+      throw new Error("Access denied: requires owner or admin role");
+    }
+    if (requiredRole === "editor" && boardCollaborator.role !== "editor") {
+      throw new Error("Access denied: requires editor role");
+    }
+    return { board, identity, role: boardCollaborator.role };
+  }
+
+  throw new Error("Access denied");
+}
 
 // =========================================================================
 // QUERIES (Real-time reactive data)
@@ -20,14 +92,29 @@ export const listByWorkspace = query({
     workspaceId: v.id("workspaces"),
   },
   handler: async (ctx, args) => {
-    // Check authentication (Clerk integration)
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unauthorized");
     }
 
-    // TODO: Check if user has access to workspace
-    // For now, just return boards
+    // Verify user has access to the workspace
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const hasAccess =
+      workspace.ownerId === identity.subject ||
+      (await ctx.db
+        .query("workspaceMembers")
+        .withIndex("by_workspace_and_user", (q) =>
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+        )
+        .first()) !== null;
+
+    if (!hasAccess) {
+      throw new Error("Access denied");
+    }
 
     const boards = await ctx.db
       .query("boards")
@@ -73,18 +160,7 @@ export const getById = query({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    const board = await ctx.db.get(args.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
-
-    // TODO: Check if user has access to this board
-
+    const { board } = await assertBoardAccess(ctx, args.boardId);
     return board;
   },
 });
@@ -97,16 +173,7 @@ export const getContent = query({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    // Check board exists and user has access
-    const board = await ctx.db.get(args.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
+    const { identity } = await assertBoardAccess(ctx, args.boardId);
 
     // Get content
     const content = await ctx.db
@@ -150,6 +217,25 @@ export const create = mutation({
       throw new Error("Unauthorized");
     }
 
+    // Verify user is a member of the workspace
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const hasAccess =
+      workspace.ownerId === identity.subject ||
+      (await ctx.db
+        .query("workspaceMembers")
+        .withIndex("by_workspace_and_user", (q) =>
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+        )
+        .first()) !== null;
+
+    if (!hasAccess) {
+      throw new Error("Access denied");
+    }
+
     const now = Date.now();
 
     const boardId = await ctx.db.insert("boards", {
@@ -179,20 +265,9 @@ export const update = mutation({
     projectId: v.optional(v.id("projects")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
+    await assertBoardAccess(ctx, args.boardId, "editor");
 
     const { boardId, ...updates } = args;
-
-    // Check board exists
-    const board = await ctx.db.get(boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
-
-    // TODO: Check if user has edit permission
 
     await ctx.db.patch(boardId, {
       ...updates,
@@ -211,10 +286,7 @@ export const updateLastOpened = mutation({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
+    await assertBoardAccess(ctx, args.boardId);
 
     await ctx.db.patch(args.boardId, {
       lastOpenedAt: Date.now(),
@@ -233,16 +305,7 @@ export const saveContent = mutation({
     checksum: v.string(),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    // Check board exists
-    const board = await ctx.db.get(args.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
+    const { identity } = await assertBoardAccess(ctx, args.boardId, "editor");
 
     // Get current content
     const existingContent = await ctx.db
@@ -294,17 +357,7 @@ export const archive = mutation({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    const board = await ctx.db.get(args.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
-
-    // TODO: Check if user has delete permission
+    await assertBoardAccess(ctx, args.boardId, "owner");
 
     await ctx.db.patch(args.boardId, {
       archivedAt: Date.now(),
@@ -313,7 +366,7 @@ export const archive = mutation({
 });
 
 /**
- * Permanently delete a board and its content.
+ * Permanently delete a board and all related data.
  * Cannot delete the last board in a workspace.
  */
 export const permanentDelete = mutation({
@@ -321,15 +374,7 @@ export const permanentDelete = mutation({
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    const board = await ctx.db.get(args.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
+    const { board } = await assertBoardAccess(ctx, args.boardId, "owner");
 
     // Check if this is the last board in the workspace
     const boardsInWorkspace = await ctx.db
@@ -346,8 +391,6 @@ export const permanentDelete = mutation({
       );
     }
 
-    // TODO: Check if user is owner
-
     // Delete content
     const content = await ctx.db
       .query("boardContent")
@@ -355,6 +398,42 @@ export const permanentDelete = mutation({
       .first();
     if (content) {
       await ctx.db.delete(content._id);
+    }
+
+    // Delete versions
+    const versions = await ctx.db
+      .query("boardVersions")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .collect();
+    for (const ver of versions) {
+      await ctx.db.delete(ver._id);
+    }
+
+    // Delete collaborators
+    const collabs = await ctx.db
+      .query("boardCollaborators")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .collect();
+    for (const c of collabs) {
+      await ctx.db.delete(c._id);
+    }
+
+    // Delete files metadata
+    const files = await ctx.db
+      .query("files")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .collect();
+    for (const f of files) {
+      await ctx.db.delete(f._id);
+    }
+
+    // Delete collaboration sessions
+    const sessions = await ctx.db
+      .query("collaborationSessions")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .collect();
+    for (const s of sessions) {
+      await ctx.db.delete(s._id);
     }
 
     // Delete board

@@ -171,7 +171,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     this.idleTimeoutId = null;
   }
 
-  private onUmmount: (() => void) | null = null;
+  private onUnmount: (() => void) | null = null;
 
   componentDidMount() {
     window.addEventListener(EVENT.BEFORE_UNLOAD, this.beforeUnload);
@@ -186,7 +186,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     const unsubOnScrollChange = this.drawinkAPI.onScrollChange(() =>
       throttledRelayUserViewportBounds(),
     );
-    this.onUmmount = () => {
+    this.onUnmount = () => {
       unsubOnUserFollow();
       unsubOnScrollChange();
     };
@@ -239,7 +239,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       window.clearTimeout(this.idleTimeoutId);
       this.idleTimeoutId = null;
     }
-    this.onUmmount?.();
+    this.onUnmount?.();
   }
 
   isCollaborating = () => appJotaiStore.get(isCollaboratingAtom)!;

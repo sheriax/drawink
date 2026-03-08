@@ -6,7 +6,12 @@
  */
 
 import { v } from "convex/values";
-import { type MutationCtx, type QueryCtx, mutation, query } from "./_generated/server";
+import {
+  type MutationCtx,
+  type QueryCtx,
+  internalMutation,
+  query,
+} from "./_generated/server";
 
 // =========================================================================
 // HELPER FUNCTIONS
@@ -50,30 +55,49 @@ export const getCurrent = query({
 
 /**
  * Get user by Clerk ID
+ * Requires authentication; strips sensitive Stripe fields from response.
  */
 export const getByClerkId = query({
   args: {
     clerkId: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
       .first();
 
-    return user;
+    if (!user) {
+      return null;
+    }
+
+    // Strip sensitive Stripe IDs from response
+    return {
+      _id: user._id,
+      _creationTime: user._creationTime,
+      clerkId: user.clerkId,
+      email: user.email,
+      name: user.name,
+      photoUrl: user.photoUrl,
+      subscriptionTier: user.subscriptionTier,
+    };
   },
 });
 
 // =========================================================================
-// MUTATIONS (Called by Clerk webhook)
+// INTERNAL MUTATIONS (Called by Clerk/Stripe webhooks via httpAction)
 // =========================================================================
 
 /**
  * Create or update user from Clerk webhook
  * This is called automatically when user signs up/updates profile
  */
-export const upsertFromClerk = mutation({
+export const upsertFromClerk = internalMutation({
   args: {
     clerkId: v.string(),
     email: v.string(),
@@ -119,7 +143,7 @@ export const upsertFromClerk = mutation({
 /**
  * Update user subscription (called by Stripe webhook)
  */
-export const updateSubscription = mutation({
+export const updateSubscription = internalMutation({
   args: {
     clerkId: v.string(),
     tier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
