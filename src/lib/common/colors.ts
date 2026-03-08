@@ -24,7 +24,7 @@ export type ColorPickerColor =
 export type ColorTuple = readonly [string, string, string, string, string];
 export type ColorPalette = Merge<
   Record<ColorPickerColor, ColorTuple>,
-  { black: "#000000"; white: "#ffffff"; transparent: "transparent" }
+  { black: "#1e1e1e"; white: "#ffffff"; transparent: "transparent" }
 >;
 
 // used general type instead of specific type (ColorPalette) to support custom colors
@@ -53,7 +53,7 @@ export const getSpecificColorShades = (
 
 export const COLOR_PALETTE = {
   transparent: "transparent",
-  black: "#000000",
+  black: "#1e1e1e",
   white: "#ffffff",
   // open-colors
   gray: getSpecificColorShades("gray", ELEMENTS_PALETTE_SHADE_INDEXES),

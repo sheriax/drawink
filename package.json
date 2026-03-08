@@ -74,7 +74,7 @@
     "socket.io-client": "4.8.3",
     "tunnel-rat": "0.1.2",
     "vite-plugin-html": "3.2.2",
-    "workbox-window": "^7.1.0"
+    "workbox-window": "7.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
