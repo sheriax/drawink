@@ -4,8 +4,8 @@ import { encryptData } from "@/core/data/encryption";
 import { newElementWith } from "@/lib/elements";
 import throttle from "lodash.throttle";
 
-import type { UserIdleState } from "@/lib/common";
 import type { OnUserFollowedPayload, SocketId } from "@/core/types";
+import type { UserIdleState } from "@/lib/common";
 import type { OrderedDrawinkElement } from "@/lib/elements/types";
 
 import { FILE_UPLOAD_TIMEOUT, WS_EVENTS, WS_SUBTYPES } from "../app_constants";

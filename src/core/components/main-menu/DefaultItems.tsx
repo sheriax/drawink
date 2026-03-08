@@ -19,29 +19,29 @@ import { useSetAtom } from "../../editor-jotai";
 import { useI18n } from "../../i18n";
 import { activeConfirmDialogAtom } from "../ActiveConfirmDialog";
 import {
-  useDrawinkSetAppState,
+  useAppProps,
   useDrawinkActionManager,
   useDrawinkElements,
-  useAppProps,
+  useDrawinkSetAppState,
 } from "../App";
 import { openConfirmModal } from "../OverwriteConfirm/OverwriteConfirmState";
 import Trans from "../Trans";
 import DropdownMenuItem from "../dropdownMenu/DropdownMenuItem";
 import DropdownMenuItemContentRadio from "../dropdownMenu/DropdownMenuItemContentRadio";
 import DropdownMenuItemLink from "../dropdownMenu/DropdownMenuItemLink";
-import { GithubIcon, DiscordIcon, XBrandIcon } from "../icons";
+import { DiscordIcon, GithubIcon, XBrandIcon } from "../icons";
 import {
-  boltIcon,
   DeviceDesktopIcon,
   ExportIcon,
   ExportImageIcon,
   HelpIcon,
   LoadIcon,
   MoonIcon,
-  save,
-  searchIcon,
   SunIcon,
   TrashIcon,
+  boltIcon,
+  save,
+  searchIcon,
   usersIcon,
 } from "../icons";
 
@@ -284,9 +284,7 @@ export const ToggleTheme = (
         event.preventDefault();
 
         if (props?.onSelect) {
-          props.onSelect(
-            appState.theme === THEME.DARK ? THEME.LIGHT : THEME.DARK,
-          );
+          props.onSelect(appState.theme === THEME.DARK ? THEME.LIGHT : THEME.DARK);
         } else {
           return actionManager.executeAction(actionToggleTheme);
         }
@@ -294,16 +292,10 @@ export const ToggleTheme = (
       icon={appState.theme === THEME.DARK ? SunIcon : MoonIcon}
       data-testid="toggle-dark-mode"
       shortcut={shortcut}
-      aria-label={
-        appState.theme === THEME.DARK
-          ? t("buttons.lightMode")
-          : t("buttons.darkMode")
-      }
+      aria-label={appState.theme === THEME.DARK ? t("buttons.lightMode") : t("buttons.darkMode")}
       disabled={props?.disabled}
     >
-      {appState.theme === THEME.DARK
-        ? t("buttons.lightMode")
-        : t("buttons.darkMode")}
+      {appState.theme === THEME.DARK ? t("buttons.lightMode") : t("buttons.darkMode")}
     </DropdownMenuItem>
   );
 };
@@ -315,10 +307,7 @@ export const ChangeCanvasBackground = (props?: { disabled?: boolean }) => {
   const actionManager = useDrawinkActionManager();
   const appProps = useAppProps();
 
-  if (
-    appState.viewModeEnabled ||
-    !appProps.UIOptions.canvasActions.changeViewBackgroundColor
-  ) {
+  if (appState.viewModeEnabled || !appProps.UIOptions.canvasActions.changeViewBackgroundColor) {
     return null;
   }
   return (

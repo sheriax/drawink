@@ -2,7 +2,7 @@ import { KEYS } from "@/lib/common";
 
 import type { Node } from "@/lib/common";
 
-import { type FontDescriptor } from "./FontPickerList";
+import type { FontDescriptor } from "./FontPickerList";
 
 interface FontPickerKeyNavHandlerProps {
   event: React.KeyboardEvent<HTMLDivElement>;
@@ -23,11 +23,7 @@ export const fontPickerKeyHandler = ({
   onSelect,
   onHover,
 }: FontPickerKeyNavHandlerProps) => {
-  if (
-    !event[KEYS.CTRL_OR_CMD] &&
-    event.shiftKey &&
-    event.key.toLowerCase() === KEYS.F
-  ) {
+  if (!event[KEYS.CTRL_OR_CMD] && event.shiftKey && event.key.toLowerCase() === KEYS.F) {
     // refocus input on the popup trigger shortcut
     inputRef.current?.focus();
     return true;

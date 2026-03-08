@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@clerk/shared'
+  - '@parcel/watcher'
+  - core-js
+  - esbuild
+  - protobufjs

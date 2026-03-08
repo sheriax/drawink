@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { resolve, dirname } from "path";
+import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { build } from "esbuild";
 

@@ -1,6 +1,3 @@
-import "@drawink/drawink/global";
-import "@drawink/drawink/css";
-
 interface Window {
   __DRAWINK_SHA__: string | undefined;
   DRAWINK_THROTTLE_RENDER: boolean | undefined;
@@ -9,6 +6,7 @@ interface Window {
   sa_event: ((event: string, properties?: Record<string, unknown>) => void) | undefined;
   DEBUG_FRACTIONAL_INDICES: boolean | undefined;
   visualDebug?: {
-    data: unknown[];
+    data: import("@/lib/common/visualdebug").DebugElement[][];
+    currentFrame?: number;
   };
 }

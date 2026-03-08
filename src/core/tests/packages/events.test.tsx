@@ -1,9 +1,8 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { resolvablePromise } from "@/lib/common";
 
-import { Drawink, CaptureUpdateAction } from "../../index";
+import { CaptureUpdateAction, Drawink } from "../../index";
 import { API } from "../helpers/api";
 import { Pointer } from "../helpers/ui";
 import { render } from "../test-utils";
@@ -19,9 +18,7 @@ describe("event callbacks", () => {
 
   beforeEach(async () => {
     const drawinkAPIPromise = resolvablePromise<DrawinkImperativeAPI>();
-    await render(
-      <Drawink drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)} />,
-    );
+    await render(<Drawink drawinkAPI={(api) => drawinkAPIPromise.resolve(api as any)} />);
     drawinkAPI = await drawinkAPIPromise;
   });
 
@@ -44,9 +41,7 @@ describe("event callbacks", () => {
       // files
       {},
     );
-    expect(onChange.mock?.lastCall?.[1].viewBackgroundColor).not.toBe(
-      origBackgroundColor,
-    );
+    expect(onChange.mock?.lastCall?.[1].viewBackgroundColor).not.toBe(origBackgroundColor);
   });
 
   it("should trigger onPointerDown/onPointerUp on canvas pointerDown/pointerUp", async () => {

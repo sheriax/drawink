@@ -1,12 +1,9 @@
+import { SHIFT_LOCKING_ANGLE, viewportCoordsToSceneCoords } from "@/lib/common";
 import {
-  SHIFT_LOCKING_ANGLE,
-  viewportCoordsToSceneCoords,
-} from "@/lib/common";
-import {
+  type Radians,
   normalizeRadians,
   radiansBetweenAngles,
   radiansDifference,
-  type Radians,
 } from "@/lib/math";
 
 import { pointsEqual } from "@/lib/math";
@@ -14,13 +11,9 @@ import { pointsEqual } from "@/lib/math";
 import type { AppState, Offsets, Zoom } from "@/core/types";
 
 import { getCommonBounds, getElementBounds } from "./bounds";
-import {
-  isArrowElement,
-  isFreeDrawElement,
-  isLinearElement,
-} from "./typeChecks";
+import { isArrowElement, isFreeDrawElement, isLinearElement } from "./typeChecks";
 
-import type { ElementsMap, DrawinkElement } from "./types";
+import type { DrawinkElement, ElementsMap } from "./types";
 
 export const INVISIBLY_SMALL_ELEMENT_SIZE = 0.1;
 
@@ -130,14 +123,9 @@ export const getPerfectElementSize = (
   const absWidth = Math.abs(width);
   const absHeight = Math.abs(height);
 
-  if (
-    elementType === "line" ||
-    elementType === "arrow" ||
-    elementType === "freedraw"
-  ) {
+  if (elementType === "line" || elementType === "arrow" || elementType === "freedraw") {
     const lockedAngle =
-      Math.round(Math.atan(absHeight / absWidth) / SHIFT_LOCKING_ANGLE) *
-      SHIFT_LOCKING_ANGLE;
+      Math.round(Math.atan(absHeight / absWidth) / SHIFT_LOCKING_ANGLE) * SHIFT_LOCKING_ANGLE;
     if (lockedAngle === 0) {
       height = 0;
     } else if (lockedAngle === Math.PI / 2) {
@@ -162,30 +150,17 @@ export const getLockedLinearCursorAlignSize = (
   let height = y - originY;
 
   const angle = Math.atan2(height, width) as Radians;
-  let lockedAngle = (Math.round(angle / SHIFT_LOCKING_ANGLE) *
-    SHIFT_LOCKING_ANGLE) as Radians;
+  let lockedAngle = (Math.round(angle / SHIFT_LOCKING_ANGLE) * SHIFT_LOCKING_ANGLE) as Radians;
 
   if (customAngle) {
     // If custom angle is provided, we check if the angle is close to the
     // custom angle, snap to that if close engough, otherwise snap to the
     // higher or lower angle depending on the current angle vs custom angle.
-    const lower = (Math.floor(customAngle / SHIFT_LOCKING_ANGLE) *
-      SHIFT_LOCKING_ANGLE) as Radians;
-    if (
-      radiansBetweenAngles(
-        angle,
-        lower,
-        (lower + SHIFT_LOCKING_ANGLE) as Radians,
-      )
-    ) {
-      if (
-        radiansDifference(angle, customAngle as Radians) <
-        SHIFT_LOCKING_ANGLE / 6
-      ) {
+    const lower = (Math.floor(customAngle / SHIFT_LOCKING_ANGLE) * SHIFT_LOCKING_ANGLE) as Radians;
+    if (radiansBetweenAngles(angle, lower, (lower + SHIFT_LOCKING_ANGLE) as Radians)) {
+      if (radiansDifference(angle, customAngle as Radians) < SHIFT_LOCKING_ANGLE / 6) {
         lockedAngle = customAngle as Radians;
-      } else if (
-        normalizeRadians(angle) > normalizeRadians(customAngle as Radians)
-      ) {
+      } else if (normalizeRadians(angle) > normalizeRadians(customAngle as Radians)) {
         lockedAngle = (lower + SHIFT_LOCKING_ANGLE) as Radians;
       } else {
         lockedAngle = lower;

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 import { KEYS, capitalizeString } from "@/lib/common";
 
@@ -13,27 +13,27 @@ import { useTunnels } from "../context/tunnels";
 
 import { HandButton } from "./HandButton";
 import { ToolButton } from "./ToolButton";
-import DropdownMenu from "./dropdownMenu/DropdownMenu";
 import { ToolPopover } from "./ToolPopover";
+import DropdownMenu from "./dropdownMenu/DropdownMenu";
 
 import {
-  SelectionIcon,
-  FreedrawIcon,
-  EraserIcon,
-  RectangleIcon,
   ArrowIcon,
-  extraToolsIcon,
   DiamondIcon,
   EllipseIcon,
-  LineIcon,
-  TextIcon,
-  ImageIcon,
-  frameToolIcon,
   EmbedIcon,
-  laserPointerToolIcon,
+  EraserIcon,
+  FreedrawIcon,
+  ImageIcon,
   LassoIcon,
-  mermaidLogoIcon,
+  LineIcon,
   MagicIcon,
+  RectangleIcon,
+  SelectionIcon,
+  TextIcon,
+  extraToolsIcon,
+  frameToolIcon,
+  laserPointerToolIcon,
+  mermaidLogoIcon,
 } from "./icons";
 
 import "./ToolIcon.scss";
@@ -87,19 +87,13 @@ type MobileToolBarProps = {
   setAppState: React.Component<any, UIAppState>["setState"];
 };
 
-export const MobileToolBar = ({
-  app,
-  onHandToolToggle,
-  setAppState,
-}: MobileToolBarProps) => {
+export const MobileToolBar = ({ app, onHandToolToggle, setAppState }: MobileToolBarProps) => {
   const activeTool = app.state.activeTool;
   const [isOtherShapesMenuOpen, setIsOtherShapesMenuOpen] = useState(false);
   const [lastActiveGenericShape, setLastActiveGenericShape] = useState<
     "rectangle" | "diamond" | "ellipse"
   >("rectangle");
-  const [lastActiveLinearElement, setLastActiveLinearElement] = useState<
-    "arrow" | "line"
-  >("arrow");
+  const [lastActiveLinearElement, setLastActiveLinearElement] = useState<"arrow" | "line">("arrow");
 
   // keep lastActiveGenericShape in sync with active tool if user switches via other UI
   useEffect(() => {
@@ -155,13 +149,7 @@ export const MobileToolBar = ({
   const showImageToolOutside = toolbarWidth >= MIN_WIDTH + 2 * ADDITIONAL_WIDTH;
   const showFrameToolOutside = toolbarWidth >= MIN_WIDTH + 3 * ADDITIONAL_WIDTH;
 
-  const extraTools = [
-    "text",
-    "frame",
-    "embeddable",
-    "laser",
-    "magicframe",
-  ].filter((tool) => {
+  const extraTools = ["text", "frame", "embeddable", "laser", "magicframe"].filter((tool) => {
     if (showTextToolOutside && tool === "text") {
       return false;
     }
@@ -178,16 +166,16 @@ export const MobileToolBar = ({
     ? activeTool.type === "text"
       ? TextIcon
       : activeTool.type === "image"
-      ? ImageIcon
-      : activeTool.type === "frame"
-      ? frameToolIcon
-      : activeTool.type === "embeddable"
-      ? EmbedIcon
-      : activeTool.type === "laser"
-      ? laserPointerToolIcon
-      : activeTool.type === "magicframe"
-      ? MagicIcon
-      : extraToolsIcon
+        ? ImageIcon
+        : activeTool.type === "frame"
+          ? frameToolIcon
+          : activeTool.type === "embeddable"
+            ? EmbedIcon
+            : activeTool.type === "laser"
+              ? laserPointerToolIcon
+              : activeTool.type === "magicframe"
+                ? MagicIcon
+                : extraToolsIcon
     : extraToolsIcon;
 
   return (
@@ -225,9 +213,8 @@ export const MobileToolBar = ({
           }
         }}
         displayedOption={
-          SELECTION_TOOLS.find(
-            (tool) => tool.type === app.state.preferredSelectionTool.type,
-          ) || SELECTION_TOOLS[0]
+          SELECTION_TOOLS.find((tool) => tool.type === app.state.preferredSelectionTool.type) ||
+          SELECTION_TOOLS[0]
         }
       />
 
@@ -273,26 +260,21 @@ export const MobileToolBar = ({
             lastActiveGenericShape === "rectangle"
               ? "toolBar.rectangle"
               : lastActiveGenericShape === "diamond"
-              ? "toolBar.diamond"
-              : lastActiveGenericShape === "ellipse"
-              ? "toolBar.ellipse"
-              : "toolBar.rectangle",
+                ? "toolBar.diamond"
+                : lastActiveGenericShape === "ellipse"
+                  ? "toolBar.ellipse"
+                  : "toolBar.rectangle",
           ),
         )}
         data-testid="toolbar-rectangle"
         onToolChange={(type: string) => {
-          if (
-            type === "rectangle" ||
-            type === "diamond" ||
-            type === "ellipse"
-          ) {
+          if (type === "rectangle" || type === "diamond" || type === "ellipse") {
             setLastActiveGenericShape(type);
             app.setActiveTool({ type });
           }
         }}
         displayedOption={
-          SHAPE_TOOLS.find((tool) => tool.type === lastActiveGenericShape) ||
-          SHAPE_TOOLS[0]
+          SHAPE_TOOLS.find((tool) => tool.type === lastActiveGenericShape) || SHAPE_TOOLS[0]
         }
       />
 
@@ -304,11 +286,7 @@ export const MobileToolBar = ({
         defaultOption={lastActiveLinearElement}
         namePrefix="linearElementType"
         title={capitalizeString(
-          t(
-            lastActiveLinearElement === "arrow"
-              ? "toolBar.arrow"
-              : "toolBar.line",
-          ),
+          t(lastActiveLinearElement === "arrow" ? "toolBar.arrow" : "toolBar.line"),
         )}
         data-testid="toolbar-arrow"
         fillable={true}
@@ -319,9 +297,8 @@ export const MobileToolBar = ({
           }
         }}
         displayedOption={
-          LINEAR_ELEMENT_TOOLS.find(
-            (tool) => tool.type === lastActiveLinearElement,
-          ) || LINEAR_ELEMENT_TOOLS[0]
+          LINEAR_ELEMENT_TOOLS.find((tool) => tool.type === lastActiveLinearElement) ||
+          LINEAR_ELEMENT_TOOLS[0]
         }
       />
 
@@ -454,9 +431,7 @@ export const MobileToolBar = ({
           >
             {t("toolBar.laser")}
           </DropdownMenu.Item>
-          <div style={{ margin: "6px 0", fontSize: 14, fontWeight: 600 }}>
-            Generate
-          </div>
+          <div style={{ margin: "6px 0", fontSize: 14, fontWeight: 600 }}>Generate</div>
           {app.props.aiEnabled !== false && <TTDDialogTriggerTunnel.Out />}
           <DropdownMenu.Item
             onSelect={() => app.setOpenDialog({ name: "ttd", tab: "mermaid" })}

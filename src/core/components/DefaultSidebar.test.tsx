@@ -1,40 +1,31 @@
-import React from "react";
-
 import { DEFAULT_SIDEBAR } from "@/lib/common";
 
 import { DefaultSidebar } from "../index";
 import { fireEvent, waitFor, withDrawinkDimensions } from "../tests/test-utils";
 
-import {
-  assertDrawinkWithSidebar,
-  assertSidebarDockButton,
-} from "./Sidebar/siderbar.test.helpers";
+import { assertDrawinkWithSidebar, assertSidebarDockButton } from "./Sidebar/siderbar.test.helpers";
 
 const { h } = window;
 
 describe("DefaultSidebar", () => {
   it("when `docked={undefined}` & `onDock={undefined}`, should allow docking", async () => {
-    await assertDrawinkWithSidebar(
-      <DefaultSidebar />,
-      DEFAULT_SIDEBAR.name,
-      async () => {
+    await assertDrawinkWithSidebar(<DefaultSidebar />, DEFAULT_SIDEBAR.name, async () => {
+      expect(h.state.defaultSidebarDockedPreference).toBe(false);
+
+      const { dockButton } = await assertSidebarDockButton(true);
+
+      fireEvent.click(dockButton);
+      await waitFor(() => {
+        expect(h.state.defaultSidebarDockedPreference).toBe(true);
+        expect(dockButton).toHaveClass("selected");
+      });
+
+      fireEvent.click(dockButton);
+      await waitFor(() => {
         expect(h.state.defaultSidebarDockedPreference).toBe(false);
-
-        const { dockButton } = await assertSidebarDockButton(true);
-
-        fireEvent.click(dockButton);
-        await waitFor(() => {
-          expect(h.state.defaultSidebarDockedPreference).toBe(true);
-          expect(dockButton).toHaveClass("selected");
-        });
-
-        fireEvent.click(dockButton);
-        await waitFor(() => {
-          expect(h.state.defaultSidebarDockedPreference).toBe(false);
-          expect(dockButton).not.toHaveClass("selected");
-        });
-      },
-    );
+        expect(dockButton).not.toHaveClass("selected");
+      });
+    });
   });
 
   it("when `docked={undefined}` & `onDock`, should allow docking", async () => {
@@ -113,16 +104,12 @@ describe("DefaultSidebar", () => {
   });
 
   it("when `docked={true}` & `onDock={undefined}`, should force-dock sidebar", async () => {
-    await assertDrawinkWithSidebar(
-      <DefaultSidebar docked />,
-      DEFAULT_SIDEBAR.name,
-      async () => {
-        expect(h.state.defaultSidebarDockedPreference).toBe(false);
+    await assertDrawinkWithSidebar(<DefaultSidebar docked />, DEFAULT_SIDEBAR.name, async () => {
+      expect(h.state.defaultSidebarDockedPreference).toBe(false);
 
-        const { sidebar } = await assertSidebarDockButton(false);
-        expect(sidebar).toHaveClass("sidebar--docked");
-      },
-    );
+      const { sidebar } = await assertSidebarDockButton(false);
+      expect(sidebar).toHaveClass("sidebar--docked");
+    });
   });
 
   it("when `docked={false}` & `onDock={undefined}`, should force-undock sidebar", async () => {

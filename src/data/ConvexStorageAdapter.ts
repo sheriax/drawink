@@ -423,6 +423,12 @@ export class ConvexStorageAdapter implements StorageAdapter {
       throw new Error("No workspace selected");
     }
 
+    // Guard against non-Convex IDs (e.g. "default" placeholder)
+    if (!boardId || boardId.length < 10 || boardId === "default") {
+      console.warn(`[ConvexStorageAdapter] Skipping save — invalid boardId: "${boardId}"`);
+      return;
+    }
+
     // Get encryption key and encrypt the content
     const key = await this.getEncryptionKey();
     const { ciphertext, iv } = await encryptContent(key, {

@@ -1,17 +1,13 @@
 import { pointFrom } from "@/lib/math";
 
+import { LinearElementEditor, isValidPolygon, newElementWith } from "@/lib/elements";
 import { bindOrUnbindBindingElement } from "@/lib/elements/binding";
-import {
-  isValidPolygon,
-  LinearElementEditor,
-  newElementWith,
-} from "@/lib/elements";
 
 import {
   isBindingElement,
   isFreeDrawElement,
-  isLinearElement,
   isLineElement,
+  isLinearElement,
 } from "@/lib/elements";
 
 import { KEYS, arrayToMap, invariant, updateActiveTool } from "@/lib/common";
@@ -21,18 +17,18 @@ import { isInvisiblySmallElement } from "@/lib/elements";
 
 import { CaptureUpdateAction } from "@/lib/elements";
 
-import type { GlobalPoint, LocalPoint } from "@/lib/math";
 import type {
   DrawinkElement,
   DrawinkLinearElement,
   NonDeleted,
   PointsPositionUpdates,
 } from "@/lib/elements/types";
+import type { GlobalPoint, LocalPoint } from "@/lib/math";
 
-import { t } from "../i18n";
-import { resetCursor } from "../cursor";
-import { done } from "../components/icons";
 import { ToolButton } from "../components/ToolButton";
+import { done } from "../components/icons";
+import { resetCursor } from "../cursor";
+import { t } from "../i18n";
 
 import { register } from "./register";
 
@@ -59,10 +55,7 @@ export const actionFinalize = register<FormData>({
         elementsMap,
       );
 
-      invariant(
-        element,
-        "Arrow element should exist if selectedLinearElement is set",
-      );
+      invariant(element, "Arrow element should exist if selectedLinearElement is set");
 
       invariant(
         sceneCoords,
@@ -173,15 +166,12 @@ export const actionFinalize = register<FormData>({
     let element: NonDeleted<DrawinkElement> | null = null;
     if (appState.multiElement) {
       element = appState.multiElement;
-    } else if (
-      appState.newElement?.type === "freedraw" ||
-      isBindingElement(appState.newElement)
-    ) {
+    } else if (appState.newElement?.type === "freedraw" || isBindingElement(appState.newElement)) {
       element = appState.newElement;
     } else if (Object.keys(appState.selectedElementIds).length === 1) {
-      const candidate = elementsMap.get(
-        Object.keys(appState.selectedElementIds)[0],
-      ) as NonDeleted<DrawinkLinearElement> | undefined;
+      const candidate = elementsMap.get(Object.keys(appState.selectedElementIds)[0]) as
+        | NonDeleted<DrawinkLinearElement>
+        | undefined;
       if (candidate) {
         element = candidate;
       }
@@ -197,10 +187,7 @@ export const actionFinalize = register<FormData>({
       ) {
         const { points } = element;
         const { lastCommittedPoint } = appState.selectedLinearElement;
-        if (
-          !lastCommittedPoint ||
-          points[points.length - 1] !== lastCommittedPoint
-        ) {
+        if (!lastCommittedPoint || points[points.length - 1] !== lastCommittedPoint) {
           scene.mutateElement(element, {
             points: element.points.slice(0, -1),
           });
@@ -227,9 +214,7 @@ export const actionFinalize = register<FormData>({
           const linePoints = element.points;
           const firstPoint = linePoints[0];
           const points: LocalPoint[] = linePoints.map((p, index) =>
-            index === linePoints.length - 1
-              ? pointFrom(firstPoint[0], firstPoint[1])
-              : p,
+            index === linePoints.length - 1 ? pointFrom(firstPoint[0], firstPoint[1]) : p,
           );
           if (isLineElement(element)) {
             scene.mutateElement(element, {
@@ -251,11 +236,7 @@ export const actionFinalize = register<FormData>({
       }
     }
 
-    if (
-      (!appState.activeTool.locked &&
-        appState.activeTool.type !== "freedraw") ||
-      !element
-    ) {
+    if ((!appState.activeTool.locked && appState.activeTool.type !== "freedraw") || !element) {
       resetCursor(interactiveCanvas);
     }
 
@@ -281,9 +262,7 @@ export const actionFinalize = register<FormData>({
     selectedLinearElement = selectedLinearElement
       ? {
           ...selectedLinearElement,
-          isEditing: appState.newElement
-            ? false
-            : selectedLinearElement.isEditing,
+          isEditing: appState.newElement ? false : selectedLinearElement.isEditing,
           initialState: {
             ...selectedLinearElement.initialState,
             lastClickedPoint: -1,
@@ -298,9 +277,7 @@ export const actionFinalize = register<FormData>({
         ...appState,
         cursorButton: "up",
         activeTool:
-          (appState.activeTool.locked ||
-            appState.activeTool.type === "freedraw") &&
-          element
+          (appState.activeTool.locked || appState.activeTool.type === "freedraw") && element
             ? appState.activeTool
             : activeTool,
         activeEmbeddable: null,
@@ -311,9 +288,7 @@ export const actionFinalize = register<FormData>({
         startBoundElement: null,
         suggestedBinding: null,
         selectedElementIds:
-          element &&
-          !appState.activeTool.locked &&
-          appState.activeTool.type !== "freedraw"
+          element && !appState.activeTool.locked && appState.activeTool.type !== "freedraw"
             ? {
                 ...appState.selectedElementIds,
                 [element.id]: true,
@@ -330,8 +305,7 @@ export const actionFinalize = register<FormData>({
     (event.key === KEYS.ESCAPE &&
       (appState.selectedLinearElement?.isEditing ||
         (!appState.newElement && appState.multiElement === null))) ||
-    ((event.key === KEYS.ESCAPE || event.key === KEYS.ENTER) &&
-      appState.multiElement !== null),
+    ((event.key === KEYS.ESCAPE || event.key === KEYS.ENTER) && appState.multiElement !== null),
   PanelComponent: ({ appState, updateData, data }) => (
     <ToolButton
       type="button"

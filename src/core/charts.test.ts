@@ -1,4 +1,4 @@
-import { tryParseCells, tryParseNumber, VALID_SPREADSHEET } from "./charts";
+import { VALID_SPREADSHEET, tryParseCells, tryParseNumber } from "./charts";
 
 import type { Spreadsheet } from "./charts";
 
@@ -49,14 +49,7 @@ describe("charts", () => {
       ).spreadsheet;
 
       expect(title).toEqual("value");
-      expect(labels).toEqual([
-        "01:00",
-        "02:00",
-        "03:00",
-        "04:00",
-        "05:00",
-        "06:00",
-      ]);
+      expect(labels).toEqual(["01:00", "02:00", "03:00", "04:00", "05:00", "06:00"]);
       expect(values).toEqual([61, -60, 85, -67, 54, 95]);
     });
 
@@ -80,14 +73,7 @@ describe("charts", () => {
       ).spreadsheet;
 
       expect(title).toEqual("value");
-      expect(labels).toEqual([
-        "01:00",
-        "02:00",
-        "03:00",
-        "04:00",
-        "05:00",
-        "06:00",
-      ]);
+      expect(labels).toEqual(["01:00", "02:00", "03:00", "04:00", "05:00", "06:00"]);
       expect(values).toEqual([61, -60, 85, -67, 54, 95]);
     });
 

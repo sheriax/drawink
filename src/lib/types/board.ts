@@ -2,7 +2,7 @@
  * Board types
  */
 
-import type { Timestamp } from './db';
+import type { Timestamp } from "./db";
 
 export interface Board {
   id: string;
@@ -13,7 +13,7 @@ export interface Board {
   ownerId: string;
   collaborators: Array<{
     userId: string;
-    role: 'editor' | 'viewer';
+    role: "editor" | "viewer";
     addedAt: Timestamp;
   }>;
   isPublic: boolean;

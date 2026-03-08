@@ -1,12 +1,6 @@
-import { pointFrom, type GlobalPoint } from "@/lib/math";
+import { type GlobalPoint, pointFrom } from "@/lib/math";
 import clsx from "clsx";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { EVENT, HYPERLINK_TOOLTIP_DELAY, KEYS } from "@/lib/common";
 
@@ -16,14 +10,14 @@ import { hitElementBoundingBox } from "@/lib/elements";
 
 import { isElementLink } from "@/lib/elements";
 
-import { getEmbedLink, embeddableURLValidator } from "@/lib/elements";
+import { embeddableURLValidator, getEmbedLink } from "@/lib/elements";
 
 import {
+  isLocalLink,
+  normalizeLink,
   sceneCoordsToViewportCoords,
   viewportCoordsToSceneCoords,
   wrapEvent,
-  isLocalLink,
-  normalizeLink,
 } from "@/lib/common";
 
 import { isEmbeddableElement } from "@/lib/elements";
@@ -31,8 +25,8 @@ import { isEmbeddableElement } from "@/lib/elements";
 import type { Scene } from "@/lib/elements";
 
 import type {
-  ElementsMap,
   DrawinkEmbeddableElement,
+  ElementsMap,
   NonDeletedDrawinkElement,
 } from "@/lib/elements/types";
 
@@ -41,10 +35,10 @@ import { getTooltipDiv, updateTooltipPosition } from "../../components/Tooltip";
 
 import { t } from "../../i18n";
 
-import { useAppProps, useEditorInterface, useDrawinkAppState } from "../App";
+import { getSelectedElements } from "../../scene";
+import { useAppProps, useDrawinkAppState, useEditorInterface } from "../App";
 import { ToolButton } from "../ToolButton";
 import { FreedrawIcon, TrashIcon, elementLinkIcon } from "../icons";
-import { getSelectedElements } from "../../scene";
 
 import { getLinkHandleFromCoords } from "./helpers";
 
@@ -74,13 +68,8 @@ export const Hyperlink = ({
   scene: Scene;
   setAppState: React.Component<any, AppState>["setState"];
   onLinkOpen: DrawinkProps["onLinkOpen"];
-  setToast: (
-    toast: { message: string; closable?: boolean; duration?: number } | null,
-  ) => void;
-  updateEmbedValidationStatus: (
-    element: DrawinkEmbeddableElement,
-    status: boolean,
-  ) => void;
+  setToast: (toast: { message: string; closable?: boolean; duration?: number } | null) => void;
+  updateEmbedValidationStatus: (element: DrawinkEmbeddableElement, status: boolean) => void;
 }) => {
   const elementsMap = scene.getNonDeletedElementsMap();
   const appState = useDrawinkAppState();
@@ -134,26 +123,14 @@ export const Hyperlink = ({
             closable: true,
           });
         }
-        const ar = embedLink
-          ? embedLink.intrinsicSize.w / embedLink.intrinsicSize.h
-          : 1;
-        const hasLinkChanged =
-          embeddableLinkCache.get(element.id) !== element.link;
+        const ar = embedLink ? embedLink.intrinsicSize.w / embedLink.intrinsicSize.h : 1;
+        const hasLinkChanged = embeddableLinkCache.get(element.id) !== element.link;
         scene.mutateElement(element, {
           ...(hasLinkChanged
             ? {
-                width:
-                  embedLink?.type === "video"
-                    ? width > height
-                      ? width
-                      : height * ar
-                    : width,
+                width: embedLink?.type === "video" ? (width > height ? width : height * ar) : width,
                 height:
-                  embedLink?.type === "video"
-                    ? width > height
-                      ? width / ar
-                      : height
-                    : height,
+                  embedLink?.type === "video" ? (width > height ? width / ar : height) : height,
               }
             : {}),
           link,
@@ -282,10 +259,7 @@ export const Hyperlink = ({
           target={isLocalLink(element.link) ? "_self" : "_blank"}
           onClick={(event) => {
             if (element.link && onLinkOpen) {
-              const customEvent = wrapEvent(
-                EVENT.EXCALIDRAW_LINK,
-                event.nativeEvent,
-              );
+              const customEvent = wrapEvent(EVENT.EXCALIDRAW_LINK, event.nativeEvent);
               onLinkOpen(
                 {
                   ...element,
@@ -303,9 +277,7 @@ export const Hyperlink = ({
           {element.link}
         </a>
       ) : (
-        <div className="drawink-hyperlinkContainer-link">
-          {t("labels.link.empty")}
-        </div>
+        <div className="drawink-hyperlinkContainer-link">{t("labels.link.empty")}</div>
       )}
       <div className="drawink-hyperlinkContainer__buttons">
         {!isEditing && (
@@ -373,8 +345,8 @@ export const getContextMenuLabel = (
   const label = isEmbeddableElement(selectedElements[0])
     ? "labels.link.editEmbed"
     : selectedElements[0]?.link
-    ? "labels.link.edit"
-    : "labels.link.create";
+      ? "labels.link.edit"
+      : "labels.link.create";
   return label;
 };
 
@@ -452,11 +424,8 @@ const shouldHideLinkPopup = (
   elementsMap: ElementsMap,
   appState: AppState,
   [clientX, clientY]: GlobalPoint,
-): Boolean => {
-  const { x: sceneX, y: sceneY } = viewportCoordsToSceneCoords(
-    { clientX, clientY },
-    appState,
-  );
+): boolean => {
+  const { x: sceneX, y: sceneY } = viewportCoordsToSceneCoords({ clientX, clientY }, appState);
 
   const threshold = 15 / appState.zoom.value;
   // hitbox to prevent hiding when hovered in element bounding box
@@ -465,20 +434,11 @@ const shouldHideLinkPopup = (
   }
   const [x1, y1, x2] = getElementAbsoluteCoords(element, elementsMap);
   // hit box to prevent hiding when hovered in the vertical area between element and popover
-  if (
-    sceneX >= x1 &&
-    sceneX <= x2 &&
-    sceneY >= y1 - SPACE_BOTTOM &&
-    sceneY <= y1
-  ) {
+  if (sceneX >= x1 && sceneX <= x2 && sceneY >= y1 - SPACE_BOTTOM && sceneY <= y1) {
     return false;
   }
   // hit box to prevent hiding when hovered around popover within threshold
-  const { x: popoverX, y: popoverY } = getCoordsForPopover(
-    element,
-    appState,
-    elementsMap,
-  );
+  const { x: popoverX, y: popoverY } = getCoordsForPopover(element, appState, elementsMap);
 
   if (
     clientX >= popoverX - threshold &&

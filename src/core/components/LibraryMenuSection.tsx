@@ -1,4 +1,5 @@
-import React, { memo, useEffect, useState } from "react";
+import type React from "react";
+import { memo, useEffect, useState } from "react";
 
 import type { DrawinkElement, NonDeleted } from "@/lib/elements/types";
 
@@ -6,9 +7,9 @@ import { useTransition } from "../hooks/useTransition";
 
 import { EmptyLibraryUnit, LibraryUnit } from "./LibraryUnit";
 
+import type { ReactNode } from "react";
 import type { SvgCache } from "../hooks/useLibraryItemSvg";
 import type { LibraryItem } from "../types";
-import type { ReactNode } from "react";
 
 type LibraryOrPendingItem = readonly (
   | LibraryItem

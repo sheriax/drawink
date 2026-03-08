@@ -1,19 +1,19 @@
-import { pointFrom, type LocalPoint } from "@/lib/math";
+import { type LocalPoint, pointFrom } from "@/lib/math";
 
 import {
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
   TEXT_ALIGN,
   VERTICAL_ALIGN,
-  getSizeFromPoints,
-  randomId,
   arrayToMap,
   assertNever,
   cloneJSON,
   getFontString,
-  isDevEnv,
-  toBrandedType,
   getLineHeight,
+  getSizeFromPoints,
+  isDevEnv,
+  randomId,
+  toBrandedType,
 } from "@/lib/common";
 
 import { bindBindingElement } from "@/lib/elements";
@@ -74,104 +74,81 @@ export type ValidLinearElement = {
     textAlign?: TextAlign;
     verticalAlign?: VerticalAlign;
   } & MarkOptional<ElementConstructorOpts, "x" | "y">;
-  end?:
+  end?: (
     | (
-        | (
-            | {
-                type: Exclude<
-                  DrawinkBindableElement["type"],
-                  | "image"
-                  | "text"
-                  | "frame"
-                  | "magicframe"
-                  | "embeddable"
-                  | "iframe"
-                >;
-                id?: DrawinkGenericElement["id"];
-              }
-            | {
-                id: DrawinkGenericElement["id"];
-                type?: Exclude<
-                  DrawinkBindableElement["type"],
-                  | "image"
-                  | "text"
-                  | "frame"
-                  | "magicframe"
-                  | "embeddable"
-                  | "iframe"
-                >;
-              }
-          )
-        | ((
-            | {
-                type: "text";
-                text: string;
-              }
-            | {
-                type?: "text";
-                id: DrawinkTextElement["id"];
-                text: string;
-              }
-          ) &
-            Partial<DrawinkTextElement>)
+        | {
+            type: Exclude<
+              DrawinkBindableElement["type"],
+              "image" | "text" | "frame" | "magicframe" | "embeddable" | "iframe"
+            >;
+            id?: DrawinkGenericElement["id"];
+          }
+        | {
+            id: DrawinkGenericElement["id"];
+            type?: Exclude<
+              DrawinkBindableElement["type"],
+              "image" | "text" | "frame" | "magicframe" | "embeddable" | "iframe"
+            >;
+          }
+      )
+    | ((
+        | {
+            type: "text";
+            text: string;
+          }
+        | {
+            type?: "text";
+            id: DrawinkTextElement["id"];
+            text: string;
+          }
       ) &
-        MarkOptional<ElementConstructorOpts, "x" | "y">;
-  start?:
+        Partial<DrawinkTextElement>)
+  ) &
+    MarkOptional<ElementConstructorOpts, "x" | "y">;
+  start?: (
     | (
-        | (
-            | {
-                type: Exclude<
-                  DrawinkBindableElement["type"],
-                  | "image"
-                  | "text"
-                  | "frame"
-                  | "magicframe"
-                  | "embeddable"
-                  | "iframe"
-                >;
-                id?: DrawinkGenericElement["id"];
-              }
-            | {
-                id: DrawinkGenericElement["id"];
-                type?: Exclude<
-                  DrawinkBindableElement["type"],
-                  | "image"
-                  | "text"
-                  | "frame"
-                  | "magicframe"
-                  | "embeddable"
-                  | "iframe"
-                >;
-              }
-          )
-        | ((
-            | {
-                type: "text";
-                text: string;
-              }
-            | {
-                type?: "text";
-                id: DrawinkTextElement["id"];
-                text: string;
-              }
-          ) &
-            Partial<DrawinkTextElement>)
+        | {
+            type: Exclude<
+              DrawinkBindableElement["type"],
+              "image" | "text" | "frame" | "magicframe" | "embeddable" | "iframe"
+            >;
+            id?: DrawinkGenericElement["id"];
+          }
+        | {
+            id: DrawinkGenericElement["id"];
+            type?: Exclude<
+              DrawinkBindableElement["type"],
+              "image" | "text" | "frame" | "magicframe" | "embeddable" | "iframe"
+            >;
+          }
+      )
+    | ((
+        | {
+            type: "text";
+            text: string;
+          }
+        | {
+            type?: "text";
+            id: DrawinkTextElement["id"];
+            text: string;
+          }
       ) &
-        MarkOptional<ElementConstructorOpts, "x" | "y">;
+        Partial<DrawinkTextElement>)
+  ) &
+    MarkOptional<ElementConstructorOpts, "x" | "y">;
 } & Partial<DrawinkLinearElement>;
 
-export type ValidContainer =
-  | {
-      type: Exclude<DrawinkGenericElement["type"], "selection">;
-      id?: DrawinkGenericElement["id"];
-      label?: {
-        text: string;
-        fontSize?: number;
-        fontFamily?: FontFamilyValues;
-        textAlign?: TextAlign;
-        verticalAlign?: VerticalAlign;
-      } & MarkOptional<ElementConstructorOpts, "x" | "y">;
-    } & ElementConstructorOpts;
+export type ValidContainer = {
+  type: Exclude<DrawinkGenericElement["type"], "selection">;
+  id?: DrawinkGenericElement["id"];
+  label?: {
+    text: string;
+    fontSize?: number;
+    fontFamily?: FontFamilyValues;
+    textAlign?: TextAlign;
+    verticalAlign?: VerticalAlign;
+  } & MarkOptional<ElementConstructorOpts, "x" | "y">;
+} & ElementConstructorOpts;
 
 export type DrawinkElementSkeleton =
   | Extract<
@@ -287,9 +264,7 @@ const bindLinearElementToElement = (
           text = start.text;
         }
         if (!text) {
-          console.error(
-            `No text found for start binding text element for ${linearElement.id}`,
-          );
+          console.error(`No text found for start binding text element for ${linearElement.id}`);
         }
         startBoundElement = newTextElement({
           x: startX,
@@ -364,9 +339,7 @@ const bindLinearElementToElement = (
         }
 
         if (!text) {
-          console.error(
-            `No text found for end binding text element for ${linearElement.id}`,
-          );
+          console.error(`No text found for end binding text element for ${linearElement.id}`);
         }
         endBoundElement = newTextElement({
           x: endX,
@@ -397,11 +370,7 @@ const bindLinearElementToElement = (
             break;
           }
           default: {
-            assertNever(
-              linearElement as never,
-              `Unhandled element end type "${endType}"`,
-              true,
-            );
+            assertNever(linearElement as never, `Unhandled element end type "${endType}"`, true);
           }
         }
       }
@@ -432,36 +401,24 @@ const bindLinearElementToElement = (
   const newPoints = cloneJSON<readonly LocalPoint[]>(linearElement.points);
 
   // left to right so shift the arrow towards right
-  if (
-    linearElement.points[endPointIndex][0] >
-    linearElement.points[endPointIndex - 1][0]
-  ) {
+  if (linearElement.points[endPointIndex][0] > linearElement.points[endPointIndex - 1][0]) {
     newPoints[0][0] = delta;
     newPoints[endPointIndex][0] -= delta;
   }
 
   // right to left so shift the arrow towards left
-  if (
-    linearElement.points[endPointIndex][0] <
-    linearElement.points[endPointIndex - 1][0]
-  ) {
+  if (linearElement.points[endPointIndex][0] < linearElement.points[endPointIndex - 1][0]) {
     newPoints[0][0] = -delta;
     newPoints[endPointIndex][0] += delta;
   }
   // top to bottom so shift the arrow towards top
-  if (
-    linearElement.points[endPointIndex][1] >
-    linearElement.points[endPointIndex - 1][1]
-  ) {
+  if (linearElement.points[endPointIndex][1] > linearElement.points[endPointIndex - 1][1]) {
     newPoints[0][1] = delta;
     newPoints[endPointIndex][1] -= delta;
   }
 
   // bottom to top so shift the arrow towards bottom
-  if (
-    linearElement.points[endPointIndex][1] <
-    linearElement.points[endPointIndex - 1][1]
-  ) {
+  if (linearElement.points[endPointIndex][1] < linearElement.points[endPointIndex - 1][1]) {
     newPoints[0][1] = -delta;
     newPoints[endPointIndex][1] += delta;
   }
@@ -497,9 +454,7 @@ class ElementStore {
   };
 
   getElementsMap = () => {
-    return toBrandedType<NonDeletedSceneElementsMap>(
-      arrayToMap(this.getElements()),
-    );
+    return toBrandedType<NonDeletedSceneElementsMap>(arrayToMap(this.getElements()));
   };
 
   getElement = (id: string) => {
@@ -629,11 +584,7 @@ export const convertToDrawinkElements = (
 
       default: {
         drawinkElement = element;
-        assertNever(
-          element,
-          `Unhandled element type "${(element as any).type}"`,
-          true,
-        );
+        assertNever(element, `Unhandled element type "${(element as any).type}"`, true);
       }
     }
     const existingElement = elementStore.getElement(drawinkElement.id);
@@ -662,19 +613,13 @@ export const convertToDrawinkElements = (
       case "diamond":
       case "arrow": {
         if (element.label?.text) {
-          let [container, text] = bindTextToContainer(
-            drawinkElement,
-            element?.label,
-            scene,
-          );
+          let [container, text] = bindTextToContainer(drawinkElement, element?.label, scene);
           elementStore.add(container);
           elementStore.add(text);
 
           if (isArrowElement(container)) {
-            const originalStart =
-              element.type === "arrow" ? element?.start : undefined;
-            const originalEnd =
-              element.type === "arrow" ? element?.end : undefined;
+            const originalStart = element.type === "arrow" ? element?.start : undefined;
+            const originalEnd = element.type === "arrow" ? element?.end : undefined;
             if (originalStart && originalStart.id) {
               const newStartId = oldToNewElementIdMap.get(originalStart.id);
               if (newStartId) {
@@ -762,9 +707,7 @@ export const convertToDrawinkElements = (
       elementInFrame?.boundElements?.forEach((boundElement) => {
         const ele = elementStore.getElement(boundElement.id);
         if (!ele) {
-          throw new Error(
-            `Bound element with id ${boundElement.id} doesn't exist`,
-          );
+          throw new Error(`Bound element with id ${boundElement.id} doesn't exist`);
         }
         Object.assign(ele, { frameId: frame.id });
         childrenElements.push(ele);

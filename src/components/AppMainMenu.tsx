@@ -1,9 +1,6 @@
-import {
-  // loginIcon,
-  // ExcalLogo,
-  eyeIcon,
-} from "@/core/components/icons";
+import { eyeIcon } from "@/core/components/icons";
 import { MainMenu } from "@/core/index";
+import { useUser } from "@clerk/clerk-react";
 import React from "react";
 
 import { isDevEnv } from "@/lib/common";
@@ -11,7 +8,6 @@ import { isDevEnv } from "@/lib/common";
 import type { Theme } from "@/lib/elements/types";
 
 import { LanguageList } from "../app-language/LanguageList";
-// import { isDrawinkPlusSignedUser } from "../app_constants";
 
 import { CloudSyncMenuItem } from "./CloudSyncMenuItem";
 import { saveDebugState } from "./DebugCanvas";
@@ -24,6 +20,7 @@ export const AppMainMenu: React.FC<{
   setTheme: (theme: Theme | "system") => void;
   refresh: () => void;
 }> = React.memo((props) => {
+  const { isSignedIn } = useUser();
   return (
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
@@ -44,18 +41,31 @@ export const AppMainMenu: React.FC<{
       {/* Cloud Sync Login/Logout */}
       <CloudSyncMenuItem />
       <MainMenu.Separator />
-      {/* Dashboard Link */}
-      <MainMenu.ItemLink href="/dashboard">
-        Dashboard
-      </MainMenu.ItemLink>
-      <MainMenu.Separator />
-      {/* <MainMenu.ItemLink
-        icon={ExcalLogo}
-        href="/plus?utm_source=drawink&utm_medium=app&utm_content=hamburger"
-        className=""
-      >
-        Drawink Pro
-      </MainMenu.ItemLink> */}
+      {/* Dashboard Link (signed-in users only) */}
+      {isSignedIn && (
+        <MainMenu.ItemLink
+          href="/dashboard"
+          icon={
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          }
+        >
+          Dashboard
+        </MainMenu.ItemLink>
+      )}
       <MainMenu.DefaultItems.Socials disabled />
       {/* <MainMenu.ItemLink
         icon={loginIcon}

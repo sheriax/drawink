@@ -1,5 +1,3 @@
-import React from "react";
-
 import { EXPORT_DATA_TYPES, MIME_TYPES } from "@/lib/common";
 
 import type { DrawinkTextElement } from "@/lib/elements/types";

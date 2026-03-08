@@ -58,6 +58,16 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       open: true,
     },
+    optimizeDeps: {
+      exclude: ["@drawink/drawink"],
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ["import", "global-builtin", "color-functions"],
+        },
+      },
+    },
     build: {
       outDir: "dist",
       sourcemap: true,

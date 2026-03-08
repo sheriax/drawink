@@ -2,7 +2,7 @@ import { isDevEnv } from "@/lib/common";
 
 import type { NestedKeyOf } from "@/lib/common/utility-types";
 
-import { useAtomValue, editorJotaiStore, atom } from "./editor-jotai";
+import { atom, editorJotaiStore, useAtomValue } from "./editor-jotai";
 import fallbackLangData from "./locales/en.json";
 import percentages from "./locales/percentages.json";
 
@@ -67,11 +67,7 @@ export const languages: Language[] = [
     { code: "mr-IN", label: "मराठी" },
     { code: "ta-IN", label: "தமிழ்" },
   ]
-    .filter(
-      (lang) =>
-        (percentages as Record<string, number>)[lang.code] >=
-        COMPLETION_THRESHOLD,
-    )
+    .filter((lang) => (percentages as Record<string, number>)[lang.code] >= COMPLETION_THRESHOLD)
     .sort((left, right) => (left.label > right.label ? 1 : -1)),
 ];
 
@@ -131,9 +127,7 @@ export const t = (
   fallback?: string,
 ) => {
   if (currentLang.code.startsWith(TEST_LANG_CODE)) {
-    const name = replacement
-      ? `${path}(${JSON.stringify(replacement).slice(1, -1)})`
-      : path;
+    const name = replacement ? `${path}(${JSON.stringify(replacement).slice(1, -1)})` : path;
     return `\u{202a}[[${name}]]\u{202c}`;
   }
 

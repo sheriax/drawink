@@ -1,6 +1,6 @@
 import * as Popover from "@radix-ui/react-popover";
 import clsx from "clsx";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   COLOR_OUTLINE_CONTRAST_THRESHOLD,
@@ -9,22 +9,22 @@ import {
   isWritableElement,
 } from "@/lib/common";
 
-import type { ColorTuple, ColorPaletteCustom } from "@/lib/common";
+import type { ColorPaletteCustom, ColorTuple } from "@/lib/common";
 
 import type { DrawinkElement } from "@/lib/elements/types";
 
 import { useAtom } from "../../editor-jotai";
+import {
+  restoreCaretPosition,
+  saveCaretPosition,
+  temporarilyDisableTextEditorBlur,
+} from "../../hooks/useTextEditorFocus";
 import { t } from "../../i18n";
 import { useDrawinkContainer, useStylesPanelMode } from "../App";
 import { ButtonSeparator } from "../ButtonSeparator";
 import { activeEyeDropperAtom } from "../EyeDropper";
 import { PropertiesPopover } from "../PropertiesPopover";
 import { slashIcon, strokeIcon } from "../icons";
-import {
-  saveCaretPosition,
-  restoreCaretPosition,
-  temporarilyDisableTextEditorBlur,
-} from "../../hooks/useTextEditorFocus";
 
 import { ColorInput } from "./ColorInput";
 import { Picker } from "./Picker";
@@ -52,11 +52,7 @@ export const getColor = (color: string): string | null => {
   // testing for `#` first fixes a bug on Electron (more specfically, an
   // Obsidian popout window), where a hex color without `#` is (incorrectly)
   // considered valid
-  return isValidColor(`#${color}`)
-    ? `#${color}`
-    : isValidColor(color)
-    ? color
-    : null;
+  return isValidColor(`#${color}`) ? `#${color}` : isValidColor(color) ? color : null;
 };
 
 interface ColorPickerProps {
@@ -87,14 +83,7 @@ const ColorPickerPopupContent = ({
   appState,
 }: Pick<
   ColorPickerProps,
-  | "type"
-  | "color"
-  | "onChange"
-  | "label"
-  | "elements"
-  | "palette"
-  | "updateData"
-  | "appState"
+  "type" | "color" | "onChange" | "label" | "elements" | "palette" | "updateData" | "appState"
 > & {
   getOpenPopup: () => AppState["openPopup"];
 }) => {
@@ -158,9 +147,7 @@ const ColorPickerPopupContent = ({
         // Refocus text editor when popover closes if we were editing text
         if (appState.editingTextElement) {
           setTimeout(() => {
-            const textEditor = document.querySelector(
-              ".drawink-wysiwyg",
-            ) as HTMLTextAreaElement;
+            const textEditor = document.querySelector(".drawink-wysiwyg") as HTMLTextAreaElement;
             if (textEditor) {
               textEditor.focus();
             }
@@ -175,9 +162,7 @@ const ColorPickerPopupContent = ({
           color={color}
           onChange={(changedColor) => {
             // Save caret position before color change if editing text
-            const savedSelection = appState.editingTextElement
-              ? saveCaretPosition()
-              : null;
+            const savedSelection = appState.editingTextElement ? saveCaretPosition() : null;
 
             onChange(changedColor);
 
@@ -266,18 +251,13 @@ const ColorPickerTrigger = ({
       type="button"
       className={clsx("color-picker__button active-color properties-trigger", {
         "is-transparent": !color || color === "transparent",
-        "has-outline":
-          !color || !isColorDark(color, COLOR_OUTLINE_CONTRAST_THRESHOLD),
+        "has-outline": !color || !isColorDark(color, COLOR_OUTLINE_CONTRAST_THRESHOLD),
         "compact-sizing": isCompactMode,
         "mobile-border": isMobileMode,
       })}
       aria-label={label}
       style={color ? { "--swatch-color": color } : undefined}
-      title={
-        type === "elementStroke"
-          ? t("labels.showStroke")
-          : t("labels.showBackground")
-      }
+      title={type === "elementStroke" ? t("labels.showStroke") : t("labels.showBackground")}
       data-openpopup={type}
       onClick={handleClick}
     >
@@ -287,9 +267,7 @@ const ColorPickerTrigger = ({
           <span
             style={{
               color:
-                color && isColorDark(color, COLOR_OUTLINE_CONTRAST_THRESHOLD)
-                  ? "#fff"
-                  : "#111",
+                color && isColorDark(color, COLOR_OUTLINE_CONTRAST_THRESHOLD) ? "#fff" : "#111",
             }}
           >
             {strokeIcon}
@@ -328,12 +306,7 @@ export const ColorPicker = ({
         })}
       >
         {!isCompactMode && (
-          <TopPicks
-            activeColor={color}
-            onChange={onChange}
-            type={type}
-            topPicks={topPicks}
-          />
+          <TopPicks activeColor={color} onChange={onChange} type={type} topPicks={topPicks} />
         )}
         {!isCompactMode && <ButtonSeparator />}
         <Popover.Root

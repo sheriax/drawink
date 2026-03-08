@@ -5,7 +5,7 @@ import decodePng from "png-chunks-extract";
 import { EXPORT_DATA_TYPES, MIME_TYPES } from "@/lib/common";
 
 import { blobToArrayBuffer } from "./blob";
-import { encode, decode } from "./encode";
+import { decode, encode } from "./encode";
 
 // -----------------------------------------------------------------------------
 // PNG
@@ -53,10 +53,7 @@ export const decodePngMetadata = async (blob: Blob) => {
       const encodedData = JSON.parse(metadata.text);
       if (!("encoded" in encodedData)) {
         // legacy, un-encoded scene JSON
-        if (
-          "type" in encodedData &&
-          encodedData.type === EXPORT_DATA_TYPES.drawink
-        ) {
+        if ("type" in encodedData && encodedData.type === EXPORT_DATA_TYPES.drawink) {
           return metadata.text;
         }
         throw new Error("FAILED");

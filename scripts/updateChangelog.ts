@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
-import { readFileSync, writeFileSync } from "fs";
-import { promisify } from "util";
 import { exec as execCallback } from "child_process";
-import { resolve, dirname } from "path";
+import { readFileSync, writeFileSync } from "fs";
+import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
+import { promisify } from "util";
 
 const exec = promisify(execCallback);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -30,9 +30,7 @@ const badCommits: string[] = [];
 const getCommitHashForLastVersion = async (): Promise<string> => {
   try {
     const commitMessage = `"release @drawink/drawink"`;
-    const { stdout } = await exec(
-      `git log --format=format:"%H" --grep=${commitMessage}`,
-    );
+    const { stdout } = await exec(`git log --format=format:"%H" --grep=${commitMessage}`);
     return stdout.split(/\r?\n/)[0];
   } catch (error) {
     console.error(error);
@@ -42,9 +40,7 @@ const getCommitHashForLastVersion = async (): Promise<string> => {
 
 const getLibraryCommitsSinceLastRelease = async (): Promise<Record<string, string[]>> => {
   const commitHash = await getCommitHashForLastVersion();
-  const { stdout } = await exec(
-    `git log --pretty=format:%s ${commitHash}...master`,
-  );
+  const { stdout } = await exec(`git log --pretty=format:%s ${commitHash}...master`);
   const commitsSinceLastRelease = stdout.split("\n");
   const commitList: Record<string, string[]> = {};
   supportedTypes.forEach((type) => {
@@ -65,10 +61,7 @@ const getLibraryCommitsSinceLastRelease = async (): Promise<Record<string, strin
       const prNumber = prMatch[1];
       if (existingChangeLog.includes(prNumber)) return;
       const prMarkdown = `[#${prNumber}](https://github.com/drawink/drawink/pull/${prNumber})`;
-      const messageWithPRLink = messageWithCapitalizeFirst.replace(
-        /\(#[0-9]*\)/,
-        prMarkdown,
-      );
+      const messageWithPRLink = messageWithCapitalizeFirst.replace(/\(#[0-9]*\)/, prMarkdown);
       commitList[type].push(messageWithPRLink);
     } else {
       badCommits.push(commit);

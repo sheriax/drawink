@@ -1,29 +1,30 @@
 import clsx from "clsx";
-import React, {
+import type React from "react";
+import {
+  forwardRef,
+  useCallback,
   useEffect,
+  useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
-  forwardRef,
-  useImperativeHandle,
-  useCallback,
 } from "react";
 
-import { CLASSES, EVENT, isDevEnv, KEYS, updateObject } from "@/lib/common";
+import { CLASSES, EVENT, KEYS, isDevEnv, updateObject } from "@/lib/common";
 
 import { useUIAppState } from "../../context/ui-appState";
 import { atom, useSetAtom } from "../../editor-jotai";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
-import { useEditorInterface, useDrawinkSetAppState } from "../App";
+import { useDrawinkSetAppState, useEditorInterface } from "../App";
 import { Island } from "../Island";
 
 import { SidebarHeader } from "./SidebarHeader";
+import { SidebarTab } from "./SidebarTab";
 import { SidebarTabTrigger } from "./SidebarTabTrigger";
 import { SidebarTabTriggers } from "./SidebarTabTriggers";
+import { SidebarTabs } from "./SidebarTabs";
 import { SidebarTrigger } from "./SidebarTrigger";
 import { SidebarPropsContext } from "./common";
-import { SidebarTabs } from "./SidebarTabs";
-import { SidebarTab } from "./SidebarTab";
 
 import "./Sidebar.scss";
 
@@ -68,9 +69,7 @@ export const SidebarInner = forwardRef(
       };
     }, [setIsSidebarDockedAtom, docked]);
 
-    const headerPropsRef = useRef<SidebarPropsContextValue>(
-      {} as SidebarPropsContextValue,
-    );
+    const headerPropsRef = useRef<SidebarPropsContextValue>({} as SidebarPropsContextValue);
     headerPropsRef.current.onCloseRequest = () => {
       setAppState({ openSidebar: null });
     };
@@ -121,10 +120,7 @@ export const SidebarInner = forwardRef(
 
     useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
-        if (
-          event.key === KEYS.ESCAPE &&
-          (!docked || !editorInterface.canFitSidebar)
-        ) {
+        if (event.key === KEYS.ESCAPE && (!docked || !editorInterface.canFitSidebar)) {
           closeLibrary();
         }
       };
@@ -137,11 +133,7 @@ export const SidebarInner = forwardRef(
     return (
       <Island
         {...rest}
-        className={clsx(
-          CLASSES.SIDEBAR,
-          { "sidebar--docked": docked },
-          className,
-        )}
+        className={clsx(CLASSES.SIDEBAR, { "sidebar--docked": docked }, className)}
         ref={islandRef}
       >
         <SidebarPropsContext.Provider value={headerPropsRef.current}>
@@ -163,8 +155,7 @@ export const Sidebar = Object.assign(
     useEffect(() => {
       if (
         // closing sidebar
-        ((!appState.openSidebar &&
-          refPrevOpenSidebar?.current?.name === props.name) ||
+        ((!appState.openSidebar && refPrevOpenSidebar?.current?.name === props.name) ||
           // opening current sidebar
           (appState.openSidebar?.name === props.name &&
             refPrevOpenSidebar?.current?.name !== props.name) ||
@@ -172,11 +163,7 @@ export const Sidebar = Object.assign(
           refPrevOpenSidebar.current?.name === props.name) &&
         appState.openSidebar !== refPrevOpenSidebar.current
       ) {
-        onStateChange?.(
-          appState.openSidebar?.name !== props.name
-            ? null
-            : appState.openSidebar,
-        );
+        onStateChange?.(appState.openSidebar?.name !== props.name ? null : appState.openSidebar);
       }
       refPrevOpenSidebar.current = appState.openSidebar;
     }, [appState.openSidebar, onStateChange, props.name]);

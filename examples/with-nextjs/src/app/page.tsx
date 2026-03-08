@@ -5,12 +5,9 @@ import "../common.scss";
 
 // Since client components get prerenderd on server as well hence importing the drawink stuff dynamically
 // with ssr false
-const DrawinkWithClientOnly = dynamic(
-  async () => (await import("../drawinkWrapper")).default,
-  {
-    ssr: false,
-  },
-);
+const DrawinkWithClientOnly = dynamic(async () => (await import("../drawinkWrapper")).default, {
+  ssr: false,
+});
 
 export default function Page() {
   return (

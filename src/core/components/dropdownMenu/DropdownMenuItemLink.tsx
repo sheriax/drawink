@@ -1,10 +1,7 @@
-import React from "react";
+import type React from "react";
 
 import MenuItemContent from "./DropdownMenuItemContent";
-import {
-  getDropdownMenuItemClassName,
-  useHandleDropdownMenuItemClick,
-} from "./common";
+import { getDropdownMenuItemClassName, useHandleDropdownMenuItemClick } from "./common";
 
 import type { JSX } from "react";
 

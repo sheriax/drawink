@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
-import { writeFileSync, readFileSync } from "fs";
-import { resolve, join, dirname } from "path";
 import { execSync } from "child_process";
+import { readFileSync, writeFileSync } from "fs";
+import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -23,7 +23,7 @@ const commitHash = (): string => {
 const commitDate = (hash: string): string => {
   try {
     const unix = execSync(`git show -s --format=%ct ${hash}`).toString().trim();
-    const date = new Date(parseInt(unix) * 1000);
+    const date = new Date(Number.parseInt(unix) * 1000);
     return versionDate(date);
   } catch {
     return versionDate(new Date());

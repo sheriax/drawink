@@ -1,7 +1,7 @@
-import { DEFAULT_VERSION, debounce, getVersion, nFormatter } from "@/lib/common";
 import { Stats } from "@/core";
 import { copyTextToSystemClipboard } from "@/core/clipboard";
 import { t } from "@/core/i18n";
+import { DEFAULT_VERSION, debounce, getVersion, nFormatter } from "@/lib/common";
 import { useEffect, useState } from "react";
 
 import type { UIAppState } from "@/core/types";

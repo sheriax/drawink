@@ -5,49 +5,46 @@ import {
   DEFAULT_TEXT_ALIGN,
   DEFAULT_VERTICAL_ALIGN,
   VERTICAL_ALIGN,
-  randomInteger,
-  randomId,
   getFontString,
-  getUpdatedTimestamp,
   getLineHeight,
+  getUpdatedTimestamp,
+  randomId,
+  randomInteger,
 } from "@/lib/common";
 
 import type { Radians } from "@/lib/math";
 
 import type { MarkOptional, Merge } from "@/lib/common/utility-types";
 
-import {
-  getElementAbsoluteCoords,
-  getResizedElementAbsoluteCoords,
-} from "./bounds";
+import { getElementAbsoluteCoords, getResizedElementAbsoluteCoords } from "./bounds";
 import { newElementWith } from "./mutateElement";
 import { getBoundTextMaxWidth } from "./textElement";
-import { normalizeText, measureText } from "./textMeasurements";
+import { measureText, normalizeText } from "./textMeasurements";
 import { wrapText } from "./textWrapping";
 
 import { isLineElement } from "./typeChecks";
 
 import type {
+  Arrowhead,
+  DrawinkArrowElement,
+  DrawinkElbowArrowElement,
   DrawinkElement,
-  DrawinkImageElement,
-  DrawinkTextElement,
-  DrawinkLinearElement,
+  DrawinkEmbeddableElement,
+  DrawinkFrameElement,
+  DrawinkFreeDrawElement,
   DrawinkGenericElement,
+  DrawinkIframeElement,
+  DrawinkImageElement,
+  DrawinkLineElement,
+  DrawinkLinearElement,
+  DrawinkMagicFrameElement,
+  DrawinkTextContainer,
+  DrawinkTextElement,
+  ElementsMap,
+  FontFamilyValues,
   NonDeleted,
   TextAlign,
   VerticalAlign,
-  Arrowhead,
-  DrawinkFreeDrawElement,
-  FontFamilyValues,
-  DrawinkTextContainer,
-  DrawinkFrameElement,
-  DrawinkEmbeddableElement,
-  DrawinkMagicFrameElement,
-  DrawinkIframeElement,
-  ElementsMap,
-  DrawinkArrowElement,
-  DrawinkElbowArrowElement,
-  DrawinkLineElement,
 } from "./types";
 
 export type ElementConstructorOpts = MarkOptional<
@@ -159,8 +156,7 @@ export const newElement = (
   opts: {
     type: DrawinkGenericElement["type"];
   } & ElementConstructorOpts,
-): NonDeleted<DrawinkGenericElement> =>
-  _newElementBase<DrawinkGenericElement>(opts.type, opts);
+): NonDeleted<DrawinkGenericElement> => _newElementBase<DrawinkGenericElement>(opts.type, opts);
 
 export const newEmbeddableElement = (
   opts: {
@@ -230,8 +226,8 @@ const getTextElementPositionOffsets = (
       opts.textAlign === "center"
         ? metrics.width / 2
         : opts.textAlign === "right"
-        ? metrics.width
-        : 0,
+          ? metrics.width
+          : 0,
     y: opts.verticalAlign === "middle" ? metrics.height / 2 : 0,
   };
 };
@@ -253,17 +249,10 @@ export const newTextElement = (
   const fontSize = opts.fontSize || DEFAULT_FONT_SIZE;
   const lineHeight = opts.lineHeight || getLineHeight(fontFamily);
   const text = normalizeText(opts.text);
-  const metrics = measureText(
-    text,
-    getFontString({ fontFamily, fontSize }),
-    lineHeight,
-  );
+  const metrics = measureText(text, getFontString({ fontFamily, fontSize }), lineHeight);
   const textAlign = opts.textAlign || DEFAULT_TEXT_ALIGN;
   const verticalAlign = opts.verticalAlign || DEFAULT_VERTICAL_ALIGN;
-  const offsets = getTextElementPositionOffsets(
-    { textAlign, verticalAlign },
-    metrics,
-  );
+  const offsets = getTextElementPositionOffsets({ textAlign, verticalAlign }, metrics);
 
   const textElementProps: DrawinkTextElement = {
     ..._newElementBase<DrawinkTextElement>("text", opts),
@@ -317,11 +306,7 @@ const getAdjustedDimensions = (
     !element.containerId &&
     element.autoResize
   ) {
-    const prevMetrics = measureText(
-      element.text,
-      getFontString(element),
-      element.lineHeight,
-    );
+    const prevMetrics = measureText(element.text, getFontString(element), element.lineHeight);
     const offsets = getTextElementPositionOffsets(element, {
       width: nextWidth - prevMetrics.width,
       height: nextHeight - prevMetrics.height,
@@ -427,9 +412,7 @@ export const refreshTextDimensions = (
     text = wrapText(
       text,
       getFontString(textElement),
-      container
-        ? getBoundTextMaxWidth(container, textElement)
-        : textElement.width,
+      container ? getBoundTextMaxWidth(container, textElement) : textElement.width,
     );
   }
   const dimensions = getAdjustedDimensions(textElement, elementsMap, text);
@@ -490,9 +473,7 @@ export const newArrowElement = <T extends boolean>(
     elbowed?: T;
     fixedSegments?: DrawinkElbowArrowElement["fixedSegments"] | null;
   } & ElementConstructorOpts,
-): T extends true
-  ? NonDeleted<DrawinkElbowArrowElement>
-  : NonDeleted<DrawinkArrowElement> => {
+): T extends true ? NonDeleted<DrawinkElbowArrowElement> : NonDeleted<DrawinkArrowElement> => {
   if (opts.elbowed) {
     return {
       ..._newElementBase<DrawinkElbowArrowElement>(opts.type, opts),
@@ -516,9 +497,7 @@ export const newArrowElement = <T extends boolean>(
     startArrowhead: opts.startArrowhead || null,
     endArrowhead: opts.endArrowhead || null,
     elbowed: false,
-  } as T extends true
-    ? NonDeleted<DrawinkElbowArrowElement>
-    : NonDeleted<DrawinkArrowElement>;
+  } as T extends true ? NonDeleted<DrawinkElbowArrowElement> : NonDeleted<DrawinkArrowElement>;
 };
 
 export const newImageElement = (

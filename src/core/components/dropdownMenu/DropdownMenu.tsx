@@ -7,10 +7,7 @@ import DropdownMenuItemCustom from "./DropdownMenuItemCustom";
 import DropdownMenuItemLink from "./DropdownMenuItemLink";
 import MenuSeparator from "./DropdownMenuSeparator";
 import DropdownMenuTrigger from "./DropdownMenuTrigger";
-import {
-  getMenuContentComponent,
-  getMenuTriggerComponent,
-} from "./dropdownMenuUtils";
+import { getMenuContentComponent, getMenuTriggerComponent } from "./dropdownMenuUtils";
 
 import "./DropdownMenu.scss";
 

@@ -3,9 +3,9 @@
  */
 
 import { useAuth } from "@clerk/clerk-react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
-import { ReactNode } from "react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import type { ReactNode } from "react";
 
 // Validate and initialize Convex client
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
@@ -13,7 +13,7 @@ const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
 if (!CONVEX_URL) {
   throw new Error(
     "Missing Convex URL. Please ensure VITE_CONVEX_URL is set in your .env.local file.\n" +
-    "Expected format: VITE_CONVEX_URL=https://your-deployment-name.convex.cloud"
+      "Expected format: VITE_CONVEX_URL=https://your-deployment-name.convex.cloud",
   );
 }
 

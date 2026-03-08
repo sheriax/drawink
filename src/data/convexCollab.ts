@@ -10,17 +10,17 @@
 
 import { reconcileElements } from "@/core";
 import { decryptData, encryptData } from "@/core/data/encryption";
-import { restoreElements } from "@/core/data/restore";
-import { getSceneVersion } from "@/lib/elements";
-import type { AppState } from "@/core/types";
-import type { DrawinkElement, OrderedDrawinkElement } from "@/lib/elements/types";
 import type { RemoteDrawinkElement } from "@/core/data/reconcile";
-import type Portal from "../collab/Portal";
+import { restoreElements } from "@/core/data/restore";
+import type { AppState } from "@/core/types";
+import { getSceneVersion } from "@/lib/elements";
+import type { DrawinkElement, OrderedDrawinkElement } from "@/lib/elements/types";
+import { ConvexHttpClient } from "convex/browser";
 import type { Socket } from "socket.io-client";
 import type { SyncableDrawinkElement } from ".";
 import { getSyncableElements } from ".";
-import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
+import type Portal from "../collab/Portal";
 
 // Initialize Convex client
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
@@ -46,10 +46,7 @@ class ConvexSceneVersionCache {
 /**
  * Check if the current scene is saved to Convex
  */
-export const isSavedToConvex = (
-  portal: Portal,
-  elements: readonly DrawinkElement[]
-): boolean => {
+export const isSavedToConvex = (portal: Portal, elements: readonly DrawinkElement[]): boolean => {
   if (portal.socket && portal.roomId && portal.roomKey) {
     const sceneVersion = getSceneVersion(elements);
     return ConvexSceneVersionCache.get(portal.socket) === sceneVersion;
@@ -62,7 +59,7 @@ export const isSavedToConvex = (
  */
 async function encryptElements(
   key: string,
-  elements: readonly DrawinkElement[]
+  elements: readonly DrawinkElement[],
 ): Promise<{ ciphertext: ArrayBuffer; iv: Uint8Array }> {
   const json = JSON.stringify(elements);
   const encoded = new TextEncoder().encode(json);
@@ -76,7 +73,7 @@ async function encryptElements(
 async function decryptElements(
   ciphertext: Uint8Array,
   iv: Uint8Array,
-  roomKey: string
+  roomKey: string,
 ): Promise<readonly DrawinkElement[]> {
   const decrypted = await decryptData(iv, ciphertext, roomKey);
   const decodedData = new TextDecoder("utf-8").decode(new Uint8Array(decrypted));
@@ -89,7 +86,7 @@ async function decryptElements(
 export const saveToConvex = async (
   portal: Portal,
   elements: readonly SyncableDrawinkElement[],
-  appState: AppState
+  appState: AppState,
 ): Promise<readonly SyncableDrawinkElement[] | null> => {
   const { roomId, roomKey, socket } = portal;
 
@@ -113,18 +110,18 @@ export const saveToConvex = async (
           await decryptElements(
             new Uint8Array(existingScene.ciphertext),
             new Uint8Array(existingScene.iv),
-            roomKey
+            roomKey,
           ),
-          null
-        )
+          null,
+        ),
       );
 
       reconciledElements = getSyncableElements(
         reconcileElements(
           elements,
           prevStoredElements as OrderedDrawinkElement[] as RemoteDrawinkElement[],
-          appState
-        )
+          appState,
+        ),
       );
     } else {
       // First save, no reconciliation needed
@@ -139,8 +136,11 @@ export const saveToConvex = async (
     // Convex v.bytes() expects ArrayBuffer, not Uint8Array
     await convex.mutation(api.collaboration.saveCollaborativeScene, {
       roomId,
-      ciphertext: ciphertext instanceof ArrayBuffer ? ciphertext : new Uint8Array(ciphertext).buffer as ArrayBuffer,
-      iv: iv instanceof ArrayBuffer ? iv : iv.buffer as ArrayBuffer,
+      ciphertext:
+        ciphertext instanceof ArrayBuffer
+          ? ciphertext
+          : (new Uint8Array(ciphertext).buffer as ArrayBuffer),
+      iv: iv instanceof ArrayBuffer ? iv : (iv.buffer as ArrayBuffer),
       sceneVersion,
       lastEditedBy: undefined, // Optional: could pass Clerk user ID if authenticated
     });
@@ -161,7 +161,7 @@ export const saveToConvex = async (
 export const loadFromConvex = async (
   roomId: string,
   roomKey: string,
-  socket: Socket | null
+  socket: Socket | null,
 ): Promise<readonly SyncableDrawinkElement[] | null> => {
   try {
     const scene = await convex.query(api.collaboration.loadCollaborativeScene, {
@@ -175,14 +175,10 @@ export const loadFromConvex = async (
     // Decrypt elements
     const elements = getSyncableElements(
       restoreElements(
-        await decryptElements(
-          new Uint8Array(scene.ciphertext),
-          new Uint8Array(scene.iv),
-          roomKey
-        ),
+        await decryptElements(new Uint8Array(scene.ciphertext), new Uint8Array(scene.iv), roomKey),
         null,
-        { deleteInvisibleElements: true }
-      )
+        { deleteInvisibleElements: true },
+      ),
     );
 
     // Update cache

@@ -9,18 +9,18 @@ const pick = <R extends Record<string, any>, K extends readonly (keyof R)[]>(
   source: R,
   keys: K,
 ) => {
-  return keys.reduce((acc, key: K[number]) => {
-    if (key in source) {
-      acc[key] = source[key];
-    }
-    return acc;
-  }, {} as Pick<R, K[number]>) as Pick<R, K[number]>;
+  return keys.reduce(
+    (acc, key: K[number]) => {
+      if (key in source) {
+        acc[key] = source[key];
+      }
+      return acc;
+    },
+    {} as Pick<R, K[number]>,
+  ) as Pick<R, K[number]>;
 };
 
-export type ColorPickerColor =
-  | Exclude<keyof oc, "indigo" | "lime">
-  | "transparent"
-  | "bronze";
+export type ColorPickerColor = Exclude<keyof oc, "indigo" | "lime"> | "transparent" | "bronze";
 export type ColorTuple = readonly [string, string, string, string, string];
 export type ColorPalette = Merge<
   Record<ColorPickerColor, ColorTuple>,
@@ -42,10 +42,7 @@ export const ELEMENTS_PALETTE_SHADE_INDEXES = [0, 2, 4, 6, 8] as const;
 export const CANVAS_PALETTE_SHADE_INDEXES = [0, 1, 2, 3, 4] as const;
 
 export const getSpecificColorShades = (
-  color: Exclude<
-    ColorPickerColor,
-    "transparent" | "white" | "black" | "bronze"
-  >,
+  color: Exclude<ColorPickerColor, "transparent" | "white" | "black" | "bronze">,
   indexArr: Readonly<ColorShadesIndexes>,
 ) => {
   return indexArr.map((index) => oc[color][index]) as any as ColorTuple;

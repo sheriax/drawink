@@ -1,59 +1,42 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-  memo,
-  useRef,
-} from "react";
+import type React from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  LIBRARY_DISABLED_TYPES,
-  randomId,
-  isShallowEqual,
-  KEYS,
-  isWritableElement,
-  addEventListener,
-  EVENT,
   CLASSES,
+  EVENT,
+  KEYS,
+  LIBRARY_DISABLED_TYPES,
+  addEventListener,
+  isShallowEqual,
+  isWritableElement,
+  randomId,
 } from "@/lib/common";
 
-import type {
-  DrawinkElement,
-  NonDeletedDrawinkElement,
-} from "@/lib/elements/types";
+import type { DrawinkElement, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { trackEvent } from "../analytics";
 import { useUIAppState } from "../context/ui-appState";
-import {
-  distributeLibraryItemsOnSquareGrid,
-  libraryItemsAtom,
-} from "../data/library";
+import { distributeLibraryItemsOnSquareGrid, libraryItemsAtom } from "../data/library";
 import { atom, useAtom } from "../editor-jotai";
 import { t } from "../i18n";
 
 import { getSelectedElements } from "../scene";
 
-import {
-  useApp,
-  useAppProps,
-  useDrawinkElements,
-  useDrawinkSetAppState,
-} from "./App";
+import { useApp, useAppProps, useDrawinkElements, useDrawinkSetAppState } from "./App";
 import { LibraryMenuControlButtons } from "./LibraryMenuControlButtons";
 import LibraryMenuItems from "./LibraryMenuItems";
 import Spinner from "./Spinner";
 
 import "./LibraryMenu.scss";
 
-import type {
-  LibraryItems,
-  LibraryItem,
-  DrawinkProps,
-  UIAppState,
-  AppClassProperties,
-} from "../types";
 import type Library from "../data/library";
+import type {
+  AppClassProperties,
+  DrawinkProps,
+  LibraryItem,
+  LibraryItems,
+  UIAppState,
+} from "../types";
 
 export const isLibraryMenuOpenAtom = atom(false);
 
@@ -120,15 +103,9 @@ const LibraryMenuContent = memo(
       [onAddToLibrary, library, setAppState, libraryItemsData.libraryItems],
     );
 
-    const libraryItems = useMemo(
-      () => libraryItemsData.libraryItems,
-      [libraryItemsData],
-    );
+    const libraryItems = useMemo(() => libraryItemsData.libraryItems, [libraryItemsData]);
 
-    if (
-      libraryItemsData.status === "loading" &&
-      !libraryItemsData.isInitialized
-    ) {
+    if (libraryItemsData.status === "loading" && !libraryItemsData.isInitialized) {
       return (
         <LibraryMenuWrapper>
           <div className="layer-ui__library-message">
@@ -141,8 +118,7 @@ const LibraryMenuContent = memo(
       );
     }
 
-    const showBtn =
-      libraryItemsData.libraryItems.length > 0 || pendingElements.length > 0;
+    const showBtn = libraryItemsData.libraryItems.length > 0 || pendingElements.length > 0;
 
     return (
       <LibraryMenuWrapper>
@@ -188,10 +164,7 @@ const getPendingElements = (
   selectedElementIds,
 });
 
-const usePendingElementsMemo = (
-  appState: UIAppState,
-  app: AppClassProperties,
-) => {
+const usePendingElementsMemo = (appState: UIAppState, app: AppClassProperties) => {
   const elements = useDrawinkElements();
   const [state, setState] = useState(() =>
     getPendingElements(elements, appState.selectedElementIds),
@@ -218,9 +191,7 @@ const usePendingElementsMemo = (
       setState((prev) => {
         // if selectedElementIds changed, we don't have to compare versions
         // ---------------------------------------------------------------------
-        if (
-          !isShallowEqual(prev.selectedElementIds, appState.selectedElementIds)
-        ) {
+        if (!isShallowEqual(prev.selectedElementIds, appState.selectedElementIds)) {
           selectedElementVersions.current.clear();
           return getPendingElements(elements, appState.selectedElementIds);
         }
@@ -229,10 +200,7 @@ const usePendingElementsMemo = (
         const elementsMap = app.scene.getNonDeletedElementsMap();
         for (const id of Object.keys(appState.selectedElementIds)) {
           const currVersion = elementsMap.get(id)?.version;
-          if (
-            currVersion &&
-            currVersion !== selectedElementVersions.current.get(id)
-          ) {
+          if (currVersion && currVersion !== selectedElementVersions.current.get(id)) {
             // we can't update the selectedElementVersions in here
             // because of double render in StrictMode which would overwrite
             // the state in the second pass with the old `prev` state.

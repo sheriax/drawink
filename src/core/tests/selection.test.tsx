@@ -1,4 +1,3 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { KEYS, reseed } from "@/lib/common";
@@ -12,20 +11,17 @@ import * as StaticScene from "../renderer/staticScene";
 import { API } from "./helpers/api";
 import { Keyboard, Pointer, UI } from "./helpers/ui";
 import {
-  render,
+  assertSelectedElements,
   fireEvent,
   mockBoundingClientRect,
+  render,
   restoreOriginalGetBoundingClientRect,
-  assertSelectedElements,
   unmountComponent,
 } from "./test-utils";
 
 unmountComponent();
 
-const renderInteractiveScene = vi.spyOn(
-  InteractiveCanvas,
-  "renderInteractiveScene",
-);
+const renderInteractiveScene = vi.spyOn(InteractiveCanvas, "renderInteractiveScene");
 const renderStaticScene = vi.spyOn(StaticScene, "renderStaticScene");
 
 beforeEach(() => {
@@ -294,9 +290,7 @@ describe("select single element on the scene", () => {
   });
 
   it("rectangle", async () => {
-    const { getByToolName, container } = await render(
-      <Drawink handleKeyboardGlobally={true} />,
-    );
+    const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
     const canvas = container.querySelector("canvas.interactive")!;
     {
       // create element
@@ -326,9 +320,7 @@ describe("select single element on the scene", () => {
   });
 
   it("diamond", async () => {
-    const { getByToolName, container } = await render(
-      <Drawink handleKeyboardGlobally={true} />,
-    );
+    const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
     const canvas = container.querySelector("canvas.interactive")!;
     {
       // create element
@@ -358,9 +350,7 @@ describe("select single element on the scene", () => {
   });
 
   it("ellipse", async () => {
-    const { getByToolName, container } = await render(
-      <Drawink handleKeyboardGlobally={true} />,
-    );
+    const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
     const canvas = container.querySelector("canvas.interactive")!;
     {
       // create element
@@ -390,9 +380,7 @@ describe("select single element on the scene", () => {
   });
 
   it("arrow", async () => {
-    const { getByToolName, container } = await render(
-      <Drawink handleKeyboardGlobally={true} />,
-    );
+    const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
     const canvas = container.querySelector("canvas.interactive")!;
     {
       // create element
@@ -434,9 +422,7 @@ describe("select single element on the scene", () => {
   });
 
   it("arrow escape", async () => {
-    const { getByToolName, container } = await render(
-      <Drawink handleKeyboardGlobally={true} />,
-    );
+    const { getByToolName, container } = await render(<Drawink handleKeyboardGlobally={true} />);
     const canvas = container.querySelector("canvas.interactive")!;
     {
       // create element
@@ -487,12 +473,7 @@ describe("tool locking & selection", () => {
     expect(h.state.activeTool.locked).toBe(true);
 
     for (const { value } of Object.values(SHAPES)) {
-      if (
-        value !== "image" &&
-        value !== "selection" &&
-        value !== "eraser" &&
-        value !== "arrow"
-      ) {
+      if (value !== "image" && value !== "selection" && value !== "eraser" && value !== "arrow") {
         const element = UI.createElement(value);
         expect(h.state.selectedElementIds[element.id]).not.toBe(true);
       }

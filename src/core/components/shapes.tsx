@@ -1,16 +1,16 @@
 import { KEYS } from "@/lib/common";
 
 import {
-  SelectionIcon,
-  RectangleIcon,
+  ArrowIcon,
   DiamondIcon,
   EllipseIcon,
-  ArrowIcon,
-  LineIcon,
-  FreedrawIcon,
-  TextIcon,
-  ImageIcon,
   EraserIcon,
+  FreedrawIcon,
+  ImageIcon,
+  LineIcon,
+  RectangleIcon,
+  SelectionIcon,
+  TextIcon,
 } from "./icons";
 
 import type { AppClassProperties } from "../types";

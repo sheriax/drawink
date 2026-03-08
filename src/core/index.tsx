@@ -8,8 +8,8 @@ import Footer from "./components/footer/FooterCenter";
 import LiveCollaborationTrigger from "./components/live-collaboration/LiveCollaborationTrigger";
 import MainMenu from "./components/main-menu/MainMenu";
 import WelcomeScreen from "./components/welcome-screen/WelcomeScreen";
-import { defaultLang } from "./i18n";
 import { EditorJotaiProvider, editorJotaiStore } from "./editor-jotai";
+import { defaultLang } from "./i18n";
 import polyfill from "./polyfill";
 
 import "./css/app.scss";
@@ -79,10 +79,7 @@ const DrawinkBase = (props: DrawinkProps) => {
       DEFAULT_UI_OPTIONS.canvasActions.export.saveFileToDisk;
   }
 
-  if (
-    UIOptions.canvasActions.toggleTheme === null &&
-    typeof theme === "undefined"
-  ) {
+  if (UIOptions.canvasActions.toggleTheme === null && typeof theme === "undefined") {
     UIOptions.canvasActions.toggleTheme = true;
   }
 
@@ -163,16 +160,8 @@ const areEqual = (prevProps: DrawinkProps, nextProps: DrawinkProps) => {
     return false;
   }
 
-  const {
-    initialData: prevInitialData,
-    UIOptions: prevUIOptions = {},
-    ...prev
-  } = prevProps;
-  const {
-    initialData: nextInitialData,
-    UIOptions: nextUIOptions = {},
-    ...next
-  } = nextProps;
+  const { initialData: prevInitialData, UIOptions: prevUIOptions = {}, ...prev } = prevProps;
+  const { initialData: nextInitialData, UIOptions: nextUIOptions = {}, ...next } = nextProps;
 
   // comparing UIOptions
   const prevUIOptionsKeys = Object.keys(prevUIOptions) as (keyof Partial<
@@ -188,9 +177,9 @@ const areEqual = (prevProps: DrawinkProps, nextProps: DrawinkProps) => {
 
   const isUIOptionsSame = prevUIOptionsKeys.every((key) => {
     if (key === "canvasActions") {
-      const canvasOptionKeys = Object.keys(
-        prevUIOptions.canvasActions!,
-      ) as (keyof Partial<typeof DEFAULT_UI_OPTIONS.canvasActions>)[];
+      const canvasOptionKeys = Object.keys(prevUIOptions.canvasActions!) as (keyof Partial<
+        typeof DEFAULT_UI_OPTIONS.canvasActions
+      >)[];
       return canvasOptionKeys.every((key) => {
         if (
           key === "export" &&
@@ -202,10 +191,7 @@ const areEqual = (prevProps: DrawinkProps, nextProps: DrawinkProps) => {
             nextUIOptions.canvasActions.export.saveFileToDisk
           );
         }
-        return (
-          prevUIOptions?.canvasActions?.[key] ===
-          nextUIOptions?.canvasActions?.[key]
-        );
+        return prevUIOptions?.canvasActions?.[key] === nextUIOptions?.canvasActions?.[key];
       });
     }
     return prevUIOptions[key] === nextUIOptions[key];

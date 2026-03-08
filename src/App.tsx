@@ -117,7 +117,7 @@ import { useHandleAppTheme } from "./useHandleAppTheme";
 import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
-import { type AuthUser, authStateAtom, cloudEnabledAtom, syncStatusAtom } from "@/core/atoms/auth";
+import { type AuthUser, authStateAtom, cloudEnabledAtom } from "@/core/atoms/auth";
 import { boardsAPIAtom } from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
@@ -129,6 +129,7 @@ import type { CollabAPI } from "./collab/Collab";
 polyfill();
 
 // Initialize boards API atom with HybridStorageAdapter
+// @ts-ignore - jotai store type inference limitation
 editorJotaiStore.set(boardsAPIAtom, hybridStorageAdapter);
 
 window.DRAWINK_THROTTLE_RENDER = true;
@@ -262,16 +263,18 @@ const initializeScene = async (opts: {
       const request = await fetch(window.decodeURIComponent(url));
       const data = await loadFromBlob(await request.blob(), null, null);
       if (!scene.elements.length || (await openConfirmModal(shareableLinkConfirmDialog))) {
+        // @ts-ignore - complex discriminated union type
         return { scene: data, isExternalScene };
       }
     } catch (error: any) {
+      // @ts-ignore - complex discriminated union type
       return {
         scene: {
           appState: {
             errorMessage: t("alerts.invalidSceneUrl"),
           },
         },
-        isExternalScene,
+        isExternalScene: isExternalScene as false,
       };
     }
   }
@@ -436,19 +439,14 @@ const DrawinkWrapper = () => {
       hybridStorageAdapter.enableCloudSync(clerkUser.id, fetchConvexToken);
       editorJotaiStore.set(cloudEnabledAtom, true);
 
-      // Wire up sync status updates
-      hybridStorageAdapter.onSyncStatusChange((status) => {
-        editorJotaiStore.set(syncStatusAtom, status);
-      });
-
       console.log("[Auth] User signed in:", authUser.email);
 
       // Ensure workspace exists after a short delay (give sync engine time to try first)
       setTimeout(() => {
         // Check if sync is in error state or if we should ensure workspace
         const currentStatus = hybridStorageAdapter.getSyncStatus();
-        if (currentStatus === "error") {
-          console.log("[Auth] Sync in error state - ensuring workspace...");
+        if (!currentStatus.isOnline || currentStatus.pendingOperations > 0) {
+          console.log("[Auth] Sync status indicates issues - ensuring workspace...");
           hybridStorageAdapter.ensureWorkspaceAndSync().catch(console.error);
         }
       }, 3000); // Wait 3 seconds for initial sync attempt
@@ -705,8 +703,8 @@ const DrawinkWrapper = () => {
 
       // Load images for the new board
       const fileIds = (elements || [])
-        .filter((el: any) => el.type === "image" && el.fileId)
-        .map((el: any) => el.fileId);
+        .filter((el) => isInitializedImageElement(el))
+        .map((el) => (el as any).fileId);
 
       if (fileIds.length > 0) {
         hybridStorageAdapter.fileStorage.getFiles(fileIds).then(({ loadedFiles, erroredFiles }) => {
@@ -999,7 +997,7 @@ const DrawinkWrapper = () => {
 
         <TTDDialogTrigger />
         {isCollaborating && isOffline && (
-          <div className="alertalert--warning">{t("alerts.collabOfflineWarning")}</div>
+          <div className="alert alert--warning">{t("alerts.collabOfflineWarning")}</div>
         )}
         {localStorageQuotaExceeded && (
           <div className="alert alert--danger">{t("alerts.localStorageQuotaExceeded")}</div>

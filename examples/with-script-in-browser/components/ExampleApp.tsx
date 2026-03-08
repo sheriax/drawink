@@ -1,34 +1,24 @@
 import { nanoid } from "nanoid";
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  Children,
-  cloneElement,
-} from "react";
+import React, { useEffect, useState, useRef, useCallback, Children, cloneElement } from "react";
 
 import type * as TDrawink from "@/core";
-import type { ImportedLibraryData } from "@/lib/types";
-import type {
-  NonDeletedDrawinkElement,
-  Theme,
-} from "@/lib/elements/types";
 import type {
   AppState,
   BinaryFileData,
   DrawinkImperativeAPI,
   DrawinkInitialDataState,
+  PointerDownState as DrawinkPointerDownState,
   Gesture,
   LibraryItems,
-  PointerDownState as DrawinkPointerDownState,
 } from "@/core/types";
+import type { NonDeletedDrawinkElement, Theme } from "@/lib/elements/types";
+import type { ImportedLibraryData } from "@/lib/types";
 
 import initialData from "../initialData";
 import {
-  resolvablePromise,
   distance2d,
   fileOpen,
+  resolvablePromise,
   withBatchedUpdates,
   withBatchedUpdatesThrottled,
 } from "../utils";
@@ -112,22 +102,17 @@ export default function ExampleApp({
   const [theme, setTheme] = useState<Theme>("light");
   const [disableImageTool, setDisableImageTool] = useState(false);
   const [isCollaborating, setIsCollaborating] = useState(false);
-  const [commentIcons, setCommentIcons] = useState<{ [id: string]: Comment }>(
-    {},
-  );
+  const [commentIcons, setCommentIcons] = useState<{ [id: string]: Comment }>({});
   const [comment, setComment] = useState<Comment | null>(null);
 
   const initialStatePromiseRef = useRef<{
     promise: ResolvablePromise<DrawinkInitialDataState | null>;
   }>({ promise: null! });
   if (!initialStatePromiseRef.current.promise) {
-    initialStatePromiseRef.current.promise =
-      resolvablePromise<DrawinkInitialDataState | null>();
+    initialStatePromiseRef.current.promise = resolvablePromise<DrawinkInitialDataState | null>();
   }
 
-  const [drawinkAPI, setDrawinkAPI] = useState<DrawinkImperativeAPI | null>(
-    null,
-  );
+  const [drawinkAPI, setDrawinkAPI] = useState<DrawinkImperativeAPI | null>(null);
 
   useCustom(drawinkAPI, customArgs);
 
@@ -143,7 +128,7 @@ export default function ExampleApp({
       const reader = new FileReader();
       reader.readAsDataURL(imageData);
 
-      reader.onload = function () {
+      reader.onload = () => {
         const imagesArray: BinaryFileData[] = [
           {
             id: "rocket" as BinaryFileData["id"],
@@ -239,11 +224,7 @@ export default function ExampleApp({
           Toggle Custom Sidebar
         </Sidebar.Trigger>
         {renderMenu()}
-        {drawinkAPI && (
-          <TTDDialogTrigger icon={<span>😀</span>}>
-            Text to diagram
-          </TTDDialogTrigger>
-        )}
+        {drawinkAPI && <TTDDialogTrigger icon={<span>😀</span>}>Text to diagram</TTDDialogTrigger>}
         <TTDDialog
           onTextSubmit={async (_) => {
             console.info("submit");
@@ -268,10 +249,7 @@ export default function ExampleApp({
             }}
           />
         )}
-        <button
-          onClick={() => alert("This is an empty top right UI")}
-          style={{ height: "2.5rem" }}
-        >
+        <button onClick={() => alert("This is an empty top right UI")} style={{ height: "2.5rem" }}>
           Click me
         </button>
       </>
@@ -348,8 +326,7 @@ export default function ExampleApp({
       const { nativeEvent } = event.detail;
       const isNewTab = nativeEvent.ctrlKey || nativeEvent.metaKey;
       const isNewWindow = nativeEvent.shiftKey;
-      const isInternalLink =
-        link.startsWith("/") || link.includes(window.location.origin);
+      const isInternalLink = link.startsWith("/") || link.includes(window.location.origin);
       if (isInternalLink && !isNewTab && !isNewWindow) {
         // signal that we're handling the redirect ourselves
         event.preventDefault();
@@ -393,9 +370,7 @@ export default function ExampleApp({
     if (!drawinkAPI) {
       return false;
     }
-    const commentIconsElements = appRef.current.querySelectorAll(
-      ".comment-icon",
-    ) as HTMLElement[];
+    const commentIconsElements = appRef.current.querySelectorAll(".comment-icon") as HTMLElement[];
     commentIconsElements.forEach((ele) => {
       const id = ele.id;
       const appstate = drawinkAPI.getAppState();
@@ -403,18 +378,12 @@ export default function ExampleApp({
         { sceneX: commentIcons[id].x, sceneY: commentIcons[id].y },
         appstate,
       );
-      ele.style.left = `${
-        x - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetLeft
-      }px`;
-      ele.style.top = `${
-        y - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetTop
-      }px`;
+      ele.style.left = `${x - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetLeft}px`;
+      ele.style.top = `${y - COMMENT_ICON_DIMENSION / 2 - appstate!.offsetTop}px`;
     });
   };
 
-  const onPointerMoveFromPointerDownHandler = (
-    pointerDownState: PointerDownState,
-  ) => {
+  const onPointerMoveFromPointerDownHandler = (pointerDownState: PointerDownState) => {
     return withBatchedUpdatesThrottled((event) => {
       if (!drawinkAPI) {
         return false;
@@ -436,9 +405,7 @@ export default function ExampleApp({
       });
     });
   };
-  const onPointerUpFromPointerDownHandler = (
-    pointerDownState: PointerDownState,
-  ) => {
+  const onPointerUpFromPointerDownHandler = (pointerDownState: PointerDownState) => {
     return withBatchedUpdates((event) => {
       window.removeEventListener("pointermove", pointerDownState.onMove);
       window.removeEventListener("pointerup", pointerDownState.onUp);
@@ -501,10 +468,8 @@ export default function ExampleApp({
               hitElement: commentIcon,
               hitElementOffsets: { x: event.clientX - x, y: event.clientY - y },
             };
-            const onPointerMove =
-              onPointerMoveFromPointerDownHandler(pointerDownState);
-            const onPointerUp =
-              onPointerUpFromPointerDownHandler(pointerDownState);
+            const onPointerMove = onPointerMoveFromPointerDownHandler(pointerDownState);
+            const onPointerUp = onPointerUpFromPointerDownHandler(pointerDownState);
             window.addEventListener("pointermove", onPointerMove);
             window.addEventListener("pointerup", onPointerUp);
 
@@ -558,19 +523,13 @@ export default function ExampleApp({
     let top = y - COMMENT_ICON_DIMENSION / 2 - appState.offsetTop;
     let left = x - COMMENT_ICON_DIMENSION / 2 - appState.offsetLeft;
 
-    if (
-      top + COMMENT_INPUT_HEIGHT <
-      appState.offsetTop + COMMENT_INPUT_HEIGHT
-    ) {
+    if (top + COMMENT_INPUT_HEIGHT < appState.offsetTop + COMMENT_INPUT_HEIGHT) {
       top = COMMENT_ICON_DIMENSION / 2;
     }
     if (top + COMMENT_INPUT_HEIGHT > appState.height) {
       top = appState.height - COMMENT_INPUT_HEIGHT - COMMENT_ICON_DIMENSION / 2;
     }
-    if (
-      left + COMMENT_INPUT_WIDTH <
-      appState.offsetLeft + COMMENT_INPUT_WIDTH
-    ) {
+    if (left + COMMENT_INPUT_WIDTH < appState.offsetLeft + COMMENT_INPUT_WIDTH) {
       left = COMMENT_ICON_DIMENSION / 2;
     }
     if (left + COMMENT_INPUT_WIDTH > appState.width) {
@@ -622,18 +581,13 @@ export default function ExampleApp({
         </MainMenu.Group>
         <MainMenu.Separator />
         <MainMenu.ItemCustom>
-          <button
-            style={{ height: "2rem" }}
-            onClick={() => window.alert("custom menu item")}
-          >
+          <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
             custom item
           </button>
         </MainMenu.ItemCustom>
         <MainMenu.DefaultItems.Help />
 
-        {drawinkAPI && (
-          <MobileFooter drawinkLib={drawinkLib} drawinkAPI={drawinkAPI} />
-        )}
+        {drawinkAPI && <MobileFooter drawinkLib={drawinkLib} drawinkAPI={drawinkAPI} />}
       </MainMenu>
     );
   };
@@ -767,15 +721,9 @@ export default function ExampleApp({
             Show collaborators
           </label>
           <div>
-            <button onClick={onCopy.bind(null, "png")}>
-              Copy to Clipboard as PNG
-            </button>
-            <button onClick={onCopy.bind(null, "svg")}>
-              Copy to Clipboard as SVG
-            </button>
-            <button onClick={onCopy.bind(null, "json")}>
-              Copy to Clipboard as JSON
-            </button>
+            <button onClick={onCopy.bind(null, "png")}>Copy to Clipboard as PNG</button>
+            <button onClick={onCopy.bind(null, "svg")}>Copy to Clipboard as SVG</button>
+            <button onClick={onCopy.bind(null, "json")}>Copy to Clipboard as JSON</button>
           </div>
           <div
             style={{
@@ -828,8 +776,7 @@ export default function ExampleApp({
                 },
                 files: drawinkAPI?.getFiles(),
               });
-              appRef.current.querySelector(".export-svg").innerHTML =
-                svg.outerHTML;
+              appRef.current.querySelector(".export-svg").innerHTML = svg.outerHTML;
             }}
           >
             Export to SVG

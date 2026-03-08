@@ -4,20 +4,20 @@
  */
 
 // API types
-export * from './api';
+export * from "./api";
 
 // Database shared types
-export * from './db';
+export * from "./db";
 
 // Authentication types
-export * from './auth';
+export * from "./auth";
 
 // Domain types
-export * from './user';
-export * from './organization';
-export * from './project';
-export * from './board';
-export * from './template';
+export * from "./user";
+export * from "./organization";
+export * from "./project";
+export * from "./board";
+export * from "./template";
 
 // Application types
-export * from './app-types';
+export * from "./app-types";

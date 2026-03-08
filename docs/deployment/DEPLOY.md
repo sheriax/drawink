@@ -181,71 +181,24 @@ Set via `--set-env-vars` in the deploy command, or in the Cloud Run console:
 | `NODE_ENV` | `production` | Enables production optimizations |
 | `CORS_ORIGIN` | `https://drawink.app` | Must match your frontend domain exactly |
 
-### Custom Domain for Collab Server
+### Custom Domain for Collab Server (100% Free via Cloudflare)
 
-Option A: Use the Cloud Run URL directly (e.g., `https://drawink-collab-xxxxx.asia-south1.run.app`).
+If you use Cloudflare for your DNS (free plan), you can easily map `collab.drawink.app` to your Cloud Run service for **free** without needing an expensive GCP Load Balancer. This approach costs $0/month.
 
-Option B: Map a custom domain (`collab.drawink.app`):
+**Note on Region Support:** Custom domain mapping in Cloud Run is not supported in all regions (e.g., `asia-south1`). Make sure your Cloud Run service is deployed in a supported region like `us-central1`.
 
-```bash
-# Reserve a static IP
-gcloud compute addresses create drawink-collab-ip \
-  --global --ip-version=IPV4 --project=drawink-2026
+1. Go to your **GCP Console** → **Cloud Run** → click on your `drawink-collab` service.
+2. Click the **Integrations** tab.
+3. Click **Add Integration** → select **Custom domains - Cloudflare**.
+4. It will provide you with a **hostname** (e.g. `ghs.googlehosted.com`) or a CNAME record to add.
+5. Go to your **Cloudflare Dashboard** → **DNS**.
+6. Add the CNAME record:
 
-# Get the IP
-gcloud compute addresses describe drawink-collab-ip \
-  --global --project=drawink-2026 --format="value(address)"
+| Type | Name | Content | Proxy status |
+|------|------|---------|--------------|
+| `CNAME` | `collab` | `<cloud-run-url-without-https>` or `ghs.googlehosted.com` | **Proxied (Orange Cloud)** |
 
-# Create NEG
-gcloud compute network-endpoint-groups create drawink-collab-neg \
-  --region=asia-south1 \
-  --network-endpoint-type=serverless \
-  --cloud-run-service=drawink-collab \
-  --project=drawink-2026
-
-# Create backend service
-gcloud compute backend-services create drawink-collab-backend \
-  --global \
-  --load-balancing-scheme=EXTERNAL_MANAGED \
-  --project=drawink-2026
-
-gcloud compute backend-services add-backend drawink-collab-backend \
-  --global \
-  --network-endpoint-group=drawink-collab-neg \
-  --network-endpoint-group-region=asia-south1 \
-  --project=drawink-2026
-
-# URL map
-gcloud compute url-maps create drawink-collab-urlmap \
-  --default-service=drawink-collab-backend \
-  --global --project=drawink-2026
-
-# SSL certificate
-gcloud compute ssl-certificates create drawink-collab-ssl \
-  --domains=collab.drawink.app \
-  --global --project=drawink-2026
-
-# HTTPS proxy
-gcloud compute target-https-proxies create drawink-collab-https-proxy \
-  --ssl-certificates=drawink-collab-ssl \
-  --url-map=drawink-collab-urlmap \
-  --global --project=drawink-2026
-
-# Forwarding rule
-gcloud compute forwarding-rules create drawink-collab-https-rule \
-  --global \
-  --address=drawink-collab-ip \
-  --target-https-proxy=drawink-collab-https-proxy \
-  --ports=443 \
-  --load-balancing-scheme=EXTERNAL_MANAGED \
-  --project=drawink-2026
-```
-
-Then add a DNS A record:
-
-| Name | Type | Value |
-|------|------|-------|
-| `collab` | A | `<static-ip-from-above>` |
+Cloudflare will handle the SSL certificate and route the WebSocket traffic perfectly fine on the free plan.
 
 ### Quick Redeploy (Server Updates)
 
@@ -490,7 +443,7 @@ dig collab.drawink.app A +short
 |---------|--------------|
 | **Vercel** (Hobby) | Free (100GB bandwidth/month) |
 | **Vercel** (Pro) | $20/month (1TB bandwidth) |
-| **Cloud Run** | ~$0-5/month (with CPU throttling, min 0 instances) |
+| **Cloud Run** | $0/month (Free Tier: 2M requests & 180k vCPU-seconds/mo. 0 min instances) |
 | **Convex** | Free tier (then $25/month for Pro) |
 | **Firebase Storage** | ~$0.026/GB stored + $0.12/GB downloaded |
 | **Clerk** | Free up to 10k MAU |

@@ -1,7 +1,6 @@
-import React from "react";
-import { vi } from "vitest";
 import { KEYS, reseed } from "@/lib/common";
 import { bindBindingElement } from "@/lib/elements";
+import { vi } from "vitest";
 import "@drawink/utils/test-utils";
 
 import type { DrawinkArrowElement, NonDeleted } from "@/lib/elements/types";
@@ -10,15 +9,12 @@ import { Drawink } from "../index";
 import * as InteractiveCanvas from "../renderer/interactiveScene";
 import * as StaticScene from "../renderer/staticScene";
 
-import { UI, Pointer, Keyboard } from "./helpers/ui";
-import { render, fireEvent, act, unmountComponent } from "./test-utils";
+import { Keyboard, Pointer, UI } from "./helpers/ui";
+import { act, fireEvent, render, unmountComponent } from "./test-utils";
 
 unmountComponent();
 
-const renderInteractiveScene = vi.spyOn(
-  InteractiveCanvas,
-  "renderInteractiveScene",
-);
+const renderInteractiveScene = vi.spyOn(InteractiveCanvas, "renderInteractiveScene");
 const renderStaticScene = vi.spyOn(StaticScene, "renderStaticScene");
 
 beforeEach(() => {
@@ -43,9 +39,7 @@ describe("move element", () => {
       fireEvent.pointerMove(canvas, { clientX: 60, clientY: 70 });
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(1);
@@ -98,9 +92,7 @@ describe("move element", () => {
     // select the second rectangle
     new Pointer("mouse").clickOn(rectB);
 
-    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-      `16`,
-    );
+    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`16`);
     expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`15`);
     expect(h.state.selectionElement).toBeNull();
     expect(h.elements.length).toEqual(3);
@@ -108,10 +100,7 @@ describe("move element", () => {
     expect([rectA.x, rectA.y]).toEqual([0, 0]);
     expect([rectB.x, rectB.y]).toEqual([200, 0]);
     expect([[arrow.x, arrow.y]]).toCloselyEqualPoints([[110, -4.576537]], 0);
-    expect([[arrow.width, arrow.height]]).toCloselyEqualPoints(
-      [[79, 132.89433]],
-      0,
-    );
+    expect([[arrow.width, arrow.height]]).toCloselyEqualPoints([[79, 132.89433]], 0);
 
     renderInteractiveScene.mockClear();
     renderStaticScene.mockClear();
@@ -130,10 +119,7 @@ describe("move element", () => {
     expect([rectA.x, rectA.y]).toEqual([0, 0]);
     expect([rectB.x, rectB.y]).toEqual([201, 2]);
     expect([[arrow.x, arrow.y]]).toCloselyEqualPoints([[111, 6.1499]], 0);
-    expect([[arrow.width, arrow.height]]).toCloselyEqualPoints(
-      [[79, 124.1678]],
-      0,
-    );
+    expect([[arrow.width, arrow.height]]).toCloselyEqualPoints([[79, 124.1678]], 0);
 
     h.elements.forEach((element) => expect(element).toMatchSnapshot());
   });
@@ -152,9 +138,7 @@ describe("duplicate element on move when ALT is clicked", () => {
       fireEvent.pointerMove(canvas, { clientX: 60, clientY: 70 });
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(
-        `5`,
-      );
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(1);

@@ -1,28 +1,27 @@
-import type { UserIdleState, EditorInterface } from "@/lib/common";
+import type { EditorInterface, UserIdleState } from "@/lib/common";
 import type {
   DrawinkElement,
-  NonDeletedElementsMap,
   NonDeletedDrawinkElement,
+  NonDeletedElementsMap,
   NonDeletedSceneElementsMap,
 } from "@/lib/elements/types";
 
 import type { MakeBrand } from "@/lib/common/utility-types";
 
+import type { RoughCanvas } from "roughjs/bin/canvas";
+import type { Drawable } from "roughjs/bin/core";
 import type {
   AppClassProperties,
   AppState,
-  EmbedsValidationStatus,
   ElementsPendingErasure,
+  EmbedsValidationStatus,
   InteractiveCanvasAppState,
-  StaticCanvasAppState,
-  SocketId,
   PendingDrawinkElements,
+  SocketId,
+  StaticCanvasAppState,
 } from "../types";
-import type { RoughCanvas } from "roughjs/bin/canvas";
-import type { Drawable } from "roughjs/bin/core";
 
-export type RenderableElementsMap = NonDeletedElementsMap &
-  MakeBrand<"RenderableElementsMap">;
+export type RenderableElementsMap = NonDeletedElementsMap & MakeBrand<"RenderableElementsMap">;
 
 export type StaticCanvasRenderConfig = {
   canvasBackgroundColor: AppState["viewBackgroundColor"];
@@ -124,12 +123,7 @@ export type SceneScroll = {
   scrollY: number;
 };
 
-export type ExportType =
-  | "png"
-  | "clipboard"
-  | "clipboard-svg"
-  | "backend"
-  | "svg";
+export type ExportType = "png" | "clipboard" | "clipboard-svg" | "backend" | "svg";
 
 export type ScrollBars = {
   horizontal: {

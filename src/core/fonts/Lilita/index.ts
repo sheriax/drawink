@@ -1,6 +1,6 @@
 import { GOOGLE_FONTS_RANGES } from "@/lib/common";
 
-import { type DrawinkFontFaceDescriptor } from "../Fonts";
+import type { DrawinkFontFaceDescriptor } from "../Fonts";
 
 import LilitaLatinExt from "./Lilita-Regular-i7dPIFZ9Zz-WBtRtedDbYE98RXi4EwSsbg.woff2";
 import LilitaLatin from "./Lilita-Regular-i7dPIFZ9Zz-WBtRtedDbYEF8RXi4EwQ.woff2";

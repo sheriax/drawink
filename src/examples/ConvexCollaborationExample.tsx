@@ -16,9 +16,9 @@
  * - Type-safe real-time queries
  */
 
-import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { useEffect, useState } from "react";
 import { api } from "../../../convex/_generated/api";
 
 interface CursorPosition {
@@ -225,9 +225,7 @@ export function ConvexCollaborationExample({ boardId }: { boardId: string }) {
         <div className="log-entries">
           {activeUsers?.map((user) => (
             <div key={user.userId} className="log-entry">
-              <span className="timestamp">
-                {new Date(user.joinedAt).toLocaleTimeString()}
-              </span>
+              <span className="timestamp">{new Date(user.joinedAt).toLocaleTimeString()}</span>
               <span className="message">
                 {user.userName} {user.isActive ? "is editing" : "is viewing"}
               </span>

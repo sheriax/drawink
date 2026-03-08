@@ -1,22 +1,22 @@
 import { isFiniteNumber, pointFrom } from "@/lib/math";
 
 import {
+  DEFAULT_ELEMENT_PROPS,
   DEFAULT_FONT_FAMILY,
+  DEFAULT_GRID_SIZE,
+  DEFAULT_GRID_STEP,
+  DEFAULT_SIDEBAR,
   DEFAULT_TEXT_ALIGN,
   DEFAULT_VERTICAL_ALIGN,
   FONT_FAMILY,
   ROUNDNESS,
-  DEFAULT_SIDEBAR,
-  DEFAULT_ELEMENT_PROPS,
-  DEFAULT_GRID_SIZE,
-  DEFAULT_GRID_STEP,
-  randomId,
-  getUpdatedTimestamp,
-  updateActiveTool,
   arrayToMap,
-  getSizeFromPoints,
-  normalizeLink,
   getLineHeight,
+  getSizeFromPoints,
+  getUpdatedTimestamp,
+  normalizeLink,
+  randomId,
+  updateActiveTool,
 } from "@/lib/common";
 import {
   calculateFixedPointForNonElbowArrowBinding,
@@ -35,8 +35,8 @@ import {
   isArrowBoundToElement,
   isArrowElement,
   isElbowArrow,
-  isLinearElement,
   isLineElement,
+  isLinearElement,
   isTextElement,
   isUsingAdaptiveRadius,
 } from "@/lib/elements";
@@ -52,7 +52,6 @@ import { isInvisiblySmallElement } from "@/lib/elements";
 import type { LocalPoint, Radians } from "@/lib/math";
 
 import type {
-  ElementsMap,
   DrawinkArrowElement,
   DrawinkBindableElement,
   DrawinkElbowArrowElement,
@@ -60,6 +59,7 @@ import type {
   DrawinkLinearElement,
   DrawinkSelectionElement,
   DrawinkTextElement,
+  ElementsMap,
   FixedPointBinding,
   FontFamilyValues,
   NonDeletedSceneElementsMap,
@@ -71,24 +71,14 @@ import type { MarkOptional, Mutable } from "@/lib/common/utility-types";
 
 import { getDefaultAppState } from "../appState";
 
-import {
-  getNormalizedGridSize,
-  getNormalizedGridStep,
-  getNormalizedZoom,
-} from "../scene";
+import { getNormalizedGridSize, getNormalizedGridStep, getNormalizedZoom } from "../scene";
 
 import type { AppState, BinaryFiles, LibraryItem } from "../types";
 import type { ImportedDataState, LegacyAppState } from "./types";
 
-type RestoredAppState = Omit<
-  AppState,
-  "offsetTop" | "offsetLeft" | "width" | "height"
->;
+type RestoredAppState = Omit<AppState, "offsetTop" | "offsetLeft" | "width" | "height">;
 
-export const AllowedDrawinkActiveTools: Record<
-  AppState["activeTool"]["type"],
-  boolean
-> = {
+export const AllowedDrawinkActiveTools: Record<AppState["activeTool"]["type"], boolean> = {
   selection: true,
   lasso: true,
   text: true,
@@ -116,9 +106,7 @@ export type RestoredDataState = {
 
 const getFontFamilyByName = (fontFamilyName: string): FontFamilyValues => {
   if (Object.keys(FONT_FAMILY).includes(fontFamilyName)) {
-    return FONT_FAMILY[
-      fontFamilyName as keyof typeof FONT_FAMILY
-    ] as FontFamilyValues;
+    return FONT_FAMILY[fontFamilyName as keyof typeof FONT_FAMILY] as FontFamilyValues;
   }
   return DEFAULT_FONT_FAMILY;
 };
@@ -145,8 +133,7 @@ const repairBinding = <T extends DrawinkArrowElement>(
     return fixedPointBinding;
   }
 
-  const boundElement =
-    (elementsMap.get(binding.elementId) as DrawinkBindableElement) || undefined;
+  const boundElement = (elementsMap.get(binding.elementId) as DrawinkBindableElement) || undefined;
   if (boundElement) {
     if (binding.mode) {
       return {
@@ -161,19 +148,11 @@ const repairBinding = <T extends DrawinkArrowElement>(
       startOrEnd === "start" ? 0 : element.points.length - 1,
       elementsMap,
     );
-    const mode = isPointInElement(p, boundElement, elementsMap)
-      ? "inside"
-      : "orbit";
+    const mode = isPointInElement(p, boundElement, elementsMap) ? "inside" : "orbit";
     const focusPoint =
       mode === "inside"
         ? p
-        : projectFixedPointOntoDiagonal(
-            element,
-            p,
-            boundElement,
-            startOrEnd,
-            elementsMap,
-          ) || p;
+        : projectFixedPointOntoDiagonal(element, p, boundElement, startOrEnd, elementsMap) || p;
     const { fixedPoint } = calculateFixedPointForNonElbowArrowBinding(
       element,
       boundElement,
@@ -224,14 +203,12 @@ const restoreElementWithProperties = <
     strokeWidth: element.strokeWidth || DEFAULT_ELEMENT_PROPS.strokeWidth,
     strokeStyle: element.strokeStyle ?? DEFAULT_ELEMENT_PROPS.strokeStyle,
     roughness: element.roughness ?? DEFAULT_ELEMENT_PROPS.roughness,
-    opacity:
-      element.opacity == null ? DEFAULT_ELEMENT_PROPS.opacity : element.opacity,
+    opacity: element.opacity == null ? DEFAULT_ELEMENT_PROPS.opacity : element.opacity,
     angle: element.angle || (0 as Radians),
     x: extra.x ?? element.x ?? 0,
     y: extra.y ?? element.y ?? 0,
     strokeColor: element.strokeColor || DEFAULT_ELEMENT_PROPS.strokeColor,
-    backgroundColor:
-      element.backgroundColor || DEFAULT_ELEMENT_PROPS.backgroundColor,
+    backgroundColor: element.backgroundColor || DEFAULT_ELEMENT_PROPS.backgroundColor,
     width: element.width || 0,
     height: element.height || 0,
     seed: element.seed ?? 1,
@@ -240,25 +217,24 @@ const restoreElementWithProperties = <
     roundness: element.roundness
       ? element.roundness
       : element.strokeSharpness === "round"
-      ? {
-          // for old elements that would now use adaptive radius algo,
-          // use legacy algo instead
-          type: isUsingAdaptiveRadius(element.type)
-            ? ROUNDNESS.LEGACY
-            : ROUNDNESS.PROPORTIONAL_RADIUS,
-        }
-      : null,
+        ? {
+            // for old elements that would now use adaptive radius algo,
+            // use legacy algo instead
+            type: isUsingAdaptiveRadius(element.type)
+              ? ROUNDNESS.LEGACY
+              : ROUNDNESS.PROPORTIONAL_RADIUS,
+          }
+        : null,
     boundElements: element.boundElementIds
       ? element.boundElementIds.map((id) => ({ type: "arrow", id }))
-      : element.boundElements ?? [],
+      : (element.boundElements ?? []),
     updated: element.updated ?? getUpdatedTimestamp(),
     link: element.link ? normalizeLink(element.link) : null,
     locked: element.locked ?? false,
   };
 
   if ("customData" in element || "customData" in extra) {
-    base.customData =
-      "customData" in extra ? extra.customData : element.customData;
+    base.customData = "customData" in extra ? extra.customData : element.customData;
   }
 
   const ret = {
@@ -296,10 +272,8 @@ export const restoreElement = (
       let fontSize = element.fontSize;
       let fontFamily = element.fontFamily;
       if ("font" in element) {
-        const [fontPx, _fontFamily]: [string, string] = (
-          element as any
-        ).font.split(" ");
-        fontSize = parseFloat(fontPx);
+        const [fontPx, _fontFamily]: [string, string] = (element as any).font.split(" ");
+        fontSize = Number.parseFloat(fontPx);
         fontFamily = getFontFamilyByName(_fontFamily);
       }
       const text = (typeof element.text === "string" && element.text) || "";
@@ -365,8 +339,7 @@ export const restoreElement = (
           : element.points;
 
       if (points[0][0] !== 0 || points[0][1] !== 0) {
-        ({ points, x, y } =
-          LinearElementEditor.getNormalizeElementPointsAndCoords(element));
+        ({ points, x, y } = LinearElementEditor.getNormalizeElementPointsAndCoords(element));
       }
 
       return restoreElementWithProperties(element, {
@@ -380,9 +353,7 @@ export const restoreElement = (
         y,
         ...(isLineElement(element)
           ? {
-              polygon: isValidPolygon(element.points)
-                ? element.polygon ?? false
-                : false,
+              polygon: isValidPolygon(element.points) ? (element.polygon ?? false) : false,
             }
           : {}),
         ...getSizeFromPoints(points),
@@ -435,9 +406,7 @@ export const restoreElement = (
 
       return {
         ...restoredElement,
-        ...LinearElementEditor.getNormalizeElementPointsAndCoords(
-          restoredElement,
-        ),
+        ...LinearElementEditor.getNormalizeElementPointsAndCoords(restoredElement),
       };
     }
 
@@ -496,8 +465,7 @@ const repairContainerElement = (
             // if defined, lest boundElements is stale
             !boundElement.containerId
           ) {
-            (boundElement as Mutable<typeof boundElement>).containerId =
-              container.id;
+            (boundElement as Mutable<typeof boundElement>).containerId = container.id;
           }
         }
         return acc;
@@ -517,12 +485,10 @@ const repairBoundElement = (
   boundElement: Mutable<DrawinkTextElement>,
   elementsMap: Map<string, Mutable<DrawinkElement>>,
 ) => {
-  const container = boundElement.containerId
-    ? elementsMap.get(boundElement.containerId)
-    : null;
+  const container = boundElement.containerId ? elementsMap.get(boundElement.containerId) : null;
 
   (boundElement as Mutable<typeof boundElement>).angle = (
-    isArrowElement(container) ? 0 : container?.angle ?? 0
+    isArrowElement(container) ? 0 : (container?.angle ?? 0)
   ) as Radians;
 
   if (!container) {
@@ -539,9 +505,7 @@ const repairBoundElement = (
     !container.boundElements.find((binding) => binding.id === boundElement.id)
   ) {
     // copy because we're not cloning on restore, and we don't want to mutate upstream
-    const boundElements = (
-      container.boundElements || (container.boundElements = [])
-    ).slice();
+    const boundElements = (container.boundElements || (container.boundElements = [])).slice();
     boundElements.push({ type: "text", id: boundElement.id });
     container.boundElements = boundElements;
   }
@@ -589,13 +553,9 @@ export const restoreElements = (
         return elements;
       }
 
-      let migratedElement: DrawinkElement | null = restoreElement(
-        element,
-        elementsMap,
-        {
-          deleteInvisibleElements: opts?.deleteInvisibleElements,
-        },
-      );
+      let migratedElement: DrawinkElement | null = restoreElement(element, elementsMap, {
+        deleteInvisibleElements: opts?.deleteInvisibleElements,
+      });
       if (migratedElement) {
         const localElement = localElementsMap?.get(element.id);
 
@@ -656,15 +616,13 @@ export const restoreElements = (
     if (isLinearElement(element)) {
       if (
         element.startBinding &&
-        (!restoredElementsMap.has(element.startBinding.elementId) ||
-          !isArrowElement(element))
+        (!restoredElementsMap.has(element.startBinding.elementId) || !isArrowElement(element))
       ) {
         (element as Mutable<DrawinkLinearElement>).startBinding = null;
       }
       if (
         element.endBinding &&
-        (!restoredElementsMap.has(element.endBinding.elementId) ||
-          !isArrowElement(element))
+        (!restoredElementsMap.has(element.endBinding.elementId) || !isArrowElement(element))
       ) {
         (element as Mutable<DrawinkLinearElement>).endBinding = null;
       }
@@ -681,16 +639,9 @@ export const restoreElements = (
     ) {
       return {
         ...element,
-        ...updateElbowArrowPoints(
-          element,
-          restoredElementsMap as NonDeletedSceneElementsMap,
-          {
-            points: [
-              pointFrom<LocalPoint>(0, 0),
-              element.points[element.points.length - 1],
-            ],
-          },
-        ),
+        ...updateElbowArrowPoints(element, restoredElementsMap as NonDeletedSceneElementsMap, {
+          points: [pointFrom<LocalPoint>(0, 0), element.points[element.points.length - 1]],
+        }),
         index: element.index,
       };
     }
@@ -701,19 +652,12 @@ export const restoreElements = (
       element.endBinding &&
       element.startBinding.elementId === element.endBinding.elementId &&
       element.points.length > 1 &&
-      element.points.some(
-        ([rx, ry]) => Math.abs(rx) > 1e6 || Math.abs(ry) > 1e6,
-      )
+      element.points.some(([rx, ry]) => Math.abs(rx) > 1e6 || Math.abs(ry) > 1e6)
     ) {
       console.error("Fixing self-bound elbow arrow", element.id);
-      const boundElement = restoredElementsMap.get(
-        element.startBinding.elementId,
-      );
+      const boundElement = restoredElementsMap.get(element.startBinding.elementId);
       if (!boundElement) {
-        console.error(
-          "Bound element not found",
-          element.startBinding.elementId,
-        );
+        console.error("Bound element not found", element.startBinding.elementId);
         return element;
       }
 
@@ -727,10 +671,7 @@ export const restoreElements = (
           pointFrom<LocalPoint>(0, 0),
           pointFrom<LocalPoint>(0, -10),
           pointFrom<LocalPoint>(boundElement.width / 2 + 5, -10),
-          pointFrom<LocalPoint>(
-            boundElement.width / 2 + 5,
-            boundElement.height / 2 + 5,
-          ),
+          pointFrom<LocalPoint>(boundElement.width / 2 + 5, boundElement.height / 2 + 5),
         ],
       };
     }
@@ -739,9 +680,7 @@ export const restoreElements = (
   });
 };
 
-const coalesceAppStateValue = <
-  T extends keyof ReturnType<typeof getDefaultAppState>,
->(
+const coalesceAppStateValue = <T extends keyof ReturnType<typeof getDefaultAppState>>(
   key: T,
   appState: Exclude<ImportedDataState["appState"], null | undefined>,
   defaultAppState: ReturnType<typeof getDefaultAppState>,
@@ -761,11 +700,7 @@ const LegacyAppStateMigrations: {
     return [
       "defaultSidebarDockedPreference",
       appState.isSidebarDocked ??
-        coalesceAppStateValue(
-          "defaultSidebarDockedPreference",
-          appState,
-          defaultAppState,
-        ),
+        coalesceAppStateValue("defaultSidebarDockedPreference", appState, defaultAppState),
     ];
   },
 };
@@ -785,10 +720,7 @@ export const restoreAppState = (
     LegacyAppStateMigrations,
   ) as (keyof typeof LegacyAppStateMigrations)[]) {
     if (legacyKey in appState) {
-      const [nextKey, nextValue] = LegacyAppStateMigrations[legacyKey](
-        appState,
-        defaultAppState,
-      );
+      const [nextKey, nextValue] = LegacyAppStateMigrations[legacyKey](appState, defaultAppState);
       (nextAppState as any)[nextKey] = nextValue;
     }
   }
@@ -806,8 +738,8 @@ export const restoreAppState = (
       suppliedValue !== undefined
         ? suppliedValue
         : localValue !== undefined
-        ? localValue
-        : defaultValue;
+          ? localValue
+          : defaultValue;
   }
 
   return {
@@ -815,13 +747,11 @@ export const restoreAppState = (
     cursorButton: localAppState?.cursorButton || "up",
     // reset on fresh restore so as to hide the UI button if penMode not active
     penDetected:
-      localAppState?.penDetected ??
-      (appState.penMode ? appState.penDetected ?? false : false),
+      localAppState?.penDetected ?? (appState.penMode ? (appState.penDetected ?? false) : false),
     activeTool: {
       ...updateActiveTool(
         defaultAppState,
-        nextAppState.activeTool.type &&
-          AllowedDrawinkActiveTools[nextAppState.activeTool.type]
+        nextAppState.activeTool.type && AllowedDrawinkActiveTools[nextAppState.activeTool.type]
           ? nextAppState.activeTool
           : { type: "selection" },
       ),
@@ -833,7 +763,7 @@ export const restoreAppState = (
       value: getNormalizedZoom(
         isFiniteNumber(appState.zoom)
           ? appState.zoom
-          : appState.zoom?.value ?? defaultAppState.zoom.value,
+          : (appState.zoom?.value ?? defaultAppState.zoom.value),
       ),
     },
     openSidebar:
@@ -875,10 +805,7 @@ export const restore = (
 };
 
 const restoreLibraryItem = (libraryItem: LibraryItem) => {
-  const elements = restoreElements(
-    getNonDeletedElements(libraryItem.elements),
-    null,
-  );
+  const elements = restoreElements(getNonDeletedElements(libraryItem.elements), null);
   return elements.length ? { ...libraryItem, elements } : null;
 };
 
@@ -900,10 +827,7 @@ export const restoreLibraryItems = (
         restoredItems.push(restoredItem);
       }
     } else {
-      const _item = item as MarkOptional<
-        LibraryItem,
-        "id" | "status" | "created"
-      >;
+      const _item = item as MarkOptional<LibraryItem, "id" | "status" | "created">;
       const restoredItem = restoreLibraryItem({
         ..._item,
         id: _item.id || randomId(),

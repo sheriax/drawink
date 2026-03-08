@@ -2,10 +2,7 @@ import Spinner from "../Spinner";
 
 const ErrorComp = ({ error }: { error: string }) => {
   return (
-    <div
-      data-testid="ttd-dialog-output-error"
-      className="ttd-dialog-output-error"
-    >
+    <div data-testid="ttd-dialog-output-error" className="ttd-dialog-output-error">
       Error! <p>{error}</p>
     </div>
   );
@@ -17,11 +14,7 @@ interface TTDDialogOutputProps {
   loaded: boolean;
 }
 
-export const TTDDialogOutput = ({
-  error,
-  canvasRef,
-  loaded,
-}: TTDDialogOutputProps) => {
+export const TTDDialogOutput = ({ error, canvasRef, loaded }: TTDDialogOutputProps) => {
   return (
     <div className="ttd-dialog-output-wrapper">
       {error && <ErrorComp error={error.message} />}

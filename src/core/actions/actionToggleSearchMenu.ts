@@ -1,9 +1,4 @@
-import {
-  KEYS,
-  CANVAS_SEARCH_TAB,
-  CLASSES,
-  DEFAULT_SIDEBAR,
-} from "@/lib/common";
+import { CANVAS_SEARCH_TAB, CLASSES, DEFAULT_SIDEBAR, KEYS } from "@/lib/common";
 
 import { CaptureUpdateAction } from "@/lib/elements";
 
@@ -33,10 +28,9 @@ export const actionToggleSearchMenu = register({
       appState.openSidebar?.name === DEFAULT_SIDEBAR.name &&
       appState.openSidebar.tab === CANVAS_SEARCH_TAB
     ) {
-      const searchInput =
-        app.drawinkContainerValue.container?.querySelector<HTMLInputElement>(
-          `.${CLASSES.SEARCH_MENU_INPUT_WRAPPER} input`,
-        );
+      const searchInput = app.drawinkContainerValue.container?.querySelector<HTMLInputElement>(
+        `.${CLASSES.SEARCH_MENU_INPUT_WRAPPER} input`,
+      );
 
       searchInput?.focus();
       searchInput?.select();

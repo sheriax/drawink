@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 import { build } from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
 
@@ -15,7 +15,10 @@ const parseEnvVariables = (envPath: string): Record<string, string> => {
   for (const line of content.split("\n")) {
     if (line.startsWith("#") || !line.includes("=")) continue;
     const [key, ...valueParts] = line.split("=");
-    const value = valueParts.join("=").replace(/^["']|["']$/g, "").trim();
+    const value = valueParts
+      .join("=")
+      .replace(/^["']|["']$/g, "")
+      .trim();
     if (key) env[key.trim()] = value;
   }
   return env;

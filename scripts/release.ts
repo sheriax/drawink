@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
-import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
+import { readFileSync, writeFileSync } from "fs";
+import { dirname, resolve } from "path";
 import { createInterface } from "readline";
+import { fileURLToPath } from "url";
 import updateChangelog from "./updateChangelog";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -121,19 +121,16 @@ const askToCommit = (tag: string, nextVersion: string): Promise<void> => {
       output: process.stdout,
     });
 
-    rl.question(
-      "Would you like to commit these changes to git? (Y/n): ",
-      (answer) => {
-        rl.close();
-        if (answer.toLowerCase() === "y") {
-          execSync(`git add -u`);
-          execSync(`git commit -m "chore: release @drawink/drawink@${nextVersion} 🎉"`);
-        } else {
-          console.warn("Skipping commit. Don't forget to commit manually later!");
-        }
-        resolve();
-      },
-    );
+    rl.question("Would you like to commit these changes to git? (Y/n): ", (answer) => {
+      rl.close();
+      if (answer.toLowerCase() === "y") {
+        execSync(`git add -u`);
+        execSync(`git commit -m "chore: release @drawink/drawink@${nextVersion} 🎉"`);
+      } else {
+        console.warn("Skipping commit. Don't forget to commit manually later!");
+      }
+      resolve();
+    });
   });
 };
 
@@ -160,18 +157,15 @@ const askToPublish = (tag: string, version: string): Promise<void> => {
       output: process.stdout,
     });
 
-    rl.question(
-      "Would you like to publish these changes to npm? (Y/n): ",
-      (answer) => {
-        rl.close();
-        if (answer.toLowerCase() === "y") {
-          publishPackages(tag, version);
-        } else {
-          console.info("Skipping publish.");
-        }
-        resolve();
-      },
-    );
+    rl.question("Would you like to publish these changes to npm? (Y/n): ", (answer) => {
+      rl.close();
+      if (answer.toLowerCase() === "y") {
+        publishPackages(tag, version);
+      } else {
+        console.info("Skipping publish.");
+      }
+      resolve();
+    });
   });
 };
 

@@ -1,15 +1,8 @@
-import React from "react";
-
 import { KEYS } from "@/lib/common";
 
 import { Drawink } from "../../index";
 import { Keyboard } from "../../tests/helpers/ui";
-import {
-  render,
-  waitFor,
-  getByTestId,
-  fireEvent,
-} from "../../tests/test-utils";
+import { fireEvent, getByTestId, render, waitFor } from "../../tests/test-utils";
 
 describe("Test <DropdownMenu/>", () => {
   it("should", async () => {

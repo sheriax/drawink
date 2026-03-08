@@ -1,5 +1,5 @@
-import { CODES, EVENT, KEYS } from "@/lib/common";
 import { THEME } from "@/core";
+import { CODES, EVENT, KEYS } from "@/lib/common";
 import { useEffect, useLayoutEffect, useState } from "react";
 
 import type { Theme } from "@/lib/elements/types";

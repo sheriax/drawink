@@ -111,12 +111,9 @@ export const hasSyncErrorAtom = atom((get) => {
 /**
  * Update auth state (called by auth state listener)
  */
-export const setAuthStateAtom = atom(
-  null,
-  (get, set, authState: AuthState) => {
-    set(authStateAtom, authState);
-  },
-);
+export const setAuthStateAtom = atom(null, (get, set, authState: AuthState) => {
+  set(authStateAtom, authState);
+});
 
 /**
  * Update sync status
@@ -124,7 +121,7 @@ export const setAuthStateAtom = atom(
 export const setSyncStatusAtom = atom(null, (get, set, status: SyncStatus) => {
   set(syncStatusAtom, status);
   if (status === "idle") {
-    set(lastSyncAtom, Date.now());
+    (set as (atom: typeof lastSyncAtom, value: number) => void)(lastSyncAtom, Date.now());
   }
 });
 
@@ -142,7 +139,7 @@ export const enableCloudSyncAtom = atom(null, (get, set) => {
 export const disableCloudSyncAtom = atom(null, (get, set) => {
   set(cloudEnabledAtom, false);
   set(syncStatusAtom, "idle");
-  set(lastSyncAtom, null);
+  (set as (atom: typeof lastSyncAtom, value: null) => void)(lastSyncAtom, null);
   set(pendingChangesAtom, 0);
 });
 

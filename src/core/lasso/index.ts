@@ -2,11 +2,7 @@ import { type GlobalPoint, type LineSegment, pointFrom } from "@/lib/math";
 
 import { getElementLineSegments } from "@/lib/elements";
 import { LinearElementEditor } from "@/lib/elements";
-import {
-  isFrameLikeElement,
-  isLinearElement,
-  isTextElement,
-} from "@/lib/elements";
+import { isFrameLikeElement, isLinearElement, isTextElement } from "@/lib/elements";
 
 import { getFrameChildren } from "@/lib/elements";
 import { selectGroupsForSelectedElements } from "@/lib/elements";
@@ -15,13 +11,9 @@ import { getContainerElement } from "@/lib/elements";
 
 import { arrayToMap, easeOut, isShallowEqual } from "@/lib/common";
 
-import type {
-  DrawinkElement,
-  DrawinkLinearElement,
-  NonDeleted,
-} from "@/lib/elements/types";
+import type { DrawinkElement, DrawinkLinearElement, NonDeleted } from "@/lib/elements/types";
 
-import { type AnimationFrameHandler } from "../animation-frame-handler";
+import type { AnimationFrameHandler } from "../animation-frame-handler";
 
 import { AnimatedTrail } from "../animated-trail";
 
@@ -38,26 +30,20 @@ type CanvasTranslate = {
 export class LassoTrail extends AnimatedTrail {
   private intersectedElements: Set<DrawinkElement["id"]> = new Set();
   private enclosedElements: Set<DrawinkElement["id"]> = new Set();
-  private elementsSegments: Map<string, LineSegment<GlobalPoint>[]> | null =
-    null;
+  private elementsSegments: Map<string, LineSegment<GlobalPoint>[]> | null = null;
   private canvasTranslate: CanvasTranslate | null = null;
-  private keepPreviousSelection: boolean = false;
+  private keepPreviousSelection = false;
 
   constructor(animationFrameHandler: AnimationFrameHandler, app: App) {
     super(animationFrameHandler, app, {
       animateTrail: true,
       streamline: 0.4,
       sizeMapping: (c) => {
-        const DECAY_TIME = Infinity;
+        const DECAY_TIME = Number.POSITIVE_INFINITY;
         const DECAY_LENGTH = 5000;
-        const t = Math.max(
-          0,
-          1 - (performance.now() - c.pressure) / DECAY_TIME,
-        );
+        const t = Math.max(0, 1 - (performance.now() - c.pressure) / DECAY_TIME);
         const l =
-          (DECAY_LENGTH -
-            Math.min(DECAY_LENGTH, c.totalLength - c.currentIndex)) /
-          DECAY_LENGTH;
+          (DECAY_LENGTH - Math.min(DECAY_LENGTH, c.totalLength - c.currentIndex)) / DECAY_LENGTH;
 
         return Math.min(easeOut(l), easeOut(t));
       },
@@ -87,10 +73,13 @@ export class LassoTrail extends AnimatedTrail {
 
   selectElementsFromIds = (ids: string[]) => {
     this.app.setState((prevState) => {
-      const nextSelectedElementIds = ids.reduce((acc, id) => {
-        acc[id] = true;
-        return acc;
-      }, {} as Record<DrawinkElement["id"], true>);
+      const nextSelectedElementIds = ids.reduce(
+        (acc, id) => {
+          acc[id] = true;
+          return acc;
+        },
+        {} as Record<DrawinkElement["id"], true>,
+      );
 
       if (this.keepPreviousSelection) {
         for (const id of Object.keys(prevState.selectedElementIds)) {
@@ -102,10 +91,7 @@ export class LassoTrail extends AnimatedTrail {
         const element = this.app.scene.getNonDeletedElement(id);
 
         if (element && isTextElement(element)) {
-          const container = getContainerElement(
-            element,
-            this.app.scene.getNonDeletedElementsMap(),
-          );
+          const container = getContainerElement(element, this.app.scene.getNonDeletedElementsMap());
           if (container) {
             nextSelectedElementIds[container.id] = true;
             delete nextSelectedElementIds[element.id];

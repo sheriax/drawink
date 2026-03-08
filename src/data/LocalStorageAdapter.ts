@@ -321,12 +321,98 @@ export class LocalStorageAdapter implements StorageAdapter {
    */
   async deleteBoard(id: string): Promise<void> {
     const boards = await this.getBoards();
+    const board = boards.find((b) => b.id === id);
     const newBoards = boards.filter((b) => b.id !== id);
     localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(newBoards));
     // Clean up associated data
     localStorage.removeItem(`drawink-board-${id}-elements`);
     localStorage.removeItem(`drawink-board-${id}-state`);
     localStorage.removeItem(`drawink-board-${id}-version`);
+    // Track as deleted to prevent re-sync from uploading this board again
+    this.addDeletedBoardId(id);
+    // Also track cloudId if present
+    if (board?.cloudId) {
+      this.addDeletedBoardId(board.cloudId);
+    }
+  }
+
+  // =========================================================================
+  // Deleted Board Tracking (prevents re-sync of deleted boards)
+  // =========================================================================
+
+  /**
+   * Get list of board IDs that have been explicitly deleted.
+   * SyncEngine uses this to avoid re-uploading deleted boards.
+   */
+  getDeletedBoardIds(): string[] {
+    try {
+      const ids = localStorage.getItem("drawink-deleted-boards");
+      return ids ? JSON.parse(ids) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Track a board ID as deleted to prevent re-sync
+   */
+  addDeletedBoardId(id: string): void {
+    const ids = this.getDeletedBoardIds();
+    if (!ids.includes(id)) {
+      ids.push(id);
+      // Keep only the last 100 deleted IDs to prevent unbounded growth
+      const trimmedIds = ids.slice(-100);
+      localStorage.setItem("drawink-deleted-boards", JSON.stringify(trimmedIds));
+    }
+  }
+
+  /**
+   * Clear the deleted board IDs list (used after full re-sync)
+   */
+  clearDeletedBoardIds(): void {
+    localStorage.removeItem("drawink-deleted-boards");
+  }
+
+  // =========================================================================
+  // Cache Management (for cloud-first architecture)
+  // =========================================================================
+
+  /**
+   * Replace entire board cache with cloud boards (cloud is truth)
+   */
+  async updateBoardCache(boards: Board[]): Promise<void> {
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+    localStorage.setItem("drawink-last-sync", Date.now().toString());
+  }
+
+  /**
+   * Clear all cached board data (used on logout for security)
+   */
+  async clearCache(): Promise<void> {
+    localStorage.removeItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS);
+    localStorage.removeItem("drawink-last-sync");
+    localStorage.removeItem("drawink-deleted-boards");
+    localStorage.removeItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
+  }
+
+  /**
+   * Mark a board as pending delete (for offline delete queuing)
+   */
+  async markBoardPendingDelete(id: string): Promise<void> {
+    const boards = await this.getBoards();
+    const board = boards.find((b) => b.id === id);
+    if (board) {
+      (board as any).pendingDelete = true;
+      localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_BOARDS, JSON.stringify(boards));
+    }
+  }
+
+  /**
+   * Get last sync timestamp
+   */
+  getLastSyncTimestamp(): number | null {
+    const timestamp = localStorage.getItem("drawink-last-sync");
+    return timestamp ? Number.parseInt(timestamp, 10) : null;
   }
 
   /**

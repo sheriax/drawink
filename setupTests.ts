@@ -70,9 +70,7 @@ Object.defineProperty(window, "EXCALIDRAW_ASSET_PATH", {
 
 // mock the font fetch only, so that everything else, as font subsetting, can run inside of the (snapshot) tests
 vi.mock("./packages/drawink/fonts/DrawinkFontFace", async (importOriginal) => {
-  const mod = await importOriginal<
-    typeof import("./packages/drawink/fonts/DrawinkFontFace")
-  >();
+  const mod = await importOriginal<typeof import("./packages/drawink/fonts/DrawinkFontFace")>();
   const DrawinkFontFaceImpl = mod.DrawinkFontFace;
 
   return {

@@ -1,6 +1,6 @@
 import { GOOGLE_FONTS_RANGES } from "@/lib/common";
 
-import { type DrawinkFontFaceDescriptor } from "../Fonts";
+import type { DrawinkFontFaceDescriptor } from "../Fonts";
 
 import Cyrilic from "./Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTA3j6zbXWjgevT5.woff2";
 import Latin from "./Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2";

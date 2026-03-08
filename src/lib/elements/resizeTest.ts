@@ -1,11 +1,6 @@
-import {
-  pointFrom,
-  pointOnLineSegment,
-  pointRotateRads,
-  type Radians,
-} from "@/lib/math";
+import { type Radians, pointFrom, pointOnLineSegment, pointRotateRads } from "@/lib/math";
 
-import { SIDE_RESIZING_THRESHOLD, type EditorInterface } from "@/lib/common";
+import { type EditorInterface, SIDE_RESIZING_THRESHOLD } from "@/lib/common";
 
 import type { GlobalPoint, LineSegment, LocalPoint } from "@/lib/math";
 
@@ -13,31 +8,22 @@ import type { AppState, Zoom } from "@/core/types";
 
 import { getElementAbsoluteCoords } from "./bounds";
 import {
-  getTransformHandlesFromCoords,
-  getTransformHandles,
-  getOmitSidesForEditorInterface,
   canResizeFromSides,
+  getOmitSidesForEditorInterface,
+  getTransformHandles,
+  getTransformHandlesFromCoords,
 } from "./transformHandles";
 import { isImageElement, isLinearElement } from "./typeChecks";
 
 import type { Bounds } from "./bounds";
 import type {
-  TransformHandleType,
-  TransformHandle,
   MaybeTransformHandleType,
+  TransformHandle,
+  TransformHandleType,
 } from "./transformHandles";
-import type {
-  DrawinkElement,
-  PointerType,
-  NonDeletedDrawinkElement,
-  ElementsMap,
-} from "./types";
+import type { DrawinkElement, ElementsMap, NonDeletedDrawinkElement, PointerType } from "./types";
 
-const isInsideTransformHandle = (
-  transformHandle: TransformHandle,
-  x: number,
-  y: number,
-) =>
+const isInsideTransformHandle = (transformHandle: TransformHandle, x: number, y: number) =>
   x >= transformHandle[0] &&
   x <= transformHandle[0] + transformHandle[2] &&
   y >= transformHandle[1] &&
@@ -57,25 +43,20 @@ export const resizeTest = <Point extends GlobalPoint | LocalPoint>(
     return false;
   }
 
-  const { rotation: rotationTransformHandle, ...transformHandles } =
-    getTransformHandles(
-      element,
-      zoom,
-      elementsMap,
-      pointerType,
-      getOmitSidesForEditorInterface(editorInterface),
-    );
+  const { rotation: rotationTransformHandle, ...transformHandles } = getTransformHandles(
+    element,
+    zoom,
+    elementsMap,
+    pointerType,
+    getOmitSidesForEditorInterface(editorInterface),
+  );
 
-  if (
-    rotationTransformHandle &&
-    isInsideTransformHandle(rotationTransformHandle, x, y)
-  ) {
+  if (rotationTransformHandle && isInsideTransformHandle(rotationTransformHandle, x, y)) {
     return "rotation" as TransformHandleType;
   }
 
   const filter = Object.keys(transformHandles).filter((key) => {
-    const transformHandle =
-      transformHandles[key as Exclude<TransformHandleType, "rotation">]!;
+    const transformHandle = transformHandles[key as Exclude<TransformHandleType, "rotation">]!;
     if (!transformHandle) {
       return false;
     }
@@ -87,18 +68,12 @@ export const resizeTest = <Point extends GlobalPoint | LocalPoint>(
   }
 
   if (canResizeFromSides(editorInterface)) {
-    const [x1, y1, x2, y2, cx, cy] = getElementAbsoluteCoords(
-      element,
-      elementsMap,
-    );
+    const [x1, y1, x2, y2, cx, cy] = getElementAbsoluteCoords(element, elementsMap);
 
     // do not resize from the sides for linear elements with only two points
     if (!(isLinearElement(element) && element.points.length <= 2)) {
-      const SPACING = isImageElement(element)
-        ? 0
-        : SIDE_RESIZING_THRESHOLD / zoom.value;
-      const ZOOMED_SIDE_RESIZING_THRESHOLD =
-        SIDE_RESIZING_THRESHOLD / zoom.value;
+      const SPACING = isImageElement(element) ? 0 : SIDE_RESIZING_THRESHOLD / zoom.value;
+      const ZOOMED_SIDE_RESIZING_THRESHOLD = SIDE_RESIZING_THRESHOLD / zoom.value;
       const sides = getSelectionBorders(
         pointFrom(x1 - SPACING, y1 - SPACING),
         pointFrom(x2 + SPACING, y2 + SPACING),
@@ -134,27 +109,31 @@ export const getElementWithTransformHandleType = (
   elementsMap: ElementsMap,
   editorInterface: EditorInterface,
 ) => {
-  return elements.reduce((result, element) => {
-    if (result) {
-      return result;
-    }
-    const transformHandleType = resizeTest(
-      element,
-      elementsMap,
-      appState,
-      scenePointerX,
-      scenePointerY,
-      zoom,
-      pointerType,
-      editorInterface,
-    );
-    return transformHandleType ? { element, transformHandleType } : null;
-  }, null as { element: NonDeletedDrawinkElement; transformHandleType: MaybeTransformHandleType } | null);
+  return elements.reduce(
+    (result, element) => {
+      if (result) {
+        return result;
+      }
+      const transformHandleType = resizeTest(
+        element,
+        elementsMap,
+        appState,
+        scenePointerX,
+        scenePointerY,
+        zoom,
+        pointerType,
+        editorInterface,
+      );
+      return transformHandleType ? { element, transformHandleType } : null;
+    },
+    null as {
+      element: NonDeletedDrawinkElement;
+      transformHandleType: MaybeTransformHandleType;
+    } | null,
+  );
 };
 
-export const getTransformHandleTypeFromCoords = <
-  Point extends GlobalPoint | LocalPoint,
->(
+export const getTransformHandleTypeFromCoords = <Point extends GlobalPoint | LocalPoint>(
   [x1, y1, x2, y2]: Bounds,
   scenePointerX: number,
   scenePointerY: number,
@@ -171,11 +150,9 @@ export const getTransformHandleTypeFromCoords = <
   );
 
   const found = Object.keys(transformHandles).find((key) => {
-    const transformHandle =
-      transformHandles[key as Exclude<TransformHandleType, "rotation">]!;
+    const transformHandle = transformHandles[key as Exclude<TransformHandleType, "rotation">]!;
     return (
-      transformHandle &&
-      isInsideTransformHandle(transformHandle, scenePointerX, scenePointerY)
+      transformHandle && isInsideTransformHandle(transformHandle, scenePointerX, scenePointerY)
     );
   });
 
@@ -231,8 +208,7 @@ export const getCursorForResizingElement = (resizingElement: {
   transformHandleType: MaybeTransformHandleType;
 }): string => {
   const { element, transformHandleType } = resizingElement;
-  const shouldSwapCursors =
-    element && Math.sign(element.height) * Math.sign(element.width) === -1;
+  const shouldSwapCursors = element && Math.sign(element.height) * Math.sign(element.width) === -1;
   let cursor = null;
 
   switch (transformHandleType) {

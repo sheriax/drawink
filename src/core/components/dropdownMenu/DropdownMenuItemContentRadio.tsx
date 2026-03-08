@@ -35,12 +35,7 @@ const DropdownMenuItemContentRadio = <T,>({
         <label className="dropdown-menu-item__text" htmlFor={name}>
           {children}
         </label>
-        <RadioGroup
-          name={name}
-          value={value}
-          onChange={onChange}
-          choices={choices}
-        />
+        <RadioGroup name={name} value={value} onChange={onChange} choices={choices} />
       </div>
       {shortcut && editorInterface.formFactor !== "phone" && (
         <div className="dropdown-menu-item__shortcut dropdown-menu-item__shortcut--orphaned">

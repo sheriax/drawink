@@ -2,20 +2,14 @@ import React, { useEffect, useRef } from "react";
 
 import { isShallowEqual } from "@/lib/common";
 
-import type {
-  NonDeletedDrawinkElement,
-  NonDeletedSceneElementsMap,
-} from "@/lib/elements/types";
+import type { NonDeletedDrawinkElement, NonDeletedSceneElementsMap } from "@/lib/elements/types";
 
 import { isRenderThrottlingEnabled } from "../../reactUtils";
 import { renderStaticScene } from "../../renderer/staticScene";
 
-import type {
-  RenderableElementsMap,
-  StaticCanvasRenderConfig,
-} from "../../scene/types";
-import type { AppState, StaticCanvasAppState } from "../../types";
 import type { RoughCanvas } from "roughjs/bin/canvas";
+import type { RenderableElementsMap, StaticCanvasRenderConfig } from "../../scene/types";
+import type { AppState, StaticCanvasAppState } from "../../types";
 
 type StaticCanvasProps = {
   canvas: HTMLCanvasElement;
@@ -105,10 +99,7 @@ const getRelevantAppStateProps = (appState: AppState): StaticCanvasAppState => {
   return relevantAppStateProps;
 };
 
-const areEqual = (
-  prevProps: StaticCanvasProps,
-  nextProps: StaticCanvasProps,
-) => {
+const areEqual = (prevProps: StaticCanvasProps, nextProps: StaticCanvasProps) => {
   if (
     prevProps.sceneNonce !== nextProps.sceneNonce ||
     prevProps.scale !== nextProps.scale ||

@@ -1,37 +1,33 @@
 import throttle from "lodash.throttle";
 
 import {
-  randomInteger,
   arrayToMap,
-  toBrandedType,
   isDevEnv,
   isTestEnv,
+  randomInteger,
   toArray,
+  toBrandedType,
 } from "@/lib/common";
 import { isNonDeletedElement } from "@/lib/elements";
 import { isFrameLikeElement } from "@/lib/elements";
 import { getElementsInGroup } from "@/lib/elements";
 
-import {
-  syncInvalidIndices,
-  syncMovedIndices,
-  validateFractionalIndices,
-} from "@/lib/elements";
+import { syncInvalidIndices, syncMovedIndices, validateFractionalIndices } from "@/lib/elements";
 
 import { getSelectedElements } from "@/lib/elements";
 
-import { mutateElement, type ElementUpdate } from "@/lib/elements";
+import { type ElementUpdate, mutateElement } from "@/lib/elements";
 
 import type {
   DrawinkElement,
-  NonDeletedDrawinkElement,
-  NonDeleted,
   DrawinkFrameLikeElement,
   ElementsMapOrArray,
-  SceneElementsMap,
+  NonDeleted,
+  NonDeletedDrawinkElement,
   NonDeletedSceneElementsMap,
-  OrderedDrawinkElement,
   Ordered,
+  OrderedDrawinkElement,
+  SceneElementsMap,
 } from "@/lib/elements/types";
 
 import type { Assert, Mutable, SameType } from "@/lib/common/utility-types";
@@ -43,9 +39,7 @@ type SceneStateCallbackRemover = () => void;
 
 type SelectionHash = string & { __brand: "selectionHash" };
 
-const getNonDeletedElements = <T extends DrawinkElement>(
-  allElements: readonly T[],
-) => {
+const getNonDeletedElements = <T extends DrawinkElement>(allElements: readonly T[]) => {
   const elementsMap = new Map() as NonDeletedSceneElementsMap;
   const elements: T[] = [];
   for (const element of allElements) {
@@ -81,10 +75,7 @@ const hashSelectionOpts = (
   // just to ensure we're hashing all expected keys
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type _ = Assert<
-    SameType<
-      Required<HashableKeys>,
-      Pick<Required<HashableKeys>, typeof keys[number]>
-    >
+    SameType<Required<HashableKeys>, Pick<Required<HashableKeys>, (typeof keys)[number]>>
   >;
 
   let hash = "";
@@ -106,13 +97,10 @@ export class Scene {
   private callbacks: Set<SceneStateCallback> = new Set();
 
   private nonDeletedElements: readonly Ordered<NonDeletedDrawinkElement>[] = [];
-  private nonDeletedElementsMap = toBrandedType<NonDeletedSceneElementsMap>(
-    new Map(),
-  );
+  private nonDeletedElementsMap = toBrandedType<NonDeletedSceneElementsMap>(new Map());
   // ideally all elements within the scene should be wrapped around with `Ordered` type, but right now there is no real benefit doing so
   private elements: readonly OrderedDrawinkElement[] = [];
-  private nonDeletedFramesLikes: readonly NonDeleted<DrawinkFrameLikeElement>[] =
-    [];
+  private nonDeletedFramesLikes: readonly NonDeleted<DrawinkFrameLikeElement>[] = [];
   private frames: readonly DrawinkFrameLikeElement[] = [];
   private elementsMap = toBrandedType<SceneElementsMap>(new Map());
   private selectedElementsCache: {
@@ -221,9 +209,7 @@ export class Scene {
     return (this.elementsMap.get(id) as T | undefined) || null;
   }
 
-  getNonDeletedElement(
-    id: DrawinkElement["id"],
-  ): NonDeleted<DrawinkElement> | null {
+  getNonDeletedElement(id: DrawinkElement["id"]): NonDeleted<DrawinkElement> | null {
     const element = this.getElement(id);
     if (element && isNonDeletedElement(element)) {
       return element;
@@ -330,16 +316,10 @@ export class Scene {
 
   insertElementAtIndex(element: DrawinkElement, index: number) {
     if (!Number.isFinite(index) || index < 0) {
-      throw new Error(
-        "insertElementAtIndex can only be called with index >= 0",
-      );
+      throw new Error("insertElementAtIndex can only be called with index >= 0");
     }
 
-    const nextElements = [
-      ...this.elements.slice(0, index),
-      element,
-      ...this.elements.slice(index),
-    ];
+    const nextElements = [...this.elements.slice(0, index), element, ...this.elements.slice(index)];
 
     syncMovedIndices(nextElements, arrayToMap([element]));
 
@@ -352,9 +332,7 @@ export class Scene {
     }
 
     if (!Number.isFinite(index) || index < 0) {
-      throw new Error(
-        "insertElementAtIndex can only be called with index >= 0",
-      );
+      throw new Error("insertElementAtIndex can only be called with index >= 0");
     }
 
     const nextElements = [
@@ -369,9 +347,7 @@ export class Scene {
   }
 
   insertElement = (element: DrawinkElement) => {
-    const index = element.frameId
-      ? this.getElementIndex(element.frameId)
-      : this.elements.length;
+    const index = element.frameId ? this.getElementIndex(element.frameId) : this.elements.length;
 
     this.insertElementAtIndex(element, index);
   };
@@ -436,12 +412,7 @@ export class Scene {
     const elementsMap = this.getNonDeletedElementsMap();
 
     const { version: prevVersion } = element;
-    const { version: nextVersion } = mutateElement(
-      element,
-      elementsMap,
-      updates,
-      options,
-    );
+    const { version: nextVersion } = mutateElement(element, elementsMap, updates, options);
 
     if (
       // skip if the element is not in the scene (i.e. selection)

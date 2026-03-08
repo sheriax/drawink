@@ -8,10 +8,10 @@
  * - Automatic stale session cleanup
  */
 
-import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { getUserId } from "./users";
 import type { Doc, Id } from "./_generated/dataModel";
+import { type QueryCtx, internalMutation, mutation, query } from "./_generated/server";
+import { getUserId } from "./users";
 
 /**
  * Internal helper to get active users for a board
@@ -22,14 +22,12 @@ import type { Doc, Id } from "./_generated/dataModel";
  */
 async function getActiveUsersInternal(
   ctx: QueryCtx,
-  boardId: Id<"boards">
+  boardId: Id<"boards">,
 ): Promise<Doc<"collaborationSessions">[]> {
   // Get all sessions for this board
   const sessions = await ctx.db
     .query("collaborationSessions")
-    .withIndex("by_board_active", (q) =>
-      q.eq("boardId", boardId).eq("isActive", true)
-    )
+    .withIndex("by_board_active", (q) => q.eq("boardId", boardId).eq("isActive", true))
     .collect();
 
   // Filter out stale sessions (no heartbeat in last 30 seconds)
@@ -38,7 +36,7 @@ async function getActiveUsersInternal(
   const activeThreshold = 30 * 1000; // 30 seconds
 
   const activeSessions = sessions.filter(
-    (session) => now - session.lastHeartbeat < activeThreshold
+    (session) => now - session.lastHeartbeat < activeThreshold,
   );
 
   return activeSessions;
@@ -59,9 +57,7 @@ export const join = mutation({
     // Check if user already has a session for this board
     const existing = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (existing) {
@@ -102,9 +98,7 @@ export const leave = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {
@@ -129,9 +123,7 @@ export const updateCursor = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {
@@ -156,9 +148,7 @@ export const heartbeat = mutation({
 
     const session = await ctx.db
       .query("collaborationSessions")
-      .withIndex("by_board_and_user", (q) =>
-        q.eq("boardId", args.boardId).eq("userId", userId)
-      )
+      .withIndex("by_board_and_user", (q) => q.eq("boardId", args.boardId).eq("userId", userId))
       .first();
 
     if (session) {
@@ -172,24 +162,36 @@ export const heartbeat = mutation({
 
 /**
  * Get all active users on a board (real-time!)
+ * Requires authentication.
  */
 export const getActiveUsers = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     return await getActiveUsersInternal(ctx, args.boardId);
   },
 });
 
 /**
  * Get all cursor positions for active users (real-time!)
+ * Requires authentication.
  */
 export const getCursors = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Assign colors to users (deterministic based on userId)
@@ -218,12 +220,18 @@ export const getCursors = query({
 
 /**
  * Get collaboration statistics for a board
+ * Requires authentication.
  */
 export const getStats = query({
   args: {
     boardId: v.id("boards"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
     const activeUsers = await getActiveUsersInternal(ctx, args.boardId);
 
     // Get all-time collaboration sessions for this board
@@ -246,9 +254,9 @@ export const getStats = query({
 
 /**
  * Cleanup stale sessions (called by scheduled function)
- * This can be run periodically to clean up old sessions
+ * Internal only — not callable from the client.
  */
-export const cleanupStaleSessions = mutation({
+export const cleanupStaleSessions = internalMutation({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();
@@ -279,6 +287,7 @@ export const cleanupStaleSessions = mutation({
 /**
  * Save collaborative scene to Convex
  * Replaces Firebase's saveToFirebase() function
+ * Requires authentication.
  */
 export const saveCollaborativeScene = mutation({
   args: {
@@ -289,6 +298,13 @@ export const saveCollaborativeScene = mutation({
     lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
   },
   handler: async (ctx, args) => {
+    // Skip save if user is not authenticated (auto-save fires even when signed out)
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return { success: false, roomId: args.roomId, version: args.sceneVersion };
+    }
+    const userId = identity.subject;
+
     // Check if room already exists
     const existingRoom = await ctx.db
       .query("collaborativeRooms")
@@ -305,7 +321,7 @@ export const saveCollaborativeScene = mutation({
         iv: args.iv,
         sceneVersion: args.sceneVersion,
         updatedAt: now,
-        lastEditedBy: args.lastEditedBy,
+        lastEditedBy: userId, // Use authenticated userId, not client-supplied value
         expiresAt, // Reset expiry on update
       });
 
@@ -319,7 +335,7 @@ export const saveCollaborativeScene = mutation({
         sceneVersion: args.sceneVersion,
         createdAt: now,
         updatedAt: now,
-        lastEditedBy: args.lastEditedBy,
+        lastEditedBy: userId, // Use authenticated userId
         expiresAt,
       });
 

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
-import { focusNearestParent, KEYS } from "@/lib/common";
+import { KEYS, focusNearestParent } from "@/lib/common";
 
 import { useDrawinkContainer } from "./App";
 

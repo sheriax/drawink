@@ -1,16 +1,16 @@
+import { ClerkProvider } from "@clerk/clerk-react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ClerkProvider } from "@clerk/clerk-react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import "./sentry";
 
 import DrawinkApp from "./App";
 import { SignIn, SignUp } from "./components/auth";
-import { Dashboard } from "./pages/Dashboard";
-import BillingSettings from "./pages/BillingSettings";
 import { CLERK_PUBLISHABLE_KEY, clerkAppearance } from "./lib/clerk";
-// import { ConvexClientProvider } from "./lib/convex"; // DISABLED: Convex backend removed
+import { ConvexClientProvider } from "./lib/convex";
+import BillingSettings from "./pages/BillingSettings";
+import { Dashboard } from "./pages/Dashboard";
 
 window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
 
@@ -33,19 +33,18 @@ if (import.meta.env.VITE_APP_DISABLE_PWA !== "true") {
 
 root.render(
   <StrictMode>
-    <ClerkProvider
-      publishableKey={CLERK_PUBLISHABLE_KEY}
-      appearance={clerkAppearance}
-    >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/sign-in/*" element={<SignIn />} />
-          <Route path="/sign-up/*" element={<SignUp />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/billing" element={<BillingSettings />} />
-          <Route path="/*" element={<DrawinkApp />} />
-        </Routes>
-      </BrowserRouter>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} appearance={clerkAppearance}>
+      <ConvexClientProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/sign-in/*" element={<SignIn />} />
+            <Route path="/sign-up/*" element={<SignUp />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/billing" element={<BillingSettings />} />
+            <Route path="/*" element={<DrawinkApp />} />
+          </Routes>
+        </BrowserRouter>
+      </ConvexClientProvider>
     </ClerkProvider>
   </StrictMode>,
 );

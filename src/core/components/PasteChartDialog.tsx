@@ -25,21 +25,14 @@ const ChartPreviewBtn = (props: {
   onClick: OnInsertChart;
 }) => {
   const previewRef = useRef<HTMLDivElement | null>(null);
-  const [chartElements, setChartElements] = useState<ChartElements | null>(
-    null,
-  );
+  const [chartElements, setChartElements] = useState<ChartElements | null>(null);
 
   useLayoutEffect(() => {
     if (!props.spreadsheet) {
       return;
     }
 
-    const elements = renderSpreadsheet(
-      props.chartType,
-      props.spreadsheet,
-      0,
-      0,
-    );
+    const elements = renderSpreadsheet(props.chartType, props.spreadsheet, 0, 0);
     setChartElements(elements);
     let svg: SVGSVGElement;
     const previewNode = previewRef.current!;

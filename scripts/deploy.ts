@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
 // @ts-ignore - Bun-specific
-import { $ } from "bun";
-// @ts-ignore - Bun-specific
-import { resolve, dirname } from "path";
+import { dirname, resolve } from "path";
 // @ts-ignore - Bun-specific
 import { fileURLToPath } from "url";
+// @ts-ignore - Bun-specific
+import { $ } from "bun";
 
 // @ts-ignore - Bun global
 declare const process: any;
@@ -86,7 +86,8 @@ async function checkPrerequisites(): Promise<boolean> {
 
   // Check if logged in to gcloud
   try {
-    const result = await $`gcloud auth list --filter=status:ACTIVE --format="value(account)"`.quiet();
+    const result =
+      await $`gcloud auth list --filter=status:ACTIVE --format="value(account)"`.quiet();
     const account = result.stdout.toString().trim();
     if (account) {
       success(`Logged in as: ${account}`);
@@ -245,8 +246,8 @@ async function main() {
   console.log(`Custom Domain: https://drawink.app`);
 }
 
-main().catch((error) => {
+main().catch((err) => {
   error("Fatal error during deployment");
-  console.error(error);
+  console.error(err);
   process.exit(1);
 });

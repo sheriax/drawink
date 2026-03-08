@@ -1,8 +1,12 @@
 /**
- * SyncEngine - Simplified
+ * SyncEngine (Cloud-First Architecture v3)
  *
- * Only handles initial sync when user logs in.
- * No periodic sync - HybridStorageAdapter calls CloudStorageAdapter directly.
+ * Simplified to:
+ * 1. Initial pull from cloud on login (one-time)
+ * 2. Content sync for edits (push local changes to cloud)
+ *
+ * REMOVED: Upload local boards to cloud (was causing phantom boards)
+ * Cloud is now source of truth — we only pull from cloud, never upload orphaned boards.
  */
 
 import { debounce } from "@/lib/common";
@@ -12,19 +16,19 @@ import type { LocalStorageAdapter } from "./LocalStorageAdapter";
 
 export type SyncStatus = "idle" | "syncing" | "error";
 
-export type SyncState = {
+export interface SyncState {
   status: SyncStatus;
   lastSyncAt: number | null;
   error: string | null;
-};
+}
 
 /**
- * SyncEngine - handles initial sync on login
+ * SyncEngine - handles cloud→local sync on login
  *
  * Flow:
  * 1. User logs in → start() called
- * 2. Pull cloud boards to local (one-time)
- * 3. Done - no periodic sync, HybridStorageAdapter handles real-time sync
+ * 2. Pull cloud boards to local cache (one-time)
+ * 3. Done - HybridStorageAdapter handles real-time sync via OfflineQueue
  */
 export class SyncEngine {
   private localAdapter: LocalStorageAdapter;
@@ -47,23 +51,14 @@ export class SyncEngine {
     this.cloudAdapter = cloudAdapter;
   }
 
-  /**
-   * Get current sync state
-   */
   get state(): SyncState {
     return this._state;
   }
 
-  /**
-   * Register callback for state changes
-   */
   setOnStateChange(callback: (state: SyncState) => void): void {
     this.onStateChange = callback;
   }
 
-  /**
-   * Update internal state and notify listeners
-   */
   private updateState(updates: Partial<SyncState>): void {
     this._state = { ...this._state, ...updates };
     this.onStateChange?.(this._state);
@@ -74,22 +69,21 @@ export class SyncEngine {
    */
   async start(): Promise<void> {
     this.isStopped = false;
-    console.log("[SyncEngine] Starting...");
+    console.log("[SyncEngine] Starting (cloud-first mode)...");
 
-    // Ensure we have a workspace
-    // ConvexStorageAdapter now handles auth timing internally
     try {
+      // Ensure we have a workspace
       await this.cloudAdapter.ensureDefaultWorkspace();
       console.log("[SyncEngine] Default workspace ensured");
 
-      // Do initial pull from cloud
+      // Pull cloud boards to local cache
       await this.initialPullFromCloud();
     } catch (error) {
-      console.error("[SyncEngine] Failed to ensure workspace:", error);
-      console.warn("[SyncEngine] Continuing without workspace - cloud sync will be limited");
+      console.error("[SyncEngine] Failed to start:", error);
+      this.updateState({ status: "error", error: String(error) });
     }
 
-    console.log("[SyncEngine] Started (no periodic sync)");
+    console.log("[SyncEngine] Started");
   }
 
   /**
@@ -108,57 +102,31 @@ export class SyncEngine {
   }
 
   /**
-   * Initial pull from cloud - downloads cloud boards to local
-   * Only runs on login, NOT bidirectional
+   * Initial pull from cloud - downloads cloud boards to local cache
+   * CLOUD-FIRST: No local→cloud upload (removed to prevent phantom boards)
    */
   private async initialPullFromCloud(): Promise<void> {
     if (this.isStopped) return;
 
-    console.log("[SyncEngine] Pulling from cloud...");
+    console.log("[SyncEngine] Pulling boards from cloud...");
     this.updateState({ status: "syncing", error: null });
 
     try {
-      const [localBoards, cloudBoards] = await Promise.all([
-        this.localAdapter.getBoards(),
-        this.cloudAdapter.getBoards(),
-      ]);
+      const cloudBoards = await this.cloudAdapter.getBoards();
+      console.log(`[SyncEngine] Found ${cloudBoards.length} cloud boards`);
 
-      const localMap = new Map(localBoards.map((b) => [b.id, b]));
-      const cloudMap = new Map(cloudBoards.map((b) => [b.id, b]));
+      // Replace local cache with cloud boards (cloud is truth)
+      await this.localAdapter.updateBoardCache(cloudBoards);
 
-      // Download cloud boards that don't exist locally
-      for (const [id, board] of cloudMap) {
-        if (!localMap.has(id)) {
-          console.log(`[SyncEngine] Downloading cloud board: ${id}`);
-          try {
-            await this.localAdapter.createBoardWithId(id, board.name);
-            const content = await this.cloudAdapter.getBoardContent(id);
-            if (content.elements.length > 0) {
-              await this.localAdapter.saveBoardContent(id, content);
-            }
-          } catch (error) {
-            console.error(`[SyncEngine] Failed to download board ${id}:`, error);
+      // Download board content for each cloud board
+      for (const board of cloudBoards) {
+        try {
+          const content = await this.cloudAdapter.getBoardContent(board.id);
+          if (content.elements.length > 0) {
+            await this.localAdapter.saveBoardContent(board.id, content);
           }
-        }
-      }
-
-      // Upload local boards that don't exist in cloud
-      for (const [id, board] of localMap) {
-        if (!cloudMap.has(id)) {
-          console.log(`[SyncEngine] Uploading local board: ${id}`);
-          try {
-            // Create board in cloud and get the cloud board ID
-            const cloudBoardId = await this.cloudAdapter.createBoardWithId(id, board.name);
-            // Store the cloud ID mapping in the local board
-            await this.localAdapter.updateBoard(id, { cloudId: cloudBoardId });
-            // Use the cloud board ID for content operations
-            const content = await this.localAdapter.getBoardContent(id);
-            if (content.elements.length > 0) {
-              await this.cloudAdapter.saveBoardContent(cloudBoardId, content);
-            }
-          } catch (error) {
-            console.error(`[SyncEngine] Failed to upload board ${id}:`, error);
-          }
+        } catch (error) {
+          console.error(`[SyncEngine] Failed to download content for ${board.id}:`, error);
         }
       }
 
@@ -167,6 +135,7 @@ export class SyncEngine {
         lastSyncAt: Date.now(),
         error: null,
       });
+
       console.log("[SyncEngine] Initial pull completed");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Initial sync failed";
@@ -179,8 +148,8 @@ export class SyncEngine {
   }
 
   /**
-   * Schedule debounced content sync for a board
-   * Called by HybridStorageAdapter when board content changes
+   * Schedule debounced content sync for a board.
+   * Called by HybridStorageAdapter when board content changes.
    */
   scheduleBoardContentSync(boardId: string): void {
     if (this.isStopped) return;
@@ -198,31 +167,21 @@ export class SyncEngine {
   }
 
   /**
-   * Sync content for a specific board to cloud
+   * Sync content for a specific board to cloud.
    */
   async syncBoardContent(boardId: string): Promise<void> {
-    if (this.isStopped) return;
+    if (this.isStopped || !navigator.onLine) return;
 
     try {
-      // Get the local board to find the cloud ID mapping
-      const boards = await this.localAdapter.getBoards();
-      const board = boards.find((b) => b.id === boardId);
-
-      if (!board) {
-        console.error(`[SyncEngine] Board not found: ${boardId}`);
-        return;
-      }
-
-      // Use cloud ID if available, otherwise skip (board hasn't been synced yet)
-      const cloudBoardId = board.cloudId;
-      if (!cloudBoardId) {
-        console.log(`[SyncEngine] Board ${boardId} not yet synced to cloud, skipping content sync`);
+      // Skip temp/local boards (they should be queued via OfflineQueue)
+      if (boardId.startsWith("local_")) {
+        console.log(`[SyncEngine] Skipping temp board: ${boardId}`);
         return;
       }
 
       const localContent = await this.localAdapter.getBoardContent(boardId);
-      await this.cloudAdapter.saveBoardContent(cloudBoardId, localContent);
-      console.log(`[SyncEngine] Synced content for board: ${boardId} (cloud ID: ${cloudBoardId})`);
+      await this.cloudAdapter.saveBoardContent(boardId, localContent);
+      console.log(`[SyncEngine] Synced content for board: ${boardId}`);
     } catch (error) {
       console.error(`[SyncEngine] Failed to sync board content ${boardId}:`, error);
     }

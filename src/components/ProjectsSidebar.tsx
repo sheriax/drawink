@@ -1,97 +1,94 @@
 /**
  * Projects Sidebar
- * Shows projects/folders hierarchy with boards
+ * Workspace dropdown + flat board list (local-first, synced to Convex).
+ * This is the single place to manage boards — replaces the old BoardsMenu.
  */
 
+import {
+  boardsAPIAtom,
+  boardsAtom,
+  boardErrorAtom,
+  createBoardAtom,
+  currentBoardIdAtom,
+  deleteBoardAtom,
+  editingBoardIdAtom,
+  isLoadingBoardsAtom,
+  refreshBoardsAtom,
+  switchBoardAtom,
+  updateBoardNameAtom,
+} from "@/core/atoms/boards";
+import { useAtom, useAtomValue, useSetAtom } from "@/core/editor-jotai";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
-import { useTRPC } from "../lib/trpc";
-import type { Project } from "@/lib/types";
 import "./ProjectsSidebar.scss";
 
 export const ProjectsSidebar: React.FC = () => {
   const { user, isLoaded } = useUser();
-  const trpc = useTRPC();
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<string | null>(null);
+  // Local-first board state (jotai)
+  const boards = useAtomValue(boardsAtom);
+  const currentBoardId = useAtomValue(currentBoardIdAtom);
+  const isLoading = useAtomValue(isLoadingBoardsAtom);
+  const boardsAPI = useAtomValue(boardsAPIAtom);
+  const [editingBoardId, setEditingBoardId] = useAtom(editingBoardIdAtom);
+  const [newBoardName, setNewBoardName] = useState("");
 
-  // Load selected organization from localStorage
+  const refreshBoards = useSetAtom(refreshBoardsAtom);
+  const createBoard = useSetAtom(createBoardAtom);
+  const switchBoard = useSetAtom(switchBoardAtom);
+  const updateBoardName = useSetAtom(updateBoardNameAtom);
+  const deleteBoard = useSetAtom(deleteBoardAtom);
+  const boardError = useAtomValue(boardErrorAtom);
+
+  // Refresh boards on mount
   useEffect(() => {
-    const savedOrgId = localStorage.getItem("selectedOrganizationId");
-    if (savedOrgId && savedOrgId !== "personal") {
-      setSelectedOrg(savedOrgId);
+    if (boardsAPI) {
+      refreshBoards();
     }
-  }, []);
+  }, [boardsAPI, refreshBoards]);
 
-  // Load projects
-  useEffect(() => {
-    if (!isLoaded || !user) {
-      return;
+  const handleCreateBoard = async () => {
+    try {
+      const name = `Untitled Board ${boards.length + 1}`;
+      await createBoard(name);
+    } catch (error) {
+      console.error("Failed to create board:", error);
     }
-
-    const loadProjects = async () => {
-      setIsLoading(true);
-      try {
-        if (selectedOrg) {
-          // Load organization projects
-          const orgProjects = await trpc.project.organizationProjects.query({
-            organizationId: selectedOrg,
-          });
-          setProjects(orgProjects);
-        } else {
-          // Load personal projects
-          const myProjects = await trpc.project.myProjects.query();
-          setProjects(myProjects);
-        }
-      } catch (error) {
-        console.error("Failed to load projects:", error);
-        setProjects([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProjects();
-  }, [isLoaded, user, selectedOrg]);
-
-  const toggleProject = (projectId: string) => {
-    setExpandedProjects((prev) => {
-      const next = new Set(prev);
-      if (next.has(projectId)) {
-        next.delete(projectId);
-      } else {
-        next.add(projectId);
-      }
-      return next;
-    });
   };
 
-  const handleCreateProject = async () => {
-    const name = prompt("Enter project name:");
-    if (!name) return;
-
+  const handleSwitchBoard = async (id: string) => {
+    if (id === currentBoardId) return;
     try {
-      await trpc.project.create.mutate({
-        name,
-        organizationId: selectedOrg || undefined,
-      });
-
-      // Reload projects
-      if (selectedOrg) {
-        const orgProjects = await trpc.project.organizationProjects.query({
-          organizationId: selectedOrg,
-        });
-        setProjects(orgProjects);
-      } else {
-        const myProjects = await trpc.project.myProjects.query();
-        setProjects(myProjects);
-      }
+      await switchBoard(id);
+      await refreshBoards();
     } catch (error) {
-      console.error("Failed to create project:", error);
-      alert("Failed to create project. Please try again.");
+      console.error("Failed to switch board:", error);
+    }
+  };
+
+  const handleDeleteBoard = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (window.confirm("Delete this board? This cannot be undone.")) {
+      try {
+        await deleteBoard(id);
+      } catch (error) {
+        console.error("Failed to delete board:", error);
+      }
+    }
+  };
+
+  const startEditing = (e: React.MouseEvent, board: { id: string; name: string }) => {
+    e.stopPropagation();
+    setEditingBoardId(board.id);
+    setNewBoardName(board.name);
+  };
+
+  const saveBoardName = async (e: React.MouseEvent | React.FormEvent, id: string) => {
+    e.stopPropagation();
+    if (newBoardName.trim()) {
+      await updateBoardName({ id, name: newBoardName.trim() });
+    } else {
+      setEditingBoardId(null);
     }
   };
 
@@ -99,7 +96,18 @@ export const ProjectsSidebar: React.FC = () => {
     return (
       <div className="projects-sidebar">
         <div className="projects-sidebar__empty">
-          <p>Sign in to see your projects</p>
+          <p>Sign in to see your boards</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!boardsAPI) {
+    return (
+      <div className="projects-sidebar">
+        <div className="projects-sidebar__loading">
+          <div className="spinner-small" />
+          <span>Loading...</span>
         </div>
       </div>
     );
@@ -107,62 +115,145 @@ export const ProjectsSidebar: React.FC = () => {
 
   return (
     <div className="projects-sidebar">
+      {/* Header with create button */}
       <div className="projects-sidebar__header">
-        <h3>Projects</h3>
+        <h3>Boards</h3>
         <button
-          onClick={handleCreateProject}
+          onClick={handleCreateBoard}
           className="projects-sidebar__create-btn"
-          title="Create new project"
+          title="Create new board"
         >
           +
         </button>
       </div>
 
-      {isLoading ? (
+      {/* Board list */}
+      {isLoading && boards.length === 0 ? (
         <div className="projects-sidebar__loading">
-          <div className="spinner-small"></div>
-          <span>Loading projects...</span>
+          <div className="spinner-small" />
+          <span>Loading boards...</span>
         </div>
-      ) : projects.length === 0 ? (
+      ) : boards.length === 0 ? (
         <div className="projects-sidebar__empty">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <p>No projects yet</p>
-          <button onClick={handleCreateProject} className="btn-small">
-            Create Project
+          <p>No boards yet</p>
+          <button onClick={handleCreateBoard} className="btn-small">
+            Create Board
           </button>
         </div>
       ) : (
-        <div className="projects-sidebar__list">
-          {projects.map((project) => (
-            <div key={project.id} className="project-item">
-              <div
-                className="project-item__header"
-                onClick={() => toggleProject(project.id)}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  className={`project-item__chevron ${
-                    expandedProjects.has(project.id) ? "expanded" : ""
-                  }`}
-                >
-                  <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" fill="none" />
-                </svg>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
-                <span className="project-item__name">{project.name}</span>
-              </div>
-
-              {expandedProjects.has(project.id) && (
-                <div className="project-item__boards">
-                  <div className="project-item__empty-boards">
-                    <p>No boards in this project yet</p>
-                  </div>
+        <div className="projects-sidebar__list" role="listbox" aria-label="Boards">
+          {boardError && (
+            <div className="projects-sidebar__error" role="alert">
+              {boardError}
+            </div>
+          )}
+          {boards.map((board) => (
+            <div
+              key={board.id}
+              className={`board-item ${board.id === currentBoardId ? "board-item--active" : ""}`}
+              onClick={() => handleSwitchBoard(board.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSwitchBoard(board.id);
+                }
+              }}
+              role="option"
+              aria-selected={board.id === currentBoardId}
+              tabIndex={0}
+            >
+              {editingBoardId === board.id ? (
+                <div className="board-item__edit" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="text"
+                    value={newBoardName}
+                    onChange={(e) => setNewBoardName(e.target.value)}
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveBoardName(e, board.id);
+                      if (e.key === "Escape") setEditingBoardId(null);
+                    }}
+                    onBlur={() => setEditingBoardId(null)}
+                  />
+                  <button
+                    className="board-item__save-btn"
+                    onMouseDown={(e) => saveBoardName(e, board.id)}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <svg
+                    className="board-item__icon"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="board-item__name">{board.name}</span>
+                  <div className="board-item__actions">
+                    <button
+                      className="board-item__action-btn"
+                      onClick={(e) => startEditing(e, board)}
+                      title="Rename"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
+                    {boards.length > 1 && (
+                      <button
+                        className="board-item__action-btn board-item__action-btn--delete"
+                        onClick={(e) => handleDeleteBoard(e, board.id)}
+                        title="Delete"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           ))}

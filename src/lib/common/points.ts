@@ -1,14 +1,8 @@
-import {
-  pointFromPair,
-  type GlobalPoint,
-  type LocalPoint,
-} from "@/lib/math";
+import { type GlobalPoint, type LocalPoint, pointFromPair } from "@/lib/math";
 
 import type { NullableGridSize } from "@/lib/types";
 
-export const getSizeFromPoints = (
-  points: readonly (GlobalPoint | LocalPoint)[],
-) => {
+export const getSizeFromPoints = (points: readonly (GlobalPoint | LocalPoint)[]) => {
   const xs = points.map((point) => point[0]);
   const ys = points.map((point) => point[1]);
   return {
@@ -30,7 +24,7 @@ export const rescalePoints = <Point extends GlobalPoint | LocalPoint>(
   const size = maxCoordinate - minCoordinate;
   const scale = size === 0 ? 1 : newSize / size;
 
-  let nextMinCoordinate = Infinity;
+  let nextMinCoordinate = Number.POSITIVE_INFINITY;
 
   const scaledPoints = points.map((point): Point => {
     const newCoordinate = point[dimension] * scale;
@@ -71,10 +65,7 @@ export const getGridPoint = (
   gridSize: NullableGridSize,
 ): [number, number] => {
   if (gridSize) {
-    return [
-      Math.round(x / gridSize) * gridSize,
-      Math.round(y / gridSize) * gridSize,
-    ];
+    return [Math.round(x / gridSize) * gridSize, Math.round(y / gridSize) * gridSize];
   }
   return [x, y];
 };

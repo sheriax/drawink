@@ -1,51 +1,29 @@
 import { pointFrom, pointRotateRads } from "@/lib/math";
 
-import {
-  getBoundTextElement,
-  isBindingElement,
-  unbindBindingElement,
-} from "@/lib/elements";
+import { getBoundTextElement, isBindingElement, unbindBindingElement } from "@/lib/elements";
 import { isFrameLikeElement } from "@/lib/elements";
 
-import {
-  getSelectedGroupIds,
-  getElementsInGroup,
-  isInGroup,
-} from "@/lib/elements";
+import { getElementsInGroup, getSelectedGroupIds, isInGroup } from "@/lib/elements";
 
 import { getFrameChildren } from "@/lib/elements";
 
-import { updateBindings } from "@/lib/elements";
 import { DRAGGING_THRESHOLD } from "@/lib/common";
+import { updateBindings } from "@/lib/elements";
 
 import type { Radians } from "@/lib/math";
 
-import type {
-  ElementsMap,
-  DrawinkElement,
-  NonDeletedDrawinkElement,
-} from "@/lib/elements/types";
+import type { DrawinkElement, ElementsMap, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import type { Scene } from "@/lib/elements";
 
 import type { AppState } from "../../types";
 
-export type StatsInputProperty =
-  | "x"
-  | "y"
-  | "width"
-  | "height"
-  | "angle"
-  | "fontSize"
-  | "gridStep";
+export type StatsInputProperty = "x" | "y" | "width" | "height" | "angle" | "fontSize" | "gridStep";
 
 export const SMALLEST_DELTA = 0.01;
 export const STEP_SIZE = 10;
 
-export const isPropertyEditable = (
-  element: DrawinkElement,
-  property: keyof DrawinkElement,
-) => {
+export const isPropertyEditable = (element: DrawinkElement, property: keyof DrawinkElement) => {
   if (property === "angle" && isFrameLikeElement(element)) {
     return false;
   }
@@ -97,16 +75,8 @@ export const newOrigin = (
    */
 
   return {
-    x:
-      x1 +
-      (w1 - w2) / 2 +
-      ((w2 - w1) / 2) * Math.cos(angle) +
-      ((h1 - h2) / 2) * Math.sin(angle),
-    y:
-      y1 +
-      (h1 - h2) / 2 +
-      ((w2 - w1) / 2) * Math.sin(angle) +
-      ((h2 - h1) / 2) * Math.cos(angle),
+    x: x1 + (w1 - w2) / 2 + ((w2 - w1) / 2) * Math.cos(angle) + ((h1 - h2) / 2) * Math.sin(angle),
+    y: y1 + (h1 - h2) / 2 + ((w2 - w1) / 2) * Math.sin(angle) + ((h2 - h1) / 2) * Math.cos(angle),
   };
 };
 
@@ -168,10 +138,7 @@ export const moveElement = (
   );
   updateBindings(latestElement, scene, appState);
 
-  const boundTextElement = getBoundTextElement(
-    originalElement,
-    originalElementsMap,
-  );
+  const boundTextElement = getBoundTextElement(originalElement, originalElementsMap);
   if (boundTextElement) {
     const latestBoundTextElement = elementsMap.get(boundTextElement.id);
     latestBoundTextElement &&
@@ -186,10 +153,7 @@ export const moveElement = (
   }
 
   if (isFrameLikeElement(originalElement)) {
-    const originalChildren = getFrameChildren(
-      originalElementsMap,
-      originalElement.id,
-    );
+    const originalChildren = getFrameChildren(originalElementsMap, originalElement.id);
     originalChildren.forEach((child) => {
       const latestChildElement = elementsMap.get(child.id);
 
@@ -197,10 +161,7 @@ export const moveElement = (
         return;
       }
 
-      const [childCX, childCY] = [
-        child.x + child.width / 2,
-        child.y + child.height / 2,
-      ];
+      const [childCX, childCY] = [child.x + child.width / 2, child.y + child.height / 2];
       const [childTopLeftX, childTopLeftY] = pointRotateRads(
         pointFrom(child.x, child.y),
         pointFrom(childCX, childCY),
@@ -231,10 +192,7 @@ export const moveElement = (
   }
 };
 
-export const getAtomicUnits = (
-  targetElements: readonly DrawinkElement[],
-  appState: AppState,
-) => {
+export const getAtomicUnits = (targetElements: readonly DrawinkElement[], appState: AppState) => {
   const selectedGroupIds = getSelectedGroupIds(appState);
   const _atomicUnits = selectedGroupIds.map((gid) => {
     return getElementsInGroup(targetElements, gid).reduce((acc, el) => {

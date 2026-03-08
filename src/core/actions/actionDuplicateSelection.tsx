@@ -1,18 +1,10 @@
-import {
-  DEFAULT_GRID_SIZE,
-  KEYS,
-  MOBILE_ACTION_BUTTON_BG,
-  arrayToMap,
-} from "@/lib/common";
+import { DEFAULT_GRID_SIZE, KEYS, MOBILE_ACTION_BUTTON_BG, arrayToMap } from "@/lib/common";
 
 import { getNonDeletedElements } from "@/lib/elements";
 
 import { LinearElementEditor } from "@/lib/elements";
 
-import {
-  getSelectedElements,
-  getSelectionStateForElements,
-} from "@/lib/elements";
+import { getSelectedElements, getSelectionStateForElements } from "@/lib/elements";
 
 import { syncMovedIndices } from "@/lib/elements";
 
@@ -45,10 +37,7 @@ export const actionDuplicateSelection = register({
     if (appState.selectedLinearElement?.isEditing) {
       // TODO: Invariants should be checked here instead of duplicateSelectedPoints()
       try {
-        const newAppState = LinearElementEditor.duplicateSelectedPoints(
-          appState,
-          app.scene,
-        );
+        const newAppState = LinearElementEditor.duplicateSelectedPoints(appState, app.scene);
 
         return {
           elements,
@@ -83,20 +72,14 @@ export const actionDuplicateSelection = register({
     });
 
     if (app.props.onDuplicate && elementsWithDuplicates) {
-      const mappedElements = app.props.onDuplicate(
-        elementsWithDuplicates,
-        elements,
-      );
+      const mappedElements = app.props.onDuplicate(elementsWithDuplicates, elements);
       if (mappedElements) {
         elementsWithDuplicates = mappedElements;
       }
     }
 
     return {
-      elements: syncMovedIndices(
-        elementsWithDuplicates,
-        arrayToMap(duplicatedElements),
-      ),
+      elements: syncMovedIndices(elementsWithDuplicates, arrayToMap(duplicatedElements)),
       appState: {
         ...appState,
         ...getSelectionStateForElements(
@@ -116,14 +99,10 @@ export const actionDuplicateSelection = register({
       <ToolButton
         type="button"
         icon={DuplicateIcon}
-        title={`${t("labels.duplicateSelection")} — ${getShortcutKey(
-          "CtrlOrCmd+D",
-        )}`}
+        title={`${t("labels.duplicateSelection")} — ${getShortcutKey("CtrlOrCmd+D")}`}
         aria-label={t("labels.duplicateSelection")}
         onClick={() => updateData(null)}
-        disabled={
-          !isSomeElementSelected(getNonDeletedElements(elements), appState)
-        }
+        disabled={!isSomeElementSelected(getNonDeletedElements(elements), appState)}
         style={{
           ...(isMobile && appState.openPopup !== "compactOtherProperties"
             ? MOBILE_ACTION_BUTTON_BG

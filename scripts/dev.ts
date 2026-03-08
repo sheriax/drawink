@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
 // @ts-ignore - Bun-specific
-import { spawn } from "bun";
-// @ts-ignore - Bun-specific
-import { resolve, dirname } from "path";
+import { dirname, resolve } from "path";
 // @ts-ignore - Bun-specific
 import { fileURLToPath } from "url";
+// @ts-ignore - Bun-specific
+import { spawn } from "bun";
 
 // @ts-ignore - Bun global
 declare const process: any;
@@ -102,7 +102,7 @@ function startService(service: Service): Promise<void> {
             log(service, `${colors.green}✓ Running${colors.reset}`);
           }
         },
-      })
+      }),
     );
 
     proc.stderr?.pipeTo(
@@ -114,7 +114,7 @@ function startService(service: Service): Promise<void> {
             log(service, `${colors.yellow}${line}${colors.reset}`);
           }
         },
-      })
+      }),
     );
 
     proc.exited.then((code) => {

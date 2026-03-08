@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { normalizeLink, KEYS } from "@/lib/common";
+import { KEYS, normalizeLink } from "@/lib/common";
 
-import {
-  defaultGetElementLinkFromSelection,
-  getLinkIdAndTypeFromSelection,
-} from "@/lib/elements";
+import { defaultGetElementLinkFromSelection, getLinkIdAndTypeFromSelection } from "@/lib/elements";
 
 import type { DrawinkElement } from "@/lib/elements/types";
 
@@ -46,26 +43,15 @@ const ElementLinkDialog = ({
     let nextLink = originalLink;
 
     if (selectedElements.length > 0 && generateLinkForSelection) {
-      const idAndType = getLinkIdAndTypeFromSelection(
-        selectedElements,
-        appState as AppState,
-      );
+      const idAndType = getLinkIdAndTypeFromSelection(selectedElements, appState as AppState);
 
       if (idAndType) {
-        nextLink = normalizeLink(
-          generateLinkForSelection(idAndType.id, idAndType.type),
-        );
+        nextLink = normalizeLink(generateLinkForSelection(idAndType.id, idAndType.type));
       }
     }
 
     setNextLink(nextLink);
-  }, [
-    elementsMap,
-    appState,
-    appState.selectedElementIds,
-    originalLink,
-    generateLinkForSelection,
-  ]);
+  }, [elementsMap, appState, appState.selectedElementIds, originalLink, generateLinkForSelection]);
 
   const handleConfirm = useCallback(() => {
     if (nextLink && nextLink !== elementsMap.get(sourceElementId)?.link) {
@@ -89,17 +75,11 @@ const ElementLinkDialog = ({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        appState.openDialog?.name === "elementLinkSelector" &&
-        event.key === KEYS.ENTER
-      ) {
+      if (appState.openDialog?.name === "elementLinkSelector" && event.key === KEYS.ENTER) {
         handleConfirm();
       }
 
-      if (
-        appState.openDialog?.name === "elementLinkSelector" &&
-        event.key === KEYS.ESCAPE
-      ) {
+      if (appState.openDialog?.name === "elementLinkSelector" && event.key === KEYS.ESCAPE) {
         onClose?.();
       }
     };

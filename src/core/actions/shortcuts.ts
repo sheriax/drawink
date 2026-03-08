@@ -63,10 +63,7 @@ const shortcutMap: Record<ShortcutName, string[]> = {
   loadScene: [getShortcutKey("CtrlOrCmd+O")],
   clearCanvas: [getShortcutKey("CtrlOrCmd+Delete")],
   imageExport: [getShortcutKey("CtrlOrCmd+Shift+E")],
-  commandPalette: [
-    getShortcutKey("CtrlOrCmd+/"),
-    getShortcutKey("CtrlOrCmd+Shift+P"),
-  ],
+  commandPalette: [getShortcutKey("CtrlOrCmd+/"), getShortcutKey("CtrlOrCmd+Shift+P")],
   cut: [getShortcutKey("CtrlOrCmd+X")],
   copy: [getShortcutKey("CtrlOrCmd+C")],
   paste: [getShortcutKey("CtrlOrCmd+V")],
@@ -80,15 +77,9 @@ const shortcutMap: Record<ShortcutName, string[]> = {
   ],
   sendBackward: [getShortcutKey("CtrlOrCmd+[")],
   bringForward: [getShortcutKey("CtrlOrCmd+]")],
-  sendToBack: [
-    isDarwin
-      ? getShortcutKey("CtrlOrCmd+Alt+[")
-      : getShortcutKey("CtrlOrCmd+Shift+["),
-  ],
+  sendToBack: [isDarwin ? getShortcutKey("CtrlOrCmd+Alt+[") : getShortcutKey("CtrlOrCmd+Shift+[")],
   bringToFront: [
-    isDarwin
-      ? getShortcutKey("CtrlOrCmd+Alt+]")
-      : getShortcutKey("CtrlOrCmd+Shift+]"),
+    isDarwin ? getShortcutKey("CtrlOrCmd+Alt+]") : getShortcutKey("CtrlOrCmd+Shift+]"),
   ],
   copyAsPng: [getShortcutKey("Shift+Alt+C")],
   group: [getShortcutKey("CtrlOrCmd+G")],
@@ -122,7 +113,5 @@ const shortcutMap: Record<ShortcutName, string[]> = {
 export const getShortcutFromShortcutName = (name: ShortcutName, idx = 0) => {
   const shortcuts = shortcutMap[name];
   // if multiple shortcuts available, take the first one
-  return shortcuts && shortcuts.length > 0
-    ? shortcuts[idx] || shortcuts[0]
-    : "";
+  return shortcuts && shortcuts.length > 0 ? shortcuts[idx] || shortcuts[0] : "";
 };

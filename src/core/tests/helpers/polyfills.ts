@@ -48,7 +48,7 @@ class DataTransferItem {
 }
 
 class DataTransferItemList extends Array<DataTransferItem> {
-  add(data: string | File, type: string = ""): void {
+  add(data: string | File, type = ""): void {
     if (typeof data === "string") {
       this.push(new DataTransferItem("string", type, data));
     } else if (data instanceof File) {
@@ -65,12 +65,10 @@ class DataTransfer {
   public items: DataTransferItemList = new DataTransferItemList();
 
   get files() {
-    return this.items
-      .filter((item) => item.kind === "file")
-      .map((item) => item.getAsFile()!);
+    return this.items.filter((item) => item.kind === "file").map((item) => item.getAsFile()!);
   }
 
-  add(data: string | File, type: string = ""): void {
+  add(data: string | File, type = ""): void {
     if (typeof data === "string") {
       this.items.add(data, type);
     } else {

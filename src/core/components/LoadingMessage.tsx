@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { THEME } from "@/lib/common";
 
@@ -9,10 +9,7 @@ import { t } from "../i18n";
 
 import Spinner from "./Spinner";
 
-export const LoadingMessage: React.FC<{ delay?: number; theme?: Theme }> = ({
-  delay,
-  theme,
-}) => {
+export const LoadingMessage: React.FC<{ delay?: number; theme?: Theme }> = ({ delay, theme }) => {
   const [isWaiting, setIsWaiting] = useState(!!delay);
 
   useEffect(() => {

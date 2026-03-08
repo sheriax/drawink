@@ -5,12 +5,9 @@ import type { NonDeletedSceneElementsMap } from "@/lib/elements/types";
 import { isRenderThrottlingEnabled } from "../../reactUtils";
 import { renderNewElementScene } from "../../renderer/renderNewElementScene";
 
-import type {
-  RenderableElementsMap,
-  StaticCanvasRenderConfig,
-} from "../../scene/types";
-import type { AppState } from "../../types";
 import type { RoughCanvas } from "roughjs/bin/canvas";
+import type { RenderableElementsMap, StaticCanvasRenderConfig } from "../../scene/types";
+import type { AppState } from "../../types";
 
 interface NewElementCanvasProps {
   appState: AppState;

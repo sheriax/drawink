@@ -30,7 +30,7 @@ export interface ClerkUser {
   emailAddresses: Array<{
     emailAddress: string;
     verification: {
-      status: 'verified' | 'unverified';
+      status: "verified" | "unverified";
     };
   }>;
   firstName: string | null;
@@ -42,7 +42,7 @@ export interface ClerkUser {
 export interface ClerkSession {
   id: string;
   userId: string;
-  status: 'active' | 'expired' | 'abandoned';
+  status: "active" | "expired" | "abandoned";
   lastActiveAt: number;
   expireAt: number;
 }

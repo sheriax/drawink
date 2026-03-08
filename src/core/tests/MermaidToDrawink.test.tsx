@@ -1,4 +1,3 @@
-import React from "react";
 import { expect } from "vitest";
 
 import { Drawink } from "../index";
@@ -112,8 +111,6 @@ describe("Test <MermaidToDrawink/>", () => {
     editor = await getTextEditor({ selector, waitForEditor: false });
 
     expect(editor.textContent).toBe("flowchart TD1");
-    expect(
-      dialog.querySelector('[data-testid="mermaid-error"]'),
-    ).toMatchInlineSnapshot("null");
+    expect(dialog.querySelector('[data-testid="mermaid-error"]')).toMatchInlineSnapshot("null");
   });
 });

@@ -8,6 +8,7 @@ import * as sizeHelpers from "@/lib/elements";
 
 import type { LocalPoint } from "@/lib/math";
 
+import type { NormalizedZoomValue } from "@/core/types";
 import type {
   DrawinkArrowElement,
   DrawinkElement,
@@ -15,11 +16,10 @@ import type {
   DrawinkLinearElement,
   DrawinkTextElement,
 } from "@/lib/elements/types";
-import type { NormalizedZoomValue } from "@/core/types";
 
-import { API } from "../helpers/api";
-import * as restore from "../../data/restore";
 import { getDefaultAppState } from "../../appState";
+import * as restore from "../../data/restore";
+import { API } from "../helpers/api";
 
 import type { ImportedDataState } from "../../data/types";
 
@@ -51,9 +51,7 @@ describe("restoreElements", () => {
     });
 
     dummyNotSupportedElement.type = "not supported";
-    expect(
-      restore.restoreElements([dummyNotSupportedElement], null).length,
-    ).toBe(0);
+    expect(restore.restoreElements([dummyNotSupportedElement], null).length).toBe(0);
   });
 
   it("should return empty array when isInvisiblySmallElement is true", () => {
@@ -78,10 +76,7 @@ describe("restoreElements", () => {
       id: "id-text01",
     });
 
-    const restoredText = restore.restoreElements(
-      [textElement],
-      null,
-    )[0] as DrawinkTextElement;
+    const restoredText = restore.restoreElements([textElement], null)[0] as DrawinkTextElement;
 
     expect(restoredText).toMatchSnapshot({
       seed: expect.any(Number),
@@ -155,10 +150,7 @@ describe("restoreElements", () => {
     });
     drawElement.type = "draw";
 
-    const restoredElements = restore.restoreElements(
-      [lineElement, drawElement],
-      null,
-    );
+    const restoredElements = restore.restoreElements([lineElement, drawElement], null);
 
     const restoredLine = restoredElements[0] as DrawinkLinearElement;
     const restoredDraw = restoredElements[1] as DrawinkLinearElement;
@@ -201,9 +193,7 @@ describe("restoreElements", () => {
       deleteInvisibleElements: true,
     });
 
-    const restoredArrow = restoredElements[0] as
-      | DrawinkArrowElement
-      | undefined;
+    const restoredArrow = restoredElements[0] as DrawinkArrowElement | undefined;
 
     expect(restoredArrow).not.toBeUndefined();
     expect(restoredArrow?.isDeleted).toBe(true);
@@ -229,10 +219,7 @@ describe("restoreElements", () => {
       y: 0,
     });
 
-    const restoredElements = restore.restoreElements(
-      [freedrawElement, lineElement],
-      null,
-    );
+    const restoredElements = restore.restoreElements([freedrawElement, lineElement], null);
 
     expect(restoredElements).toEqual([
       expect.objectContaining({ id: freedrawElement.id }),
@@ -264,17 +251,10 @@ describe("restoreElements", () => {
       y: 500,
     });
 
-    const restoredElements = restore.restoreElements(
-      [linearElement, arrowElement],
-      null,
-    );
+    const restoredElements = restore.restoreElements([linearElement, arrowElement], null);
 
-    const restoredLinear = restoredElements[0] as
-      | DrawinkLinearElement
-      | undefined;
-    const restoredArrow = restoredElements[1] as
-      | DrawinkArrowElement
-      | undefined;
+    const restoredLinear = restoredElements[0] as DrawinkLinearElement | undefined;
+    const restoredArrow = restoredElements[1] as DrawinkArrowElement | undefined;
 
     expect(restoredLinear?.type).toBe("line");
     expect(restoredLinear?.points).toEqual([
@@ -328,10 +308,7 @@ describe("restoreElements", () => {
       [lineElement.width, lineElement.height],
     ];
 
-    const restoredLine = restore.restoreElements(
-      [lineElement],
-      null,
-    )[0] as DrawinkLinearElement;
+    const restoredLine = restore.restoreElements([lineElement], null)[0] as DrawinkLinearElement;
 
     expect(restoredLine.points).toMatchObject(expectedLinePoints);
   });
@@ -368,10 +345,7 @@ describe("restoreElements", () => {
       get: vi.fn(() => pointsEl_1),
     });
 
-    const restoredElements = restore.restoreElements(
-      [lineElement_0, lineElement_1],
-      null,
-    );
+    const restoredElements = restore.restoreElements([lineElement_0, lineElement_1], null);
 
     const restoredLine_0 = restoredElements[0] as DrawinkLinearElement;
     const restoredLine_1 = restoredElements[1] as DrawinkLinearElement;
@@ -438,10 +412,7 @@ describe("restoreElements", () => {
     const ellipse = API.createElement({ type: "ellipse" });
     const rectangle_modified = newElementWith(rectangle, { isDeleted: true });
 
-    const restoredElements = restore.restoreElements(
-      [rectangle, ellipse],
-      [rectangle_modified],
-    );
+    const restoredElements = restore.restoreElements([rectangle, ellipse], [rectangle_modified]);
 
     expect(restoredElements[0].id).toBe(rectangle.id);
     expect(restoredElements[0].versionNonce).not.toBe(rectangle.versionNonce);
@@ -470,13 +441,8 @@ describe("restoreAppState", () => {
     stubLocalAppState.cursorButton = "up";
     stubLocalAppState.name = "local app state";
 
-    const restoredAppState = restore.restoreAppState(
-      stubImportedAppState,
-      stubLocalAppState,
-    );
-    expect(restoredAppState.activeTool).toEqual(
-      stubImportedAppState.activeTool,
-    );
+    const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
+    expect(restoredAppState.activeTool).toEqual(stubImportedAppState.activeTool);
     expect(restoredAppState.cursorButton).toBe("up");
     expect(restoredAppState.name).toBe(stubImportedAppState.name);
   });
@@ -492,10 +458,7 @@ describe("restoreAppState", () => {
     stubLocalAppState.cursorButton = "down";
     stubLocalAppState.name = "local app state";
 
-    const restoredAppState = restore.restoreAppState(
-      stubImportedAppState,
-      stubLocalAppState,
-    );
+    const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
     expect(restoredAppState.cursorButton).toBe(stubLocalAppState.cursorButton);
     expect(restoredAppState.name).toBe(stubLocalAppState.name);
   });
@@ -505,10 +468,7 @@ describe("restoreAppState", () => {
     stubImportedAppState.cursorButton = "down";
     stubImportedAppState.name = "imported app state";
 
-    const restoredAppState = restore.restoreAppState(
-      stubImportedAppState,
-      null,
-    );
+    const restoredAppState = restore.restoreAppState(stubImportedAppState, null);
     expect(restoredAppState.cursorButton).toBe("up");
     expect(restoredAppState.name).toBe(stubImportedAppState.name);
   });
@@ -534,20 +494,13 @@ describe("restoreAppState", () => {
       cursorButton: undefined,
     };
 
-    const restoredAppState = restore.restoreAppState(
-      stubImportedAppState,
-      stubLocalAppState,
-    );
-    expect(restoredAppState.cursorButton).toBe(
-      getDefaultAppState().cursorButton,
-    );
+    const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
+    expect(restoredAppState.cursorButton).toBe(getDefaultAppState().cursorButton);
   });
 
   it("should return default app state when imported data state and local app state are null", () => {
     const restoredAppState = restore.restoreAppState(null, null);
-    expect(restoredAppState.cursorButton).toBe(
-      getDefaultAppState().cursorButton,
-    );
+    expect(restoredAppState.cursorButton).toBe(getDefaultAppState().cursorButton);
   });
 
   it("when imported data state has a not allowed Drawink Element Types", () => {
@@ -556,10 +509,7 @@ describe("restoreAppState", () => {
     stubImportedAppState.activeTool = "not allowed Drawink Element Types";
     const stubLocalAppState = getDefaultAppState();
 
-    const restoredAppState = restore.restoreAppState(
-      stubImportedAppState,
-      stubLocalAppState,
-    );
+    const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
     expect(restoredAppState.activeTool.type).toBe("selection");
   });
 
@@ -571,10 +521,7 @@ describe("restoreAppState", () => {
 
       const stubLocalAppState = getDefaultAppState();
 
-      const restoredAppState = restore.restoreAppState(
-        stubImportedAppState,
-        stubLocalAppState,
-      );
+      const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
 
       expect(restoredAppState.zoom.value).toBe(10);
     });
@@ -587,10 +534,7 @@ describe("restoreAppState", () => {
 
       const stubLocalAppState = getDefaultAppState();
 
-      const restoredAppState = restore.restoreAppState(
-        stubImportedAppState,
-        stubLocalAppState,
-      );
+      const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
 
       expect(restoredAppState.zoom.value).toBe(10);
       expect(restoredAppState.zoom).toMatchObject(stubImportedAppState.zoom);
@@ -605,10 +549,7 @@ describe("restoreAppState", () => {
 
       const stubLocalAppState = getDefaultAppState();
 
-      const restoredAppState = restore.restoreAppState(
-        stubImportedAppState,
-        stubLocalAppState,
-      );
+      const restoredAppState = restore.restoreAppState(stubImportedAppState, stubLocalAppState);
 
       expect(restoredAppState.zoom).toMatchObject(getDefaultAppState().zoom);
     });
@@ -616,18 +557,16 @@ describe("restoreAppState", () => {
 
   it("should handle appState.openSidebar legacy values", () => {
     expect(restore.restoreAppState({}, null).openSidebar).toBe(null);
-    expect(
-      restore.restoreAppState({ openSidebar: "library" } as any, null)
-        .openSidebar,
-    ).toEqual({ name: DEFAULT_SIDEBAR.name });
-    expect(
-      restore.restoreAppState({ openSidebar: "xxx" } as any, null).openSidebar,
-    ).toEqual({ name: DEFAULT_SIDEBAR.name });
+    expect(restore.restoreAppState({ openSidebar: "library" } as any, null).openSidebar).toEqual({
+      name: DEFAULT_SIDEBAR.name,
+    });
+    expect(restore.restoreAppState({ openSidebar: "xxx" } as any, null).openSidebar).toEqual({
+      name: DEFAULT_SIDEBAR.name,
+    });
     // while "library" was our legacy sidebar name, we can't assume it's legacy
     // value as it may be some host app's custom sidebar name ¯\_(ツ)_/¯
     expect(
-      restore.restoreAppState({ openSidebar: { name: "library" } } as any, null)
-        .openSidebar,
+      restore.restoreAppState({ openSidebar: { name: "library" } } as any, null).openSidebar,
     ).toEqual({ name: "library" });
     expect(
       restore.restoreAppState(
@@ -652,9 +591,7 @@ describe("restore", () => {
     stubLocalAppState.name = "local app state";
 
     const restoredData = restore.restore(null, stubLocalAppState, null);
-    expect(restoredData.appState.cursorButton).toBe(
-      stubLocalAppState.cursorButton,
-    );
+    expect(restoredData.appState.cursorButton).toBe(stubLocalAppState.cursorButton);
     expect(restoredData.appState.name).toBe(stubLocalAppState.name);
   });
 
@@ -668,11 +605,7 @@ describe("restore", () => {
     const importedDataState = {} as ImportedDataState;
     importedDataState.elements = elements;
 
-    const restoredData = restore.restore(
-      importedDataState,
-      stubLocalAppState,
-      null,
-    );
+    const restoredData = restore.restore(importedDataState, stubLocalAppState, null);
     expect(restoredData.elements.length).toBe(elements.length);
   });
 
@@ -695,16 +628,12 @@ describe("restore", () => {
 
     const rectangle_modified = newElementWith(rectangle, { isDeleted: true });
 
-    const restoredData = restore.restore(
-      { elements: [rectangle, ellipse] },
-      null,
-      [rectangle_modified],
-    );
+    const restoredData = restore.restore({ elements: [rectangle, ellipse] }, null, [
+      rectangle_modified,
+    ]);
 
     expect(restoredData.elements[0].id).toBe(rectangle.id);
-    expect(restoredData.elements[0].versionNonce).not.toBe(
-      rectangle.versionNonce,
-    );
+    expect(restoredData.elements[0].versionNonce).not.toBe(rectangle.versionNonce);
     expect(restoredData.elements).toEqual([
       expect.objectContaining({ version: rectangle_modified.version + 2 }),
       expect.objectContaining({
@@ -728,10 +657,7 @@ describe("repairing bindings", () => {
 
     expect(container.boundElements).toEqual([]);
 
-    let restoredElements = restore.restoreElements(
-      [container, boundElement],
-      null,
-    );
+    let restoredElements = restore.restoreElements([container, boundElement], null);
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -744,11 +670,9 @@ describe("repairing bindings", () => {
       }),
     ]);
 
-    restoredElements = restore.restoreElements(
-      [container, boundElement],
-      null,
-      { repairBindings: true },
-    );
+    restoredElements = restore.restoreElements([container, boundElement], null, {
+      repairBindings: true,
+    });
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -772,10 +696,7 @@ describe("repairing bindings", () => {
       boundElements: [{ type: boundElement.type, id: boundElement.id }],
     });
 
-    let restoredElements = restore.restoreElements(
-      [container, boundElement],
-      null,
-    );
+    let restoredElements = restore.restoreElements([container, boundElement], null);
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -788,11 +709,9 @@ describe("repairing bindings", () => {
       }),
     ]);
 
-    restoredElements = restore.restoreElements(
-      [container, boundElement],
-      null,
-      { repairBindings: true },
-    );
+    restoredElements = restore.restoreElements([container, boundElement], null, {
+      repairBindings: true,
+    });
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -819,10 +738,7 @@ describe("repairing bindings", () => {
 
     expect(container.boundElements).toEqual([]);
 
-    const restoredElements = restore.restoreElements(
-      [container, boundElement],
-      null,
-    );
+    const restoredElements = restore.restoreElements([container, boundElement], null);
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -862,11 +778,7 @@ describe("repairing bindings", () => {
 
     const nonExistentBinding = { type: "text", id: "non-existent" };
     // @ts-ignore
-    container.boundElements = [
-      obsoleteBinding,
-      invisibleBinding,
-      nonExistentBinding,
-    ];
+    container.boundElements = [obsoleteBinding, invisibleBinding, nonExistentBinding];
 
     let restoredElements = restore.restoreElements(
       [container, invisibleBoundElement, boundElement],
@@ -924,10 +836,7 @@ describe("repairing bindings", () => {
       isDeleted: true,
     });
 
-    let restoredElements = restore.restoreElements(
-      [boundElement, boundElementDeleted],
-      null,
-    );
+    let restoredElements = restore.restoreElements([boundElement, boundElementDeleted], null);
 
     expect(restoredElements).toEqual([
       expect.objectContaining({
@@ -940,11 +849,9 @@ describe("repairing bindings", () => {
       }),
     ]);
 
-    restoredElements = restore.restoreElements(
-      [boundElement, boundElementDeleted],
-      null,
-      { repairBindings: true },
-    );
+    restoredElements = restore.restoreElements([boundElement, boundElementDeleted], null, {
+      repairBindings: true,
+    });
 
     expect(restoredElements).toEqual([
       expect.objectContaining({

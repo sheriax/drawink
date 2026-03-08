@@ -1,20 +1,16 @@
-import { bytesToHexString } from "@/lib/common";
 import { compressData, decompressData } from "@/core/data/encode";
-import {
-  IV_LENGTH_BYTES,
-  decryptData,
-  generateEncryptionKey,
-} from "@/core/data/encryption";
+import { IV_LENGTH_BYTES, decryptData, generateEncryptionKey } from "@/core/data/encryption";
 import { serializeAsJSON } from "@/core/data/json";
 import { restore } from "@/core/data/restore";
 import { t } from "@/core/i18n";
+import { bytesToHexString } from "@/lib/common";
 import { isInvisiblySmallElement } from "@/lib/elements";
 import { isInitializedImageElement } from "@/lib/elements";
 
-import type { UserIdleState } from "@/lib/common";
-import type { MakeBrand } from "@/lib/common/utility-types";
 import type { ImportedDataState } from "@/core/data/types";
 import type { AppState, BinaryFileData, BinaryFiles, SocketId } from "@/core/types";
+import type { UserIdleState } from "@/lib/common";
+import type { MakeBrand } from "@/lib/common/utility-types";
 import type { SceneBounds } from "@/lib/elements";
 import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@/lib/elements/types";
 
@@ -178,7 +174,10 @@ const legacy_decodeFromBackend = async ({
 /**
  * Import a public share from Convex (NO AUTH REQUIRED)
  */
-export const importFromConvex = async (shareId: string, decryptionKey: string): Promise<ImportedDataState> => {
+export const importFromConvex = async (
+  shareId: string,
+  decryptionKey: string,
+): Promise<ImportedDataState> => {
   try {
     const convexUrl = import.meta.env.VITE_CONVEX_URL;
     if (!convexUrl) {

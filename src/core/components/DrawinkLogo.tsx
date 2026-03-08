@@ -2,9 +2,9 @@ import "./DrawinkLogo.scss";
 
 // Import logo images
 import logoBlackBg from "./assets/logo/drawink-logo-black-bg.png";
-import logoWhiteBg from "./assets/logo/drawink-logo-white-bg.png";
 import logoTextBlackBg from "./assets/logo/drawink-logo-text-black-bg.png";
 import logoTextWhiteBg from "./assets/logo/drawink-logo-text-white-bg.png";
+import logoWhiteBg from "./assets/logo/drawink-logo-white-bg.png";
 
 const LogoIcon = () => (
   <span className="DrawinkLogo-icon">

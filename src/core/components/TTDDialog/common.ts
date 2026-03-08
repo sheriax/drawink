@@ -1,6 +1,5 @@
 import { DEFAULT_EXPORT_PADDING, EDITOR_LS_KEYS } from "@/lib/common";
 
-
 import type { NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { EditorLocalStorage } from "../../data/EditorLocalStorage";
@@ -8,10 +7,9 @@ import { canvasToBlob } from "../../data/blob";
 import { t } from "../../i18n";
 import { convertToDrawinkElements, exportToCanvas } from "../../index";
 
+import type { MermaidConfig } from "@excalidraw/mermaid-to-excalidraw";
+import type { MermaidToExcalidrawResult } from "@excalidraw/mermaid-to-excalidraw/dist/interfaces";
 import type { AppClassProperties, BinaryFiles } from "../../types";
-import { MermaidConfig } from "@excalidraw/mermaid-to-excalidraw";
-import { MermaidToExcalidrawResult } from "@excalidraw/mermaid-to-excalidraw/dist/interfaces";
-
 
 const resetPreview = ({
   canvasRef,
@@ -81,9 +79,7 @@ export const convertMermaidToDrawink = async ({
     try {
       ret = await api.parseMermaidToExcalidraw(mermaidDefinition);
     } catch (err: any) {
-      ret = await api.parseMermaidToExcalidraw(
-        mermaidDefinition.replace(/"/g, "'"),
-      );
+      ret = await api.parseMermaidToExcalidraw(mermaidDefinition.replace(/"/g, "'"));
     }
     const { elements, files } = ret;
     setError(null);
@@ -99,9 +95,7 @@ export const convertMermaidToDrawink = async ({
       elements: data.current.elements,
       files: data.current.files,
       exportPadding: DEFAULT_EXPORT_PADDING,
-      maxWidthOrHeight:
-        Math.max(parent.offsetWidth, parent.offsetHeight) *
-        window.devicePixelRatio,
+      maxWidthOrHeight: Math.max(parent.offsetWidth, parent.offsetHeight) * window.devicePixelRatio,
     });
     // if converting to blob fails, there's some problem that will
     // likely prevent preview and export (e.g. canvas too big)
@@ -126,10 +120,7 @@ export const convertMermaidToDrawink = async ({
 };
 
 export const saveMermaidDataToStorage = (mermaidDefinition: string) => {
-  EditorLocalStorage.set(
-    EDITOR_LS_KEYS.MERMAID_TO_EXCALIDRAW,
-    mermaidDefinition,
-  );
+  EditorLocalStorage.set(EDITOR_LS_KEYS.MERMAID_TO_EXCALIDRAW, mermaidDefinition);
 };
 
 export const insertToEditor = ({

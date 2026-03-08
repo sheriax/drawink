@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 import { getNameInitial } from "../clients";
 
@@ -13,13 +14,7 @@ type AvatarProps = {
   className?: string;
 };
 
-export const Avatar = ({
-  color,
-  onClick,
-  name,
-  src,
-  className,
-}: AvatarProps) => {
+export const Avatar = ({ color, onClick, name, src, className }: AvatarProps) => {
   const shortName = getNameInitial(name);
   const [error, setError] = useState(false);
   const loadImg = !error && src;

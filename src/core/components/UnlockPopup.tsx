@@ -1,9 +1,5 @@
-import {
-  getCommonBounds,
-  getElementsInGroup,
-  selectGroupsFromGivenElements,
-} from "@/lib/elements";
 import { sceneCoordsToViewportCoords } from "@/lib/common";
+import { getCommonBounds, getElementsInGroup, selectGroupsFromGivenElements } from "@/lib/elements";
 
 import { flushSync } from "react-dom";
 
@@ -36,10 +32,7 @@ const UnlockPopup = ({
   }
 
   const [x, y] = getCommonBounds(elements);
-  const { x: viewX, y: viewY } = sceneCoordsToViewportCoords(
-    { sceneX: x, sceneY: y },
-    app.state,
-  );
+  const { x: viewX, y: viewY } = sceneCoordsToViewportCoords({ sceneX: x, sceneY: y }, app.state);
 
   return (
     <div

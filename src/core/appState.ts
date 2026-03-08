@@ -1,23 +1,21 @@
 import {
-  COLOR_PALETTE,
   ARROW_TYPE,
+  COLOR_PALETTE,
   DEFAULT_ELEMENT_PROPS,
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
-  DEFAULT_TEXT_ALIGN,
   DEFAULT_GRID_SIZE,
+  DEFAULT_GRID_STEP,
+  DEFAULT_TEXT_ALIGN,
   EXPORT_SCALES,
   STATS_PANELS,
   THEME,
-  DEFAULT_GRID_STEP,
   isTestEnv,
 } from "@/lib/common";
 
 import type { AppState, NormalizedZoomValue } from "./types";
 
-const defaultExportScale = EXPORT_SCALES.includes(devicePixelRatio)
-  ? devicePixelRatio
-  : 1;
+const defaultExportScale = EXPORT_SCALES.includes(devicePixelRatio) ? devicePixelRatio : 1;
 
 export const getDefaultAppState = (): Omit<
   AppState,
@@ -145,8 +143,9 @@ const APP_STATE_STORAGE_CONF = (<
     server: boolean;
   },
   T extends Record<keyof AppState, Values>,
->(config: { [K in keyof T]: K extends keyof AppState ? T[K] : never }) =>
-  config)({
+>(
+  config: { [K in keyof T]: K extends keyof AppState ? T[K] : never },
+) => config)({
   showWelcomeScreen: { browser: true, export: false, server: false },
   theme: { browser: true, export: false, server: false },
   collaborators: { browser: false, export: false, server: false },
@@ -256,18 +255,16 @@ const APP_STATE_STORAGE_CONF = (<
   bindMode: { browser: true, export: false, server: false },
 });
 
-const _clearAppStateForStorage = <
-  ExportType extends "export" | "browser" | "server",
->(
+const _clearAppStateForStorage = <ExportType extends "export" | "browser" | "server">(
   appState: Partial<AppState>,
   exportType: ExportType,
 ) => {
   type ExportableKeys = {
-    [K in keyof typeof APP_STATE_STORAGE_CONF]: typeof APP_STATE_STORAGE_CONF[K][ExportType] extends true
+    [K in keyof typeof APP_STATE_STORAGE_CONF]: (typeof APP_STATE_STORAGE_CONF)[K][ExportType] extends true
       ? K
       : never;
   }[keyof typeof APP_STATE_STORAGE_CONF];
-  const stateForExport = {} as { [K in ExportableKeys]?: typeof appState[K] };
+  const stateForExport = {} as { [K in ExportableKeys]?: (typeof appState)[K] };
   for (const key of Object.keys(appState) as (keyof typeof appState)[]) {
     const propConfig = APP_STATE_STORAGE_CONF[key];
     if (propConfig?.[exportType]) {

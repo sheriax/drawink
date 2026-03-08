@@ -23,7 +23,7 @@ require("dotenv").config(
 );
 
 const app = express();
-const port = process.env.PORT || (process.env.NODE_ENV !== "development" ? 80 : 3002); // default port to listen
+const port = process.env.PORT || 3003;
 
 app.use(express.static("public"));
 

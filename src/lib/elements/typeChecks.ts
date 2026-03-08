@@ -8,28 +8,28 @@ import type { MarkNonNullable } from "@/lib/common/utility-types";
 
 import type { Bounds } from "./bounds";
 import type {
-  DrawinkElement,
-  DrawinkTextElement,
-  DrawinkEmbeddableElement,
-  DrawinkLinearElement,
+  DrawinkArrowElement,
   DrawinkBindableElement,
-  DrawinkFreeDrawElement,
-  InitializedDrawinkImageElement,
-  DrawinkImageElement,
-  DrawinkTextElementWithContainer,
-  DrawinkTextContainer,
-  DrawinkFrameElement,
-  RoundnessType,
-  DrawinkFrameLikeElement,
+  DrawinkElbowArrowElement,
+  DrawinkElement,
   DrawinkElementType,
+  DrawinkEmbeddableElement,
+  DrawinkFlowchartNodeElement,
+  DrawinkFrameElement,
+  DrawinkFrameLikeElement,
+  DrawinkFreeDrawElement,
   DrawinkIframeElement,
   DrawinkIframeLikeElement,
-  DrawinkMagicFrameElement,
-  DrawinkArrowElement,
-  DrawinkElbowArrowElement,
+  DrawinkImageElement,
   DrawinkLineElement,
-  DrawinkFlowchartNodeElement,
+  DrawinkLinearElement,
   DrawinkLinearElementSubType,
+  DrawinkMagicFrameElement,
+  DrawinkTextContainer,
+  DrawinkTextElement,
+  DrawinkTextElementWithContainer,
+  InitializedDrawinkImageElement,
+  RoundnessType,
 } from "./types";
 
 export const isInitializedImageElement = (
@@ -38,9 +38,7 @@ export const isInitializedImageElement = (
   return !!element && element.type === "image" && !!element.fileId;
 };
 
-export const isImageElement = (
-  element: DrawinkElement | null,
-): element is DrawinkImageElement => {
+export const isImageElement = (element: DrawinkElement | null): element is DrawinkImageElement => {
   return !!element && element.type === "image";
 };
 
@@ -59,20 +57,14 @@ export const isIframeElement = (
 export const isIframeLikeElement = (
   element: DrawinkElement | null,
 ): element is DrawinkIframeLikeElement => {
-  return (
-    !!element && (element.type === "iframe" || element.type === "embeddable")
-  );
+  return !!element && (element.type === "iframe" || element.type === "embeddable");
 };
 
-export const isTextElement = (
-  element: DrawinkElement | null,
-): element is DrawinkTextElement => {
+export const isTextElement = (element: DrawinkElement | null): element is DrawinkTextElement => {
   return element != null && element.type === "text";
 };
 
-export const isFrameElement = (
-  element: DrawinkElement | null,
-): element is DrawinkFrameElement => {
+export const isFrameElement = (element: DrawinkElement | null): element is DrawinkFrameElement => {
   return element != null && element.type === "frame";
 };
 
@@ -85,10 +77,7 @@ export const isMagicFrameElement = (
 export const isFrameLikeElement = (
   element: DrawinkElement | null,
 ): element is DrawinkFrameLikeElement => {
-  return (
-    element != null &&
-    (element.type === "frame" || element.type === "magicframe")
-  );
+  return element != null && (element.type === "frame" || element.type === "magicframe");
 };
 
 export const isFreeDrawElement = (
@@ -97,9 +86,7 @@ export const isFreeDrawElement = (
   return element != null && isFreeDrawElementType(element.type);
 };
 
-export const isFreeDrawElementType = (
-  elementType: DrawinkElementType,
-): boolean => {
+export const isFreeDrawElementType = (elementType: DrawinkElementType): boolean => {
   return elementType === "freedraw";
 };
 
@@ -109,50 +96,34 @@ export const isLinearElement = (
   return element != null && isLinearElementType(element.type);
 };
 
-export const isLineElement = (
-  element?: DrawinkElement | null,
-): element is DrawinkLineElement => {
+export const isLineElement = (element?: DrawinkElement | null): element is DrawinkLineElement => {
   return element != null && element.type === "line";
 };
 
-export const isArrowElement = (
-  element?: DrawinkElement | null,
-): element is DrawinkArrowElement => {
+export const isArrowElement = (element?: DrawinkElement | null): element is DrawinkArrowElement => {
   return element != null && element.type === "arrow";
 };
 
-export const isElbowArrow = (
-  element?: DrawinkElement,
-): element is DrawinkElbowArrowElement => {
+export const isElbowArrow = (element?: DrawinkElement): element is DrawinkElbowArrowElement => {
   return isArrowElement(element) && element.elbowed;
 };
 
 /**
  * sharp or curved arrow, but not elbow
  */
-export const isSimpleArrow = (
-  element?: DrawinkElement,
-): element is DrawinkArrowElement => {
+export const isSimpleArrow = (element?: DrawinkElement): element is DrawinkArrowElement => {
   return isArrowElement(element) && !element.elbowed;
 };
 
-export const isSharpArrow = (
-  element?: DrawinkElement,
-): element is DrawinkArrowElement => {
+export const isSharpArrow = (element?: DrawinkElement): element is DrawinkArrowElement => {
   return isArrowElement(element) && !element.elbowed && !element.roundness;
 };
 
-export const isCurvedArrow = (
-  element?: DrawinkElement,
-): element is DrawinkArrowElement => {
-  return (
-    isArrowElement(element) && !element.elbowed && element.roundness !== null
-  );
+export const isCurvedArrow = (element?: DrawinkElement): element is DrawinkArrowElement => {
+  return isArrowElement(element) && !element.elbowed && element.roundness !== null;
 };
 
-export const isLinearElementType = (
-  elementType: ElementOrToolType,
-): boolean => {
+export const isLinearElementType = (elementType: ElementOrToolType): boolean => {
   return (
     elementType === "arrow" || elementType === "line" // || elementType === "freedraw"
   );
@@ -169,9 +140,7 @@ export const isBindingElement = (
   );
 };
 
-export const isBindingElementType = (
-  elementType: ElementOrToolType,
-): boolean => {
+export const isBindingElementType = (elementType: ElementOrToolType): boolean => {
   return elementType === "arrow";
 };
 
@@ -273,19 +242,14 @@ export const isDrawinkElement = (element: any): element is DrawinkElement => {
 export const isFlowchartNodeElement = (
   element: DrawinkElement,
 ): element is DrawinkFlowchartNodeElement => {
-  return (
-    element.type === "rectangle" ||
-    element.type === "ellipse" ||
-    element.type === "diamond"
-  );
+  return element.type === "rectangle" || element.type === "ellipse" || element.type === "diamond";
 };
 
 export const hasBoundTextElement = (
   element: DrawinkElement | null,
 ): element is MarkNonNullable<DrawinkBindableElement, "boundElements"> => {
   return (
-    isTextBindableContainer(element) &&
-    !!element.boundElements?.some(({ type }) => type === "text")
+    isTextBindableContainer(element) && !!element.boundElements?.some(({ type }) => type === "text")
   );
 };
 
@@ -305,10 +269,7 @@ export const isArrowBoundToElement = (element: DrawinkArrowElement) => {
 };
 
 export const isUsingAdaptiveRadius = (type: string) =>
-  type === "rectangle" ||
-  type === "embeddable" ||
-  type === "iframe" ||
-  type === "image";
+  type === "rectangle" || type === "embeddable" || type === "iframe" || type === "image";
 
 export const isUsingProportionalRadius = (type: string) =>
   type === "line" || type === "arrow" || type === "diamond";
@@ -326,10 +287,7 @@ export const canApplyRoundnessTypeToElement = (
   ) {
     return true;
   }
-  if (
-    roundnessType === ROUNDNESS.PROPORTIONAL_RADIUS &&
-    isUsingProportionalRadius(element.type)
-  ) {
+  if (roundnessType === ROUNDNESS.PROPORTIONAL_RADIUS && isUsingProportionalRadius(element.type)) {
     return true;
   }
 
@@ -383,15 +341,11 @@ export const getLinearElementSubType = (
  * If you want to check if points *can* be turned into a polygon, use
  *  canBecomePolygon(points).
  */
-export const isValidPolygon = (
-  points: DrawinkLineElement["points"],
-): boolean => {
+export const isValidPolygon = (points: DrawinkLineElement["points"]): boolean => {
   return points.length > 3 && pointsEqual(points[0], points[points.length - 1]);
 };
 
-export const canBecomePolygon = (
-  points: DrawinkLineElement["points"],
-): boolean => {
+export const canBecomePolygon = (points: DrawinkLineElement["points"]): boolean => {
   return (
     points.length > 3 ||
     // 3-point polygons can't have all points in a single line

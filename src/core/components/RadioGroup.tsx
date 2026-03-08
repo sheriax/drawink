@@ -15,32 +15,25 @@ export type RadioGroupProps<T> = {
   name: string;
 };
 
-export const RadioGroup = function <T>({
-  onChange,
-  value,
-  choices,
-  name,
-}: RadioGroupProps<T>) {
-  return (
-    <div className="RadioGroup">
-      {choices.map((choice) => (
-        <div
-          className={clsx("RadioGroup__choice", {
-            active: choice.value === value,
-          })}
-          key={String(choice.value)}
-          title={choice.ariaLabel}
-        >
-          <input
-            name={name}
-            type="radio"
-            checked={choice.value === value}
-            onChange={() => onChange(choice.value)}
-            aria-label={choice.ariaLabel}
-          />
-          {choice.label}
-        </div>
-      ))}
-    </div>
-  );
-};
+export const RadioGroup = <T,>({ onChange, value, choices, name }: RadioGroupProps<T>) => (
+  <div className="RadioGroup">
+    {choices.map((choice) => (
+      <div
+        className={clsx("RadioGroup__choice", {
+          active: choice.value === value,
+        })}
+        key={String(choice.value)}
+        title={choice.ariaLabel}
+      >
+        <input
+          name={name}
+          type="radio"
+          checked={choice.value === value}
+          onChange={() => onChange(choice.value)}
+          aria-label={choice.ariaLabel}
+        />
+        {choice.label}
+      </div>
+    ))}
+  </div>
+);

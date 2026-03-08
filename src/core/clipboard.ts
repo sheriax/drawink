@@ -1,39 +1,28 @@
 import {
   ALLOWED_PASTE_MIME_TYPES,
+  EVENT,
   EXPORT_DATA_TYPES,
   MIME_TYPES,
   arrayToMap,
   isMemberOf,
   isPromiseLike,
-  EVENT,
 } from "@/lib/common";
 
 import { mutateElement } from "@/lib/elements";
 import { deepCopyElement } from "@/lib/elements";
-import {
-  isFrameLikeElement,
-  isInitializedImageElement,
-} from "@/lib/elements";
+import { isFrameLikeElement, isInitializedImageElement } from "@/lib/elements";
 
 import { getContainingFrame } from "@/lib/elements";
 
 import type { ValueOf } from "@/lib/common/utility-types";
 
 import type { IMAGE_MIME_TYPES, STRING_MIME_TYPES } from "@/lib/common";
-import type {
-  DrawinkElement,
-  NonDeletedDrawinkElement,
-} from "@/lib/elements/types";
+import type { DrawinkElement, NonDeletedDrawinkElement } from "@/lib/elements/types";
 
+import { createFile, getFileHandle, isSupportedImageFileType, normalizeFile } from "./data/blob";
 import { DrawinkError } from "./errors";
-import {
-  createFile,
-  getFileHandle,
-  isSupportedImageFileType,
-  normalizeFile,
-} from "./data/blob";
 
-import { tryParseSpreadsheet, VALID_SPREADSHEET } from "./charts";
+import { VALID_SPREADSHEET, tryParseSpreadsheet } from "./charts";
 
 import type { FileSystemHandle } from "./data/filesystem";
 
@@ -59,7 +48,7 @@ export interface ClipboardData {
   programmaticAPI?: boolean;
 }
 
-type AllowedPasteMimeTypes = typeof ALLOWED_PASTE_MIME_TYPES[number];
+type AllowedPasteMimeTypes = (typeof ALLOWED_PASTE_MIME_TYPES)[number];
 
 type ParsedClipboardEventTextData =
   | { type: "text"; value: string }
@@ -134,9 +123,7 @@ export const createPasteEvent = ({
       try {
         event.clipboardData?.items.add(file);
         if (event.clipboardData?.files[idx] !== file) {
-          throw new Error(
-            `Failed to set file "${file.name}" as clipboardData item`,
-          );
+          throw new Error(`Failed to set file "${file.name}" as clipboardData item`);
         }
       } catch (error: any) {
         throw new Error(error.message);
@@ -155,9 +142,7 @@ export const serializeAsClipboardJSON = ({
   files: BinaryFiles | null;
 }) => {
   const elementsMap = arrayToMap(elements);
-  const framesToCopy = new Set(
-    elements.filter((element) => isFrameLikeElement(element)),
-  );
+  const framesToCopy = new Set(elements.filter((element) => isFrameLikeElement(element)));
   let foundFile = false;
 
   const _files = elements.reduce((acc, element) => {
@@ -205,10 +190,7 @@ export const copyToClipboard = async (
   /** supply if available to make the operation more certain to succeed */
   clipboardEvent?: ClipboardEvent | null,
 ) => {
-  await copyTextToSystemClipboard(
-    serializeAsClipboardJSON({ elements, files }),
-    clipboardEvent,
-  );
+  await copyTextToSystemClipboard(serializeAsClipboardJSON({ elements, files }), clipboardEvent);
 };
 
 const parsePotentialSpreadsheet = (
@@ -243,7 +225,7 @@ function parseHTMLTree(el: ChildNode) {
 }
 
 const maybeParseHTMLDataItem = (
-  dataItem: ParsedDataTransferItemType<typeof MIME_TYPES["html"]>,
+  dataItem: ParsedDataTransferItemType<(typeof MIME_TYPES)["html"]>,
 ): { type: "mixedContent"; value: PastedMixedContent } | null => {
   const html = dataItem.value;
 
@@ -347,8 +329,7 @@ const parseClipboardEventTextData = async (
   try {
     const htmlItem = dataList.findByType(MIME_TYPES.html);
 
-    const mixedContent =
-      !isPlainPaste && htmlItem && maybeParseHTMLDataItem(htmlItem);
+    const mixedContent = !isPlainPaste && htmlItem && maybeParseHTMLDataItem(htmlItem);
 
     if (mixedContent) {
       if (mixedContent.value.every((item) => item.type === "text")) {
@@ -393,14 +374,10 @@ type ParsedDataTransferItem =
     }
   | { type: string; kind: "string"; value: string };
 
-type ParsedDataTransferItemType<
-  T extends AllowedParsedDataTransferItem["type"],
-> = AllowedParsedDataTransferItem & { type: T };
+type ParsedDataTransferItemType<T extends AllowedParsedDataTransferItem["type"]> =
+  AllowedParsedDataTransferItem & { type: T };
 
-export type ParsedDataTransferFile = Extract<
-  AllowedParsedDataTransferItem,
-  { kind: "file" }
->;
+export type ParsedDataTransferFile = Extract<AllowedParsedDataTransferItem, { kind: "file" }>;
 
 type ParsedDataTranferList = ParsedDataTransferItem[] & {
   /**
@@ -418,39 +395,26 @@ type ParsedDataTranferList = ParsedDataTransferItem[] & {
   getFiles: typeof getDataTransferFiles;
 };
 
-const findDataTransferItemType = function <
-  T extends ValueOf<typeof STRING_MIME_TYPES>,
->(this: ParsedDataTranferList, type: T): ParsedDataTransferItemType<T> | null {
-  return (
-    this.find(
-      (item): item is ParsedDataTransferItemType<T> => item.type === type,
-    ) || null
-  );
-};
-const getDataTransferItemData = function <
-  T extends ValueOf<typeof STRING_MIME_TYPES>,
->(
+const findDataTransferItemType = function <T extends ValueOf<typeof STRING_MIME_TYPES>>(
   this: ParsedDataTranferList,
   type: T,
-):
-  | ParsedDataTransferItemType<ValueOf<typeof STRING_MIME_TYPES>>["value"]
-  | null {
+): ParsedDataTransferItemType<T> | null {
+  return this.find((item): item is ParsedDataTransferItemType<T> => item.type === type) || null;
+};
+const getDataTransferItemData = function <T extends ValueOf<typeof STRING_MIME_TYPES>>(
+  this: ParsedDataTranferList,
+  type: T,
+): ParsedDataTransferItemType<ValueOf<typeof STRING_MIME_TYPES>>["value"] | null {
   const item = this.find(
-    (
-      item,
-    ): item is ParsedDataTransferItemType<ValueOf<typeof STRING_MIME_TYPES>> =>
+    (item): item is ParsedDataTransferItemType<ValueOf<typeof STRING_MIME_TYPES>> =>
       item.type === type,
   );
 
   return item?.value ?? null;
 };
 
-const getDataTransferFiles = function (
-  this: ParsedDataTranferList,
-): ParsedDataTransferFile[] {
-  return this.filter(
-    (item): item is ParsedDataTransferFile => item.kind === "file",
-  );
+const getDataTransferFiles = function (this: ParsedDataTranferList): ParsedDataTransferFile[] {
+  return this.filter((item): item is ParsedDataTransferFile => item.kind === "file");
 };
 
 export const parseDataTransferEvent = async (
@@ -467,36 +431,34 @@ export const parseDataTransferEvent = async (
 
   const dataItems = (
     await Promise.all(
-      Array.from(items || []).map(
-        async (item): Promise<ParsedDataTransferItem | null> => {
-          if (item.kind === "file") {
-            let file = item.getAsFile();
-            if (file) {
-              const fileHandle = await getFileHandle(item);
-              file = await normalizeFile(file);
-              return {
-                type: file.type,
-                kind: "file",
-                file,
-                fileHandle,
-              };
-            }
-          } else if (item.kind === "string") {
-            const { type } = item;
-            let value: string;
-            if ("clipboardData" in event && event.clipboardData) {
-              value = event.clipboardData?.getData(type);
-            } else {
-              value = await new Promise<string>((resolve) => {
-                item.getAsString((str) => resolve(str));
-              });
-            }
-            return { type, kind: "string", value };
+      Array.from(items || []).map(async (item): Promise<ParsedDataTransferItem | null> => {
+        if (item.kind === "file") {
+          let file = item.getAsFile();
+          if (file) {
+            const fileHandle = await getFileHandle(item);
+            file = await normalizeFile(file);
+            return {
+              type: file.type,
+              kind: "file",
+              file,
+              fileHandle,
+            };
           }
+        } else if (item.kind === "string") {
+          const { type } = item;
+          let value: string;
+          if ("clipboardData" in event && event.clipboardData) {
+            value = event.clipboardData?.getData(type);
+          } else {
+            value = await new Promise<string>((resolve) => {
+              item.getAsString((str) => resolve(str));
+            });
+          }
+          return { type, kind: "string", value };
+        }
 
-          return null;
-        },
-      ),
+        return null;
+      }),
     )
   ).filter((data): data is ParsedDataTransferItem => data != null);
 
@@ -514,10 +476,7 @@ export const parseClipboard = async (
   dataList: ParsedDataTranferList,
   isPlainPaste = false,
 ): Promise<ClipboardData> => {
-  const parsedEventData = await parseClipboardEventTextData(
-    dataList,
-    isPlainPaste,
-  );
+  const parsedEventData = await parseClipboardEventTextData(dataList, isPlainPaste);
 
   if (parsedEventData.type === "mixedContent") {
     return {
@@ -528,8 +487,7 @@ export const parseClipboard = async (
   try {
     // if system clipboard contains spreadsheet, use it even though it's
     // technically possible it's staler than in-app clipboard
-    const spreadsheetResult =
-      !isPlainPaste && parsePotentialSpreadsheet(parsedEventData.value);
+    const spreadsheetResult = !isPlainPaste && parsePotentialSpreadsheet(parsedEventData.value);
 
     if (spreadsheetResult) {
       return spreadsheetResult;
@@ -540,15 +498,12 @@ export const parseClipboard = async (
 
   try {
     const systemClipboardData = JSON.parse(parsedEventData.value);
-    const programmaticAPI =
-      systemClipboardData.type === EXPORT_DATA_TYPES.drawinkClipboardWithAPI;
+    const programmaticAPI = systemClipboardData.type === EXPORT_DATA_TYPES.drawinkClipboardWithAPI;
     if (clipboardContainsElements(systemClipboardData)) {
       return {
         elements: systemClipboardData.elements,
         files: systemClipboardData.files,
-        text: isPlainPaste
-          ? JSON.stringify(systemClipboardData.elements, null, 2)
-          : undefined,
+        text: isPlainPaste ? JSON.stringify(systemClipboardData.elements, null, 2) : undefined,
         programmaticAPI,
       };
     }
@@ -665,13 +620,7 @@ const copyTextViaExecCommand = (text: string | null) => {
   return success;
 };
 
-export const isClipboardEvent = (
-  event: React.SyntheticEvent | Event,
-): event is ClipboardEvent => {
+export const isClipboardEvent = (event: React.SyntheticEvent | Event): event is ClipboardEvent => {
   /** not using instanceof ClipboardEvent due to tests (jsdom) */
-  return (
-    event.type === EVENT.PASTE ||
-    event.type === EVENT.COPY ||
-    event.type === EVENT.CUT
-  );
+  return event.type === EVENT.PASTE || event.type === EVENT.COPY || event.type === EVENT.CUT;
 };

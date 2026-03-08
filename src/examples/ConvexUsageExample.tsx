@@ -5,10 +5,10 @@
  * in React components. Use these patterns when migrating from Firestore.
  */
 
-import { useQuery, useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
-import { useState } from "react";
 import { uploadImage } from "../lib/firebaseStorage";
 
 /**
@@ -38,9 +38,7 @@ export function BoardsList({ workspaceId }: { workspaceId: Id<"workspaces"> }) {
           {boards.map((board) => (
             <li key={board._id}>
               {board.name} - {board.isPublic ? "Public" : "Private"}
-              {board.thumbnailUrl && (
-                <img src={board.thumbnailUrl} alt={board.name} width={50} />
-              )}
+              {board.thumbnailUrl && <img src={board.thumbnailUrl} alt={board.name} width={50} />}
             </li>
           ))}
         </ul>
@@ -91,11 +89,7 @@ export function CreateBoardForm({ workspaceId }: { workspaceId: Id<"workspaces">
         required
       />
       <label>
-        <input
-          type="checkbox"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
-        />
+        <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
         Public board
       </label>
       <button type="submit">Create Board</button>
@@ -146,12 +140,7 @@ export function FileUploadExample({ boardId }: { boardId: Id<"boards"> }) {
   return (
     <div>
       <h2>Upload File</h2>
-      <input
-        type="file"
-        onChange={handleFileUpload}
-        disabled={uploading}
-        accept="image/*"
-      />
+      <input type="file" onChange={handleFileUpload} disabled={uploading} accept="image/*" />
       {uploading && <p>Uploading...</p>}
     </div>
   );

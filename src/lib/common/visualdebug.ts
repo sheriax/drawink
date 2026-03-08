@@ -1,9 +1,9 @@
 import {
+  type GlobalPoint,
+  type LocalPoint,
   isLineSegment,
   lineSegment,
   pointFrom,
-  type GlobalPoint,
-  type LocalPoint,
 } from "@/lib/math";
 
 import { isBounds } from "@/lib/elements";
@@ -50,9 +50,7 @@ export const debugDrawLine = (
     permanent?: boolean;
   },
 ) => {
-  const segments = (
-    isLineSegment(segment) ? [segment] : segment
-  ) as LineSegment<GlobalPoint>[];
+  const segments = (isLineSegment(segment) ? [segment] : segment) as LineSegment<GlobalPoint>[];
 
   segments.forEach((data) =>
     addToCurrentFrame({
@@ -143,9 +141,7 @@ export const debugDrawPoints = (
   },
   options?: any,
 ) => {
-  points.forEach((p) =>
-    debugDrawPoint(pointFrom<GlobalPoint>(x + p[0], y + p[1]), options),
-  );
+  points.forEach((p) => debugDrawPoint(pointFrom<GlobalPoint>(x + p[0], y + p[1]), options));
 };
 
 export const debugCloseFrame = () => {

@@ -1,11 +1,10 @@
-import React from "react";
 import { vi } from "vitest";
 
 import { reseed } from "@/lib/common";
 
 import { Drawink } from "../index";
 import * as StaticScene from "../renderer/staticScene";
-import { render, queryByTestId, unmountComponent } from "../tests/test-utils";
+import { queryByTestId, render, unmountComponent } from "../tests/test-utils";
 
 const renderStaticScene = vi.spyOn(StaticScene, "renderStaticScene");
 

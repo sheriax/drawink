@@ -1,4 +1,3 @@
-import { safelyParseJSON } from "@/lib/common";
 import {
   DiagramToCodePlugin,
   MIME_TYPES,
@@ -7,6 +6,7 @@ import {
   getTextFromElements,
 } from "@/core";
 import { getDataURL } from "@/core/data/blob";
+import { safelyParseJSON } from "@/lib/common";
 
 import type { DrawinkImperativeAPI } from "@/core/types";
 

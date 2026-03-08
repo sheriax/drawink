@@ -7,25 +7,15 @@ import React, {
   type KeyboardEventHandler,
 } from "react";
 
-import { type FontFamilyValues } from "@/lib/elements/types";
+import type { FontFamilyValues } from "@/lib/elements/types";
 
-import {
-  arrayToList,
-  debounce,
-  FONT_FAMILY,
-  getFontFamilyString,
-} from "@/lib/common";
+import { FONT_FAMILY, arrayToList, debounce, getFontFamilyString } from "@/lib/common";
 
 import type { ValueOf } from "@/lib/common/utility-types";
 
 import { Fonts } from "../../fonts";
 import { t } from "../../i18n";
-import {
-  useApp,
-  useAppProps,
-  useDrawinkContainer,
-  useStylesPanelMode,
-} from "../App";
+import { useApp, useAppProps, useDrawinkContainer, useStylesPanelMode } from "../App";
 import { PropertiesPopover } from "../PropertiesPopover";
 import { QuickSearch } from "../QuickSearch";
 import { ScrollableList } from "../ScrollableList";
@@ -105,9 +95,7 @@ export const FontPickerList = React.memo(
     const allFonts = useMemo(
       () =>
         Array.from(Fonts.registered.entries())
-          .filter(
-            ([_, { metadata }]) => !metadata.private && !metadata.fallback,
-          )
+          .filter(([_, { metadata }]) => !metadata.private && !metadata.fallback)
           .map(([familyId, { metadata, fontFaces }]) => {
             const fontDescriptor = {
               value: familyId,
@@ -127,9 +115,7 @@ export const FontPickerList = React.memo(
 
             return fontDescriptor as FontDescriptor;
           })
-          .sort((a, b) =>
-            a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1,
-          ),
+          .sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1)),
       [],
     );
 
@@ -148,9 +134,7 @@ export const FontPickerList = React.memo(
     const availableFonts = useMemo(
       () =>
         allFonts.filter(
-          (font) =>
-            !sceneFamilies.has(font.value) &&
-            (showDeprecatedFonts || !font.deprecated), // skip deprecated fonts
+          (font) => !sceneFamilies.has(font.value) && (showDeprecatedFonts || !font.deprecated), // skip deprecated fonts
         ),
       [allFonts, sceneFamilies, showDeprecatedFonts],
     );
@@ -185,14 +169,7 @@ export const FontPickerList = React.memo(
       }
 
       return font;
-    }, [
-      hoveredFontFamily,
-      selectedFontFamily,
-      searchTerm,
-      filteredFonts,
-      onHover,
-      onLeave,
-    ]);
+    }, [hoveredFontFamily, selectedFontFamily, searchTerm, filteredFonts, onHover, onLeave]);
 
     // Create a wrapped onSelect function that preserves caret position
     const wrappedOnSelect = useCallback(
@@ -200,9 +177,7 @@ export const FontPickerList = React.memo(
         // Save caret position before font selection if editing text
         let savedSelection: { start: number; end: number } | null = null;
         if (app.state.editingTextElement) {
-          const textEditor = document.querySelector(
-            ".drawink-wysiwyg",
-          ) as HTMLTextAreaElement;
+          const textEditor = document.querySelector(".drawink-wysiwyg") as HTMLTextAreaElement;
           if (textEditor) {
             savedSelection = {
               start: textEditor.selectionStart,
@@ -216,9 +191,7 @@ export const FontPickerList = React.memo(
         // Restore caret position after font selection if editing text
         if (app.state.editingTextElement && savedSelection) {
           setTimeout(() => {
-            const textEditor = document.querySelector(
-              ".drawink-wysiwyg",
-            ) as HTMLTextAreaElement;
+            const textEditor = document.querySelector(".drawink-wysiwyg") as HTMLTextAreaElement;
             if (textEditor && savedSelection) {
               textEditor.focus();
               textEditor.selectionStart = savedSelection.start;
@@ -331,9 +304,7 @@ export const FontPickerList = React.memo(
           // Refocus text editor when font picker closes if we were editing text
           if (app.state.editingTextElement) {
             setTimeout(() => {
-              const textEditor = document.querySelector(
-                ".drawink-wysiwyg",
-              ) as HTMLTextAreaElement;
+              const textEditor = document.querySelector(".drawink-wysiwyg") as HTMLTextAreaElement;
               if (textEditor) {
                 textEditor.focus();
               }

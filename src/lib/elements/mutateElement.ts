@@ -1,8 +1,4 @@
-import {
-  getSizeFromPoints,
-  randomInteger,
-  getUpdatedTimestamp,
-} from "@/lib/common";
+import { getSizeFromPoints, getUpdatedTimestamp, randomInteger } from "@/lib/common";
 
 import type { Radians } from "@/lib/math";
 
@@ -15,9 +11,9 @@ import { updateElbowArrowPoints } from "./elbowArrow";
 import { isElbowArrow } from "./typeChecks";
 
 import type {
-  ElementsMap,
   DrawinkElbowArrowElement,
   DrawinkElement,
+  ElementsMap,
   NonDeletedSceneElementsMap,
 } from "./types";
 
@@ -79,10 +75,7 @@ export const mutateElement = <TElement extends Mutable<DrawinkElement>>(
         (element as any)[key] === value &&
         // if object, always update because its attrs could have changed
         // (except for specific keys we handle below)
-        (typeof value !== "object" ||
-          value === null ||
-          key === "groupIds" ||
-          key === "scale")
+        (typeof value !== "object" || value === null || key === "groupIds" || key === "scale")
       ) {
         continue;
       }
@@ -102,10 +95,7 @@ export const mutateElement = <TElement extends Mutable<DrawinkElement>>(
           while (--index) {
             const prevPoint = prevPoints[index];
             const nextPoint = nextPoints[index];
-            if (
-              prevPoint[0] !== nextPoint[0] ||
-              prevPoint[1] !== nextPoint[1]
-            ) {
+            if (prevPoint[0] !== nextPoint[0] || prevPoint[1] !== nextPoint[1]) {
               didChangePoints = true;
               break;
             }

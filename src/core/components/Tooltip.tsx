@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import type React from "react";
+import { useEffect } from "react";
 
 import "./Tooltip.scss";
 
 export const getTooltipDiv = () => {
-  const existingDiv =
-    document.querySelector<HTMLDivElement>(".drawink-tooltip");
+  const existingDiv = document.querySelector<HTMLDivElement>(".drawink-tooltip");
   if (existingDiv) {
     return existingDiv;
   }
@@ -82,13 +82,7 @@ type TooltipProps = {
   disabled?: boolean;
 };
 
-export const Tooltip = ({
-  children,
-  label,
-  long = false,
-  style,
-  disabled,
-}: TooltipProps) => {
+export const Tooltip = ({ children, label, long = false, style, disabled }: TooltipProps) => {
   useEffect(() => {
     return () => getTooltipDiv().classList.remove("drawink-tooltip--visible");
   }, []);
@@ -99,16 +93,9 @@ export const Tooltip = ({
     <div
       className="drawink-tooltip-wrapper"
       onPointerEnter={(event) =>
-        updateTooltip(
-          event.currentTarget as HTMLDivElement,
-          getTooltipDiv(),
-          label,
-          long,
-        )
+        updateTooltip(event.currentTarget as HTMLDivElement, getTooltipDiv(), label, long)
       }
-      onPointerLeave={() =>
-        getTooltipDiv().classList.remove("drawink-tooltip--visible")
-      }
+      onPointerLeave={() => getTooltipDiv().classList.remove("drawink-tooltip--visible")}
       style={style}
     >
       {children}

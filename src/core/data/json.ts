@@ -1,9 +1,9 @@
 import {
   DEFAULT_FILENAME,
   EXPORT_DATA_TYPES,
-  getExportSource,
   MIME_TYPES,
   VERSIONS,
+  getExportSource,
 } from "@/lib/common";
 
 import type { DrawinkElement } from "@/lib/elements/types";
@@ -16,26 +16,18 @@ import { fileOpen, fileSave } from "./filesystem";
 import type { AppState, BinaryFiles, LibraryItems } from "../types";
 import type {
   ExportedDataState,
-  ImportedDataState,
   ExportedLibraryData,
+  ImportedDataState,
   ImportedLibraryData,
 } from "./types";
 
 /**
  * Strips out files which are only referenced by deleted elements
  */
-const filterOutDeletedFiles = (
-  elements: readonly DrawinkElement[],
-  files: BinaryFiles,
-) => {
+const filterOutDeletedFiles = (elements: readonly DrawinkElement[], files: BinaryFiles) => {
   const nextFiles: BinaryFiles = {};
   for (const element of elements) {
-    if (
-      !element.isDeleted &&
-      "fileId" in element &&
-      element.fileId &&
-      files[element.fileId]
-    ) {
+    if (!element.isDeleted && "fileId" in element && element.fileId && files[element.fileId]) {
       nextFiles[element.fileId] = files[element.fileId];
     }
   }
@@ -54,9 +46,7 @@ export const serializeAsJSON = (
     source: getExportSource(),
     elements,
     appState:
-      type === "local"
-        ? cleanAppStateForExport(appState)
-        : clearAppStateForDatabase(appState),
+      type === "local" ? cleanAppStateForExport(appState) : clearAppStateForDatabase(appState),
     files:
       type === "local"
         ? filterOutDeletedFiles(elements, files)
@@ -83,9 +73,7 @@ export const saveAsJSON = async (
     name,
     extension: "drawink",
     description: "Drawink file",
-    fileHandle: isImageFileHandle(appState.fileHandle)
-      ? null
-      : appState.fileHandle,
+    fileHandle: isImageFileHandle(appState.fileHandle) ? null : appState.fileHandle,
   });
   return { fileHandle };
 };
@@ -111,8 +99,7 @@ export const isValidDrawinkData = (data?: {
   return (
     data?.type === EXPORT_DATA_TYPES.drawink &&
     (!data.elements ||
-      (Array.isArray(data.elements) &&
-        (!data.appState || typeof data.appState === "object")))
+      (Array.isArray(data.elements) && (!data.appState || typeof data.appState === "object")))
   );
 };
 

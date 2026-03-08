@@ -10,18 +10,13 @@ import {
 } from "@/lib/utils/shape";
 
 import {
-  pointFrom,
-  pointDistance,
-  type LocalPoint,
-  pointRotateRads,
-} from "@/lib/math";
-import {
-  ROUGHNESS,
-  isTransparent,
-  assertNever,
   COLOR_PALETTE,
   LINE_POLYGON_POINT_MERGE_DISTANCE,
+  ROUGHNESS,
+  assertNever,
+  isTransparent,
 } from "@/lib/common";
+import { type LocalPoint, pointDistance, pointFrom, pointRotateRads } from "@/lib/math";
 
 import { RoughGenerator } from "roughjs/bin/generator";
 
@@ -29,11 +24,12 @@ import type { GlobalPoint } from "@/lib/math";
 
 import type { Mutable } from "@/lib/common/utility-types";
 
-import type { AppState, EmbedsValidationStatus } from "@/core/types";
 import type { ElementShape, ElementShapes } from "@/core/scene/types";
+import type { AppState, EmbedsValidationStatus } from "@/core/types";
 
 import { elementWithCanvasCache } from "./renderElement";
 
+import { headingForPointIsHorizontal } from "./heading";
 import {
   canBecomePolygon,
   isElbowArrow,
@@ -43,10 +39,7 @@ import {
   isLinearElement,
 } from "./typeChecks";
 import { getCornerRadius, isPathALoop } from "./utils";
-import { headingForPointIsHorizontal } from "./heading";
 
-import { canChangeRoundness } from "./comparisons";
-import { generateFreeDrawShape } from "./renderElement";
 import {
   getArrowheadPoints,
   getCenterForBounds,
@@ -54,16 +47,18 @@ import {
   getElementAbsoluteCoords,
 } from "./bounds";
 import { shouldTestInside } from "./collision";
+import { canChangeRoundness } from "./comparisons";
+import { generateFreeDrawShape } from "./renderElement";
 
 import type {
-  DrawinkElement,
-  NonDeletedDrawinkElement,
-  DrawinkSelectionElement,
-  DrawinkLinearElement,
   Arrowhead,
+  DrawinkElement,
   DrawinkFreeDrawElement,
-  ElementsMap,
   DrawinkLineElement,
+  DrawinkLinearElement,
+  DrawinkSelectionElement,
+  ElementsMap,
+  NonDeletedDrawinkElement,
 } from "./types";
 
 import type { Drawable, Options } from "roughjs/bin/core";
@@ -78,22 +73,17 @@ export class ShapeCache {
    * is optional and you have a fallback in case it's not cached.
    */
   public static get = <T extends DrawinkElement>(element: T) => {
-    return ShapeCache.cache.get(
-      element,
-    ) as T["type"] extends keyof ElementShapes
+    return ShapeCache.cache.get(element) as T["type"] extends keyof ElementShapes
       ? ElementShapes[T["type"]] | undefined
       : ElementShape | undefined;
   };
 
   public static set = <T extends DrawinkElement>(
     element: T,
-    shape: T["type"] extends keyof ElementShapes
-      ? ElementShapes[T["type"]]
-      : Drawable,
+    shape: T["type"] extends keyof ElementShapes ? ElementShapes[T["type"]] : Drawable,
   ) => ShapeCache.cache.set(element, shape);
 
-  public static delete = (element: DrawinkElement) =>
-    ShapeCache.cache.delete(element);
+  public static delete = (element: DrawinkElement) => ShapeCache.cache.delete(element);
 
   public static destroy = () => {
     ShapeCache.cache = new WeakMap();
@@ -103,9 +93,7 @@ export class ShapeCache {
    * Generates & caches shape for element if not already cached, otherwise
    * returns cached shape.
    */
-  public static generateElementShape = <
-    T extends Exclude<DrawinkElement, DrawinkSelectionElement>,
-  >(
+  public static generateElementShape = <T extends Exclude<DrawinkElement, DrawinkSelectionElement>>(
     element: T,
     renderConfig: {
       isExporting: boolean;
@@ -114,9 +102,7 @@ export class ShapeCache {
     } | null,
   ) => {
     // when exporting, always regenerated to guarantee the latest shape
-    const cachedShape = renderConfig?.isExporting
-      ? undefined
-      : ShapeCache.get(element);
+    const cachedShape = renderConfig?.isExporting ? undefined : ShapeCache.get(element);
 
     // `null` indicates no rc shape applicable for this element type,
     // but it's considered a valid cache value (= do not regenerate)
@@ -134,9 +120,7 @@ export class ShapeCache {
         canvasBackgroundColor: COLOR_PALETTE.white,
         embedsValidationStatus: null,
       },
-    ) as T["type"] extends keyof ElementShapes
-      ? ElementShapes[T["type"]]
-      : Drawable | null;
+    ) as T["type"] extends keyof ElementShapes ? ElementShapes[T["type"]] : Drawable | null;
 
     ShapeCache.cache.set(element, shape);
 
@@ -159,9 +143,7 @@ function adjustRoughness(element: DrawinkElement): number {
     // both sides relatively big
     (minSize >= 20 && maxSize >= 50) ||
     // is round & both sides above 15px
-    (minSize >= 15 &&
-      !!element.roundness &&
-      canChangeRoundness(element.type)) ||
+    (minSize >= 15 && !!element.roundness && canChangeRoundness(element.type)) ||
     // relatively long linear element
     (isLinearElement(element) && maxSize >= 50)
   ) {
@@ -171,27 +153,21 @@ function adjustRoughness(element: DrawinkElement): number {
   return Math.min(roughness / (maxSize < 10 ? 3 : 2), 2.5);
 }
 
-export const generateRoughOptions = (
-  element: DrawinkElement,
-  continuousPath = false,
-): Options => {
+export const generateRoughOptions = (element: DrawinkElement, continuousPath = false): Options => {
   const options: Options = {
     seed: element.seed,
     strokeLineDash:
       element.strokeStyle === "dashed"
         ? getDashArrayDashed(element.strokeWidth)
         : element.strokeStyle === "dotted"
-        ? getDashArrayDotted(element.strokeWidth)
-        : undefined,
+          ? getDashArrayDotted(element.strokeWidth)
+          : undefined,
     // for non-solid strokes, disable multiStroke because it tends to make
     // dashes/dots overlay each other
     disableMultiStroke: element.strokeStyle !== "solid",
     // for non-solid strokes, increase the width a bit to make it visually
     // similar to solid strokes, because we're also disabling multiStroke
-    strokeWidth:
-      element.strokeStyle !== "solid"
-        ? element.strokeWidth + 0.5
-        : element.strokeWidth,
+    strokeWidth: element.strokeStyle !== "solid" ? element.strokeWidth + 0.5 : element.strokeWidth,
     // when increasing strokeWidth, we must explicitly set fillWeight and
     // hachureGap because if not specified, roughjs uses strokeWidth to
     // calculate them (and we don't want the fills to be modified)
@@ -199,8 +175,7 @@ export const generateRoughOptions = (
     hachureGap: element.strokeWidth * 4,
     roughness: adjustRoughness(element),
     stroke: element.strokeColor,
-    preserveVertices:
-      continuousPath || element.roughness < ROUGHNESS.cartoonist,
+    preserveVertices: continuousPath || element.roughness < ROUGHNESS.cartoonist,
   };
 
   switch (element.type) {
@@ -210,9 +185,7 @@ export const generateRoughOptions = (
     case "diamond":
     case "ellipse": {
       options.fillStyle = element.fillStyle;
-      options.fill = isTransparent(element.backgroundColor)
-        ? undefined
-        : element.backgroundColor;
+      options.fill = isTransparent(element.backgroundColor) ? undefined : element.backgroundColor;
       if (element.type === "ellipse") {
         options.curveFitting = 1;
       }
@@ -223,9 +196,7 @@ export const generateRoughOptions = (
       if (isPathALoop(element.points)) {
         options.fillStyle = element.fillStyle;
         options.fill =
-          element.backgroundColor === "transparent"
-            ? undefined
-            : element.backgroundColor;
+          element.backgroundColor === "transparent" ? undefined : element.backgroundColor;
       }
       return options;
     }
@@ -245,8 +216,7 @@ const modifyIframeLikeForRoughOptions = (
   if (
     isIframeLikeElement(element) &&
     (isExporting ||
-      (isEmbeddableElement(element) &&
-        embedsValidationStatus?.get(element.id) !== true)) &&
+      (isEmbeddableElement(element) && embedsValidationStatus?.get(element.id) !== true)) &&
     isTransparent(element.backgroundColor) &&
     isTransparent(element.strokeColor)
   ) {
@@ -259,12 +229,8 @@ const modifyIframeLikeForRoughOptions = (
   } else if (isIframeElement(element)) {
     return {
       ...element,
-      strokeColor: isTransparent(element.strokeColor)
-        ? "#000000"
-        : element.strokeColor,
-      backgroundColor: isTransparent(element.backgroundColor)
-        ? "#f4f4f6"
-        : element.backgroundColor,
+      strokeColor: isTransparent(element.strokeColor) ? "#000000" : element.strokeColor,
+      backgroundColor: isTransparent(element.backgroundColor) ? "#f4f4f6" : element.backgroundColor,
     };
   }
   return element;
@@ -279,21 +245,13 @@ const getArrowheadShapes = (
   options: Options,
   canvasBackgroundColor: string,
 ) => {
-  const arrowheadPoints = getArrowheadPoints(
-    element,
-    shape,
-    position,
-    arrowhead,
-  );
+  const arrowheadPoints = getArrowheadPoints(element, shape, position, arrowhead);
 
   if (arrowheadPoints === null) {
     return [];
   }
 
-  const generateCrowfootOne = (
-    arrowheadPoints: number[] | null,
-    options: Options,
-  ) => {
+  const generateCrowfootOne = (arrowheadPoints: number[] | null, options: Options) => {
     if (arrowheadPoints === null) {
       return [];
     }
@@ -315,10 +273,7 @@ const getArrowheadShapes = (
       return [
         generator.circle(x, y, diameter, {
           ...options,
-          fill:
-            arrowhead === "circle_outline"
-              ? canvasBackgroundColor
-              : element.strokeColor,
+          fill: arrowhead === "circle_outline" ? canvasBackgroundColor : element.strokeColor,
 
           fillStyle: "solid",
           stroke: element.strokeColor,
@@ -343,10 +298,7 @@ const getArrowheadShapes = (
           ],
           {
             ...options,
-            fill:
-              arrowhead === "triangle_outline"
-                ? canvasBackgroundColor
-                : element.strokeColor,
+            fill: arrowhead === "triangle_outline" ? canvasBackgroundColor : element.strokeColor,
             fillStyle: "solid",
             roughness: Math.min(1, options.roughness || 0),
           },
@@ -371,10 +323,7 @@ const getArrowheadShapes = (
           ],
           {
             ...options,
-            fill:
-              arrowhead === "diamond_outline"
-                ? canvasBackgroundColor
-                : element.strokeColor,
+            fill: arrowhead === "diamond_outline" ? canvasBackgroundColor : element.strokeColor,
             fillStyle: "solid",
             roughness: Math.min(1, options.roughness || 0),
           },
@@ -435,7 +384,12 @@ export const generateLinearCollisionShape = (
           Math.max(element.y + point[1], acc[3]),
         ];
       },
-      [Infinity, Infinity, -Infinity, -Infinity],
+      [
+        Number.POSITIVE_INFINITY,
+        Number.POSITIVE_INFINITY,
+        Number.NEGATIVE_INFINITY,
+        Number.NEGATIVE_INFINITY,
+      ],
     ),
   );
 
@@ -444,13 +398,10 @@ export const generateLinearCollisionShape = (
     case "arrow": {
       // points array can be empty in the beginning, so it is important to add
       // initial position to it
-      const points = element.points.length
-        ? element.points
-        : [pointFrom<LocalPoint>(0, 0)];
+      const points = element.points.length ? element.points : [pointFrom<LocalPoint>(0, 0)];
 
       if (isElbowArrow(element)) {
-        return generator.path(generateElbowArrowShape(points, 16), options)
-          .sets[0].ops;
+        return generator.path(generateElbowArrowShape(points, 16), options).sets[0].ops;
       } else if (!element.roundness) {
         return points.map((point, idx) => {
           const p = pointRotateRads(
@@ -472,10 +423,7 @@ export const generateLinearCollisionShape = (
         .map((op, i) => {
           if (i === 0) {
             const p = pointRotateRads<GlobalPoint>(
-              pointFrom<GlobalPoint>(
-                element.x + op.data[0],
-                element.y + op.data[1],
-              ),
+              pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
               center,
               element.angle,
             );
@@ -490,34 +438,21 @@ export const generateLinearCollisionShape = (
             op: "bcurveTo",
             data: [
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[0],
-                  element.y + op.data[1],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
                 center,
                 element.angle,
               ),
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[2],
-                  element.y + op.data[3],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[2], element.y + op.data[3]),
                 center,
                 element.angle,
               ),
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[4],
-                  element.y + op.data[5],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[4], element.y + op.data[5]),
                 center,
                 element.angle,
               ),
-            ]
-              .map((p) =>
-                pointFrom<LocalPoint>(p[0] - element.x, p[1] - element.y),
-              )
-              .flat(),
+            ].flatMap((p) => pointFrom<LocalPoint>(p[0] - element.x, p[1] - element.y)),
           };
         });
     }
@@ -526,10 +461,7 @@ export const generateLinearCollisionShape = (
         return [];
       }
 
-      const simplifiedPoints = simplify(
-        element.points as Mutable<LocalPoint[]>,
-        0.75,
-      );
+      const simplifiedPoints = simplify(element.points as Mutable<LocalPoint[]>, 0.75);
 
       return generator
         .curve(simplifiedPoints as [number, number][], options)
@@ -537,10 +469,7 @@ export const generateLinearCollisionShape = (
         .map((op, i) => {
           if (i === 0) {
             const p = pointRotateRads<GlobalPoint>(
-              pointFrom<GlobalPoint>(
-                element.x + op.data[0],
-                element.y + op.data[1],
-              ),
+              pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
               center,
               element.angle,
             );
@@ -555,34 +484,21 @@ export const generateLinearCollisionShape = (
             op: "bcurveTo",
             data: [
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[0],
-                  element.y + op.data[1],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[0], element.y + op.data[1]),
                 center,
                 element.angle,
               ),
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[2],
-                  element.y + op.data[3],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[2], element.y + op.data[3]),
                 center,
                 element.angle,
               ),
               pointRotateRads(
-                pointFrom<GlobalPoint>(
-                  element.x + op.data[4],
-                  element.y + op.data[5],
-                ),
+                pointFrom<GlobalPoint>(element.x + op.data[4], element.y + op.data[5]),
                 center,
                 element.angle,
               ),
-            ]
-              .map((p) =>
-                pointFrom<LocalPoint>(p[0] - element.x, p[1] - element.y),
-              )
-              .flat(),
+            ].flatMap((p) => pointFrom<LocalPoint>(p[0] - element.x, p[1] - element.y)),
           };
         });
     }
@@ -624,15 +540,9 @@ const generateElementShape = (
         shape = generator.path(
           `M ${r} 0 L ${w - r} 0 Q ${w} 0, ${w} ${r} L ${w} ${
             h - r
-          } Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${
-            h - r
-          } L 0 ${r} Q 0 0, ${r} 0`,
+          } Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${h - r} L 0 ${r} Q 0 0, ${r} 0`,
           generateRoughOptions(
-            modifyIframeLikeForRoughOptions(
-              element,
-              isExporting,
-              embedsValidationStatus,
-            ),
+            modifyIframeLikeForRoughOptions(element, isExporting, embedsValidationStatus),
             true,
           ),
         );
@@ -643,11 +553,7 @@ const generateElementShape = (
           element.width,
           element.height,
           generateRoughOptions(
-            modifyIframeLikeForRoughOptions(
-              element,
-              isExporting,
-              embedsValidationStatus,
-            ),
+            modifyIframeLikeForRoughOptions(element, isExporting, embedsValidationStatus),
             false,
           ),
         );
@@ -662,30 +568,27 @@ const generateElementShape = (
       if (element.roundness) {
         const verticalRadius = getCornerRadius(Math.abs(topX - leftX), element);
 
-        const horizontalRadius = getCornerRadius(
-          Math.abs(rightY - topY),
-          element,
-        );
+        const horizontalRadius = getCornerRadius(Math.abs(rightY - topY), element);
 
         shape = generator.path(
           `M ${topX + verticalRadius} ${topY + horizontalRadius} L ${
             rightX - verticalRadius
           } ${rightY - horizontalRadius}
             C ${rightX} ${rightY}, ${rightX} ${rightY}, ${
-            rightX - verticalRadius
-          } ${rightY + horizontalRadius}
+              rightX - verticalRadius
+            } ${rightY + horizontalRadius}
             L ${bottomX + verticalRadius} ${bottomY - horizontalRadius}
             C ${bottomX} ${bottomY}, ${bottomX} ${bottomY}, ${
-            bottomX - verticalRadius
-          } ${bottomY - horizontalRadius}
+              bottomX - verticalRadius
+            } ${bottomY - horizontalRadius}
             L ${leftX + verticalRadius} ${leftY + horizontalRadius}
             C ${leftX} ${leftY}, ${leftX} ${leftY}, ${leftX + verticalRadius} ${
-            leftY - horizontalRadius
-          }
+              leftY - horizontalRadius
+            }
             L ${topX - verticalRadius} ${topY + horizontalRadius}
             C ${topX} ${topY}, ${topX} ${topY}, ${topX + verticalRadius} ${
-            topY + horizontalRadius
-          }`,
+              topY + horizontalRadius
+            }`,
           generateRoughOptions(element, true),
         );
       } else {
@@ -718,17 +621,11 @@ const generateElementShape = (
 
       // points array can be empty in the beginning, so it is important to add
       // initial position to it
-      const points = element.points.length
-        ? element.points
-        : [pointFrom<LocalPoint>(0, 0)];
+      const points = element.points.length ? element.points : [pointFrom<LocalPoint>(0, 0)];
 
       if (isElbowArrow(element)) {
         // NOTE (mtolmacs): Temporary fix for extremely big arrow shapes
-        if (
-          !points.every(
-            (point) => Math.abs(point[0]) <= 1e6 && Math.abs(point[1]) <= 1e6,
-          )
-        ) {
+        if (!points.every((point) => Math.abs(point[0]) <= 1e6 && Math.abs(point[1]) <= 1e6)) {
           console.error(
             `Elbow arrow with extreme point positions detected. Arrow not rendered.`,
             element.id,
@@ -747,13 +644,9 @@ const generateElementShape = (
         // curve is always the first element
         // this simplifies finding the curve for an element
         if (options.fill) {
-          shape = [
-            generator.polygon(points as unknown as RoughPoint[], options),
-          ];
+          shape = [generator.polygon(points as unknown as RoughPoint[], options)];
         } else {
-          shape = [
-            generator.linearPath(points as unknown as RoughPoint[], options),
-          ];
+          shape = [generator.linearPath(points as unknown as RoughPoint[], options)];
         }
       } else {
         shape = [generator.curve(points as unknown as RoughPoint[], options)];
@@ -801,10 +694,7 @@ const generateElementShape = (
 
       if (isPathALoop(element.points)) {
         // generate rough polygon to fill freedraw shape
-        const simplifiedPoints = simplify(
-          element.points as Mutable<LocalPoint[]>,
-          0.75,
-        );
+        const simplifiedPoints = simplify(element.points as Mutable<LocalPoint[]>, 0.75);
         shape = generator.curve(simplifiedPoints as [number, number][], {
           ...generateRoughOptions(element),
           stroke: "none",
@@ -824,19 +714,13 @@ const generateElementShape = (
       return shape;
     }
     default: {
-      assertNever(
-        element,
-        `generateElementShape(): Unimplemented type ${(element as any)?.type}`,
-      );
+      assertNever(element, `generateElementShape(): Unimplemented type ${(element as any)?.type}`);
       return null;
     }
   }
 };
 
-const generateElbowArrowShape = (
-  points: readonly LocalPoint[],
-  radius: number,
-) => {
+const generateElbowArrowShape = (points: readonly LocalPoint[], radius: number) => {
   const subpoints = [] as [number, number][];
   for (let i = 1; i < points.length - 1; i += 1) {
     const prev = points[i - 1];
@@ -920,8 +804,7 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
     case "arrow":
     case "line": {
       const roughShape =
-        ShapeCache.get(element)?.[0] ??
-        ShapeCache.generateElementShape(element, null)[0];
+        ShapeCache.get(element)?.[0] ?? ShapeCache.generateElementShape(element, null)[0];
       const [, , , , cx, cy] = getElementAbsoluteCoords(element, elementsMap);
 
       return shouldTestInside(element)
@@ -945,11 +828,7 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
 
     case "freedraw": {
       const [, , , , cx, cy] = getElementAbsoluteCoords(element, elementsMap);
-      return getFreedrawShape(
-        element,
-        pointFrom(cx, cy),
-        shouldTestInside(element),
-      );
+      return getFreedrawShape(element, pointFrom(cx, cy), shouldTestInside(element));
     }
   }
 };
@@ -971,21 +850,12 @@ export const toggleLinePolygonState = (
     const firstPoint = updatedPoints[0];
     const lastPoint = updatedPoints[updatedPoints.length - 1];
 
-    const distance = Math.hypot(
-      firstPoint[0] - lastPoint[0],
-      firstPoint[1] - lastPoint[1],
-    );
+    const distance = Math.hypot(firstPoint[0] - lastPoint[0], firstPoint[1] - lastPoint[1]);
 
-    if (
-      distance > LINE_POLYGON_POINT_MERGE_DISTANCE ||
-      updatedPoints.length < 4
-    ) {
+    if (distance > LINE_POLYGON_POINT_MERGE_DISTANCE || updatedPoints.length < 4) {
       updatedPoints.push(pointFrom(firstPoint[0], firstPoint[1]));
     } else {
-      updatedPoints[updatedPoints.length - 1] = pointFrom(
-        firstPoint[0],
-        firstPoint[1],
-      );
+      updatedPoints[updatedPoints.length - 1] = pointFrom(firstPoint[0], firstPoint[1]);
     }
   }
 

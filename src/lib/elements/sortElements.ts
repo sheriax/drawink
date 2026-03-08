@@ -6,9 +6,7 @@ const normalizeGroupElementOrder = (elements: readonly DrawinkElement[]) => {
   const origElements: DrawinkElement[] = elements.slice();
   const sortedElements = new Set<DrawinkElement>();
 
-  const orderInnerGroups = (
-    elements: readonly DrawinkElement[],
-  ): DrawinkElement[] => {
+  const orderInnerGroups = (elements: readonly DrawinkElement[]): DrawinkElement[] => {
     const firstGroupSig = elements[0]?.groupIds?.join("");
     const aGroup: DrawinkElement[] = [elements[0]];
     const bGroup: DrawinkElement[] = [];
@@ -103,9 +101,7 @@ const normalizeBoundElementsOrder = (elements: readonly DrawinkElement[]) => {
   // if there's a bug which resulted in losing some of the elements, return
   // original instead as that's better than losing data
   if (sortedElements.size !== elements.length) {
-    console.error(
-      "normalizeBoundElementsOrder: lost some elements... bailing!",
-    );
+    console.error("normalizeBoundElementsOrder: lost some elements... bailing!");
     return elements;
   }
 

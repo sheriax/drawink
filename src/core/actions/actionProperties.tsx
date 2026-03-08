@@ -3,25 +3,25 @@ import { pointFrom } from "@/lib/math";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  ARROW_TYPE,
   DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE,
   DEFAULT_ELEMENT_BACKGROUND_PICKS,
   DEFAULT_ELEMENT_STROKE_COLOR_PALETTE,
   DEFAULT_ELEMENT_STROKE_PICKS,
-  ARROW_TYPE,
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
   FONT_FAMILY,
+  KEYS,
   ROUNDNESS,
   STROKE_WIDTH,
   VERTICAL_ALIGN,
-  KEYS,
-  randomInteger,
   arrayToMap,
   getFontFamilyString,
   getLineHeight,
-  isTransparent,
-  reduceToCommonValue,
   invariant,
+  isTransparent,
+  randomInteger,
+  reduceToCommonValue,
 } from "@/lib/common";
 
 import { canBecomePolygon, getNonDeletedElements } from "@/lib/elements";
@@ -42,8 +42,8 @@ import {
   isArrowElement,
   isBoundToContainer,
   isElbowArrow,
-  isLinearElement,
   isLineElement,
+  isLinearElement,
   isTextElement,
   isUsingAdaptiveRadius,
 } from "@/lib/elements";
@@ -51,9 +51,9 @@ import {
 import { hasStrokeColor } from "@/lib/elements";
 
 import {
-  updateElbowArrowPoints,
   CaptureUpdateAction,
   toggleLinePolygonState,
+  updateElbowArrowPoints,
 } from "@/lib/elements";
 
 import { deriveStylesPanelMode } from "@/lib/common";
@@ -62,11 +62,11 @@ import type { LocalPoint, Radians } from "@/lib/math";
 
 import type {
   Arrowhead,
-  ElementsMap,
   DrawinkBindableElement,
   DrawinkElement,
   DrawinkLinearElement,
   DrawinkTextElement,
+  ElementsMap,
   FontFamilyValues,
   TextAlign,
   VerticalAlign,
@@ -77,52 +77,52 @@ import type { Scene } from "@/lib/elements";
 import type { CaptureUpdateActionType } from "@/lib/elements";
 
 import { trackEvent } from "../analytics";
-import { RadioSelection } from "../components/RadioSelection";
 import { ColorPicker } from "../components/ColorPicker/ColorPicker";
 import { FontPicker } from "../components/FontPicker/FontPicker";
 import { IconPicker } from "../components/IconPicker";
+import { RadioSelection } from "../components/RadioSelection";
 import { Range } from "../components/Range";
 import {
   ArrowheadArrowIcon,
   ArrowheadBarIcon,
   ArrowheadCircleIcon,
-  ArrowheadTriangleIcon,
-  ArrowheadNoneIcon,
-  StrokeStyleDashedIcon,
-  StrokeStyleDottedIcon,
-  TextAlignTopIcon,
-  TextAlignBottomIcon,
-  TextAlignMiddleIcon,
-  FillHachureIcon,
-  FillCrossHatchIcon,
-  FillSolidIcon,
-  SloppinessArchitectIcon,
-  SloppinessArtistIcon,
-  SloppinessCartoonistIcon,
-  StrokeWidthBaseIcon,
-  StrokeWidthBoldIcon,
-  StrokeWidthExtraBoldIcon,
-  FontSizeSmallIcon,
-  FontSizeMediumIcon,
-  FontSizeLargeIcon,
-  FontSizeExtraLargeIcon,
-  EdgeSharpIcon,
-  EdgeRoundIcon,
-  TextAlignLeftIcon,
-  TextAlignCenterIcon,
-  TextAlignRightIcon,
-  FillZigZagIcon,
-  ArrowheadTriangleOutlineIcon,
   ArrowheadCircleOutlineIcon,
-  ArrowheadDiamondIcon,
-  ArrowheadDiamondOutlineIcon,
-  fontSizeIcon,
-  sharpArrowIcon,
-  roundArrowIcon,
-  elbowArrowIcon,
   ArrowheadCrowfootIcon,
   ArrowheadCrowfootOneIcon,
   ArrowheadCrowfootOneOrManyIcon,
+  ArrowheadDiamondIcon,
+  ArrowheadDiamondOutlineIcon,
+  ArrowheadNoneIcon,
+  ArrowheadTriangleIcon,
+  ArrowheadTriangleOutlineIcon,
+  EdgeRoundIcon,
+  EdgeSharpIcon,
+  FillCrossHatchIcon,
+  FillHachureIcon,
+  FillSolidIcon,
+  FillZigZagIcon,
+  FontSizeExtraLargeIcon,
+  FontSizeLargeIcon,
+  FontSizeMediumIcon,
+  FontSizeSmallIcon,
+  SloppinessArchitectIcon,
+  SloppinessArtistIcon,
+  SloppinessCartoonistIcon,
+  StrokeStyleDashedIcon,
+  StrokeStyleDottedIcon,
+  StrokeWidthBaseIcon,
+  StrokeWidthBoldIcon,
+  StrokeWidthExtraBoldIcon,
+  TextAlignBottomIcon,
+  TextAlignCenterIcon,
+  TextAlignLeftIcon,
+  TextAlignMiddleIcon,
+  TextAlignRightIcon,
+  TextAlignTopIcon,
+  elbowArrowIcon,
+  fontSizeIcon,
+  roundArrowIcon,
+  sharpArrowIcon,
 } from "../components/icons";
 
 import { Fonts } from "../fonts";
@@ -134,10 +134,7 @@ import {
   isSomeElementSelected,
 } from "../scene";
 
-import {
-  withCaretPositionPreservation,
-  restoreCaretPosition,
-} from "../hooks/useTextEditorFocus";
+import { restoreCaretPosition, withCaretPositionPreservation } from "../hooks/useTextEditorFocus";
 
 import { getShortcutKey } from "../shortcut";
 
@@ -169,23 +166,20 @@ export const changeProperty = (
   );
 
   return elements.map((element) => {
-    if (
-      selectedElementIds.get(element.id) ||
-      element.id === appState.editingTextElement?.id
-    ) {
+    if (selectedElementIds.get(element.id) || element.id === appState.editingTextElement?.id) {
       return callback(element);
     }
     return element;
   });
 };
 
-export const getFormValue = function <T extends Primitive>(
+export const getFormValue = <T extends Primitive>(
   elements: readonly DrawinkElement[],
   app: AppClassProperties,
   getAttribute: (element: DrawinkElement) => T,
   isRelevantElement: true | ((element: DrawinkElement) => boolean),
   defaultValue: T | ((isSomeElementSelected: boolean) => T),
-): T {
+): T => {
   const editingTextElement = app.state.editingTextElement;
   const nonDeletedElements = getNonDeletedElements(elements);
 
@@ -207,12 +201,9 @@ export const getFormValue = function <T extends Primitive>(
 
       ret =
         reduceToCommonValue(targetElements, getAttribute) ??
-        (typeof defaultValue === "function"
-          ? defaultValue(true)
-          : defaultValue);
+        (typeof defaultValue === "function" ? defaultValue(true) : defaultValue);
     } else {
-      ret =
-        typeof defaultValue === "function" ? defaultValue(false) : defaultValue;
+      ret = typeof defaultValue === "function" ? defaultValue(false) : defaultValue;
     }
   }
 
@@ -232,8 +223,7 @@ const offsetElementAfterFontResize = (
       prevElement.textAlign === "left"
         ? prevElement.x
         : prevElement.x +
-          (prevElement.width - nextElement.width) /
-            (prevElement.textAlign === "center" ? 2 : 1),
+          (prevElement.width - nextElement.width) / (prevElement.textAlign === "center" ? 2 : 1),
     // centering vertically is non-standard, but for Drawink I think
     // it makes sense
     y: prevElement.y + (prevElement.height - nextElement.height) / 2,
@@ -260,17 +250,9 @@ const changeFontSize = (
         let newElement: DrawinkTextElement = newElementWith(oldElement, {
           fontSize: newFontSize,
         });
-        redrawTextBoundingBox(
-          newElement,
-          app.scene.getContainerElement(oldElement),
-          app.scene,
-        );
+        redrawTextBoundingBox(newElement, app.scene.getContainerElement(oldElement), app.scene);
 
-        newElement = offsetElementAfterFontResize(
-          oldElement,
-          newElement,
-          app.scene,
-        );
+        newElement = offsetElementAfterFontResize(oldElement, newElement, app.scene);
 
         return newElement;
       }
@@ -297,7 +279,7 @@ const changeFontSize = (
       currentItemFontSize:
         newFontSizes.size === 1
           ? [...newFontSizes][0]
-          : fallbackValue ?? appState.currentItemFontSize,
+          : (fallbackValue ?? appState.currentItemFontSize),
     },
     captureUpdate: CaptureUpdateAction.IMMEDIATELY,
   };
@@ -305,9 +287,7 @@ const changeFontSize = (
 
 // -----------------------------------------------------------------------------
 
-export const actionChangeStrokeColor = register<
-  Pick<AppState, "currentItemStrokeColor">
->({
+export const actionChangeStrokeColor = register<Pick<AppState, "currentItemStrokeColor">>({
   name: "changeStrokeColor",
   label: "labels.stroke",
   trackEvent: false,
@@ -341,9 +321,7 @@ export const actionChangeStrokeColor = register<
 
     return (
       <>
-        {stylesPanelMode === "full" && (
-          <h3 aria-hidden="true">{t("labels.stroke")}</h3>
-        )}
+        {stylesPanelMode === "full" && <h3 aria-hidden="true">{t("labels.stroke")}</h3>}
         <ColorPicker
           topPicks={DEFAULT_ELEMENT_STROKE_PICKS}
           palette={DEFAULT_ELEMENT_STROKE_COLOR_PALETTE}
@@ -354,8 +332,7 @@ export const actionChangeStrokeColor = register<
             app,
             (element) => element.strokeColor,
             true,
-            (hasSelection) =>
-              !hasSelection ? appState.currentItemStrokeColor : null,
+            (hasSelection) => (!hasSelection ? appState.currentItemStrokeColor : null),
           )}
           onChange={(color) => updateData({ currentItemStrokeColor: color })}
           elements={elements}
@@ -389,9 +366,7 @@ export const actionChangeBackgroundColor = register<
     const selectedElements = app.scene.getSelectedElements(appState);
     const shouldEnablePolygon =
       !isTransparent(value.currentItemBackgroundColor) &&
-      selectedElements.every(
-        (el) => isLineElement(el) && canBecomePolygon(el.points),
-      );
+      selectedElements.every((el) => isLineElement(el) && canBecomePolygon(el.points));
 
     if (shouldEnablePolygon) {
       const selectedElementsMap = arrayToMap(selectedElements);
@@ -426,9 +401,7 @@ export const actionChangeBackgroundColor = register<
 
     return (
       <>
-        {stylesPanelMode === "full" && (
-          <h3 aria-hidden="true">{t("labels.background")}</h3>
-        )}
+        {stylesPanelMode === "full" && <h3 aria-hidden="true">{t("labels.background")}</h3>}
         <ColorPicker
           topPicks={DEFAULT_ELEMENT_BACKGROUND_PICKS}
           palette={DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE}
@@ -439,12 +412,9 @@ export const actionChangeBackgroundColor = register<
             app,
             (element) => element.backgroundColor,
             true,
-            (hasSelection) =>
-              !hasSelection ? appState.currentItemBackgroundColor : null,
+            (hasSelection) => (!hasSelection ? appState.currentItemBackgroundColor : null),
           )}
-          onChange={(color) =>
-            updateData({ currentItemBackgroundColor: color })
-          }
+          onChange={(color) => updateData({ currentItemBackgroundColor: color })}
           elements={elements}
           appState={appState}
           updateData={updateData}
@@ -462,9 +432,7 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
     trackEvent(
       "element",
       "changeFillStyle",
-      `${value} (${
-        app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"
-      })`,
+      `${value} (${app.editorInterface.formFactor === "phone" ? "mobile" : "desktop"})`,
     );
     return {
       elements: changeProperty(elements, appState, (el) =>
@@ -479,8 +447,7 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
   PanelComponent: ({ elements, appState, updateData, app }) => {
     const selectedElements = getSelectedElements(elements, appState);
     const allElementsZigZag =
-      selectedElements.length > 0 &&
-      selectedElements.every((el) => el.fillStyle === "zigzag");
+      selectedElements.length > 0 && selectedElements.every((el) => el.fillStyle === "zigzag");
 
     return (
       <fieldset>
@@ -516,8 +483,7 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
               app,
               (element) => element.fillStyle,
               (element) => element.hasOwnProperty("fillStyle"),
-              (hasSelection) =>
-                hasSelection ? null : appState.currentItemFillStyle,
+              (hasSelection) => (hasSelection ? null : appState.currentItemFillStyle),
             )}
             onClick={(value, event) => {
               const nextValue =
@@ -582,8 +548,7 @@ export const actionChangeStrokeWidth = register<DrawinkElement["strokeWidth"]>({
             app,
             (element) => element.strokeWidth,
             (element) => element.hasOwnProperty("strokeWidth"),
-            (hasSelection) =>
-              hasSelection ? null : appState.currentItemStrokeWidth,
+            (hasSelection) => (hasSelection ? null : appState.currentItemStrokeWidth),
           )}
           onChange={(value) => updateData(value)}
         />
@@ -636,8 +601,7 @@ export const actionChangeSloppiness = register<DrawinkElement["roughness"]>({
             app,
             (element) => element.roughness,
             (element) => element.hasOwnProperty("roughness"),
-            (hasSelection) =>
-              hasSelection ? null : appState.currentItemRoughness,
+            (hasSelection) => (hasSelection ? null : appState.currentItemRoughness),
           )}
           onChange={(value) => updateData(value)}
         />
@@ -689,8 +653,7 @@ export const actionChangeStrokeStyle = register<DrawinkElement["strokeStyle"]>({
             app,
             (element) => element.strokeStyle,
             (element) => element.hasOwnProperty("strokeStyle"),
-            (hasSelection) =>
-              hasSelection ? null : appState.currentItemStrokeStyle,
+            (hasSelection) => (hasSelection ? null : appState.currentItemStrokeStyle),
           )}
           onChange={(value) => updateData(value)}
         />
@@ -792,14 +755,9 @@ export const actionChangeFontSize = register<DrawinkTextElement["fontSize"]>({
               },
               (element) =>
                 isTextElement(element) ||
-                getBoundTextElement(
-                  element,
-                  app.scene.getNonDeletedElementsMap(),
-                ) !== null,
+                getBoundTextElement(element, app.scene.getNonDeletedElementsMap()) !== null,
               (hasSelection) =>
-                hasSelection
-                  ? null
-                  : appState.currentItemFontSize || DEFAULT_FONT_SIZE,
+                hasSelection ? null : appState.currentItemFontSize || DEFAULT_FONT_SIZE,
             )}
             onChange={(value) => {
               withCaretPositionPreservation(
@@ -861,10 +819,7 @@ export const actionIncreaseFontSize = register({
 });
 
 type ChangeFontFamilyData = Partial<
-  Pick<
-    AppState,
-    "openPopup" | "currentItemFontFamily" | "currentHoveredFontFamily"
-  >
+  Pick<AppState, "openPopup" | "currentItemFontFamily" | "currentHoveredFontFamily">
 > & {
   /** cache of selected & editing elements populated on opened popup */
   cachedElements?: ElementsMap;
@@ -918,8 +873,7 @@ export const actionChangeFontFamily = register<{
 
     const { currentItemFontFamily, currentHoveredFontFamily } = value;
 
-    let nextCaptureUpdateAction: CaptureUpdateActionType =
-      CaptureUpdateAction.EVENTUALLY;
+    let nextCaptureUpdateAction: CaptureUpdateActionType = CaptureUpdateAction.EVENTUALLY;
     let nextFontFamily: FontFamilyValues | undefined;
     let skipOnHoverRender = false;
 
@@ -941,10 +895,7 @@ export const actionChangeFontFamily = register<{
         let i = 0;
         let textLengthAccumulator = 0;
 
-        while (
-          i < selectedTextElements.length &&
-          textLengthAccumulator < 5000
-        ) {
+        while (i < selectedTextElements.length && textLengthAccumulator < 5000) {
           const textElement = selectedTextElements[i] as DrawinkTextElement;
           textLengthAccumulator += textElement?.originalText.length || 0;
           i++;
@@ -965,10 +916,7 @@ export const actionChangeFontFamily = register<{
     };
 
     if (nextFontFamily && !skipOnHoverRender) {
-      const elementContainerMapping = new Map<
-        DrawinkTextElement,
-        DrawinkElement | null
-      >();
+      const elementContainerMapping = new Map<DrawinkTextElement, DrawinkElement | null>();
       let uniqueChars = new Set<string>();
       let skipFontFaceCheck = false;
 
@@ -995,19 +943,14 @@ export const actionChangeFontFamily = register<{
           (oldElement) => {
             if (
               isTextElement(oldElement) &&
-              (oldElement.fontFamily !== nextFontFamily ||
-                currentItemFontFamily) // force update on selection
+              (oldElement.fontFamily !== nextFontFamily || currentItemFontFamily) // force update on selection
             ) {
-              const newElement: DrawinkTextElement = newElementWith(
-                oldElement,
-                {
-                  fontFamily: nextFontFamily,
-                  lineHeight: getLineHeight(nextFontFamily!),
-                },
-              );
+              const newElement: DrawinkTextElement = newElementWith(oldElement, {
+                fontFamily: nextFontFamily,
+                lineHeight: getLineHeight(nextFontFamily!),
+              });
 
-              const cachedContainer =
-                cachedElements?.get(oldElement.containerId || "") || {};
+              const cachedContainer = cachedElements?.get(oldElement.containerId || "") || {};
 
               const container = app.scene.getContainerElement(oldElement);
 
@@ -1017,10 +960,7 @@ export const actionChangeFontFamily = register<{
               }
 
               if (!skipFontFaceCheck) {
-                uniqueChars = new Set([
-                  ...uniqueChars,
-                  ...Array.from(newElement.originalText),
-                ]);
+                uniqueChars = new Set([...uniqueChars, ...Array.from(newElement.originalText)]);
               }
 
               elementContainerMapping.set(newElement, container);
@@ -1052,9 +992,7 @@ export const actionChangeFontFamily = register<{
           for (const [element, container] of elementContainerMapping) {
             // use latest element state to ensure we don't have closure over an old instance in order to avoid possible race conditions (i.e. font faces load out-of-order while rapidly switching fonts)
             const latestElement = app.scene.getElement(element.id);
-            const latestContainer = container
-              ? app.scene.getElement(container.id)
-              : null;
+            const latestContainer = container ? app.scene.getElement(container.id) : null;
 
             if (latestElement) {
               // trigger async redraw
@@ -1083,10 +1021,7 @@ export const actionChangeFontFamily = register<{
     const { stylesPanelMode, isCompact } = getStylesPanelInfo(app);
 
     const selectedFontFamily = useMemo(() => {
-      const getFontFamily = (
-        elementsArray: readonly DrawinkElement[],
-        elementsMap: ElementsMap,
-      ) =>
+      const getFontFamily = (elementsArray: readonly DrawinkElement[], elementsMap: ElementsMap) =>
         getFormValue(
           elementsArray,
           app,
@@ -1100,20 +1035,13 @@ export const actionChangeFontFamily = register<{
             }
             return null;
           },
-          (element) =>
-            isTextElement(element) ||
-            getBoundTextElement(element, elementsMap) !== null,
+          (element) => isTextElement(element) || getBoundTextElement(element, elementsMap) !== null,
           (hasSelection) =>
-            hasSelection
-              ? null
-              : appState.currentItemFontFamily || DEFAULT_FONT_FAMILY,
+            hasSelection ? null : appState.currentItemFontFamily || DEFAULT_FONT_FAMILY,
         );
 
       // popup opened, use cached elements
-      if (
-        batchedData.openPopup === "fontFamily" &&
-        appState.openPopup === "fontFamily"
-      ) {
+      if (batchedData.openPopup === "fontFamily" && appState.openPopup === "fontFamily") {
         return getFontFamily(
           Array.from(cachedElementsRef.current?.values() ?? []),
           cachedElementsRef.current,
@@ -1153,9 +1081,7 @@ export const actionChangeFontFamily = register<{
 
     return (
       <>
-        {stylesPanelMode === "full" && (
-          <legend>{t("labels.fontFamily")}</legend>
-        )}
+        {stylesPanelMode === "full" && <legend>{t("labels.fontFamily")}</legend>}
         <FontPicker
           isOpened={appState.openPopup === "fontFamily"}
           selectedFontFamily={selectedFontFamily}
@@ -1200,33 +1126,20 @@ export const actionChangeFontFamily = register<{
               // still check type to be safe
               if (editingTextElement?.type === "text") {
                 // retrieve the latest version from the scene, as `editingTextElement` isn't mutated
-                const latesteditingTextElement = app.scene.getElement(
-                  editingTextElement.id,
-                );
+                const latesteditingTextElement = app.scene.getElement(editingTextElement.id);
 
                 // inside the wysiwyg editor
                 cachedElementsRef.current.set(
                   editingTextElement.id,
-                  newElementWith(
-                    latesteditingTextElement || editingTextElement,
-                    {},
-                    true,
-                  ),
+                  newElementWith(latesteditingTextElement || editingTextElement, {}, true),
                 );
               } else {
-                const selectedElements = getSelectedElements(
-                  elements,
-                  appState,
-                  {
-                    includeBoundTextElement: true,
-                  },
-                );
+                const selectedElements = getSelectedElements(elements, appState, {
+                  includeBoundTextElement: true,
+                });
 
                 for (const element of selectedElements) {
-                  cachedElementsRef.current.set(
-                    element.id,
-                    newElementWith(element, {}, true),
-                  );
+                  cachedElementsRef.current.set(element.id, newElementWith(element, {}, true));
                 }
               }
 
@@ -1272,11 +1185,7 @@ export const actionChangeTextAlign = register<TextAlign>({
             const newElement: DrawinkTextElement = newElementWith(oldElement, {
               textAlign: value,
             });
-            redrawTextBoundingBox(
-              newElement,
-              app.scene.getContainerElement(oldElement),
-              app.scene,
-            );
+            redrawTextBoundingBox(newElement, app.scene.getContainerElement(oldElement), app.scene);
             return newElement;
           }
 
@@ -1328,20 +1237,15 @@ export const actionChangeTextAlign = register<TextAlign>({
                 if (isTextElement(element)) {
                   return element.textAlign;
                 }
-                const boundTextElement = getBoundTextElement(
-                  element,
-                  elementsMap,
-                );
+                const boundTextElement = getBoundTextElement(element, elementsMap);
                 if (boundTextElement) {
                   return boundTextElement.textAlign;
                 }
                 return null;
               },
               (element) =>
-                isTextElement(element) ||
-                getBoundTextElement(element, elementsMap) !== null,
-              (hasSelection) =>
-                hasSelection ? null : appState.currentItemTextAlign,
+                isTextElement(element) || getBoundTextElement(element, elementsMap) !== null,
+              (hasSelection) => (hasSelection ? null : appState.currentItemTextAlign),
             )}
             onChange={(value) => {
               withCaretPositionPreservation(
@@ -1373,11 +1277,7 @@ export const actionChangeVerticalAlign = register<VerticalAlign>({
               verticalAlign: value,
             });
 
-            redrawTextBoundingBox(
-              newElement,
-              app.scene.getContainerElement(oldElement),
-              app.scene,
-            );
+            redrawTextBoundingBox(newElement, app.scene.getContainerElement(oldElement), app.scene);
             return newElement;
           }
 
@@ -1436,10 +1336,7 @@ export const actionChangeVerticalAlign = register<VerticalAlign>({
               },
               (element) =>
                 isTextElement(element) ||
-                getBoundTextElement(
-                  element,
-                  app.scene.getNonDeletedElementsMap(),
-                ) !== null,
+                getBoundTextElement(element, app.scene.getNonDeletedElementsMap()) !== null,
               (hasSelection) => (hasSelection ? null : VERTICAL_ALIGN.MIDDLE),
             )}
             onChange={(value) => {
@@ -1487,14 +1384,9 @@ export const actionChangeRoundness = register<"sharp" | "round">({
     };
   },
   PanelComponent: ({ elements, appState, updateData, app, renderAction }) => {
-    const targetElements = getTargetElements(
-      getNonDeletedElements(elements),
-      appState,
-    );
+    const targetElements = getTargetElements(getNonDeletedElements(elements), appState);
 
-    const hasLegacyRoundness = targetElements.some(
-      (el) => el.roundness?.type === ROUNDNESS.LEGACY,
-    );
+    const hasLegacyRoundness = targetElements.some((el) => el.roundness?.type === ROUNDNESS.LEGACY);
 
     return (
       <fieldset>
@@ -1517,16 +1409,9 @@ export const actionChangeRoundness = register<"sharp" | "round">({
             value={getFormValue(
               elements,
               app,
-              (element) =>
-                hasLegacyRoundness
-                  ? null
-                  : element.roundness
-                  ? "round"
-                  : "sharp",
-              (element) =>
-                !isArrowElement(element) && element.hasOwnProperty("roundness"),
-              (hasSelection) =>
-                hasSelection ? null : appState.currentItemRoundness,
+              (element) => (hasLegacyRoundness ? null : element.roundness ? "round" : "sharp"),
+              (element) => !isArrowElement(element) && element.hasOwnProperty("roundness"),
+              (hasSelection) => (hasSelection ? null : appState.currentItemRoundness),
             )}
             onChange={(value) => updateData(value)}
           />
@@ -1646,9 +1531,8 @@ export const actionChangeArrowhead = register<{
       }),
       appState: {
         ...appState,
-        [value.position === "start"
-          ? "currentItemStartArrowhead"
-          : "currentItemEndArrowhead"]: value.type,
+        [value.position === "start" ? "currentItemStartArrowhead" : "currentItemEndArrowhead"]:
+          value.type,
       },
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
@@ -1728,16 +1612,8 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
         return el;
       }
       const elementsMap = app.scene.getNonDeletedElementsMap();
-      const startPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(
-        el,
-        0,
-        elementsMap,
-      );
-      const endPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(
-        el,
-        -1,
-        elementsMap,
-      );
+      const startPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(el, 0, elementsMap);
+      const endPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(el, -1, elementsMap);
       let newElement = newElementWith(el, {
         x: value === ARROW_TYPE.elbow ? startPoint[0] : el.x,
         y: value === ARROW_TYPE.elbow ? startPoint[1] : el.y,
@@ -1783,28 +1659,22 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
 
         app.dismissLinearEditor();
 
-        const startGlobalPoint =
-          LinearElementEditor.getPointAtIndexGlobalCoordinates(
-            newElement,
-            0,
-            elementsMap,
-          );
-        const endGlobalPoint =
-          LinearElementEditor.getPointAtIndexGlobalCoordinates(
-            newElement,
-            -1,
-            elementsMap,
-          );
+        const startGlobalPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(
+          newElement,
+          0,
+          elementsMap,
+        );
+        const endGlobalPoint = LinearElementEditor.getPointAtIndexGlobalCoordinates(
+          newElement,
+          -1,
+          elementsMap,
+        );
         const startElement =
           newElement.startBinding &&
-          (elementsMap.get(
-            newElement.startBinding.elementId,
-          ) as DrawinkBindableElement);
+          (elementsMap.get(newElement.startBinding.elementId) as DrawinkBindableElement);
         const endElement =
           newElement.endBinding &&
-          (elementsMap.get(
-            newElement.endBinding.elementId,
-          ) as DrawinkBindableElement);
+          (elementsMap.get(newElement.endBinding.elementId) as DrawinkBindableElement);
 
         const startBinding =
           startElement && newElement.startBinding
@@ -1839,8 +1709,7 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
           endBinding,
           ...updateElbowArrowPoints(newElement, elementsMap, {
             points: [startGlobalPoint, endGlobalPoint].map(
-              (p): LocalPoint =>
-                pointFrom(p[0] - newElement.x, p[1] - newElement.y),
+              (p): LocalPoint => pointFrom(p[0] - newElement.x, p[1] - newElement.y),
             ),
             startBinding,
             endBinding,
@@ -1941,15 +1810,14 @@ export const actionChangeArrowType = register<keyof typeof ARROW_TYPE>({
                   return element.elbowed
                     ? ARROW_TYPE.elbow
                     : element.roundness
-                    ? ARROW_TYPE.round
-                    : ARROW_TYPE.sharp;
+                      ? ARROW_TYPE.round
+                      : ARROW_TYPE.sharp;
                 }
 
                 return null;
               },
               (element) => isArrowElement(element),
-              (hasSelection) =>
-                hasSelection ? null : appState.currentItemArrowType,
+              (hasSelection) => (hasSelection ? null : appState.currentItemArrowType),
             )}
             onChange={(value) => updateData(value)}
           />

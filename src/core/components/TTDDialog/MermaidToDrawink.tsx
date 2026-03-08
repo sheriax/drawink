@@ -1,25 +1,21 @@
-import { useState, useRef, useEffect, useDeferredValue } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 
 import { EDITOR_LS_KEYS, debounce, isDevEnv } from "@/lib/common";
 
 import type { NonDeletedDrawinkElement } from "@/lib/elements/types";
 
-import { useApp } from "../App";
-import { ArrowRightIcon } from "../icons";
 import { EditorLocalStorage } from "../../data/EditorLocalStorage";
 import { t } from "../../i18n";
+import { useApp } from "../App";
 import Trans from "../Trans";
+import { ArrowRightIcon } from "../icons";
 
 import { TTDDialogInput } from "./TTDDialogInput";
 import { TTDDialogOutput } from "./TTDDialogOutput";
 import { TTDDialogPanel } from "./TTDDialogPanel";
 import { TTDDialogPanels } from "./TTDDialogPanels";
 import { TTDDialogSubmitShortcut } from "./TTDDialogSubmitShortcut";
-import {
-  convertMermaidToDrawink,
-  insertToEditor,
-  saveMermaidDataToStorage,
-} from "./common";
+import { convertMermaidToDrawink, insertToEditor, saveMermaidDataToStorage } from "./common";
 
 import "./MermaidToDrawink.scss";
 
@@ -37,9 +33,7 @@ const MermaidToDrawink = ({
   mermaidToDrawinkLib: MermaidToDrawinkLibProps;
 }) => {
   const [text, setText] = useState(
-    () =>
-      EditorLocalStorage.get<string>(EDITOR_LS_KEYS.MERMAID_TO_EXCALIDRAW) ||
-      MERMAID_EXAMPLE,
+    () => EditorLocalStorage.get<string>(EDITOR_LS_KEYS.MERMAID_TO_EXCALIDRAW) || MERMAID_EXAMPLE,
   );
   const deferredText = useDeferredValue(text.trim());
   const [error, setError] = useState<Error | null>(null);
@@ -89,17 +83,11 @@ const MermaidToDrawink = ({
       <div className="ttd-dialog-desc">
         <Trans
           i18nKey="mermaid.description"
-          flowchartLink={(el) => (
-            <a href="https://mermaid.js.org/syntax/flowchart.html">{el}</a>
-          )}
+          flowchartLink={(el) => <a href="https://mermaid.js.org/syntax/flowchart.html">{el}</a>}
           sequenceLink={(el) => (
-            <a href="https://mermaid.js.org/syntax/sequenceDiagram.html">
-              {el}
-            </a>
+            <a href="https://mermaid.js.org/syntax/sequenceDiagram.html">{el}</a>
           )}
-          classLink={(el) => (
-            <a href="https://mermaid.js.org/syntax/classDiagram.html">{el}</a>
-          )}
+          classLink={(el) => <a href="https://mermaid.js.org/syntax/classDiagram.html">{el}</a>}
         />
       </div>
       <TTDDialogPanels>

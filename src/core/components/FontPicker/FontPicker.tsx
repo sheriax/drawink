@@ -7,13 +7,9 @@ import { FONT_FAMILY } from "@/lib/common";
 import type { FontFamilyValues } from "@/lib/elements/types";
 
 import { t } from "../../i18n";
-import { RadioSelection } from "../RadioSelection";
 import { ButtonSeparator } from "../ButtonSeparator";
-import {
-  FontFamilyCodeIcon,
-  FontFamilyNormalIcon,
-  FreedrawIcon,
-} from "../icons";
+import { RadioSelection } from "../RadioSelection";
+import { FontFamilyCodeIcon, FontFamilyNormalIcon, FreedrawIcon } from "../icons";
 
 import { FontPickerList } from "./FontPickerList";
 import { FontPickerTrigger } from "./FontPickerTrigger";

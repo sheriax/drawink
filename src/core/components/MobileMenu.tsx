@@ -1,28 +1,23 @@
-import React from "react";
+import type React from "react";
 
 import type { NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { useTunnels } from "../context/tunnels";
 import { t } from "../i18n";
 import { calculateScrollCenter } from "../scene";
-import { SCROLLBAR_WIDTH, SCROLLBAR_MARGIN } from "../scene/scrollbars";
+import { SCROLLBAR_MARGIN, SCROLLBAR_WIDTH } from "../scene/scrollbars";
 
 import { ExitViewModeButton, MobileShapeActions } from "./Actions";
-import { MobileToolBar } from "./MobileToolBar";
 import { FixedSideContainer } from "./FixedSideContainer";
+import { MobileToolBar } from "./MobileToolBar";
 
 import { Island } from "./Island";
 
 import { PenModeButton } from "./PenModeButton";
 
-import type { ActionManager } from "../actions/manager";
-import type {
-  AppClassProperties,
-  AppProps,
-  AppState,
-  UIAppState,
-} from "../types";
 import type { JSX } from "react";
+import type { ActionManager } from "../actions/manager";
+import type { AppClassProperties, AppProps, AppState, UIAppState } from "../types";
 
 type MobileMenuProps = {
   appState: UIAppState;
@@ -34,14 +29,8 @@ type MobileMenuProps = {
   onHandToolToggle: () => void;
   onPenModeToggle: AppClassProperties["togglePenMode"];
 
-  renderTopRightUI?: (
-    isMobile: boolean,
-    appState: UIAppState,
-  ) => JSX.Element | null;
-  renderTopLeftUI?: (
-    isMobile: boolean,
-    appState: UIAppState,
-  ) => JSX.Element | null;
+  renderTopRightUI?: (isMobile: boolean, appState: UIAppState) => JSX.Element | null;
+  renderTopLeftUI?: (isMobile: boolean, appState: UIAppState) => JSX.Element | null;
   renderSidebars: () => JSX.Element | null;
   renderWelcomeScreen: boolean;
   UIOptions: AppProps["UIOptions"];
@@ -62,11 +51,7 @@ export const MobileMenu = ({
   app,
   onPenModeToggle,
 }: MobileMenuProps) => {
-  const {
-    WelcomeScreenCenterTunnel,
-    MainMenuTunnel,
-    DefaultSidebarTriggerTunnel,
-  } = useTunnels();
+  const { WelcomeScreenCenterTunnel, MainMenuTunnel, DefaultSidebarTriggerTunnel } = useTunnels();
   const renderAppTopBar = () => {
     if (appState.openDialog?.name === "elementLinkSelector") {
       return null;
@@ -87,9 +72,7 @@ export const MobileMenu = ({
               <DefaultSidebarTriggerTunnel.Out />
             </>
           ))}
-        {appState.viewModeEnabled && (
-          <ExitViewModeButton actionManager={actionManager} />
-        )}
+        {appState.viewModeEnabled && <ExitViewModeButton actionManager={actionManager} />}
       </div>
     );
 
@@ -117,11 +100,7 @@ export const MobileMenu = ({
 
   const renderToolbar = () => {
     return (
-      <MobileToolBar
-        app={app}
-        onHandToolToggle={onHandToolToggle}
-        setAppState={setAppState}
-      />
+      <MobileToolBar app={app} onHandToolToggle={onHandToolToggle} setAppState={setAppState} />
     );
   };
 
@@ -153,21 +132,19 @@ export const MobileMenu = ({
             {!appState.viewModeEnabled &&
               appState.openDialog?.name !== "elementLinkSelector" &&
               renderToolbar()}
-            {appState.scrolledOutside &&
-              !appState.openMenu &&
-              !appState.openSidebar && (
-                <button
-                  type="button"
-                  className="scroll-back-to-content"
-                  onClick={() => {
-                    setAppState((appState) => ({
-                      ...calculateScrollCenter(elements, appState),
-                    }));
-                  }}
-                >
-                  {t("buttons.scrollBackToContent")}
-                </button>
-              )}
+            {appState.scrolledOutside && !appState.openMenu && !appState.openSidebar && (
+              <button
+                type="button"
+                className="scroll-back-to-content"
+                onClick={() => {
+                  setAppState((appState) => ({
+                    ...calculateScrollCenter(elements, appState),
+                  }));
+                }}
+              >
+                {t("buttons.scrollBackToContent")}
+              </button>
+            )}
           </Island>
         </div>
       )}

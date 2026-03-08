@@ -1,8 +1,8 @@
-import { type DrawinkFontFaceDescriptor } from "../Fonts";
+import type { DrawinkFontFaceDescriptor } from "../Fonts";
 
-import _5 from "./Excalifont-Regular-349fac6ca4700ffec595a7150a0d1e1d.woff2";
 import _4 from "./Excalifont-Regular-3f2c5db56cc93c5a6873b1361d730c16.woff2";
 import _3 from "./Excalifont-Regular-41b173a47b57366892116a575a43e2b6.woff2";
+import _5 from "./Excalifont-Regular-349fac6ca4700ffec595a7150a0d1e1d.woff2";
 import _6 from "./Excalifont-Regular-623ccf21b21ef6b3a0d87738f77eb071.woff2";
 import _0 from "./Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2";
 import _2 from "./Excalifont-Regular-b9dcf9d2e50a1eaf42fc664b50a3fd0d.woff2";
@@ -138,8 +138,7 @@ export const ExcalifontFontFaces: DrawinkFontFaceDescriptor[] = [
   {
     uri: _3,
     descriptors: {
-      unicodeRange:
-        "U+37e,U+384-38a,U+38c,U+38e-393,U+395-3a1,U+3a3-3a8,U+3aa-3cf,U+3d7",
+      unicodeRange: "U+37e,U+384-38a,U+38c,U+38e-393,U+395-3a1,U+3a3-3a8,U+3aa-3cf,U+3d7",
     },
   },
   {
@@ -152,8 +151,7 @@ export const ExcalifontFontFaces: DrawinkFontFaceDescriptor[] = [
   {
     uri: _5,
     descriptors: {
-      unicodeRange:
-        "U+462-463,U+472-475,U+4d8-4d9,U+4e2-4e3,U+4e6-4e9,U+4ee-4ef",
+      unicodeRange: "U+462-463,U+472-475,U+4d8-4d9,U+4e2-4e3,U+4e6-4e9,U+4ee-4ef",
     },
   },
   { uri: _6, descriptors: { unicodeRange: "U+300-301,U+303" } },

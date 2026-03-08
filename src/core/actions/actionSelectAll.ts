@@ -2,7 +2,7 @@ import { getNonDeletedElements } from "@/lib/elements";
 import { LinearElementEditor } from "@/lib/elements";
 import { isLinearElement, isTextElement } from "@/lib/elements";
 
-import { arrayToMap, KEYS } from "@/lib/common";
+import { KEYS, arrayToMap } from "@/lib/common";
 
 import { selectGroupsForSelectedElements } from "@/lib/elements";
 
@@ -28,9 +28,7 @@ export const actionSelectAll = register({
     const selectedElementIds = elements
       .filter(
         (element) =>
-          !element.isDeleted &&
-          !(isTextElement(element) && element.containerId) &&
-          !element.locked,
+          !element.isDeleted && !(isTextElement(element) && element.containerId) && !element.locked,
       )
       .reduce((map: Record<DrawinkElement["id"], true>, element) => {
         map[element.id] = true;
@@ -51,8 +49,7 @@ export const actionSelectAll = register({
         ),
         selectedLinearElement:
           // single linear element selected
-          Object.keys(selectedElementIds).length === 1 &&
-          isLinearElement(elements[0])
+          Object.keys(selectedElementIds).length === 1 && isLinearElement(elements[0])
             ? new LinearElementEditor(elements[0], arrayToMap(elements))
             : null,
       },

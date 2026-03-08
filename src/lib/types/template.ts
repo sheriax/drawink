@@ -2,7 +2,7 @@
  * Template types
  */
 
-import type { Timestamp } from './db';
+import type { Timestamp } from "./db";
 
 export interface Template {
   id: string;
