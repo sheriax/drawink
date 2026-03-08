@@ -128,8 +128,8 @@ async function buildDockerImage(): Promise<boolean> {
   try {
     // @ts-ignore - Bun-specific
     const __dirname = import.meta.dir || dirname(fileURLToPath(import.meta.url));
-    const rootDir = resolve(__dirname, "..");
-    await $`docker build --platform linux/amd64 -t ${CONFIG.imageName}:latest ${rootDir}`.quiet();
+    const serverDir = resolve(__dirname, "..", "server");
+    await $`docker build --platform linux/amd64 -t ${CONFIG.imageName}:latest ${serverDir}`.quiet();
     success("Docker image built successfully");
     return true;
   } catch (e) {
