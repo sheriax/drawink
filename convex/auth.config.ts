@@ -19,7 +19,7 @@
  * but anonymous features (like public shareable links) will still function.
  */
 
-const clerkDomain = process.env.CLERK_JWT_ISSUER_DOMAIN;
+const clerkDomain = process.env.CLERK_FRONTEND_API_URL;
 
 export default {
   providers: clerkDomain
