@@ -181,9 +181,11 @@ Set via `--set-env-vars` in the deploy command, or in the Cloud Run console:
 | `NODE_ENV` | `production` | Enables production optimizations |
 | `CORS_ORIGIN` | `https://drawink.app` | Must match your frontend domain exactly |
 
-### Custom Domain for Collab Server (Cloudflare)
+### Custom Domain for Collab Server (100% Free via Cloudflare)
 
-If you use Cloudflare for your DNS (free plan), you can easily map `collab.drawink.app` to your Cloud Run service for **free** without needing an expensive GCP Load Balancer.
+If you use Cloudflare for your DNS (free plan), you can easily map `collab.drawink.app` to your Cloud Run service for **free** without needing an expensive GCP Load Balancer. This approach costs $0/month.
+
+**Note on Region Support:** Custom domain mapping in Cloud Run is not supported in all regions (e.g., `asia-south1`). Make sure your Cloud Run service is deployed in a supported region like `us-central1`.
 
 1. Go to your **GCP Console** → **Cloud Run** → click on your `drawink-collab` service.
 2. Click the **Integrations** tab.
@@ -441,7 +443,7 @@ dig collab.drawink.app A +short
 |---------|--------------|
 | **Vercel** (Hobby) | Free (100GB bandwidth/month) |
 | **Vercel** (Pro) | $20/month (1TB bandwidth) |
-| **Cloud Run** | ~$0-5/month (with CPU throttling, min 0 instances) |
+| **Cloud Run** | $0/month (Free Tier: 2M requests & 180k vCPU-seconds/mo. 0 min instances) |
 | **Convex** | Free tier (then $25/month for Pro) |
 | **Firebase Storage** | ~$0.026/GB stored + $0.12/GB downloaded |
 | **Clerk** | Free up to 10k MAU |
