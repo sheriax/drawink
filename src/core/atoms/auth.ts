@@ -121,8 +121,7 @@ export const setAuthStateAtom = atom(null, (get, set, authState: AuthState) => {
 export const setSyncStatusAtom = atom(null, (get, set, status: SyncStatus) => {
   set(syncStatusAtom, status);
   if (status === "idle") {
-    // @ts-ignore - jotai-scope type inference limitation
-    set(lastSyncAtom, Date.now());
+    (set as (atom: typeof lastSyncAtom, value: number) => void)(lastSyncAtom, Date.now());
   }
 });
 
@@ -140,8 +139,7 @@ export const enableCloudSyncAtom = atom(null, (get, set) => {
 export const disableCloudSyncAtom = atom(null, (get, set) => {
   set(cloudEnabledAtom, false);
   set(syncStatusAtom, "idle");
-  // @ts-ignore - jotai-scope type inference limitation
-  set(lastSyncAtom, null);
+  (set as (atom: typeof lastSyncAtom, value: null) => void)(lastSyncAtom, null);
   set(pendingChangesAtom, 0);
 });
 

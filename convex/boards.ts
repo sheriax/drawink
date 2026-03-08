@@ -6,8 +6,38 @@
  */
 
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
+
+// Shared validator for board document shape
+const boardValidator = v.object({
+  _id: v.id("boards"),
+  _creationTime: v.number(),
+  name: v.string(),
+  thumbnailUrl: v.optional(v.string()),
+  workspaceId: v.id("workspaces"),
+  projectId: v.optional(v.id("projects")),
+  ownerId: v.string(),
+  isPublic: v.boolean(),
+  publicLinkId: v.optional(v.string()),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+  lastOpenedAt: v.number(),
+  archivedAt: v.optional(v.number()),
+  version: v.number(),
+});
+
+// Shared validator for board content shape
+const boardContentValidator = v.object({
+  boardId: v.id("boards"),
+  ciphertext: v.bytes(),
+  iv: v.bytes(),
+  version: v.number(),
+  updatedAt: v.number(),
+  updatedBy: v.string(),
+  checksum: v.string(),
+});
 
 // =========================================================================
 // AUTH HELPERS
@@ -20,7 +50,7 @@ import { mutation, query } from "./_generated/server";
  */
 async function assertBoardAccess(
   ctx: QueryCtx | MutationCtx,
-  boardId: any,
+  boardId: Id<"boards">,
   requiredRole?: "owner" | "editor",
 ) {
   const identity = await ctx.auth.getUserIdentity();
@@ -91,6 +121,7 @@ export const listByWorkspace = query({
   args: {
     workspaceId: v.id("workspaces"),
   },
+  returns: v.array(boardValidator),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -136,6 +167,7 @@ export const listRecent = query({
     workspaceId: v.id("workspaces"),
     limit: v.optional(v.number()),
   },
+  returns: v.array(boardValidator),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -159,6 +191,7 @@ export const getById = query({
   args: {
     boardId: v.id("boards"),
   },
+  returns: boardValidator,
   handler: async (ctx, args) => {
     const { board } = await assertBoardAccess(ctx, args.boardId);
     return board;
@@ -172,6 +205,7 @@ export const getContent = query({
   args: {
     boardId: v.id("boards"),
   },
+  returns: boardContentValidator,
   handler: async (ctx, args) => {
     const { identity } = await assertBoardAccess(ctx, args.boardId);
 
@@ -211,6 +245,7 @@ export const create = mutation({
     name: v.string(),
     projectId: v.optional(v.id("projects")),
   },
+  returns: v.id("boards"),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -264,6 +299,7 @@ export const update = mutation({
     thumbnailUrl: v.optional(v.string()),
     projectId: v.optional(v.id("projects")),
   },
+  returns: v.id("boards"),
   handler: async (ctx, args) => {
     await assertBoardAccess(ctx, args.boardId, "editor");
 
@@ -285,6 +321,7 @@ export const updateLastOpened = mutation({
   args: {
     boardId: v.id("boards"),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     await assertBoardAccess(ctx, args.boardId);
 
@@ -304,6 +341,7 @@ export const saveContent = mutation({
     iv: v.bytes(),
     checksum: v.string(),
   },
+  returns: v.number(),
   handler: async (ctx, args) => {
     const { identity } = await assertBoardAccess(ctx, args.boardId, "editor");
 
@@ -356,6 +394,7 @@ export const archive = mutation({
   args: {
     boardId: v.id("boards"),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     await assertBoardAccess(ctx, args.boardId, "owner");
 
@@ -373,6 +412,7 @@ export const permanentDelete = mutation({
   args: {
     boardId: v.id("boards"),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const { board } = await assertBoardAccess(ctx, args.boardId, "owner");
 

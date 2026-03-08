@@ -38,6 +38,23 @@ export async function getUserId(ctx: MutationCtx | QueryCtx): Promise<string> {
  */
 export const getCurrent = query({
   args: {},
+  returns: v.union(
+    v.object({
+      _id: v.id("users"),
+      _creationTime: v.number(),
+      clerkId: v.string(),
+      email: v.string(),
+      name: v.string(),
+      photoUrl: v.optional(v.string()),
+      subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
+      stripeCustomerId: v.optional(v.string()),
+      stripeSubscriptionId: v.optional(v.string()),
+      subscriptionExpiresAt: v.optional(v.number()),
+      createdAt: v.number(),
+      lastLoginAt: v.number(),
+    }),
+    v.null(),
+  ),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -61,6 +78,18 @@ export const getByClerkId = query({
   args: {
     clerkId: v.string(),
   },
+  returns: v.union(
+    v.object({
+      _id: v.id("users"),
+      _creationTime: v.number(),
+      clerkId: v.string(),
+      email: v.string(),
+      name: v.string(),
+      photoUrl: v.optional(v.string()),
+      subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -167,5 +196,49 @@ export const updateSubscription = internalMutation({
       stripeSubscriptionId: args.stripeSubscriptionId,
       subscriptionExpiresAt: args.expiresAt,
     });
+  },
+});
+
+/**
+ * Delete user from Clerk webhook (user.deleted event).
+ * Removes the user record and cleans up workspace memberships.
+ */
+export const deleteFromClerk = internalMutation({
+  args: {
+    clerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first();
+
+    if (!user) {
+      // Already deleted or never existed — idempotent
+      return;
+    }
+
+    // Remove workspace memberships (not owned workspaces — those stay)
+    const memberships = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_user", (q) => q.eq("userId", args.clerkId))
+      .collect();
+
+    for (const membership of memberships) {
+      await ctx.db.delete(membership._id);
+    }
+
+    // Remove board collaborator entries
+    const collaborations = await ctx.db
+      .query("boardCollaborators")
+      .withIndex("by_user", (q) => q.eq("userId", args.clerkId))
+      .collect();
+
+    for (const collab of collaborations) {
+      await ctx.db.delete(collab._id);
+    }
+
+    // Delete the user record
+    await ctx.db.delete(user._id);
   },
 });

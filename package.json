@@ -69,6 +69,7 @@
     "sass": "1.97.3",
     "socket.io": "4.8.3",
     "socket.io-client": "4.8.3",
+    "svix": "1.86.0",
     "tunnel-rat": "0.1.2",
     "vite-plugin-html": "3.2.2"
   },

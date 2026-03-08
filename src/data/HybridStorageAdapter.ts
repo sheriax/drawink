@@ -45,7 +45,7 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   private syncEngine: SyncEngine | null = null;
 
   private _userId: string | null = null;
-  private _onSyncStatusChange: ((status: CloudSyncStatus) => void) | null = null;
+  private _syncListeners: Set<(status: CloudSyncStatus) => void> = new Set();
 
   constructor(localAdapter?: LocalStorageAdapter) {
     this.localAdapter = localAdapter || localStorageAdapter;
@@ -190,15 +190,22 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   }
 
   onSyncStatusChange(callback: (status: CloudSyncStatus) => void): void {
-    this._onSyncStatusChange = callback;
+    this._syncListeners.add(callback);
   }
 
-  offSyncStatusChange(): void {
-    this._onSyncStatusChange = null;
+  offSyncStatusChange(callback?: (status: CloudSyncStatus) => void): void {
+    if (callback) {
+      this._syncListeners.delete(callback);
+    } else {
+      this._syncListeners.clear();
+    }
   }
 
   private notifySyncStatusChange(): void {
-    this._onSyncStatusChange?.(this.getSyncStatus());
+    const status = this.getSyncStatus();
+    for (const listener of this._syncListeners) {
+      listener(status);
+    }
   }
 
   // =========================================================================
@@ -448,7 +455,30 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
   }
 
   async getBoardContent(boardId: string): Promise<BoardContent> {
-    return this.localAdapter.getBoardContent(boardId);
+    // Try local first
+    const localContent = await this.localAdapter.getBoardContent(boardId);
+
+    // If we have local content or no cloud adapter, return local
+    if (localContent || !this.cloudAdapter) {
+      return localContent;
+    }
+
+    // Cloud fallback: fetch from cloud when local cache is empty
+    if (navigator.onLine) {
+      try {
+        const cloudContent = await this.cloudAdapter.getBoardContent(boardId);
+        if (cloudContent) {
+          // Cache locally for next time
+          await this.localAdapter.saveBoardContent(boardId, cloudContent);
+        }
+        return cloudContent;
+      } catch (error) {
+        console.warn("[HybridStorageAdapter] Cloud content fetch failed:", error);
+        return localContent;
+      }
+    }
+
+    return localContent;
   }
 
   async saveBoardContent(boardId: string, content: BoardContent): Promise<void> {

@@ -22,7 +22,8 @@ export function useSyncStatus(): CloudSyncStatus {
     window.addEventListener("offline", handleOffline);
 
     // Subscribe to sync status changes from adapter
-    hybridStorageAdapter.onSyncStatusChange(setStatus);
+    const handleSyncChange = (newStatus: CloudSyncStatus) => setStatus(newStatus);
+    hybridStorageAdapter.onSyncStatusChange(handleSyncChange);
 
     // Subscribe to queue changes
     const unsubscribeQueue = offlineQueue.onSync(() => {
@@ -32,7 +33,7 @@ export function useSyncStatus(): CloudSyncStatus {
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
-      hybridStorageAdapter.offSyncStatusChange();
+      hybridStorageAdapter.offSyncStatusChange(handleSyncChange);
       unsubscribeQueue();
     };
   }, []);

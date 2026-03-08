@@ -5,6 +5,41 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+// Shared validator for workspace document shape
+const workspaceValidator = v.object({
+  _id: v.id("workspaces"),
+  _creationTime: v.number(),
+  name: v.string(),
+  ownerId: v.string(),
+  clerkOrgId: v.optional(v.string()),
+  icon: v.optional(v.string()),
+  color: v.optional(v.string()),
+  subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+  memberCount: v.number(),
+});
+
+// Shared validator for member with user details
+const memberWithUserValidator = v.object({
+  _id: v.id("workspaceMembers"),
+  _creationTime: v.number(),
+  workspaceId: v.id("workspaces"),
+  userId: v.string(),
+  role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member"), v.literal("viewer")),
+  joinedAt: v.number(),
+  user: v.union(
+    v.object({
+      _id: v.id("users"),
+      clerkId: v.string(),
+      name: v.string(),
+      email: v.string(),
+      photoUrl: v.optional(v.string()),
+    }),
+    v.null(),
+  ),
+});
+
 // =========================================================================
 // QUERIES
 // =========================================================================
@@ -14,6 +49,7 @@ import { mutation, query } from "./_generated/server";
  */
 export const listMine = query({
   args: {},
+  returns: v.array(workspaceValidator),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -56,6 +92,7 @@ export const getById = query({
   args: {
     workspaceId: v.id("workspaces"),
   },
+  returns: workspaceValidator,
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -92,6 +129,7 @@ export const getMembers = query({
   args: {
     workspaceId: v.id("workspaces"),
   },
+  returns: v.array(memberWithUserValidator),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -163,6 +201,7 @@ export const create = mutation({
     name: v.string(),
     clerkOrgId: v.optional(v.string()),
   },
+  returns: v.id("workspaces"),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -215,6 +254,7 @@ export const update = mutation({
     icon: v.optional(v.string()),
     color: v.optional(v.string()),
   },
+  returns: v.id("workspaces"),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -235,6 +275,16 @@ export const update = mutation({
       throw new Error("Access denied");
     }
 
+    // Validate icon (emoji, max 8 chars)
+    if (updates.icon !== undefined && updates.icon.length > 8) {
+      throw new Error("Icon must be 8 characters or fewer");
+    }
+
+    // Validate color (hex format)
+    if (updates.color !== undefined && !/^#[0-9a-fA-F]{3,8}$/.test(updates.color)) {
+      throw new Error("Color must be a valid hex color (e.g. #FF5733)");
+    }
+
     await ctx.db.patch(workspaceId, {
       ...updates,
       updatedAt: Date.now(),
@@ -249,6 +299,7 @@ export const update = mutation({
  */
 export const ensureDefault = mutation({
   args: {},
+  returns: v.id("workspaces"),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -309,6 +360,7 @@ export const deleteWorkspace = mutation({
     workspaceId: v.id("workspaces"),
     confirmName: v.string(),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -334,7 +386,14 @@ export const deleteWorkspace = mutation({
       .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
       .collect();
 
-    // For each board, delete related data
+    // Safety check: reject very large workspaces to avoid mutation timeout
+    if (boards.length > 50) {
+      throw new Error(
+        "Workspace has too many boards for direct deletion. Please delete boards individually first.",
+      );
+    }
+
+    // For each board, delete all related data in a single pass
     for (const board of boards) {
       const contents = await ctx.db
         .query("boardContent")
@@ -368,12 +427,6 @@ export const deleteWorkspace = mutation({
         await ctx.db.delete(f._id);
       }
 
-      await ctx.db.delete(board._id);
-    }
-
-    // Delete all collaboration sessions for boards in this workspace
-    // (sessions reference boards, which are now deleted)
-    for (const board of boards) {
       const sessions = await ctx.db
         .query("collaborationSessions")
         .withIndex("by_board", (q) => q.eq("boardId", board._id))
@@ -381,6 +434,8 @@ export const deleteWorkspace = mutation({
       for (const s of sessions) {
         await ctx.db.delete(s._id);
       }
+
+      await ctx.db.delete(board._id);
     }
 
     // Delete all projects in this workspace
@@ -403,6 +458,7 @@ export const deleteWorkspace = mutation({
 
     // Delete the workspace
     await ctx.db.delete(args.workspaceId);
+    return null;
   },
 });
 
@@ -415,6 +471,7 @@ export const transferOwnership = mutation({
     workspaceId: v.id("workspaces"),
     newOwnerUserId: v.string(),
   },
+  returns: v.id("workspaces"),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
