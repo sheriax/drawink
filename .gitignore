@@ -28,7 +28,6 @@ coverage
 dev-dist
 html
 meta*.json
-.claude
 .turbo
 
 # Convex compiled files (auto-generated, should not be committed)

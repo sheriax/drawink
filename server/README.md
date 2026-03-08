@@ -1,24 +1,33 @@
-# Drawink Collaboration Server
+# Drawink Collab Server
 
-Real-time collaboration server for Drawink using Socket.io.
+Real-time collaboration server for [Drawink](https://drawink.app) — powered by **Socket.io** and **Bun**.
 
-Based on the [Excalidraw collaboration server](https://github.com/excalidraw/excalidraw-room).
+## What It Does
 
-## Features
+Handles real-time collaboration features that need low-latency WebSocket connections:
 
-- Real-time collaborative editing
-- Encrypted scene updates
-- User presence (cursors, selections)
-- User following (viewport sync)
-- Room-based collaboration
+- **Room-based collaboration** — users join shared rooms to co-edit
+- **Encrypted scene sync** — scene updates are encrypted client-side before transmission
+- **Cursor & selection presence** — live cursor tracking across collaborators
+- **User following** — sync viewports between users
+- **Volatile broadcasts** — ephemeral updates (cursors) that don't need guaranteed delivery
+
+> All persistent data (boards, users, files) lives in **Convex** — this server only handles real-time transport.
 
 ## Architecture
 
-This server is part of the Drawink hybrid architecture:
-
-- **Collaboration (this server)**: Socket.io for real-time features
-- **Database**: Convex for persistence, auth, and business logic
-- **File Storage**: Firebase Storage for images and files
+```
+┌──────────────┐    WebSocket     ┌─────────────────┐
+│  Drawink App │ ◄──────────────► │  Collab Server   │
+│  (Vite/React)│    Socket.io     │  (Bun + Express) │
+└──────┬───────┘                  └──────────────────┘
+       │
+       │  HTTPS
+       ▼
+┌──────────────┐
+│    Convex    │  Persistence, Auth, Business Logic
+└──────────────┘
+```
 
 ## Development
 
@@ -26,70 +35,77 @@ This server is part of the Drawink hybrid architecture:
 # Install dependencies
 bun install
 
-# Run in development mode (with hot reload)
+# Start with hot reload
 bun run dev
 
-# Or run directly
+# Or start directly
 bun run start
 ```
 
+The server runs on `http://localhost:3003` by default.
+
+> **Tip:** From the root project, `bun dev` starts both the Vite app and this collab server concurrently.
+
 ## Environment Variables
 
-Copy `.env.example` to `.env` and configure:
+| Variable | Dev Default | Production | Description |
+|---|---|---|---|
+| `PORT` | `3003` | `3003` | Server port |
+| `NODE_ENV` | `development` | `production` | Environment |
+| `CORS_ORIGIN` | `http://localhost:5173` | `https://drawink.app` | Allowed frontend origin |
 
-```bash
-PORT=3003
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
-```
+Config files: `.env.development` (local) and `.env.production` (deployed).
 
 ## Deployment
 
-### Docker
+### Current: Google Cloud Run
 
-```dockerfile
-FROM oven/bun:1.3.3
-WORKDIR /app
-COPY package.json bun.lockb ./
-RUN bun install --production
-COPY . .
-EXPOSE 3003
-CMD ["bun", "index.ts"]
-```
+The server is deployed on **Google Cloud Run** in the `drawink-2026` GCP project:
 
-### Cloud Run (Google Cloud)
+- **Region:** `asia-south1` (Mumbai)
+- **Image:** `asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest`
+- **URL:** `https://drawink-731425062456.asia-south1.run.app`
+
+#### Deploy Steps
 
 ```bash
-# Build and deploy
-gcloud builds submit --tag gcr.io/PROJECT_ID/drawink-collab
-gcloud run deploy drawink-collab \
-  --image gcr.io/PROJECT_ID/drawink-collab \
+# 1. Build and push Docker image to Artifact Registry
+gcloud builds submit --tag asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
+
+# 2. Deploy to Cloud Run
+gcloud run deploy drawink \
+  --image asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
   --platform managed \
-  --region us-central1 \
+  --region asia-south1 \
   --allow-unauthenticated \
-  --set-env-vars="CORS_ORIGIN=https://canvas.drawink.app"
+  --set-env-vars="CORS_ORIGIN=https://drawink.app,PORT=3003,NODE_ENV=production"
 ```
 
-## Protocol
+> **Note:** No custom domain is mapped yet. The frontend currently references `collab.drawink.app` in `.env.production` — this needs to be updated to the actual Cloud Run URL or a custom domain needs to be mapped.
 
-The server uses the following Socket.io events:
+## Socket.io Protocol
 
 ### Client → Server
 
-- `join-room`: Join a collaboration room
-- `server-broadcast`: Broadcast scene update to room
-- `server-volatile-broadcast`: Broadcast volatile update (cursor, etc.)
-- `user-follow`: Follow/unfollow a user's viewport
+| Event | Payload | Description |
+|---|---|---|
+| `join-room` | `roomID` | Join a collaboration room |
+| `server-broadcast` | `roomID, encryptedData, iv` | Broadcast scene update (reliable) |
+| `server-volatile-broadcast` | `roomID, encryptedData, iv` | Broadcast volatile update (cursor position) |
+| `user-follow` | `{ userToFollow, action }` | Follow/unfollow a user's viewport |
 
 ### Server → Client
 
-- `init-room`: Room initialization
-- `first-in-room`: First user in room
-- `new-user`: New user joined
-- `client-broadcast`: Scene update from another user
-- `room-user-change`: Room user list changed
-- `user-follow-room-change`: Follower list changed
+| Event | Payload | Description |
+|---|---|---|
+| `init-room` | — | Room initialization |
+| `first-in-room` | — | You're the first user in this room |
+| `new-user` | `socketId` | Another user joined |
+| `client-broadcast` | `encryptedData, iv` | Scene update from another user |
+| `room-user-change` | `socketId[]` | Room participant list changed |
+| `user-follow-room-change` | `socketId[]` | Follower list changed |
+| `broadcast-unfollow` | — | All followers have left |
 
 ## Security
 
-All scene data is encrypted client-side before transmission. The server only handles encrypted blobs.
+All scene data is **end-to-end encrypted** — the server only relays opaque encrypted blobs and never sees drawing content.
