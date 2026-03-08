@@ -45,7 +45,7 @@ const CLOUD_RUN_SETTINGS = [
   "--concurrency=80",
   "--timeout=3600",
   "--session-affinity",
-  '--set-env-vars="NODE_ENV=production,PORT=3003,CORS_ORIGIN=https://drawink.app"',
+  '--set-env-vars="NODE_ENV=production,CORS_ORIGIN=https://drawink.app"',
 ] as const;
 
 function log(message: string, color = colors.cyan) {
