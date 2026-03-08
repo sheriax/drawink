@@ -40,6 +40,7 @@ server.listen(port, () => {
 try {
   const io = new SocketIO(server, {
     transports: ["websocket", "polling"],
+    perMessageDeflate: false,
     cors: {
       allowedHeaders: ["Content-Type", "Authorization"],
       origin: process.env.CORS_ORIGIN || "*",

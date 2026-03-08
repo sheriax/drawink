@@ -108,7 +108,7 @@ The Socket.io collaboration server handles real-time presence, cursor sync, and 
 | Setting | Value |
 |---------|-------|
 | **GCP Project** | `drawink-2026` |
-| **Region** | `asia-south1` |
+| **Region** | `us-central1` |
 | **Service Name** | `drawink-collab` |
 | **Domain** | `collab.drawink.app` |
 
@@ -127,45 +127,21 @@ gcloud services enable \
 # Create Artifact Registry repo (if not exists)
 gcloud artifacts repositories create drawink \
   --repository-format=docker \
-  --location=asia-south1 \
+  --location=us-central1 \
   --description="Drawink Docker images" \
   --project=drawink-2026
 
 # Configure Docker auth
-gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
+gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 ```
 
 ### Deploy the Collab Server
 
+We provide an automated deployment script that builds, tags, and deploys the Cloud Run service with the exact required settings (like session-affinity and long timeouts for WebSockets).
+
 ```bash
-# Navigate to server directory
-cd server
-
-# 1. Build Docker image (linux/amd64 required for Cloud Run)
-docker build --platform linux/amd64 -t drawink-collab:latest .
-
-# 2. Tag for Artifact Registry
-docker tag drawink-collab:latest \
-  asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest
-
-# 3. Push to Artifact Registry
-docker push \
-  asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest
-
-# 4. Deploy to Cloud Run
-gcloud run deploy drawink-collab \
-  --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest \
-  --region=asia-south1 \
-  --port=3003 \
-  --allow-unauthenticated \
-  --cpu-throttling \
-  --memory=256Mi \
-  --min-instances=0 \
-  --max-instances=3 \
-  --timeout=3600 \
-  --session-affinity \
-  --set-env-vars="NODE_ENV=production,PORT=3003,CORS_ORIGIN=https://drawink.app" \
-  --project=drawink-2026
+# From the project root
+bun ./scripts/deploy.ts
 ```
 
 > **Note:** `--timeout=3600` (1 hour) is needed for long-lived WebSocket connections.
@@ -203,14 +179,8 @@ Cloudflare will handle the SSL certificate and route the WebSocket traffic perfe
 ### Quick Redeploy (Server Updates)
 
 ```bash
-cd server
-docker build --platform linux/amd64 -t drawink-collab:latest . && \
-docker tag drawink-collab:latest asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest && \
-docker push asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest && \
-gcloud run deploy drawink-collab \
-  --image=asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest \
-  --region=asia-south1 \
-  --project=drawink-2026
+# The deployment script supports a --quick flag to skip the confirmation prompt:
+bun ./scripts/deploy.ts --quick
 ```
 
 ---
@@ -397,11 +367,11 @@ Or use the [Vercel Dashboard](https://vercel.com) for logs, analytics, and deplo
 ```bash
 # View logs
 gcloud run services logs read drawink-collab \
-  --region=asia-south1 --project=drawink-2026 --limit=50
+  --region=us-central1 --project=drawink-2026 --limit=50
 
 # Check service status
 gcloud run services describe drawink-collab \
-  --region=asia-south1 --project=drawink-2026
+  --region=us-central1 --project=drawink-2026
 ```
 
 ### Convex

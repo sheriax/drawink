@@ -23,11 +23,11 @@ const colors = {
 // Configuration
 const CONFIG = {
   projectId: "drawink-2026",
-  region: "asia-south1",
-  serviceName: "drawink",
-  imageName: "drawink",
-  registry: `asia-south1-docker.pkg.dev/drawink-2026/drawink`,
-  port: 3000,
+  region: "us-central1",
+  serviceName: "drawink-collab",
+  imageName: "drawink-collab",
+  registry: `us-central1-docker.pkg.dev/drawink-2026/drawink`,
+  port: 3003,
 } as const;
 
 // Cloud Run optimized settings
@@ -42,7 +42,9 @@ const CLOUD_RUN_SETTINGS = [
   "--min-instances=0",
   "--max-instances=3",
   "--concurrency=80",
-  "--timeout=300",
+  "--timeout=3600",
+  "--session-affinity",
+  '--set-env-vars="NODE_ENV=production,PORT=3003,CORS_ORIGIN=https://drawink.app"',
 ] as const;
 
 function log(message: string, color = colors.cyan) {
@@ -178,8 +180,9 @@ async function deployToCloudRun(quick = false): Promise<boolean> {
     console.log("  - CPU throttling: enabled");
     console.log("  - Memory: 256Mi");
     console.log("  - Max instances: 3");
-    console.log("  - Timeout: 300s");
+    console.log("  - Timeout: 3600s");
     console.log("  - Concurrency: 80");
+    console.log("  - Session Affinity: enabled");
     console.log("\nPress Ctrl+C to cancel, or wait 3 seconds to continue...");
 
     await new Promise((resolve) => setTimeout(resolve, 3000));

@@ -1,0 +1,32 @@
+name: Drawink CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun environment
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Build Frontend
+        run: bun run build
+        env:
+          VITE_CLERK_PUBLISHABLE_KEY: pk_test_dummy
+          VITE_CONVEX_URL: https://dummy.convex.cloud
+
+      - name: Build Collab Server
+        run: bun run build:collab

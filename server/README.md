@@ -62,26 +62,21 @@ Config files: `.env.development` (local) and `.env.production` (deployed).
 
 The server is deployed on **Google Cloud Run** in the `drawink-2026` GCP project:
 
-- **Region:** `asia-south1` (Mumbai)
-- **Image:** `asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest`
-- **URL:** `https://drawink-731425062456.asia-south1.run.app`
+- **Region:** `us-central1` (Iowa) - Required for Cloudflare custom domains
+- **Service Name:** `drawink-collab`
+- **Image:** `us-central1-docker.pkg.dev/drawink-2026/drawink/drawink-collab:latest`
+- **URL:** `https://drawink-collab-731425062456.us-central1.run.app`
 
 #### Deploy Steps
 
-```bash
-# 1. Build and push Docker image to Artifact Registry
-gcloud builds submit --tag asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest
+We highly recommend using our automated deployment script from the project root. It correctly configures Docker tagging, Artifact Registry push, session affinity, and timeouts for robust WebSocket connections on Cloud Run.
 
-# 2. Deploy to Cloud Run
-gcloud run deploy drawink \
-  --image asia-south1-docker.pkg.dev/drawink-2026/drawink/drawink:latest \
-  --platform managed \
-  --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars="CORS_ORIGIN=https://drawink.app,PORT=3003,NODE_ENV=production"
+```bash
+# From the project root:
+bun ./scripts/deploy.ts
 ```
 
-> **Note:** No custom domain is mapped yet. The frontend currently references `collab.drawink.app` in `.env.production` — this needs to be updated to the actual Cloud Run URL or a custom domain needs to be mapped.
+> **Note:** The server is mapped to `collab.drawink.app` via Cloudflare which routes directly to the Cloud Run service.
 
 ## Socket.io Protocol
 

@@ -459,7 +459,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
     try {
       this.portal.socket = this.portal.open(
         socketIOClient(import.meta.env.VITE_APP_WS_SERVER_URL, {
-          transports: ["websocket", "polling"],
+          transports: ["polling", "websocket"],
         }),
         roomId,
         roomKey,
