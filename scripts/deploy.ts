@@ -26,6 +26,7 @@ const CONFIG = {
   region: "us-central1",
   serviceName: "drawink-collab",
   imageName: "drawink-collab",
+  repositoryName: "drawink",
   registry: `us-central1-docker.pkg.dev/drawink-2026/drawink`,
   port: 3003,
 } as const;
@@ -158,6 +159,15 @@ async function pushImage(): Promise<boolean> {
   step("Pushing image to Artifact Registry...");
 
   try {
+    // Ensure Artifact Registry repository exists
+    try {
+      await $`gcloud artifacts repositories describe ${CONFIG.repositoryName} --location=${CONFIG.region} --project=${CONFIG.projectId}`.quiet();
+    } catch {
+      log(`Repository '${CONFIG.repositoryName}' not found, creating it...`, colors.yellow);
+      await $`gcloud artifacts repositories create ${CONFIG.repositoryName} --repository-format=docker --location=${CONFIG.region} --project=${CONFIG.projectId} --description="Docker repository for Drawink"`.quiet();
+      success(`Created Artifact Registry repository '${CONFIG.repositoryName}'`);
+    }
+
     // Ensure Docker is authenticated
     await $`gcloud auth configure-docker ${CONFIG.region}-docker.pkg.dev --quiet`.quiet();
 
