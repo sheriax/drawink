@@ -24,6 +24,7 @@ export default defineSchema({
     stripeCustomerId: v.optional(v.string()),
     stripeSubscriptionId: v.optional(v.string()),
     subscriptionExpiresAt: v.optional(v.number()),
+    isBetaUser: v.optional(v.boolean()),
 
     // Metadata
     createdAt: v.number(),

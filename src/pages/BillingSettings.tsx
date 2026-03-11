@@ -1,16 +1,19 @@
 /**
  * Billing Settings Page
- * Shows user that all features are available for free
+ * Shows user's current plan — beta users see a "Beta Access" badge
+ * with a notice that features may require a paid plan after beta ends.
  */
 
 import { useUser } from "@clerk/clerk-react";
 import type React from "react";
+import { useSubscription } from "../hooks/useSubscription";
 import "./BillingSettings.scss";
 
 const BillingSettings: React.FC = () => {
   const { user, isLoaded } = useUser();
+  const { tier, isBetaUser, isLoading: subLoading } = useSubscription();
 
-  if (!isLoaded) {
+  if (!isLoaded || subLoading) {
     return (
       <div className="billing-settings">
         <div className="loading">Loading...</div>
@@ -26,6 +29,9 @@ const BillingSettings: React.FC = () => {
     );
   }
 
+  const planName = isBetaUser ? "Beta Access" : tier === "team" ? "Team" : tier === "pro" ? "Pro" : "Free";
+  const planPrice = isBetaUser ? "Free during beta" : "₹0/month";
+
   return (
     <div className="billing-settings">
       <div className="container">
@@ -36,15 +42,30 @@ const BillingSettings: React.FC = () => {
           <div className="plan-card">
             <div className="plan-header">
               <div className="plan-info">
-                <h3>Free - All Features Unlocked</h3>
-                <p className="plan-price">₹0/month</p>
+                <h3>{planName}</h3>
+                <p className="plan-price">{planPrice}</p>
               </div>
-              <div className="status-badge active">Active</div>
+              <div className={`status-badge ${isBetaUser ? "beta" : "active"}`}>
+                {isBetaUser ? "Beta" : "Active"}
+              </div>
             </div>
 
             <div className="plan-details">
-              <p>You have access to all features for free!</p>
+              <p>
+                {isBetaUser
+                  ? "You have full access to all features as a beta user."
+                  : "You have access to all features for free!"}
+              </p>
             </div>
+
+            {isBetaUser && (
+              <div className="beta-warning">
+                <p>
+                  When the beta period ends, your account will move to the Free
+                  plan. Some features may require a paid plan at that point.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

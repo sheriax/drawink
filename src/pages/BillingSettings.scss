@@ -89,6 +89,25 @@
       background: #ffebee;
       color: #c62828;
     }
+
+    &.beta {
+      background: rgba(255, 193, 7, 0.15);
+      color: #b8860b;
+    }
+  }
+
+  .beta-warning {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    border-radius: 8px;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #b8860b;
+    }
   }
 
   .plan-details {

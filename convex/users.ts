@@ -47,6 +47,7 @@ export const getCurrent = query({
       name: v.string(),
       photoUrl: v.optional(v.string()),
       subscriptionTier: v.union(v.literal("free"), v.literal("pro"), v.literal("team")),
+      isBetaUser: v.optional(v.boolean()),
       stripeCustomerId: v.optional(v.string()),
       stripeSubscriptionId: v.optional(v.string()),
       subscriptionExpiresAt: v.optional(v.number()),
@@ -154,12 +155,14 @@ export const upsertFromClerk = internalMutation({
       return existingUser._id;
     } else {
       // Create new user
+      const betaEnabled = process.env.BETA_ENABLED === "true";
       const userId = await ctx.db.insert("users", {
         clerkId: args.clerkId,
         email: args.email,
         name: args.name,
         photoUrl: args.photoUrl,
-        subscriptionTier: "team",
+        subscriptionTier: "free",
+        isBetaUser: betaEnabled ? true : undefined,
         createdAt: now,
         lastLoginAt: now,
       });
@@ -196,6 +199,45 @@ export const updateSubscription = internalMutation({
       stripeSubscriptionId: args.stripeSubscriptionId,
       subscriptionExpiresAt: args.expiresAt,
     });
+  },
+});
+
+/**
+ * One-time migration: converts all existing users to beta users.
+ * Run once from the Convex dashboard after deploying this schema change.
+ * Sets isBetaUser: true and subscriptionTier: "free" on every user.
+ * Idempotent — safe to run multiple times.
+ */
+export const migrateToBeta = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const allUsers = await ctx.db.query("users").collect();
+    for (const user of allUsers) {
+      await ctx.db.patch(user._id, {
+        isBetaUser: true,
+        subscriptionTier: "free",
+      });
+    }
+    return { migrated: allUsers.length };
+  },
+});
+
+/**
+ * End-of-beta migration: clears the isBetaUser flag on all beta users.
+ * Run from the Convex dashboard when the beta period ends.
+ * Beta users will automatically lose premium access (their tier stays "free").
+ */
+export const endBeta = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const betaUsers = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("isBetaUser"), true))
+      .collect();
+    for (const user of betaUsers) {
+      await ctx.db.patch(user._id, { isBetaUser: false });
+    }
+    return { cleared: betaUsers.length };
   },
 });
 
