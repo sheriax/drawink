@@ -347,12 +347,18 @@ export const saveCollaborativeScene = mutation({
 /**
  * Load collaborative scene from Convex
  * Replaces Firebase's loadFromFirebase() function
+ * Requires authentication to prevent unauthenticated access to encrypted scene data.
  */
 export const loadCollaborativeScene = query({
   args: {
     roomId: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized: authentication required to load collaborative scenes");
+    }
+
     const room = await ctx.db
       .query("collaborativeRooms")
       .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))

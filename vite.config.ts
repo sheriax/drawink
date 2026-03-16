@@ -61,13 +61,6 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       exclude: ["@drawink/drawink"],
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          silenceDeprecations: ["import", "global-builtin", "color-functions"],
-        },
-      },
-    },
     build: {
       outDir: "dist",
       sourcemap: true,

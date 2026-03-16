@@ -8,6 +8,9 @@ import {
 import { getDataURL } from "@/core/data/blob";
 import { safelyParseJSON } from "@/lib/common";
 
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+
 import type { DrawinkImperativeAPI } from "@/core/types";
 
 export const AIComponents = ({
@@ -15,10 +18,29 @@ export const AIComponents = ({
 }: {
   drawinkAPI: DrawinkImperativeAPI;
 }) => {
+  const trackUsage = useMutation(api.aiUsage.trackUsage);
+  const limitCheck = useQuery(api.aiUsage.checkLimit);
+
   return (
     <>
       <DiagramToCodePlugin
         generate={async ({ frame, children }) => {
+          // Check limit before making AI request
+          if (limitCheck && !limitCheck.allowed) {
+            return {
+              html: `<html>
+              <body style="margin: 0; text-align: center">
+              <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100vh; padding: 0 60px">
+                <div style="color:red">${limitCheck.reason || "AI request limit reached."}</div>
+                </br>
+                </br>
+                <div>Upgrade your plan for unlimited AI access.</div>
+              </div>
+              </body>
+              </html>`,
+            };
+          }
+
           const appState = drawinkAPI.getAppState();
 
           const blob = await exportToBlob({
@@ -85,6 +107,12 @@ export const AIComponents = ({
             if (!html) {
               throw new Error("Generation failed (invalid response)");
             }
+
+            // Track successful AI usage
+            trackUsage({ feature: "diagram-to-code" }).catch(() => {
+              // Non-blocking: don't fail the generation if tracking fails
+            });
+
             return {
               html,
             };
@@ -96,6 +124,15 @@ export const AIComponents = ({
 
       <TTDDialog
         onTextSubmit={async (input) => {
+          // Check limit before making AI request
+          if (limitCheck && !limitCheck.allowed) {
+            return {
+              error: new Error(
+                limitCheck.reason || "AI request limit reached. Upgrade your plan for unlimited access.",
+              ),
+            };
+          }
+
           try {
             const response = await fetch(
               `${import.meta.env.VITE_APP_AI_BACKEND}/v1/ai/text-to-diagram/generate`,
@@ -135,6 +172,11 @@ export const AIComponents = ({
             if (!generatedResponse) {
               throw new Error("Generation failed...");
             }
+
+            // Track successful AI usage
+            trackUsage({ feature: "text-to-diagram" }).catch(() => {
+              // Non-blocking: don't fail the generation if tracking fails
+            });
 
             return { generatedResponse, rateLimit, rateLimitRemaining };
           } catch (err: any) {

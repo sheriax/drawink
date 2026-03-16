@@ -120,10 +120,29 @@ export const remove = mutation({
       throw new Error("File not found");
     }
 
-    // TODO: Check if user has permission to delete
-    // For now, just check if user created it
+    // Check if user has permission to delete:
+    // 1. File creator can always delete their own files
+    // 2. Board owner/workspace admin can delete any file on their board
     if (file.createdBy !== identity.subject) {
-      throw new Error("Access denied");
+      const board = await ctx.db.get(file.boardId);
+      if (!board) {
+        throw new Error("Board not found");
+      }
+
+      const isOwner = board.ownerId === identity.subject;
+      const workspaceMember = !isOwner
+        ? await ctx.db
+            .query("workspaceMembers")
+            .withIndex("by_workspace_and_user", (q) =>
+              q.eq("workspaceId", board.workspaceId).eq("userId", identity.subject),
+            )
+            .first()
+        : null;
+      const isAdmin = workspaceMember?.role === "owner" || workspaceMember?.role === "admin";
+
+      if (!isOwner && !isAdmin) {
+        throw new Error("Access denied: only the file creator, board owner, or workspace admin can delete files");
+      }
     }
 
     await ctx.db.delete(file._id);
