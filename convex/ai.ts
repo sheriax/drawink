@@ -31,6 +31,7 @@ function getAIConfig() {
 async function callChatCompletion(
   config: { baseUrl: string; apiKey: string; model: string },
   messages: { role: string; content: string | object[] }[],
+  opts?: { temperature?: number; maxTokens?: number },
 ): Promise<string> {
   const response = await fetch(`${config.baseUrl}/chat/completions`, {
     method: "POST",
@@ -41,8 +42,8 @@ async function callChatCompletion(
     body: JSON.stringify({
       model: config.model,
       messages,
-      temperature: 0.3,
-      max_tokens: 4096,
+      temperature: opts?.temperature ?? 0.3,
+      max_tokens: opts?.maxTokens ?? 4096,
     }),
   });
 
@@ -155,28 +156,49 @@ Rules:
         ? `\n\nText content extracted from the wireframe:\n${args.texts.join("\n")}`
         : "";
 
-    const content = await callChatCompletion(config, [
-      { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: [
-          {
-            type: "image_url",
-            image_url: { url: args.image },
-          },
-          {
-            type: "text",
-            text: `Convert this wireframe into a complete HTML page with inline CSS.${textContext}`,
-          },
-        ],
-      },
-    ]);
+    const content = await callChatCompletion(
+      config,
+      [
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: { url: args.image },
+            },
+            {
+              type: "text",
+              text: `Convert this wireframe into a complete HTML page with inline CSS.${textContext}`,
+            },
+          ],
+        },
+      ],
+      { maxTokens: 8192, temperature: 0.4 },
+    );
 
-    // Strip markdown fences if present
-    const cleaned = content
-      .replace(/^```(?:html)?\s*\n?/i, "")
-      .replace(/\n?```\s*$/i, "")
-      .trim();
+    // Extract HTML from response — handle markdown fences and explanatory text
+    let cleaned = content.trim();
+
+    // If wrapped in markdown code fences, extract the content inside
+    const fenceMatch = cleaned.match(/```(?:html)?\s*\n([\s\S]*?)\n```/i);
+    if (fenceMatch) {
+      cleaned = fenceMatch[1].trim();
+    } else {
+      // Strip leading/trailing fences that might not have matched
+      cleaned = cleaned
+        .replace(/^```(?:html)?\s*\n?/i, "")
+        .replace(/\n?```\s*$/i, "")
+        .trim();
+    }
+
+    // If there's text before <!DOCTYPE or <html>, strip it
+    const docTypeIdx = cleaned.indexOf("<!DOCTYPE");
+    const htmlIdx = cleaned.indexOf("<html");
+    const startIdx = docTypeIdx >= 0 ? docTypeIdx : htmlIdx;
+    if (startIdx > 0) {
+      cleaned = cleaned.slice(startIdx);
+    }
 
     // Track usage
     await ctx.runMutation(internal.aiUsage.trackUsageInternal, {

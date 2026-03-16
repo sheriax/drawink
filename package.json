@@ -9,7 +9,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:convex\" \"npm run dev:collab\" \"vite\"",
+    "dev": "concurrently \"pnpm run dev:convex\" \"pnpm run dev:collab\" \"vite\"",
     "dev:vite": "vite",
     "dev:convex": "convex dev",
     "dev:collab": "cd server && bun run dev",
