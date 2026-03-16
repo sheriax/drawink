@@ -6,7 +6,7 @@
  */
 
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { getUserId } from "./users";
 
 // =========================================================================
@@ -157,6 +157,55 @@ export const checkLimit = query({
  * Track an AI request. Increments daily and monthly counters.
  * Handles counter resets when the day/month rolls over.
  */
+/**
+ * Internal version of trackUsage — callable from Convex actions via ctx.runMutation(internal.*).
+ * Takes userId directly instead of reading from auth context.
+ */
+export const trackUsageInternal = internalMutation({
+  args: {
+    userId: v.string(),
+    feature: v.string(),
+    tokensUsed: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const tokens = args.tokensUsed ?? 1;
+    const now = Date.now();
+    const currentMonth = getCurrentMonth();
+    const startOfToday = getStartOfTodayMs();
+
+    const existing = await ctx.db
+      .query("aiUsage")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .first();
+
+    if (existing) {
+      const dailyTokens =
+        existing.lastDailyReset < startOfToday
+          ? tokens
+          : existing.dailyTokensUsed + tokens;
+      const monthlyTokens =
+        existing.lastMonthlyReset !== currentMonth
+          ? tokens
+          : existing.monthlyTokensUsed + tokens;
+
+      await ctx.db.patch(existing._id, {
+        dailyTokensUsed: dailyTokens,
+        monthlyTokensUsed: monthlyTokens,
+        lastDailyReset: existing.lastDailyReset < startOfToday ? startOfToday : existing.lastDailyReset,
+        lastMonthlyReset: currentMonth,
+      });
+    } else {
+      await ctx.db.insert("aiUsage", {
+        userId: args.userId,
+        dailyTokensUsed: tokens,
+        monthlyTokensUsed: tokens,
+        lastDailyReset: startOfToday,
+        lastMonthlyReset: currentMonth,
+      });
+    }
+  },
+});
+
 export const trackUsage = mutation({
   args: {
     feature: v.string(), // "text-to-diagram", "diagram-to-code", etc.

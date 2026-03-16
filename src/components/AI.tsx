@@ -6,9 +6,8 @@ import {
   getTextFromElements,
 } from "@/core";
 import { getDataURL } from "@/core/data/blob";
-import { safelyParseJSON } from "@/lib/common";
 
-import { useMutation, useQuery } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 import type { DrawinkImperativeAPI } from "@/core/types";
@@ -18,29 +17,13 @@ export const AIComponents = ({
 }: {
   drawinkAPI: DrawinkImperativeAPI;
 }) => {
-  const trackUsage = useMutation(api.aiUsage.trackUsage);
-  const limitCheck = useQuery(api.aiUsage.checkLimit);
+  const textToDiagram = useAction(api.ai.textToDiagram);
+  const diagramToCode = useAction(api.ai.diagramToCode);
 
   return (
     <>
       <DiagramToCodePlugin
         generate={async ({ frame, children }) => {
-          // Check limit before making AI request
-          if (limitCheck && !limitCheck.allowed) {
-            return {
-              html: `<html>
-              <body style="margin: 0; text-align: center">
-              <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100vh; padding: 0 60px">
-                <div style="color:red">${limitCheck.reason || "AI request limit reached."}</div>
-                </br>
-                </br>
-                <div>Upgrade your plan for unlimited AI access.</div>
-              </div>
-              </body>
-              </html>`,
-            };
-          }
-
           const appState = drawinkAPI.getAppState();
 
           const blob = await exportToBlob({
@@ -56,131 +39,55 @@ export const AIComponents = ({
           });
 
           const dataURL = await getDataURL(blob);
-
           const textFromFrameChildren = getTextFromElements(children);
 
-          const response = await fetch(
-            `${import.meta.env.VITE_APP_AI_BACKEND}/v1/ai/diagram-to-code/generate`,
-            {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                texts: textFromFrameChildren,
-                image: dataURL,
-                theme: appState.theme,
-              }),
-            },
-          );
+          try {
+            const result = await diagramToCode({
+              image: dataURL,
+              texts: [textFromFrameChildren],
+              theme: appState.theme,
+            });
 
-          if (!response.ok) {
-            const text = await response.text();
-            const errorJSON = safelyParseJSON(text);
-
-            if (!errorJSON) {
-              throw new Error(text);
-            }
-
-            if (errorJSON.statusCode === 429) {
+            return { html: result.html };
+          } catch (error: any) {
+            if (error.message?.includes("rate limit")) {
               return {
                 html: `<html>
                 <body style="margin: 0; text-align: center">
                 <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100vh; padding: 0 60px">
-                  <div style="color:red">Too many requests today,</br>please try again tomorrow!</div>
-                  </br>
-                  </br>
-                  <div>Please try again later or contact support.</div>
+                  <div style="color:red">Too many requests,</br>please try again later!</div>
                 </div>
                 </body>
                 </html>`,
               };
             }
-
-            throw new Error(errorJSON.message || text);
-          }
-
-          try {
-            const { html } = await response.json();
-
-            if (!html) {
-              throw new Error("Generation failed (invalid response)");
-            }
-
-            // Track successful AI usage
-            trackUsage({ feature: "diagram-to-code" }).catch(() => {
-              // Non-blocking: don't fail the generation if tracking fails
-            });
-
-            return {
-              html,
-            };
-          } catch (error: any) {
-            throw new Error("Generation failed (invalid response)");
+            throw error;
           }
         }}
       />
 
       <TTDDialog
         onTextSubmit={async (input) => {
-          // Check limit before making AI request
-          if (limitCheck && !limitCheck.allowed) {
-            return {
-              error: new Error(
-                limitCheck.reason || "AI request limit reached. Upgrade your plan for unlimited access.",
-              ),
-            };
-          }
-
           try {
-            const response = await fetch(
-              `${import.meta.env.VITE_APP_AI_BACKEND}/v1/ai/text-to-diagram/generate`,
-              {
-                method: "POST",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ prompt: input }),
-              },
-            );
+            const result = await textToDiagram({ prompt: input });
 
-            const rateLimit = response.headers.has("X-Ratelimit-Limit")
-              ? Number.parseInt(response.headers.get("X-Ratelimit-Limit") || "0", 10)
-              : undefined;
-
-            const rateLimitRemaining = response.headers.has("X-Ratelimit-Remaining")
-              ? Number.parseInt(response.headers.get("X-Ratelimit-Remaining") || "0", 10)
-              : undefined;
-
-            const json = await response.json();
-
-            if (!response.ok) {
-              if (response.status === 429) {
-                return {
-                  rateLimit,
-                  rateLimitRemaining,
-                  error: new Error("Too many requests today, please try again tomorrow!"),
-                };
-              }
-
-              throw new Error(json.message || "Generation failed...");
+            return {
+              generatedResponse: result.generatedResponse,
+            };
+          } catch (error: any) {
+            if (error.message?.includes("rate limit")) {
+              return {
+                error: new Error("Too many requests, please try again later!"),
+              };
             }
-
-            const generatedResponse = json.generatedResponse;
-            if (!generatedResponse) {
-              throw new Error("Generation failed...");
+            if (error.message?.includes("Unauthorized")) {
+              return {
+                error: new Error("Please sign in to use AI features."),
+              };
             }
-
-            // Track successful AI usage
-            trackUsage({ feature: "text-to-diagram" }).catch(() => {
-              // Non-blocking: don't fail the generation if tracking fails
-            });
-
-            return { generatedResponse, rateLimit, rateLimitRemaining };
-          } catch (err: any) {
-            throw new Error("Request failed");
+            return {
+              error: new Error(error.message || "Generation failed"),
+            };
           }
         }}
       />
