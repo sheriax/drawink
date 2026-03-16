@@ -228,7 +228,15 @@ export const getContent = query({
       };
     }
 
-    return content;
+    return {
+      boardId: content.boardId,
+      ciphertext: content.ciphertext,
+      iv: content.iv,
+      version: content.version,
+      updatedAt: content.updatedAt,
+      updatedBy: content.updatedBy,
+      checksum: content.checksum,
+    };
   },
 });
 
