@@ -41,6 +41,10 @@ root.render(
             <Route path="/sign-up/*" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/billing" element={<BillingSettings />} />
+            <Route
+              path="/workspace/:workspaceId/board/:boardId"
+              element={<DrawinkApp />}
+            />
             <Route path="/*" element={<DrawinkApp />} />
           </Routes>
         </BrowserRouter>

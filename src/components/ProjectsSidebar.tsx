@@ -10,6 +10,7 @@ import {
   boardErrorAtom,
   createBoardAtom,
   currentBoardIdAtom,
+  currentWorkspaceIdAtom,
   deleteBoardAtom,
   editingBoardIdAtom,
   isLoadingBoardsAtom,
@@ -18,6 +19,8 @@ import {
   updateBoardNameAtom,
 } from "@/core/atoms/boards";
 import { useAtom, useAtomValue, useSetAtom } from "@/core/editor-jotai";
+import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
+import type { Workspace } from "@/core/storage/types";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import "./ProjectsSidebar.scss";
@@ -33,6 +36,13 @@ export const ProjectsSidebar: React.FC = () => {
   const [editingBoardId, setEditingBoardId] = useAtom(editingBoardIdAtom);
   const [newBoardName, setNewBoardName] = useState("");
 
+  // Workspace state
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useAtom(
+    currentWorkspaceIdAtom,
+  );
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspacesLoading, setWorkspacesLoading] = useState(false);
+
   const refreshBoards = useSetAtom(refreshBoardsAtom);
   const createBoard = useSetAtom(createBoardAtom);
   const switchBoard = useSetAtom(switchBoardAtom);
@@ -40,12 +50,51 @@ export const ProjectsSidebar: React.FC = () => {
   const deleteBoard = useSetAtom(deleteBoardAtom);
   const boardError = useAtomValue(boardErrorAtom);
 
-  // Refresh boards on mount
+  // Load workspaces on mount
   useEffect(() => {
-    if (boardsAPI) {
-      refreshBoards();
+    if (!user) {
+      return;
     }
-  }, [boardsAPI, refreshBoards]);
+    setWorkspacesLoading(true);
+    hybridStorageAdapter
+      .getWorkspaces()
+      .then((ws) => {
+        setWorkspaces(ws);
+        // If no workspace selected yet, pick from localStorage or first
+        if (!currentWorkspaceId) {
+          const saved = localStorage.getItem("selectedWorkspaceId");
+          if (saved && ws.some((w) => w.id === saved)) {
+            setCurrentWorkspaceId(saved);
+          } else if (ws.length > 0) {
+            setCurrentWorkspaceId(ws[0].id);
+            localStorage.setItem("selectedWorkspaceId", ws[0].id);
+          }
+        }
+      })
+      .catch(console.error)
+      .finally(() => setWorkspacesLoading(false));
+  }, [user, currentWorkspaceId, setCurrentWorkspaceId]);
+
+  // Set workspace on cloud adapter and refresh boards when workspace changes
+  useEffect(() => {
+    if (!boardsAPI || !currentWorkspaceId) {
+      return;
+    }
+    // setWorkspaceId is called inside setWorkspaceAndBoard, but we also
+    // need to handle the case when only workspace changes (not board)
+    hybridStorageAdapter
+      .setWorkspaceAndBoard(
+        currentWorkspaceId,
+        localStorage.getItem("drawink-current-board-id") || "",
+      )
+      .then(() => refreshBoards())
+      .catch(console.error);
+  }, [boardsAPI, currentWorkspaceId, refreshBoards]);
+
+  const handleWorkspaceChange = (wsId: string) => {
+    setCurrentWorkspaceId(wsId);
+    localStorage.setItem("selectedWorkspaceId", wsId);
+  };
 
   const handleCreateBoard = async () => {
     try {
@@ -77,13 +126,19 @@ export const ProjectsSidebar: React.FC = () => {
     }
   };
 
-  const startEditing = (e: React.MouseEvent, board: { id: string; name: string }) => {
+  const startEditing = (
+    e: React.MouseEvent,
+    board: { id: string; name: string },
+  ) => {
     e.stopPropagation();
     setEditingBoardId(board.id);
     setNewBoardName(board.name);
   };
 
-  const saveBoardName = async (e: React.MouseEvent | React.FormEvent, id: string) => {
+  const saveBoardName = async (
+    e: React.MouseEvent | React.FormEvent,
+    id: string,
+  ) => {
     e.stopPropagation();
     if (newBoardName.trim()) {
       await updateBoardName({ id, name: newBoardName.trim() });
@@ -113,11 +168,35 @@ export const ProjectsSidebar: React.FC = () => {
     );
   }
 
+  const currentWorkspace = workspaces.find(
+    (ws) => ws.id === currentWorkspaceId,
+  );
+
   return (
     <div className="projects-sidebar">
+      {/* Workspace selector */}
+      {workspaces.length > 0 && (
+        <div className="projects-sidebar__workspace-selector">
+          <select
+            value={currentWorkspaceId || ""}
+            onChange={(e) => handleWorkspaceChange(e.target.value)}
+            className="projects-sidebar__workspace-select"
+            disabled={workspacesLoading}
+          >
+            {workspaces.map((ws) => (
+              <option key={ws.id} value={ws.id}>
+                {ws.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Header with create button */}
       <div className="projects-sidebar__header">
-        <h3>Boards</h3>
+        <h3>
+          {currentWorkspace ? `${currentWorkspace.name}` : "Boards"}
+        </h3>
         <button
           onClick={handleCreateBoard}
           className="projects-sidebar__create-btn"
@@ -151,7 +230,11 @@ export const ProjectsSidebar: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="projects-sidebar__list" role="listbox" aria-label="Boards">
+        <div
+          className="projects-sidebar__list"
+          role="listbox"
+          aria-label="Boards"
+        >
           {boardError && (
             <div className="projects-sidebar__error" role="alert">
               {boardError}
@@ -173,7 +256,10 @@ export const ProjectsSidebar: React.FC = () => {
               tabIndex={0}
             >
               {editingBoardId === board.id ? (
-                <div className="board-item__edit" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="board-item__edit"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <input
                     type="text"
                     value={newBoardName}

@@ -134,7 +134,8 @@ export const getCollaborationLink = (data: {
   roomId: string;
   roomKey: string;
 }) => {
-  return `${window.location.origin}${window.location.pathname}#room=${data.roomId},${data.roomKey}`;
+  // Always use root origin — don't include /workspace/... path in collab links
+  return `${window.location.origin}/#room=${data.roomId},${data.roomKey}`;
 };
 
 /**
@@ -339,7 +340,8 @@ export const exportToBackend = async (
       }
 
       // Create shareable URL with encryption key in hash
-      const url = new URL(window.location.href);
+      // Always use origin (root) so workspace/board paths are never leaked to public viewers
+      const url = new URL(window.location.origin);
       url.hash = `share=${shareId},${encryptionKey}`;
 
       return { url: url.toString(), errorMessage: null };

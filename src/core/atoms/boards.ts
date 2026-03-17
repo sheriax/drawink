@@ -41,6 +41,16 @@ export const currentBoardIdAtom = atom(
 );
 
 /**
+ * ID of the currently active workspace.
+ */
+const _currentWorkspaceIdAtom = atom<string | null>(null);
+export const currentWorkspaceIdAtom = atom(
+  (get) => get(_currentWorkspaceIdAtom),
+  // @ts-expect-error - jotai-scope type inference limitation with primitive atoms
+  (_get, set, value: string | null) => set(_currentWorkspaceIdAtom, value),
+);
+
+/**
  * Loading state for board operations.
  */
 const _isLoadingBoardsAtom = atom<boolean>(true);

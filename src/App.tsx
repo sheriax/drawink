@@ -118,9 +118,14 @@ import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
 import { type AuthUser, authStateAtom, cloudEnabledAtom } from "@/core/atoms/auth";
-import { boardsAPIAtom } from "@/core/atoms/boards";
+import {
+  boardsAPIAtom,
+  currentBoardIdAtom,
+  currentWorkspaceIdAtom,
+} from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
+import { useBoardRoute } from "./hooks/useBoardRoute";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
 
@@ -190,6 +195,22 @@ const shareableLinkConfirmDialog = {
   color: "danger",
 } as const;
 
+/**
+ * Returns the best URL to restore after loading external content.
+ * If the user has a last-opened board, return that board URL;
+ * otherwise fall back to origin (root).
+ */
+const getPostLoadUrl = (): string => {
+  const lastBoardId = localStorage.getItem(
+    STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
+  );
+  const lastWsId = localStorage.getItem("selectedWorkspaceId");
+  if (lastBoardId && lastWsId) {
+    return `/workspace/${lastWsId}/board/${lastBoardId}`;
+  }
+  return window.location.origin;
+};
+
 const initializeScene = async (opts: {
   collabAPI: CollabAPI | null;
   drawinkAPI: DrawinkImperativeAPI;
@@ -204,6 +225,34 @@ const initializeScene = async (opts: {
   const jsonBackendMatch = window.location.hash.match(/^#json=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/);
   const shareMatch = window.location.hash.match(/^#share=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/);
   const externalUrlMatch = window.location.hash.match(/^#url=(.*)$/);
+
+  // Backward compat: bare board ID in hash (old /#boardId format)
+  // Redirect to proper /workspace/:wsId/board/:boardId URL
+  if (
+    window.location.hash &&
+    !jsonBackendMatch &&
+    !shareMatch &&
+    !externalUrlMatch
+  ) {
+    const bareBoardIdMatch = window.location.hash.match(
+      /^#([a-zA-Z0-9_]+)$/,
+    );
+    if (bareBoardIdMatch) {
+      const boardId = bareBoardIdMatch[1];
+      const wsId = localStorage.getItem("selectedWorkspaceId");
+      if (wsId) {
+        localStorage.setItem(
+          STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
+          boardId,
+        );
+        window.history.replaceState(
+          {},
+          "",
+          `/workspace/${wsId}/board/${boardId}`,
+        );
+      }
+    }
+  }
 
   const localDataState = importFromLocalStorage();
 
@@ -236,7 +285,7 @@ const initializeScene = async (opts: {
       }
       scene.scrollToContent = true;
       if (!roomLinkData) {
-        window.history.replaceState({}, APP_NAME, window.location.origin);
+        window.history.replaceState({}, APP_NAME, getPostLoadUrl());
       }
     } else {
       // https://github.com/drawink/drawink/issues/1919
@@ -253,10 +302,10 @@ const initializeScene = async (opts: {
       }
 
       roomLinkData = null;
-      window.history.replaceState({}, APP_NAME, window.location.origin);
+      window.history.replaceState({}, APP_NAME, getPostLoadUrl());
     }
   } else if (externalUrlMatch) {
-    window.history.replaceState({}, APP_NAME, window.location.origin);
+    window.history.replaceState({}, APP_NAME, getPostLoadUrl());
 
     const url = externalUrlMatch[1];
     try {
@@ -334,6 +383,32 @@ const DrawinkWrapper = () => {
   const [langCode, setLangCode] = useAppLangCode();
 
   const editorInterface = useEditorInterface();
+
+  // Board route params (/workspace/:wsId/board/:boardId)
+  const boardRoute = useBoardRoute();
+
+  // Set board from URL route params BEFORE initializeScene runs.
+  // importFromLocalStorage() reads "drawink-current-board-id" from localStorage
+  // to decide which board data to load, so we set it synchronously here.
+  useEffect(() => {
+    if (!boardRoute) {
+      return;
+    }
+    const { workspaceId, boardId } = boardRoute;
+
+    // Synchronously set current board ID so importFromLocalStorage reads the right data
+    localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID, boardId);
+    localStorage.setItem("selectedWorkspaceId", workspaceId);
+
+    // Set workspace on cloud adapter (async, but localStorage is already set)
+    hybridStorageAdapter
+      .setWorkspaceAndBoard(workspaceId, boardId)
+      .catch(console.error);
+
+    // Update Jotai atoms
+    editorJotaiStore.set(currentWorkspaceIdAtom, workspaceId);
+    editorJotaiStore.set(currentBoardIdAtom, boardId);
+  }, [boardRoute]);
 
   // initial state
   // ---------------------------------------------------------------------------
@@ -717,6 +792,16 @@ const DrawinkWrapper = () => {
             elements: drawinkAPI.getSceneElementsIncludingDeleted(),
           });
         });
+      }
+
+      // Sync URL to reflect the new board
+      const wsId = localStorage.getItem("selectedWorkspaceId");
+      if (wsId) {
+        window.history.replaceState(
+          {},
+          "",
+          `/workspace/${wsId}/board/${boardId}`,
+        );
       }
     };
 
