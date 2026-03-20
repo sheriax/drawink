@@ -113,6 +113,26 @@ export const elementOverlapsWithFrame = (
   frame: DrawinkFrameLikeElement,
   elementsMap: ElementsMap,
 ) => {
+  // AABB early exit: if bounding boxes don't overlap at all, skip expensive checks
+  const [ex1, ey1, ex2, ey2] = getElementAbsoluteCoords(element, elementsMap);
+  const [fx1, fy1, fx2, fy2] = getElementAbsoluteCoords(frame, elementsMap);
+
+  // No overlap possible if bounding boxes are completely separated
+  if (ex2 < fx1 || ex1 > fx2 || ey2 < fy1 || ey1 > fy2) {
+    // Element is completely outside the frame's bounding box,
+    // but it could still contain the frame (e.g., a large element surrounding a small frame)
+    // Only check containment if element bounds fully enclose frame bounds
+    if (ex1 <= fx1 && ey1 <= fy1 && ex2 >= fx2 && ey2 >= fy2) {
+      return isElementContainingFrame(element, frame, elementsMap);
+    }
+    return false;
+  }
+
+  // Element is fully within frame bounds — no need for expensive intersection check
+  if (fx1 <= ex1 && fy1 <= ey1 && fx2 >= ex2 && fy2 >= ey2) {
+    return true;
+  }
+
   return (
     elementsAreInFrameBounds([element], frame, elementsMap) ||
     isElementIntersectingFrame(element, frame, elementsMap) ||
@@ -150,9 +170,7 @@ export const groupsAreAtLeastIntersectingTheFrame = (
   }
 
   return !!elementsInGroup.find(
-    (element) =>
-      elementsAreInFrameBounds([element], frame, elementsMap) ||
-      isElementIntersectingFrame(element, frame, elementsMap),
+    (element) => elementOverlapsWithFrame(element, frame, elementsMap),
   );
 };
 
@@ -170,9 +188,7 @@ export const groupsAreCompletelyOutOfFrame = (
 
   return (
     elementsInGroup.find(
-      (element) =>
-        elementsAreInFrameBounds([element], frame, elementsMap) ||
-        isElementIntersectingFrame(element, frame, elementsMap),
+      (element) => elementOverlapsWithFrame(element, frame, elementsMap),
     ) === undefined
   );
 };
@@ -670,7 +686,6 @@ export const getTargetFrame = (
     : getContainingFrame(_element, elementsMap);
 };
 
-// TODO: this a huge bottleneck for large scenes, optimise
 // given an element, return if the element is in some frame
 export const isElementInFrame = (
   element: DrawinkElement,

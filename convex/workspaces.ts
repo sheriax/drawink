@@ -523,3 +523,73 @@ export const transferOwnership = mutation({
     return args.workspaceId;
   },
 });
+
+/**
+ * Remove a member from a workspace.
+ * Owner/admin can remove members. Members can remove themselves (leave).
+ * Cannot remove the workspace owner.
+ */
+export const removeMember = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    userId: v.string(), // Clerk user ID of the member to remove
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    // Cannot remove the workspace owner
+    if (args.userId === workspace.ownerId) {
+      throw new Error("Cannot remove the workspace owner. Transfer ownership first.");
+    }
+
+    const isSelfRemoval = args.userId === identity.subject;
+
+    if (!isSelfRemoval) {
+      // Only owner/admin can remove others
+      const callerMembership = await ctx.db
+        .query("workspaceMembers")
+        .withIndex("by_workspace_and_user", (q) =>
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+        )
+        .first();
+
+      const isOwner = workspace.ownerId === identity.subject;
+      const isAdmin = callerMembership?.role === "admin";
+
+      if (!isOwner && !isAdmin) {
+        throw new Error("Access denied: only owner or admin can remove members");
+      }
+    }
+
+    // Find and delete the membership
+    const membership = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", args.userId),
+      )
+      .first();
+
+    if (!membership) {
+      throw new Error("Member not found in workspace");
+    }
+
+    await ctx.db.delete(membership._id);
+
+    // Update member count
+    await ctx.db.patch(args.workspaceId, {
+      memberCount: Math.max(1, workspace.memberCount - 1),
+      updatedAt: Date.now(),
+    });
+
+    return null;
+  },
+});

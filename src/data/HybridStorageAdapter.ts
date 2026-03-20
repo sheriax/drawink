@@ -504,6 +504,48 @@ export class HybridStorageAdapter implements StorageAdapter, BoardsAPI {
     return this.cloudAdapter.getWorkspaces();
   }
 
+  /**
+   * Set workspace and board from URL route params.
+   * Sets workspace on the cloud adapter, board ID in localStorage,
+   * and fetches board data from cloud if not cached locally.
+   */
+  async setWorkspaceAndBoard(
+    workspaceId: string,
+    boardId: string,
+  ): Promise<void> {
+    // Set workspace on ConvexStorageAdapter (if cloud enabled)
+    if (this.cloudAdapter) {
+      this.cloudAdapter.setWorkspaceId(workspaceId);
+    }
+
+    // Set current board ID in localStorage
+    await this.setCurrentBoardId(boardId);
+
+    // Store workspace ID in localStorage for persistence
+    localStorage.setItem("selectedWorkspaceId", workspaceId);
+
+    // If board data not in localStorage, fetch from cloud
+    const { elements } = this.localAdapter.loadBoardData(boardId);
+    if (
+      elements.length === 0 &&
+      this.cloudAdapter &&
+      navigator.onLine
+    ) {
+      try {
+        const content =
+          await this.cloudAdapter.getBoardContent(boardId);
+        if (content.elements.length > 0) {
+          await this.localAdapter.saveBoardContent(boardId, content);
+        }
+      } catch (error) {
+        console.warn(
+          "[HybridStorageAdapter] Failed to fetch board from cloud:",
+          error,
+        );
+      }
+    }
+  }
+
   loadBoardData(boardId: string): { elements: any[]; appState: any } {
     return this.localAdapter.loadBoardData(boardId);
   }

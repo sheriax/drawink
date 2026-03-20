@@ -105,16 +105,35 @@ export function useIsTeamTier(): boolean {
 }
 
 /**
- * Usage tracking — unlimited for team/beta users, zero limits for free tier.
+ * Usage tracking — reads real AI usage from Convex.
+ * Unlimited for team/beta users, 30 requests/month for free tier.
  */
 export function useFeatureUsage(feature: string) {
   const { hasFullAccess } = useSubscription();
+  const aiUsage = useQuery(api.aiUsage.getUsage);
+
+  if (hasFullAccess) {
+    return {
+      limit: Number.POSITIVE_INFINITY,
+      used: aiUsage?.monthlyTokensUsed ?? 0,
+      remaining: Number.POSITIVE_INFINITY,
+      percentage: 0,
+      isLimitReached: false,
+      isApproachingLimit: false,
+    };
+  }
+
+  const limit = feature === "ai" ? 30 : 0;
+  const used = aiUsage?.monthlyTokensUsed ?? 0;
+  const remaining = Math.max(0, limit - used);
+  const percentage = limit > 0 ? Math.round((used / limit) * 100) : 0;
+
   return {
-    limit: hasFullAccess ? Number.POSITIVE_INFINITY : 0,
-    used: 0,
-    remaining: hasFullAccess ? Number.POSITIVE_INFINITY : 0,
-    percentage: 0,
-    isLimitReached: !hasFullAccess,
-    isApproachingLimit: false,
+    limit,
+    used,
+    remaining,
+    percentage,
+    isLimitReached: remaining <= 0,
+    isApproachingLimit: percentage >= 80 && remaining > 0,
   };
 }

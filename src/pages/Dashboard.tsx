@@ -204,7 +204,7 @@ const DashboardContent: React.FC = () => {
         workspaceId: selectedWorkspaceId,
         name: "Untitled Board",
       });
-      navigate(`/#${boardId}`);
+      navigate(`/workspace/${selectedWorkspaceId}/board/${boardId}`);
     } catch (error) {
       console.error("Failed to create board:", error);
     }
@@ -258,7 +258,15 @@ const DashboardContent: React.FC = () => {
       <header className="drawink-dashboard__nav">
         <button
           className="drawink-dashboard__back-btn"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            const lastBoardId = localStorage.getItem("drawink-current-board-id");
+            const lastWsId = localStorage.getItem("selectedWorkspaceId");
+            if (lastBoardId && lastWsId) {
+              navigate(`/workspace/${lastWsId}/board/${lastBoardId}`);
+            } else {
+              navigate("/");
+            }
+          }}
           title="Back to canvas"
         >
           <svg
@@ -605,7 +613,7 @@ const DashboardContent: React.FC = () => {
                     className="drawink-dashboard__card"
                     onClick={() => {
                       if (renamingBoardId !== board._id) {
-                        navigate(`/#${board._id}`);
+                        navigate(`/workspace/${selectedWorkspaceId}/board/${board._id}`);
                       }
                     }}
                     onContextMenu={(e) => {

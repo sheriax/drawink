@@ -330,7 +330,18 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       // that could have been saved in other tabs while we were collaborating
       resetBrowserStateVersions();
 
-      window.history.pushState({}, APP_NAME, window.location.origin);
+      // Return to the board URL if available, otherwise root
+      const lastBoardId = localStorage.getItem("drawink-current-board-id");
+      const lastWsId = localStorage.getItem("selectedWorkspaceId");
+      if (lastBoardId && lastWsId) {
+        window.history.pushState(
+          {},
+          APP_NAME,
+          `/workspace/${lastWsId}/board/${lastBoardId}`,
+        );
+      } else {
+        window.history.pushState({}, APP_NAME, window.location.origin);
+      }
       this.destroySocketClient();
 
       hybridStorageAdapter.fileStorage.reset();
