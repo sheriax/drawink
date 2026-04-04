@@ -72,7 +72,7 @@ export const sendInvitationEmail = internalAction({
           Authorization: `Bearer ${resendApiKey}`,
         },
         body: JSON.stringify({
-          from: "Drawink <onboarding@resend.dev>",
+          from: "Drawink <hi+drawink@sheriax.com>",
           to: [data.email],
           subject: `${data.inviterName} invited you to "${data.workspaceName}" on Drawink`,
           html,
