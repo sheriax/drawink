@@ -10,6 +10,7 @@ import {
   type MutationCtx,
   type QueryCtx,
   internalMutation,
+  internalQuery,
   query,
 } from "./_generated/server";
 
@@ -238,6 +239,17 @@ export const endBeta = internalMutation({
       await ctx.db.patch(user._id, { isBetaUser: false });
     }
     return { cleared: betaUsers.length };
+  },
+});
+
+/** Internal: look up a user by email (for admin/testing) */
+export const getByEmail = internalQuery({
+  args: { email: v.string() },
+  handler: async (ctx, { email }) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
   },
 });
 

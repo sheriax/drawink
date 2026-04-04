@@ -72,6 +72,30 @@ export default defineSchema({
     .index("by_workspace_and_user", ["workspaceId", "userId"]),
 
   // =========================================================================
+  // WORKSPACE INVITATIONS (Email-based invitation flow)
+  // =========================================================================
+  workspaceInvitations: defineTable({
+    workspaceId: v.id("workspaces"),
+    email: v.string(), // Invitee email (lowercased)
+    role: v.union(v.literal("admin"), v.literal("member"), v.literal("viewer")),
+    invitedBy: v.string(), // Clerk user ID of inviter
+    token: v.string(), // Cryptographic token for accept link
+    status: v.union(
+      v.literal("pending"),
+      v.literal("accepted"),
+      v.literal("declined"),
+      v.literal("expired"),
+    ),
+    createdAt: v.number(),
+    expiresAt: v.number(), // Token expiry (7 days)
+    respondedAt: v.optional(v.number()),
+  })
+    .index("by_token", ["token"])
+    .index("by_email", ["email"])
+    .index("by_workspace_and_email", ["workspaceId", "email"])
+    .index("by_workspace_and_status", ["workspaceId", "status"]),
+
+  // =========================================================================
   // PROJECTS (Folders for organizing boards)
   // =========================================================================
   projects: defineTable({
@@ -127,7 +151,19 @@ export default defineSchema({
     .index("by_owner", ["ownerId"])
     .index("by_workspace_not_archived", ["workspaceId", "archivedAt"])
     .index("by_public_link", ["publicLinkId"])
-    .index("by_workspace_recent", ["workspaceId", "lastOpenedAt"]),
+    .index("by_workspace_recent", ["workspaceId", "lastOpenedAt"])
+    .index("by_owner_recent", ["ownerId", "lastOpenedAt"]),
+
+  // =========================================================================
+  // BOARD STARS (Per-user favorites)
+  // =========================================================================
+  boardStars: defineTable({
+    boardId: v.id("boards"),
+    userId: v.string(), // Clerk user ID
+    starredAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_board_and_user", ["boardId", "userId"]),
 
   // =========================================================================
   // BOARD COLLABORATORS (Direct board sharing)

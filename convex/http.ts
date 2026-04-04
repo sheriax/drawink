@@ -71,6 +71,14 @@ http.route({
           photoUrl: image_url ?? undefined,
         });
 
+        // Auto-apply pending workspace invitations for new users
+        if (eventType === "user.created" && primaryEmail) {
+          await ctx.runMutation(internal.invitations.applyPendingInvitations, {
+            email: primaryEmail,
+            clerkId: id,
+          });
+        }
+
         console.log(`[clerk-webhook] ${eventType}: ${id}`);
         break;
       }

@@ -43,6 +43,53 @@ async function getActiveUsersInternal(
 }
 
 /**
+ * Get active collaboration sessions for multiple boards (batch query for dashboard)
+ * Returns a map of boardId -> array of active collaborators
+ */
+export const getActiveSessionsForBoards = query({
+  args: {
+    boardIds: v.array(v.id("boards")),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return {};
+    }
+
+    const now = Date.now();
+    const activeThreshold = 30 * 1000; // 30 seconds
+
+    const result: Record<
+      string,
+      Array<{ userId: string; userName: string; userPhotoUrl?: string }>
+    > = {};
+
+    for (const boardId of args.boardIds) {
+      const sessions = await ctx.db
+        .query("collaborationSessions")
+        .withIndex("by_board_active", (q) =>
+          q.eq("boardId", boardId).eq("isActive", true),
+        )
+        .collect();
+
+      const active = sessions
+        .filter((s) => now - s.lastHeartbeat < activeThreshold)
+        .map((s) => ({
+          userId: s.userId,
+          userName: s.userName,
+          userPhotoUrl: s.userPhotoUrl,
+        }));
+
+      if (active.length > 0) {
+        result[boardId] = active;
+      }
+    }
+
+    return result;
+  },
+});
+
+/**
  * Join a board (start collaborative session)
  */
 export const join = mutation({

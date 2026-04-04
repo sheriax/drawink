@@ -593,3 +593,118 @@ export const removeMember = mutation({
     return null;
   },
 });
+
+/**
+ * Invite a member to a workspace by email.
+ * Only owner/admin of a team-tier workspace can invite.
+ */
+export const inviteMember = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    email: v.string(),
+    role: v.union(v.literal("admin"), v.literal("member"), v.literal("viewer")),
+  },
+  returns: v.id("workspaceMembers"),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) throw new Error("Workspace not found");
+
+    if (workspace.subscriptionTier !== "team") {
+      throw new Error("Only team-tier workspaces can have multiple members");
+    }
+
+    // Only owner or admin can invite
+    const callerMembership = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+      )
+      .first();
+    const isOwner = workspace.ownerId === identity.subject;
+    const isAdmin = callerMembership?.role === "admin";
+    if (!isOwner && !isAdmin) {
+      throw new Error("Access denied: only owner or admin can invite members");
+    }
+
+    // Look up the target user by email
+    const targetUser = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email.trim().toLowerCase()))
+      .first();
+    if (!targetUser) {
+      throw new Error("No user found with that email. They must have a Drawink account first.");
+    }
+
+    if (targetUser.clerkId === identity.subject) {
+      throw new Error("You cannot invite yourself");
+    }
+
+    // Check not already a member
+    const existing = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", targetUser.clerkId),
+      )
+      .first();
+    if (existing) {
+      throw new Error("User is already a member of this workspace");
+    }
+
+    const now = Date.now();
+    const membershipId = await ctx.db.insert("workspaceMembers", {
+      workspaceId: args.workspaceId,
+      userId: targetUser.clerkId,
+      role: args.role,
+      joinedAt: now,
+    });
+
+    await ctx.db.patch(args.workspaceId, {
+      memberCount: workspace.memberCount + 1,
+      updatedAt: now,
+    });
+
+    return membershipId;
+  },
+});
+
+/**
+ * Update a workspace member's role.
+ * Only the workspace owner can change roles.
+ */
+export const updateMemberRole = mutation({
+  args: {
+    workspaceId: v.id("workspaces"),
+    userId: v.string(),
+    role: v.union(v.literal("admin"), v.literal("member"), v.literal("viewer")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) throw new Error("Workspace not found");
+
+    if (workspace.ownerId !== identity.subject) {
+      throw new Error("Only the workspace owner can change member roles");
+    }
+
+    if (args.userId === workspace.ownerId) {
+      throw new Error("Cannot change the owner's role. Use transfer ownership instead.");
+    }
+
+    const membership = await ctx.db
+      .query("workspaceMembers")
+      .withIndex("by_workspace_and_user", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", args.userId),
+      )
+      .first();
+    if (!membership) throw new Error("Member not found");
+
+    await ctx.db.patch(membership._id, { role: args.role });
+    return null;
+  },
+});

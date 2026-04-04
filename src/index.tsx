@@ -10,7 +10,8 @@ import { SignIn, SignUp } from "./components/auth";
 import { CLERK_PUBLISHABLE_KEY, clerkAppearance } from "./lib/clerk";
 import { ConvexClientProvider } from "./lib/convex";
 import BillingSettings from "./pages/BillingSettings";
-import { Dashboard } from "./pages/Dashboard";
+import { Dashboard } from "./pages/dashboard/Dashboard";
+import { InviteAcceptPage } from "./pages/InviteAcceptPage";
 
 window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
 
@@ -40,6 +41,7 @@ root.render(
             <Route path="/sign-in/*" element={<SignIn />} />
             <Route path="/sign-up/*" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/invite/accept" element={<InviteAcceptPage />} />
             <Route path="/billing" element={<BillingSettings />} />
             <Route
               path="/workspace/:workspaceId/board/:boardId"

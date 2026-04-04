@@ -35,3 +35,4 @@ convex/*.js
 convex/*.d.ts
 convex/*.js.map
 !convex/convex.json
+docs/

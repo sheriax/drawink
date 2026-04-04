@@ -396,6 +396,186 @@ export const saveContent = mutation({
 });
 
 /**
+ * Get recent boards across all user's workspaces (for dashboard "Recent" section)
+ */
+export const listRecentAcrossWorkspaces = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  returns: v.array(
+    v.object({
+      _id: v.id("boards"),
+      _creationTime: v.number(),
+      name: v.string(),
+      thumbnailUrl: v.optional(v.string()),
+      workspaceId: v.id("workspaces"),
+      projectId: v.optional(v.id("projects")),
+      ownerId: v.string(),
+      isPublic: v.boolean(),
+      publicLinkId: v.optional(v.string()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+      lastOpenedAt: v.number(),
+      archivedAt: v.optional(v.number()),
+      version: v.number(),
+      workspaceName: v.string(),
+      workspaceIcon: v.optional(v.string()),
+      workspaceColor: v.optional(v.string()),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const userId = identity.subject;
+    const limit = args.limit || 8;
+
+    const boards = await ctx.db
+      .query("boards")
+      .withIndex("by_owner_recent", (q) => q.eq("ownerId", userId))
+      .order("desc")
+      .take(limit + 10); // Fetch extra to account for archived filtering
+
+    const activeBoards = boards.filter((b) => !b.archivedAt).slice(0, limit);
+
+    // Enrich with workspace info
+    const workspaceCache = new Map<string, { name: string; icon?: string; color?: string }>();
+    const results = [];
+
+    for (const board of activeBoards) {
+      let wsInfo = workspaceCache.get(board.workspaceId);
+      if (!wsInfo) {
+        const ws = await ctx.db.get(board.workspaceId);
+        wsInfo = ws
+          ? { name: ws.name, icon: ws.icon, color: ws.color }
+          : { name: "Unknown" };
+        workspaceCache.set(board.workspaceId, wsInfo);
+      }
+      results.push({
+        ...board,
+        workspaceName: wsInfo.name,
+        workspaceIcon: wsInfo.icon,
+        workspaceColor: wsInfo.color,
+      });
+    }
+
+    return results;
+  },
+});
+
+/**
+ * Get archived boards in a workspace
+ */
+export const listArchived = query({
+  args: {
+    workspaceId: v.id("workspaces"),
+  },
+  returns: v.array(boardValidator),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const workspace = await ctx.db.get(args.workspaceId);
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const hasAccess =
+      workspace.ownerId === identity.subject ||
+      (await ctx.db
+        .query("workspaceMembers")
+        .withIndex("by_workspace_and_user", (q) =>
+          q.eq("workspaceId", args.workspaceId).eq("userId", identity.subject),
+        )
+        .first()) !== null;
+
+    if (!hasAccess) {
+      throw new Error("Access denied");
+    }
+
+    const boards = await ctx.db
+      .query("boards")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+      .collect();
+
+    return boards
+      .filter((b) => b.archivedAt !== undefined)
+      .sort((a, b) => (b.archivedAt || 0) - (a.archivedAt || 0));
+  },
+});
+
+/**
+ * Unarchive a board (restore from archive)
+ */
+export const unarchive = mutation({
+  args: {
+    boardId: v.id("boards"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await assertBoardAccess(ctx, args.boardId, "owner");
+
+    await ctx.db.patch(args.boardId, {
+      archivedAt: undefined,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+/**
+ * Duplicate a board (copy board + content in same workspace)
+ */
+export const duplicate = mutation({
+  args: {
+    boardId: v.id("boards"),
+  },
+  returns: v.id("boards"),
+  handler: async (ctx, args) => {
+    const { board, identity } = await assertBoardAccess(ctx, args.boardId);
+
+    const now = Date.now();
+
+    // Create new board with copied metadata
+    const newBoardId = await ctx.db.insert("boards", {
+      name: `${board.name} (copy)`,
+      workspaceId: board.workspaceId,
+      projectId: board.projectId,
+      ownerId: identity.subject,
+      isPublic: false,
+      version: 0,
+      createdAt: now,
+      updatedAt: now,
+      lastOpenedAt: now,
+      thumbnailUrl: board.thumbnailUrl,
+    });
+
+    // Copy board content if it exists
+    const content = await ctx.db
+      .query("boardContent")
+      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
+      .first();
+
+    if (content) {
+      await ctx.db.insert("boardContent", {
+        boardId: newBoardId,
+        ciphertext: content.ciphertext,
+        iv: content.iv,
+        checksum: content.checksum,
+        version: 1,
+        updatedAt: now,
+        updatedBy: identity.subject,
+      });
+    }
+
+    return newBoardId;
+  },
+});
+
+/**
  * Archive a board (soft delete)
  */
 export const archive = mutation({
