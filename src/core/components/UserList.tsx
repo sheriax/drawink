@@ -183,7 +183,7 @@ export const UserList = React.memo(
       <div className="UserList__wrapper" ref={userListWrapper}>
         <div
           className={clsx("UserList", className)}
-          style={{ [`--max-avatars` as any]: maxAvatars }}
+          style={{ ["--max-avatars" as any]: maxAvatars }}
         >
           {firstNAvatarsJSX}
 
@@ -215,7 +215,9 @@ export const UserList = React.memo(
                     {/* The list checks for `Children.count()`, hence defensively returning empty list */}
                     {filteredCollaborators.length > 0
                       ? [
-                          <div className="hint">{t("userList.hint.text")}</div>,
+                          <div className="hint" key="collaborator-list-hint">
+                            {t("userList.hint.text")}
+                          </div>,
                           filteredCollaborators.map((collaborator) =>
                             renderCollaborator({
                               actionManager,

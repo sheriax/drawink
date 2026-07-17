@@ -33,9 +33,8 @@ const parseFileContents = async (blob: Blob | File): Promise<string> => {
           "Image doesn't contain scene",
           "IMAGE_NOT_CONTAINS_SCENE_DATA",
         );
-      } else {
-        throw new ImageSceneDataError("Error: cannot restore image");
       }
+      throw new ImageSceneDataError("Error: cannot restore image");
     }
   } else {
     if ("text" in Blob) {
@@ -62,9 +61,8 @@ const parseFileContents = async (blob: Blob | File): Promise<string> => {
             "Image doesn't contain scene",
             "IMAGE_NOT_CONTAINS_SCENE_DATA",
           );
-        } else {
-          throw new ImageSceneDataError("Error: cannot restore image");
         }
+        throw new ImageSceneDataError("Error: cannot restore image");
       }
     }
   }
@@ -83,13 +81,17 @@ export const getMimeType = (blob: Blob | string): string => {
   }
   if (/\.(drawink|json)$/.test(name)) {
     return MIME_TYPES.json;
-  } else if (/\.png$/.test(name)) {
+  }
+  if (/\.png$/.test(name)) {
     return MIME_TYPES.png;
-  } else if (/\.jpe?g$/.test(name)) {
+  }
+  if (/\.jpe?g$/.test(name)) {
     return MIME_TYPES.jpg;
-  } else if (/\.svg$/.test(name)) {
+  }
+  if (/\.svg$/.test(name)) {
     return MIME_TYPES.svg;
-  } else if (/\.drawinklib$/.test(name)) {
+  }
+  if (/\.drawinklib$/.test(name)) {
     return MIME_TYPES.drawinklib;
   }
   return "";
@@ -168,7 +170,8 @@ export const loadSceneOrLibraryFromBlob = async (
           },
         ),
       };
-    } else if (isValidLibrary(data)) {
+    }
+    if (isValidLibrary(data)) {
       return {
         type: MIME_TYPES.drawinklib,
         data,
@@ -220,20 +223,15 @@ export const loadLibraryFromBlob = async (
 export const canvasToBlob = async (
   canvas: HTMLCanvasElement | Promise<HTMLCanvasElement>,
 ): Promise<Blob> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (isPromiseLike(canvas)) {
-        canvas = await canvas;
+  const resolvedCanvas = isPromiseLike(canvas) ? await canvas : canvas;
+  return new Promise((resolve, reject) => {
+    resolvedCanvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new CanvasError("Error: Canvas too big", "CANVAS_POSSIBLY_TOO_BIG"));
+        return;
       }
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          return reject(new CanvasError("Error: Canvas too big", "CANVAS_POSSIBLY_TOO_BIG"));
-        }
-        resolve(blob);
-      });
-    } catch (error: any) {
-      reject(error);
-    }
+      resolve(blob);
+    });
   });
 };
 
@@ -349,7 +347,7 @@ export const ImageURLToFile = async (
   let response;
   try {
     response = await fetch(imageUrl);
-  } catch (error: any) {
+  } catch (_error: any) {
     throw new Error("Error: failed to fetch image", { cause: "FETCH_ERROR" });
   }
 

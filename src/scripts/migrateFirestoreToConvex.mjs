@@ -52,7 +52,7 @@ if (!CONVEX_URL) {
   throw new Error("VITE_CONVEX_URL not set in .env.local");
 }
 
-const convexClient = new ConvexHttpClient(CONVEX_URL);
+const _convexClient = new ConvexHttpClient(CONVEX_URL);
 
 // Migration statistics
 const stats = {
@@ -86,7 +86,7 @@ async function migrateWorkspace(firestoreWorkspaceId, workspaceData) {
     log(`📦 Migrating workspace: ${workspaceData.name} (${firestoreWorkspaceId})`);
 
     if (isDryRun) {
-      log(`  [DRY RUN] Would create workspace with data:`, {
+      log("  [DRY RUN] Would create workspace with data:", {
         name: workspaceData.name,
         ownerClerkId: workspaceData.ownerUserId,
       });
@@ -96,13 +96,13 @@ async function migrateWorkspace(firestoreWorkspaceId, workspaceData) {
 
     // For actual migration, we need to call the Convex function
     // Since we don't have auth context, we'll need to handle this carefully
-    log(`  ⚠️  Skipping workspace creation (requires auth context)`);
-    log(`     Workspace will be auto-created when user logs in`);
+    log("  ⚠️  Skipping workspace creation (requires auth context)");
+    log("     Workspace will be auto-created when user logs in");
     stats.workspaces.succeeded++;
 
     return firestoreWorkspaceId;
   } catch (error) {
-    log(`  ❌ Failed to migrate workspace:`, error.message);
+    log("  ❌ Failed to migrate workspace:", error.message);
     stats.workspaces.failed++;
     stats.errors.push({
       type: "workspace",
@@ -116,14 +116,14 @@ async function migrateWorkspace(firestoreWorkspaceId, workspaceData) {
 /**
  * Migrate a single board
  */
-async function migrateBoard(firestoreWorkspaceId, convexWorkspaceId, firestoreBoardId, boardData) {
+async function migrateBoard(_firestoreWorkspaceId, convexWorkspaceId, firestoreBoardId, boardData) {
   stats.boards.attempted++;
 
   try {
     log(`  📄 Migrating board: ${boardData.name} (${firestoreBoardId})`);
 
     if (isDryRun) {
-      log(`    [DRY RUN] Would create board with data:`, {
+      log("    [DRY RUN] Would create board with data:", {
         workspaceId: convexWorkspaceId,
         name: boardData.name,
         isPublic: boardData.isPublic || false,
@@ -132,12 +132,12 @@ async function migrateBoard(firestoreWorkspaceId, convexWorkspaceId, firestoreBo
       return firestoreBoardId;
     }
 
-    log(`    ℹ️  Board metadata will be migrated when user accesses it`);
+    log("    ℹ️  Board metadata will be migrated when user accesses it");
     stats.boards.succeeded++;
 
     return firestoreBoardId;
   } catch (error) {
-    log(`    ❌ Failed to migrate board:`, error.message);
+    log("    ❌ Failed to migrate board:", error.message);
     stats.boards.failed++;
     stats.errors.push({
       type: "board",
@@ -176,7 +176,7 @@ async function migrateBoardContent(firestoreWorkspaceId, firestoreBoardId, conve
     const contentData = contentSnap.data();
 
     if (isDryRun) {
-      log(`    [DRY RUN] Would save board content (encrypted):`, {
+      log("    [DRY RUN] Would save board content (encrypted):", {
         boardId: convexBoardId,
         hasCiphertext: !!contentData.ciphertext,
         hasIv: !!contentData.iv,
@@ -188,10 +188,10 @@ async function migrateBoardContent(firestoreWorkspaceId, firestoreBoardId, conve
       return;
     }
 
-    log(`    ℹ️  Board content will be migrated on first access`);
+    log("    ℹ️  Board content will be migrated on first access");
     stats.boardContent.succeeded++;
   } catch (error) {
-    log(`    ❌ Failed to migrate board content:`, error.message);
+    log("    ❌ Failed to migrate board content:", error.message);
     stats.boardContent.failed++;
     stats.errors.push({
       type: "boardContent",

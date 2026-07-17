@@ -19,7 +19,7 @@ export const actionToggleSearchMenu = register({
     action: "toggle",
     predicate: (appState) => appState.gridModeEnabled,
   },
-  perform(elements, appState, _, app) {
+  perform(_elements, appState, _, app) {
     if (appState.openDialog) {
       return false;
     }
@@ -47,7 +47,7 @@ export const actionToggleSearchMenu = register({
     };
   },
   checked: (appState: AppState) => appState.gridModeEnabled,
-  predicate: (element, appState, props) => {
+  predicate: (_element, _appState, props) => {
     return props.gridModeEnabled === undefined;
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.key === KEYS.F,

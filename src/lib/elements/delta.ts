@@ -744,7 +744,7 @@ export class AppStateDelta implements DeltaContainer<AppState> {
 
             break;
           }
-          case "editingGroupId":
+          case "editingGroupId": {
             const editingGroupId = nextAppState[key];
 
             if (!editingGroupId) {
@@ -759,7 +759,8 @@ export class AppStateDelta implements DeltaContainer<AppState> {
             }
 
             break;
-          case "selectedLinearElement":
+          }
+          case "selectedLinearElement": {
             const nextLinearElement = nextAppState[key];
 
             if (!nextLinearElement) {
@@ -778,7 +779,8 @@ export class AppStateDelta implements DeltaContainer<AppState> {
             }
 
             break;
-          case "lockedMultiSelections":
+          }
+          case "lockedMultiSelections": {
             const prevLockedUnits = prevAppState[key] || {};
             const nextLockedUnits = nextAppState[key] || {};
 
@@ -789,7 +791,8 @@ export class AppStateDelta implements DeltaContainer<AppState> {
               visibleDifferenceFlag.value = true;
             }
             break;
-          case "activeLockedId":
+          }
+          case "activeLockedId": {
             const prevHitLockedId = prevAppState[key] || null;
             const nextHitLockedId = nextAppState[key] || null;
 
@@ -800,6 +803,7 @@ export class AppStateDelta implements DeltaContainer<AppState> {
               visibleDifferenceFlag.value = true;
             }
             break;
+          }
           default:
             assertNever(key, `Unknown ObservedElementsAppState's key "${key}"`, true);
         }
@@ -927,9 +931,8 @@ export class AppStateDelta implements DeltaContainer<AppState> {
       if (isTestEnv() || isDevEnv()) {
         throw e;
       }
-    } finally {
-      return [deleted, inserted];
     }
+    return [deleted, inserted];
   }
 
   private static orderAppStateKeys(partial: Partial<ObservedAppState>) {
@@ -1231,7 +1234,7 @@ export class ElementsDelta implements DeltaContainer<SceneElementsMap> {
 
         // the element wasn't found -> don't update the partial
         if (!element) {
-          console.error(`Element not found when trying to apply latest changes`);
+          console.error("Element not found when trying to apply latest changes");
           return partial;
         }
 
@@ -1353,9 +1356,8 @@ export class ElementsDelta implements DeltaContainer<SceneElementsMap> {
       if (isTestEnv() || isDevEnv()) {
         throw e;
       }
-    } finally {
-      return [nextElements, flags.containsVisibleDifference];
     }
+    return [nextElements, flags.containsVisibleDifference];
   }
 
   public squash(delta: ElementsDelta): this {
@@ -1753,9 +1755,8 @@ export class ElementsDelta implements DeltaContainer<SceneElementsMap> {
       if (isTestEnv() || isDevEnv()) {
         throw e;
       }
-    } finally {
-      return nextElements;
     }
+    return nextElements;
   }
 
   private static redrawTextBoundingBoxes(
@@ -1880,9 +1881,8 @@ export class ElementsDelta implements DeltaContainer<SceneElementsMap> {
       if (isTestEnv() || isDevEnv()) {
         throw e;
       }
-    } finally {
-      return [deleted, inserted];
     }
+    return [deleted, inserted];
   }
 
   private static stripIrrelevantProps(partial: Partial<OrderedDrawinkElement>): ElementPartial {

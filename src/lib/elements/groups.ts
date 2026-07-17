@@ -204,8 +204,8 @@ export const getSelectedGroupForElement = (
 
 export const getSelectedGroupIds = (appState: InteractiveCanvasAppState): GroupId[] =>
   Object.entries(appState.selectedGroupIds)
-    .filter(([groupId, isSelected]) => isSelected)
-    .map(([groupId, isSelected]) => groupId);
+    .filter(([_groupId, isSelected]) => isSelected)
+    .map(([groupId, _isSelected]) => groupId);
 
 // given a list of elements, return the the actual group ids that should be selected
 // or used to update the elements

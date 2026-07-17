@@ -311,7 +311,7 @@ export const actionChangeStrokeColor = register<Pick<AppState, "currentItemStrok
         ...appState,
         ...value,
       },
-      captureUpdate: !!value?.currentItemStrokeColor
+      captureUpdate: value?.currentItemStrokeColor
         ? CaptureUpdateAction.IMMEDIATELY
         : CaptureUpdateAction.EVENTUALLY,
     };
@@ -321,7 +321,7 @@ export const actionChangeStrokeColor = register<Pick<AppState, "currentItemStrok
 
     return (
       <>
-        {stylesPanelMode === "full" && <h3 aria-hidden="true">{t("labels.stroke")}</h3>}
+        {stylesPanelMode === "full" && <h3>{t("labels.stroke")}</h3>}
         <ColorPicker
           topPicks={DEFAULT_ELEMENT_STROKE_PICKS}
           palette={DEFAULT_ELEMENT_STROKE_COLOR_PALETTE}
@@ -401,7 +401,7 @@ export const actionChangeBackgroundColor = register<
 
     return (
       <>
-        {stylesPanelMode === "full" && <h3 aria-hidden="true">{t("labels.background")}</h3>}
+        {stylesPanelMode === "full" && <h3>{t("labels.background")}</h3>}
         <ColorPicker
           topPicks={DEFAULT_ELEMENT_BACKGROUND_PICKS}
           palette={DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE}
@@ -463,26 +463,26 @@ export const actionChangeFillStyle = register<DrawinkElement["fillStyle"]>({
                 } (${getShortcutKey("Alt-Click")})`,
                 icon: allElementsZigZag ? FillZigZagIcon : FillHachureIcon,
                 active: allElementsZigZag ? true : undefined,
-                testId: `fill-hachure`,
+                testId: "fill-hachure",
               },
               {
                 value: "cross-hatch",
                 text: t("labels.crossHatch"),
                 icon: FillCrossHatchIcon,
-                testId: `fill-cross-hatch`,
+                testId: "fill-cross-hatch",
               },
               {
                 value: "solid",
                 text: t("labels.solid"),
                 icon: FillSolidIcon,
-                testId: `fill-solid`,
+                testId: "fill-solid",
               },
             ]}
             value={getFormValue(
               elements,
               app,
               (element) => element.fillStyle,
-              (element) => element.hasOwnProperty("fillStyle"),
+              (element) => Object.hasOwn(element, "fillStyle"),
               (hasSelection) => (hasSelection ? null : appState.currentItemFillStyle),
             )}
             onClick={(value, event) => {
@@ -547,7 +547,7 @@ export const actionChangeStrokeWidth = register<DrawinkElement["strokeWidth"]>({
             elements,
             app,
             (element) => element.strokeWidth,
-            (element) => element.hasOwnProperty("strokeWidth"),
+            (element) => Object.hasOwn(element, "strokeWidth"),
             (hasSelection) => (hasSelection ? null : appState.currentItemStrokeWidth),
           )}
           onChange={(value) => updateData(value)}
@@ -600,7 +600,7 @@ export const actionChangeSloppiness = register<DrawinkElement["roughness"]>({
             elements,
             app,
             (element) => element.roughness,
-            (element) => element.hasOwnProperty("roughness"),
+            (element) => Object.hasOwn(element, "roughness"),
             (hasSelection) => (hasSelection ? null : appState.currentItemRoughness),
           )}
           onChange={(value) => updateData(value)}
@@ -652,7 +652,7 @@ export const actionChangeStrokeStyle = register<DrawinkElement["strokeStyle"]>({
             elements,
             app,
             (element) => element.strokeStyle,
-            (element) => element.hasOwnProperty("strokeStyle"),
+            (element) => Object.hasOwn(element, "strokeStyle"),
             (hasSelection) => (hasSelection ? null : appState.currentItemStrokeStyle),
           )}
           onChange={(value) => updateData(value)}
@@ -779,7 +779,7 @@ export const actionDecreaseFontSize = register({
   label: "labels.decreaseFontSize",
   icon: fontSizeIcon,
   trackEvent: false,
-  perform: (elements, appState, value, app) => {
+  perform: (elements, appState, _value, app) => {
     return changeFontSize(elements, appState, app, (element) =>
       Math.round(
         // get previous value before relative increase (doesn't work fully
@@ -803,7 +803,7 @@ export const actionIncreaseFontSize = register({
   label: "labels.increaseFontSize",
   icon: fontSizeIcon,
   trackEvent: false,
-  perform: (elements, appState, value, app) => {
+  perform: (elements, appState, _value, app) => {
     return changeFontSize(elements, appState, app, (element) =>
       Math.round(element.fontSize * (1 + FONT_SIZE_RELATIVE_INCREASE_STEP)),
     );
@@ -1410,7 +1410,7 @@ export const actionChangeRoundness = register<"sharp" | "round">({
               elements,
               app,
               (element) => (hasLegacyRoundness ? null : element.roundness ? "round" : "sharp"),
-              (element) => !isArrowElement(element) && element.hasOwnProperty("roundness"),
+              (element) => !isArrowElement(element) && Object.hasOwn(element, "roundness"),
               (hasSelection) => (hasSelection ? null : appState.currentItemRoundness),
             )}
             onChange={(value) => updateData(value)}
@@ -1519,7 +1519,8 @@ export const actionChangeArrowhead = register<{
               startArrowhead: type,
             });
             return element;
-          } else if (position === "end") {
+          }
+          if (position === "end") {
             const element: DrawinkLinearElement = newElementWith(el, {
               endArrowhead: type,
             });
@@ -1587,7 +1588,7 @@ export const actionChangeArrowProperties = register({
   name: "changeArrowProperties",
   label: "Change arrow properties",
   trackEvent: false,
-  perform: (elements, appState, value, app) => {
+  perform: (_elements, _appState, _value, _app) => {
     // This action doesn't perform any changes directly
     // It's just a container for the arrow type and arrowhead actions
     return false;

@@ -19,6 +19,7 @@ const Spinner = ({
   return (
     <div className={`Spinner ${className}`}>
       <svg
+        aria-hidden="true"
         viewBox="0 0 100 100"
         style={{
           width: size,

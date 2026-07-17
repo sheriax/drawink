@@ -27,7 +27,7 @@ const port = process.env.PORT || 3003;
 
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Drawink collaboration server is up :)");
 });
 

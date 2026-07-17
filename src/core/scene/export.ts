@@ -2,7 +2,6 @@ import rough from "roughjs/bin/rough";
 
 import {
   DEFAULT_EXPORT_PADDING,
-  EXPORT_DATA_TYPES,
   FONT_FAMILY,
   FRAME_STYLE,
   MIME_TYPES,
@@ -12,6 +11,7 @@ import {
   arrayToMap,
   distance,
   getFontString,
+  isDrawinkDataType,
   toBrandedType,
 } from "@/lib/common";
 
@@ -499,7 +499,10 @@ export const encodeSvgBase64Payload = ({
 };
 
 export const decodeSvgBase64Payload = ({ svg }: { svg: string }) => {
-  if (svg.includes(`payload-type:${MIME_TYPES.drawink}`)) {
+  const containsScenePayload = [MIME_TYPES.drawink, MIME_TYPES.excalidraw].some((mimeType) =>
+    svg.includes(`payload-type:${mimeType}`),
+  );
+  if (containsScenePayload) {
     const match = svg.match(/<!-- payload-start -->\s*(.+?)\s*<!-- payload-end -->/);
     if (!match) {
       throw new Error("INVALID");
@@ -513,7 +516,7 @@ export const decodeSvgBase64Payload = ({ svg }: { svg: string }) => {
       const encodedData = JSON.parse(json);
       if (!("encoded" in encodedData)) {
         // legacy, un-encoded scene JSON
-        if ("type" in encodedData && encodedData.type === EXPORT_DATA_TYPES.drawink) {
+        if ("type" in encodedData && isDrawinkDataType(encodedData.type)) {
           return json;
         }
         throw new Error("FAILED");

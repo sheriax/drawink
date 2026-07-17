@@ -173,7 +173,7 @@ export class DrawinkFontFace {
       }
 
       return `format('${parts.pop()}')`;
-    } catch (error) {
+    } catch (_error) {
       return "";
     }
   }

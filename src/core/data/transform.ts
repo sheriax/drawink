@@ -620,13 +620,13 @@ export const convertToDrawinkElements = (
           if (isArrowElement(container)) {
             const originalStart = element.type === "arrow" ? element?.start : undefined;
             const originalEnd = element.type === "arrow" ? element?.end : undefined;
-            if (originalStart && originalStart.id) {
+            if (originalStart?.id) {
               const newStartId = oldToNewElementIdMap.get(originalStart.id);
               if (newStartId) {
                 Object.assign(originalStart, { id: newStartId });
               }
             }
-            if (originalEnd && originalEnd.id) {
+            if (originalEnd?.id) {
               const newEndId = oldToNewElementIdMap.get(originalEnd.id);
               if (newEndId) {
                 Object.assign(originalEnd, { id: newEndId });
@@ -649,11 +649,11 @@ export const convertToDrawinkElements = (
           switch (element.type) {
             case "arrow": {
               const { start, end } = element;
-              if (start && start.id) {
+              if (start?.id) {
                 const newStartId = oldToNewElementIdMap.get(start.id);
                 Object.assign(start, { id: newStartId });
               }
-              if (end && end.id) {
+              if (end?.id) {
                 const newEndId = oldToNewElementIdMap.get(end.id);
                 Object.assign(end, { id: newEndId });
               }

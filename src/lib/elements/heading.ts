@@ -30,9 +30,11 @@ export const vectorToHeading = (vec: Vector): Heading => {
   const absY = Math.abs(y);
   if (x > absY) {
     return HEADING_RIGHT;
-  } else if (x <= -absY) {
+  }
+  if (x <= -absY) {
     return HEADING_LEFT;
-  } else if (y > absX) {
+  }
+  if (y > absX) {
     return HEADING_DOWN;
   }
   return HEADING_UP;
@@ -130,17 +132,20 @@ const headingForPointFromDiamondElement = (
     vectorCross(vectorFromPoint(point, top), vectorFromPoint(top, left)) > 0
   ) {
     return headingForPoint(top, midPoint);
-  } else if (
+  }
+  if (
     vectorCross(vectorFromPoint(point, right), vectorFromPoint(right, bottom)) <= 0 &&
     vectorCross(vectorFromPoint(point, right), vectorFromPoint(right, top)) > 0
   ) {
     return headingForPoint(right, midPoint);
-  } else if (
+  }
+  if (
     vectorCross(vectorFromPoint(point, bottom), vectorFromPoint(bottom, left)) <= 0 &&
     vectorCross(vectorFromPoint(point, bottom), vectorFromPoint(bottom, right)) > 0
   ) {
     return headingForPoint(bottom, midPoint);
-  } else if (
+  }
+  if (
     vectorCross(vectorFromPoint(point, left), vectorFromPoint(left, top)) <= 0 &&
     vectorCross(vectorFromPoint(point, left), vectorFromPoint(left, bottom)) > 0
   ) {
@@ -154,13 +159,15 @@ const headingForPointFromDiamondElement = (
   ) {
     const p = element.width > element.height ? top : right;
     return headingForPoint(p, midPoint);
-  } else if (
+  }
+  if (
     vectorCross(vectorFromPoint(point, midPoint), vectorFromPoint(right, midPoint)) <= 0 &&
     vectorCross(vectorFromPoint(point, midPoint), vectorFromPoint(bottom, midPoint)) > 0
   ) {
     const p = element.width > element.height ? bottom : right;
     return headingForPoint(p, midPoint);
-  } else if (
+  }
+  if (
     vectorCross(vectorFromPoint(point, midPoint), vectorFromPoint(bottom, midPoint)) <= 0 &&
     vectorCross(vectorFromPoint(point, midPoint), vectorFromPoint(left, midPoint)) > 0
   ) {

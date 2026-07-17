@@ -1,3 +1,11 @@
+# Archived: Drawink Complete Revamp Plan
+
+> **Status:** Historical planning record. This proposal describes a Turborepo-based
+> architecture that was not adopted by the current `master` branch. Do not use it as
+> setup, architecture, deployment, or implementation guidance. See
+> [Architecture](../ARCHITECTURE.md) and [Project status](../PROJECT_STATUS.md) for the
+> current repository state.
+
 # Drawink Complete Revamp Plan
 
 ## Executive Summary

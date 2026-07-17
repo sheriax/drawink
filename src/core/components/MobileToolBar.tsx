@@ -119,7 +119,7 @@ export const MobileToolBar = ({ app, onHandToolToggle, setAppState }: MobileTool
 
   const { TTDDialogTriggerTunnel } = useTunnels();
 
-  const handleToolChange = (toolType: string, pointerType?: string) => {
+  const handleToolChange = (toolType: string, _pointerType?: string) => {
     if (app.state.activeTool.type !== toolType) {
       trackEvent("toolbar", toolType, "ui");
     }
@@ -441,16 +441,14 @@ export const MobileToolBar = ({ app, onHandToolToggle, setAppState }: MobileTool
             {t("toolBar.mermaidToDrawink")}
           </DropdownMenu.Item>
           {app.props.aiEnabled !== false && app.plugins.diagramToCode && (
-            <>
-              <DropdownMenu.Item
-                onSelect={() => app.onMagicframeToolSelect()}
-                icon={MagicIcon}
-                data-testid="toolbar-magicframe"
-              >
-                {t("toolBar.magicframe")}
-                <DropdownMenu.Item.Badge>AI</DropdownMenu.Item.Badge>
-              </DropdownMenu.Item>
-            </>
+            <DropdownMenu.Item
+              onSelect={() => app.onMagicframeToolSelect()}
+              icon={MagicIcon}
+              data-testid="toolbar-magicframe"
+            >
+              {t("toolBar.magicframe")}
+              <DropdownMenu.Item.Badge>AI</DropdownMenu.Item.Badge>
+            </DropdownMenu.Item>
           )}
         </DropdownMenu.Content>
       </DropdownMenu>

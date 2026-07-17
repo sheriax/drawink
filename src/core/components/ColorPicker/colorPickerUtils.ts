@@ -4,7 +4,7 @@ import type { DrawinkElement } from "@/lib/elements/types";
 
 import type { ColorPaletteCustom, ColorPickerColor } from "@/lib/common";
 
-import { atom } from "../../editor-jotai";
+import { type PrimitiveAtom, atom } from "../../editor-jotai";
 
 export const getColorNameAndShadeFromColor = ({
   palette,
@@ -86,7 +86,9 @@ export const getMostUsedCustomColors = (
 };
 
 export type ActiveColorPickerSectionAtomType = "custom" | "baseColors" | "shades" | "hex" | null;
-export const activeColorPickerSectionAtom = atom<ActiveColorPickerSectionAtomType>(null);
+export const activeColorPickerSectionAtom = atom<ActiveColorPickerSectionAtomType>(
+  null,
+) as PrimitiveAtom<ActiveColorPickerSectionAtomType>;
 
 const calculateContrast = (r: number, g: number, b: number): number => {
   const yiq = (r * 299 + g * 587 + b * 114) / 1000;

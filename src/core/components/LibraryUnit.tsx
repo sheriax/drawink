@@ -80,7 +80,7 @@ export const LibraryUnit = memo(
         {id && elements && (isHovered || isMobile || selected) && (
           <CheckboxItem
             checked={selected}
-            onChange={(checked, event) => onToggle(id, event)}
+            onChange={(_checked, event) => onToggle(id, event)}
             className="library-unit__checkbox"
           />
         )}

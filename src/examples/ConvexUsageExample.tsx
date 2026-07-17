@@ -261,7 +261,7 @@ export function DeleteBoardButton({ boardId }: { boardId: Id<"boards"> }) {
   };
 
   return (
-    <button onClick={handleDelete} style={{ color: "red" }}>
+    <button type="button" onClick={handleDelete} style={{ color: "red" }}>
       Delete Board
     </button>
   );

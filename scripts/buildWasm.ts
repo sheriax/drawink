@@ -17,14 +17,14 @@ interface WasmModule {
 
 const wasmModules: WasmModule[] = [
   {
-    pkg: `../node_modules/fonteditor-core`,
-    src: `./wasm/woff2.wasm`,
-    dest: `../packages/drawink/fonts/wasm/woff2-wasm.ts`,
+    pkg: "../node_modules/fonteditor-core",
+    src: "./wasm/woff2.wasm",
+    dest: "../packages/drawink/fonts/wasm/woff2-wasm.ts",
   },
   {
-    pkg: `../node_modules/harfbuzzjs`,
-    src: `./wasm/hb-subset.wasm`,
-    dest: `../packages/drawink/fonts/wasm/hb-subset-wasm.ts`,
+    pkg: "../node_modules/harfbuzzjs",
+    src: "./wasm/hb-subset.wasm",
+    dest: "../packages/drawink/fonts/wasm/hb-subset-wasm.ts",
   },
 ];
 

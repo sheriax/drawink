@@ -80,10 +80,7 @@ async function assertBoardAccess(
 
   if (workspaceMember) {
     // For owner-only operations, workspace admins also qualify
-    if (
-      requiredRole === "owner" &&
-      !["owner", "admin"].includes(workspaceMember.role)
-    ) {
+    if (requiredRole === "owner" && !["owner", "admin"].includes(workspaceMember.role)) {
       throw new Error("Access denied: requires owner or admin role");
     }
     return { board, identity, role: workspaceMember.role };
@@ -92,9 +89,7 @@ async function assertBoardAccess(
   // Check board-level collaborator
   const boardCollaborator = await ctx.db
     .query("boardCollaborators")
-    .withIndex("by_board_and_user", (q) =>
-      q.eq("boardId", boardId).eq("userId", userId),
-    )
+    .withIndex("by_board_and_user", (q) => q.eq("boardId", boardId).eq("userId", userId))
     .first();
 
   if (boardCollaborator) {

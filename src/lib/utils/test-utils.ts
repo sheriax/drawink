@@ -1,4 +1,5 @@
 import { diffStringsUnified } from "jest-diff";
+import { expect } from "vitest";
 
 expect.extend({
   toCloselyEqualPoints(received, expected, precision) {
@@ -6,7 +7,7 @@ expect.extend({
       throw new Error("expected and received are not point arrays");
     }
 
-    const COMPARE = 1 / precision === 0 ? 1 : Math.pow(10, precision ?? 2);
+    const COMPARE = 1 / precision === 0 ? 1 : 10 ** (precision ?? 2);
     const pass = expected.every(
       (point, idx) =>
         Math.abs(received[idx][0] - point[0]) < COMPARE &&

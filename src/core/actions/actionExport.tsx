@@ -134,14 +134,14 @@ export const actionSaveToActiveFile = register({
   label: "buttons.save",
   icon: ExportIcon,
   trackEvent: { category: "export" },
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, appState, _props, app) => {
     return (
       !!app.props.UIOptions.canvasActions.saveToActiveFile &&
       !!appState.fileHandle &&
       !appState.viewModeEnabled
     );
   },
-  perform: async (elements, appState, value, app) => {
+  perform: async (elements, appState, _value, app) => {
     const fileHandleExists = !!appState.fileHandle;
 
     try {
@@ -181,7 +181,7 @@ export const actionSaveFileToDisk = register({
   icon: ExportIcon,
   viewMode: true,
   trackEvent: { category: "export" },
-  perform: async (elements, appState, value, app) => {
+  perform: async (elements, appState, _value, app) => {
     try {
       const { fileHandle } = await saveAsJSON(
         elements,
@@ -229,7 +229,7 @@ export const actionLoadScene = register({
   name: "loadScene",
   label: "buttons.load",
   trackEvent: { category: "export" },
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, appState, _props, app) => {
     return !!app.props.UIOptions.canvasActions.loadScene && !appState.viewModeEnabled;
   },
   perform: async (elements, appState, _, app) => {

@@ -15,8 +15,8 @@ import { getUserId } from "./users";
 
 const TIER_LIMITS: Record<string, { monthlyRequests: number }> = {
   free: { monthlyRequests: 30 },
-  pro: { monthlyRequests: Infinity },
-  team: { monthlyRequests: Infinity },
+  pro: { monthlyRequests: Number.POSITIVE_INFINITY },
+  team: { monthlyRequests: Number.POSITIVE_INFINITY },
 };
 
 // =========================================================================
@@ -74,12 +74,10 @@ export const getUsage = query({
     const startOfToday = getStartOfTodayMs();
 
     // Check if daily counter needs logical reset
-    const dailyTokensUsed =
-      usage.lastDailyReset < startOfToday ? 0 : usage.dailyTokensUsed;
+    const dailyTokensUsed = usage.lastDailyReset < startOfToday ? 0 : usage.dailyTokensUsed;
 
     // Check if monthly counter needs logical reset
-    const monthlyTokensUsed =
-      usage.lastMonthlyReset !== currentMonth ? 0 : usage.monthlyTokensUsed;
+    const monthlyTokensUsed = usage.lastMonthlyReset !== currentMonth ? 0 : usage.monthlyTokensUsed;
 
     return {
       dailyTokensUsed,
@@ -113,14 +111,14 @@ export const checkLimit = query({
 
     // Beta users always have unlimited access
     if (user.isBetaUser) {
-      return { allowed: true, reason: null, remaining: Infinity };
+      return { allowed: true, reason: null, remaining: Number.POSITIVE_INFINITY };
     }
 
     const tier = user.subscriptionTier;
     const limit = TIER_LIMITS[tier]?.monthlyRequests ?? 0;
 
-    if (limit === Infinity) {
-      return { allowed: true, reason: null, remaining: Infinity };
+    if (limit === Number.POSITIVE_INFINITY) {
+      return { allowed: true, reason: null, remaining: Number.POSITIVE_INFINITY };
     }
 
     // Get current usage
@@ -131,9 +129,7 @@ export const checkLimit = query({
 
     const currentMonth = getCurrentMonth();
     const monthlyUsed =
-      usage && usage.lastMonthlyReset === currentMonth
-        ? usage.monthlyTokensUsed
-        : 0;
+      usage && usage.lastMonthlyReset === currentMonth ? usage.monthlyTokensUsed : 0;
 
     const remaining = Math.max(0, limit - monthlyUsed);
 
@@ -169,7 +165,6 @@ export const trackUsageInternal = internalMutation({
   },
   handler: async (ctx, args) => {
     const tokens = args.tokensUsed ?? 1;
-    const now = Date.now();
     const currentMonth = getCurrentMonth();
     const startOfToday = getStartOfTodayMs();
 
@@ -180,18 +175,15 @@ export const trackUsageInternal = internalMutation({
 
     if (existing) {
       const dailyTokens =
-        existing.lastDailyReset < startOfToday
-          ? tokens
-          : existing.dailyTokensUsed + tokens;
+        existing.lastDailyReset < startOfToday ? tokens : existing.dailyTokensUsed + tokens;
       const monthlyTokens =
-        existing.lastMonthlyReset !== currentMonth
-          ? tokens
-          : existing.monthlyTokensUsed + tokens;
+        existing.lastMonthlyReset !== currentMonth ? tokens : existing.monthlyTokensUsed + tokens;
 
       await ctx.db.patch(existing._id, {
         dailyTokensUsed: dailyTokens,
         monthlyTokensUsed: monthlyTokens,
-        lastDailyReset: existing.lastDailyReset < startOfToday ? startOfToday : existing.lastDailyReset,
+        lastDailyReset:
+          existing.lastDailyReset < startOfToday ? startOfToday : existing.lastDailyReset,
         lastMonthlyReset: currentMonth,
       });
     } else {
@@ -214,7 +206,6 @@ export const trackUsage = mutation({
   handler: async (ctx, args) => {
     const userId = await getUserId(ctx);
     const tokens = args.tokensUsed ?? 1;
-    const now = Date.now();
     const currentMonth = getCurrentMonth();
     const startOfToday = getStartOfTodayMs();
 
@@ -226,20 +217,17 @@ export const trackUsage = mutation({
     if (existing) {
       // Reset daily counter if new day
       const dailyTokens =
-        existing.lastDailyReset < startOfToday
-          ? tokens
-          : existing.dailyTokensUsed + tokens;
+        existing.lastDailyReset < startOfToday ? tokens : existing.dailyTokensUsed + tokens;
 
       // Reset monthly counter if new month
       const monthlyTokens =
-        existing.lastMonthlyReset !== currentMonth
-          ? tokens
-          : existing.monthlyTokensUsed + tokens;
+        existing.lastMonthlyReset !== currentMonth ? tokens : existing.monthlyTokensUsed + tokens;
 
       await ctx.db.patch(existing._id, {
         dailyTokensUsed: dailyTokens,
         monthlyTokensUsed: monthlyTokens,
-        lastDailyReset: existing.lastDailyReset < startOfToday ? startOfToday : existing.lastDailyReset,
+        lastDailyReset:
+          existing.lastDailyReset < startOfToday ? startOfToday : existing.lastDailyReset,
         lastMonthlyReset: currentMonth,
       });
     } else {

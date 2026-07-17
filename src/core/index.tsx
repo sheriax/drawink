@@ -73,10 +73,15 @@ const DrawinkBase = (props: DrawinkProps) => {
     },
   };
 
-  if (canvasActions?.export) {
-    UIOptions.canvasActions.export.saveFileToDisk =
-      canvasActions.export?.saveFileToDisk ??
-      DEFAULT_UI_OPTIONS.canvasActions.export.saveFileToDisk;
+  const exportOptions = UIOptions.canvasActions.export;
+  const defaultExportOptions = DEFAULT_UI_OPTIONS.canvasActions.export;
+  if (
+    typeof canvasActions?.export === "object" &&
+    typeof exportOptions === "object" &&
+    typeof defaultExportOptions === "object"
+  ) {
+    exportOptions.saveFileToDisk =
+      canvasActions.export.saveFileToDisk ?? defaultExportOptions.saveFileToDisk;
   }
 
   if (UIOptions.canvasActions.toggleTheme === null && typeof theme === "undefined") {

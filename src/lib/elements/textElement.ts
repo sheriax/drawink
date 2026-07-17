@@ -133,7 +133,7 @@ export const handleBindTextResize = (
   }
   resetOriginalContainerCache(container.id);
   const textElement = getBoundTextElement(container, elementsMap);
-  if (textElement && textElement.text) {
+  if (textElement?.text) {
     if (!container) {
       return;
     }

@@ -4,7 +4,7 @@ import { ButtonIcon } from "./ButtonIcon";
 
 import type { JSX } from "react";
 
-export const RadioSelection = <T extends Object>(
+export const RadioSelection = <T,>(
   props: {
     options: {
       value: T;

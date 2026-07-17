@@ -52,9 +52,11 @@ declare module "png-chunks-extract" {
 }
 // -----------------------------------------------------------------------------
 
-interface Blob {
-  handle?: import("browser-fs-acces").FileSystemHandle;
-  name?: string;
+declare global {
+  interface Blob {
+    handle?: import("browser-fs-access").FileSystemHandle;
+    name?: string;
+  }
 }
 
 declare module "*.scss";

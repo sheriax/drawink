@@ -30,7 +30,7 @@ import { alignActionsPredicate } from "../actions/actionAlign";
 import { trackEvent } from "../analytics";
 import { useTunnels } from "../context/tunnels";
 
-import { t } from "../i18n";
+import { type TranslationKeys, t } from "../i18n";
 import {
   canChangeRoundness,
   canHaveArrowheads,
@@ -184,14 +184,12 @@ export const SelectedShapeActions = ({
       )}
 
       {(canChangeRoundness(appState.activeTool.type) ||
-        targetElements.some((element) => canChangeRoundness(element.type))) && (
-        <>{renderAction("changeRoundness")}</>
-      )}
+        targetElements.some((element) => canChangeRoundness(element.type))) &&
+        renderAction("changeRoundness")}
 
       {(toolIsArrow(appState.activeTool.type) ||
-        targetElements.some((element) => toolIsArrow(element.type))) && (
-        <>{renderAction("changeArrowType")}</>
-      )}
+        targetElements.some((element) => toolIsArrow(element.type))) &&
+        renderAction("changeArrowType")}
 
       {(appState.activeTool.type === "text" || targetElements.some(isTextElement)) && (
         <>
@@ -205,9 +203,8 @@ export const SelectedShapeActions = ({
 
       {shouldAllowVerticalAlign(targetElements, elementsMap) && renderAction("changeVerticalAlign")}
       {(canHaveArrowheads(appState.activeTool.type) ||
-        targetElements.some((element) => canHaveArrowheads(element.type))) && (
-        <>{renderAction("changeArrowhead")}</>
-      )}
+        targetElements.some((element) => canHaveArrowheads(element.type))) &&
+        renderAction("changeArrowhead")}
 
       {renderAction("changeOpacity")}
 
@@ -992,7 +989,7 @@ export const ShapesSwitcher = ({
 
   return (
     <>
-      {getToolbarTools(app).map(({ value, icon, key, numericKey, fillable }, index) => {
+      {getToolbarTools(app).map(({ value, icon, key, numericKey, fillable }, _index) => {
         if (
           UIOptions.tools?.[
             value as Extract<typeof value, keyof AppProps["UIOptions"]["tools"]>
@@ -1001,7 +998,7 @@ export const ShapesSwitcher = ({
           return null;
         }
 
-        const label = t(`toolBar.${value}`);
+        const label = t(`toolBar.${value}` as TranslationKeys);
         const letter = key && capitalizeString(typeof key === "string" ? key : key[0]);
         const shortcut = letter ? `${letter} ${t("helpDialog.or")} ${numericKey}` : `${numericKey}`;
         // when in compact styles panel mode (tablet)

@@ -22,7 +22,7 @@ const shouldLock = (elements: readonly DrawinkElement[]) => elements.every((el) 
 
 export const actionToggleElementLock = register({
   name: "toggleElementLock",
-  label: (elements, appState, app) => {
+  label: (_elements, appState, app) => {
     const selected = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
       includeBoundTextElement: false,
@@ -35,7 +35,7 @@ export const actionToggleElementLock = register({
     return shouldLock(selectedElements) ? LockedIcon : UnlockedIcon;
   },
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     return (
       selectedElements.length > 0 &&
@@ -127,7 +127,7 @@ export const actionToggleElementLock = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
   },
-  keyTest: (event, appState, elements, app) => {
+  keyTest: (event, appState, _elements, app) => {
     return (
       event.key.toLocaleLowerCase() === KEYS.L &&
       event[KEYS.CTRL_OR_CMD] &&

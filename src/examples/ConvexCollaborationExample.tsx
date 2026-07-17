@@ -178,7 +178,13 @@ export function ConvexCollaborationExample({ boardId }: { boardId: string }) {
               }}
             >
               {/* Cursor SVG */}
-              <svg width="24" height="24" viewBox="0 0 24 24" fill={cursor.color || "#4a90e2"}>
+              <svg
+                aria-hidden="true"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill={cursor.color || "#4a90e2"}
+              >
                 <path d="M5.65,1.72L11.43,21.38L13.76,13.77L21.37,11.44L5.65,1.72Z" />
               </svg>
 

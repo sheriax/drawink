@@ -75,7 +75,7 @@ export function useSubscription(): SubscriptionStatus {
  * Hook to check if user has access to a specific feature.
  * Returns true for team tier or beta users.
  */
-export function useFeatureAccess(feature: string | SubscriptionTier): FeatureAccess {
+export function useFeatureAccess(_feature: string | SubscriptionTier): FeatureAccess {
   const { hasFullAccess } = useSubscription();
   return { hasAccess: hasFullAccess };
 }

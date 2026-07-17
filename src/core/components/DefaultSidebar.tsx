@@ -97,6 +97,7 @@ export const DefaultSidebar = Object.assign(
                 <Sidebar.TabTrigger tab={BOARDS_SIDEBAR_TAB}>
                   {/* Boards icon - grid of squares */}
                   <svg
+                    aria-hidden="true"
                     width="20"
                     height="20"
                     viewBox="0 0 24 24"

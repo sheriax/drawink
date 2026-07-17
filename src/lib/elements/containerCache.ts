@@ -12,7 +12,11 @@ export const updateOriginalContainerCache = (
   id: DrawinkTextContainer["id"],
   height: DrawinkTextContainer["height"],
 ) => {
-  const data = originalContainerCache[id] || (originalContainerCache[id] = { height });
+  let data = originalContainerCache[id];
+  if (!data) {
+    data = { height };
+    originalContainerCache[id] = data;
+  }
   data.height = height;
   return data;
 };

@@ -38,7 +38,6 @@ function getDialogSize(size: DialogSize): number {
       return 550;
     case "wide":
       return 1024;
-    case "regular":
     default:
       return 800;
   }

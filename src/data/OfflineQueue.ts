@@ -101,7 +101,7 @@ export class OfflineQueue {
           this.notifyCallbacks(op, false);
         } else {
           // Exponential backoff: 2s, 4s, 8s
-          await this.delay(Math.pow(2, op.retryCount) * 1000);
+          await this.delay(2 ** op.retryCount * 1000);
           this.saveToStorage();
         }
       }

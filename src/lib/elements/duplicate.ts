@@ -368,7 +368,7 @@ const _deepCopyElement = (val: any, depth = 0) => {
     const tmp =
       typeof val.constructor === "function" ? Object.create(Object.getPrototypeOf(val)) : {};
     for (const key in val) {
-      if (val.hasOwnProperty(key)) {
+      if (Object.hasOwn(val, key)) {
         // don't copy non-serializable objects like these caches. They'll be
         // populated when the element is rendered.
         if (depth === 0 && (key === "shape" || key === "canvas")) {

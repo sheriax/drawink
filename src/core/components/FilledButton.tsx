@@ -62,9 +62,8 @@ export const FilledButton = forwardRef<HTMLButtonElement, FilledButtonProps>(
         } catch (error: any) {
           if (!(error instanceof AbortError)) {
             throw error;
-          } else {
-            console.warn(error);
           }
+          console.warn(error);
         } finally {
           clearTimeout(timer);
           setIsLoading(false);

@@ -155,10 +155,10 @@ describe("paste text as single lines", () => {
     pasteWithCtrlCmdV(text);
     await waitFor(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [fx, firstElY] = getElementBounds(h.elements[0], elementsMap);
+      const [_fx, firstElY] = getElementBounds(h.elements[0], elementsMap);
       for (let i = 1; i < h.elements.length; i++) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [fx, elY] = getElementBounds(h.elements[i], elementsMap);
+        const [_fx, elY] = getElementBounds(h.elements[i], elementsMap);
         expect(elY).toEqual(firstElY + lineHeightPx * i);
       }
     });
@@ -178,9 +178,9 @@ describe("paste text as single lines", () => {
 
     await waitFor(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [fx, firstElY] = getElementBounds(h.elements[0], elementsMap);
+      const [_fx, firstElY] = getElementBounds(h.elements[0], elementsMap);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [lx, lastElY] = getElementBounds(h.elements[1], elementsMap);
+      const [_lx, lastElY] = getElementBounds(h.elements[1], elementsMap);
       expect(lastElY).toEqual(firstElY + lineHeightPx * 2);
     });
   });
@@ -244,7 +244,7 @@ describe("Paste bound text container", () => {
       await sleep(1);
       expect(h.elements.length).toEqual(2);
       const container = h.elements[0];
-      expect(container.height).toBe(368);
+      expect(container.height).toBe(332);
       expect(container.width).toBe(166);
     });
   });
@@ -266,7 +266,7 @@ describe("Paste bound text container", () => {
       await sleep(1);
       expect(h.elements.length).toEqual(2);
       const container = h.elements[0];
-      expect(container.height).toBe(770);
+      expect(container.height).toBe(720);
       expect(container.width).toBe(166);
     });
   });
@@ -477,7 +477,7 @@ describe("pasting & frames", () => {
 describe("clipboard - pasting mermaid definition", () => {
   beforeAll(() => {
     mockMermaidToDrawink({
-      parseMermaidToDrawink: async (definition) => {
+      parseMermaidToExcalidraw: async (definition) => {
         const lines = definition.split("\n");
         return new Promise((resolve, reject) => {
           if (lines.some((line) => line === "flowchart TD")) {

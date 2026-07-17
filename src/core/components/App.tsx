@@ -761,7 +761,7 @@ class App extends React.Component<AppProps, AppState> {
     let data = null;
     try {
       data = JSON.parse(event.data);
-    } catch (e) {}
+    } catch (_e) {}
     if (!data) {
       return;
     }
@@ -1242,7 +1242,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     // GC
-    this.iFrameRefs.forEach((ref, id) => {
+    this.iFrameRefs.forEach((_ref, id) => {
       if (!iframeLikes.has(id)) {
         this.iFrameRefs.delete(id);
       }
@@ -1790,6 +1790,8 @@ class App extends React.Component<AppProps, AppState> {
         }}
         ref={this.drawinkContainerRef}
         onDrop={this.handleAppOnDrop}
+        role="application"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: The editor is a keyboard-driven application surface and must receive focus.
         tabIndex={0}
         onKeyDown={this.props.handleKeyboardGlobally ? undefined : this.onKeyDown}
         onPointerEnter={this.toggleOverscrollBehavior}
@@ -2610,7 +2612,7 @@ class App extends React.Component<AppProps, AppState> {
     this.stylesPanelMode = nextStylesPanelMode;
 
     if (prevStylesPanelMode !== "full" && nextStylesPanelMode === "full") {
-      this.setState((prevState) => ({
+      this.setState((_prevState) => ({
         preferredSelectionTool: {
           type: "selection",
           initialized: true,
@@ -2653,9 +2655,7 @@ class App extends React.Component<AppProps, AppState> {
         },
         setState: {
           configurable: true,
-          value: (...args: Parameters<typeof setState>) => {
-            return this.setState(...args);
-          },
+          value: setState,
         },
         app: {
           configurable: true,
@@ -3492,7 +3492,7 @@ class App extends React.Component<AppProps, AppState> {
         .map((response) => response.file);
       await this.insertImages(imageFiles, sceneX, sceneY);
       const error = responses.find((response) => !!response.errorMessage);
-      if (error && error.errorMessage) {
+      if (error?.errorMessage) {
         this.setState({ errorMessage: error.errorMessage });
       }
     } else {
@@ -3815,7 +3815,7 @@ class App extends React.Component<AppProps, AppState> {
         interpolateValue: (from, to, progress, key) => {
           // for zoom, use different easing
           if (key === "zoom") {
-            return from * Math.pow(to / from, easeOut(progress));
+            return from * (to / from) ** easeOut(progress);
           }
           // handle using default
           return undefined;
@@ -4319,7 +4319,8 @@ class App extends React.Component<AppProps, AppState> {
         openDialog: { name: "help" },
       });
       return;
-    } else if (event.key.toLowerCase() === KEYS.E && event.shiftKey && event[KEYS.CTRL_OR_CMD]) {
+    }
+    if (event.key.toLowerCase() === KEYS.E && event.shiftKey && event[KEYS.CTRL_OR_CMD]) {
       event.preventDefault();
       this.setState({ openDialog: { name: "imageExport" } });
       return;
@@ -4811,7 +4812,8 @@ class App extends React.Component<AppProps, AppState> {
                 multiElement: null,
               }),
         };
-      } else if (nextActiveTool.type !== "selection") {
+      }
+      if (nextActiveTool.type !== "selection") {
         return {
           ...prevState,
           ...commonResets,
@@ -5076,8 +5078,10 @@ class App extends React.Component<AppProps, AppState> {
       allHitElements = opts?.allHitElements || [];
     } else {
       allHitElements = this.getElementsAtPosition(x, y, {
-        includeBoundTextElement: opts?.includeBoundTextElement,
-        includeLockedElements: opts?.includeLockedElements,
+        includeBoundTextElement:
+          opts && "includeBoundTextElement" in opts ? opts.includeBoundTextElement : undefined,
+        includeLockedElements:
+          opts && "includeLockedElements" in opts ? opts.includeLockedElements : undefined,
       });
     }
 
@@ -5241,7 +5245,8 @@ class App extends React.Component<AppProps, AppState> {
       ) {
         hitElement = elements[index];
         break;
-      } else if (x1 < x && x < x2 && y1 < y && y < y2) {
+      }
+      if (x1 < x && x < x2 && y1 < y && y < y2) {
         hitElement = elements[index];
         break;
       }
@@ -5435,7 +5440,8 @@ class App extends React.Component<AppProps, AppState> {
         // Use the proper action to ensure immediate history capture
         this.actionManager.executeAction(actionToggleLinearEditor);
         return;
-      } else if (this.state.selectedLinearElement && isElbowArrow(selectedElements[0])) {
+      }
+      if (this.state.selectedLinearElement && isElbowArrow(selectedElements[0])) {
         const hitCoords = LinearElementEditor.getSegmentMidpointHitCoords(
           this.state.selectedLinearElement,
           { x: sceneX, y: sceneY },
@@ -5584,7 +5590,7 @@ class App extends React.Component<AppProps, AppState> {
     scenePointer: Readonly<{ x: number; y: number }>,
     hitElementMightBeLocked: NonDeletedDrawinkElement | null,
   ): DrawinkElement | undefined => {
-    if (hitElementMightBeLocked && hitElementMightBeLocked.locked) {
+    if (hitElementMightBeLocked?.locked) {
       return undefined;
     }
 
@@ -5614,7 +5620,7 @@ class App extends React.Component<AppProps, AppState> {
 
   private redirectToLink = (
     event: React.PointerEvent<HTMLCanvasElement>,
-    isTouchScreen: boolean,
+    _isTouchScreen: boolean,
   ) => {
     const draggedDistance = pointDistance(
       pointFrom(this.lastPointerDownEvent!.clientX, this.lastPointerDownEvent!.clientY),
@@ -5854,7 +5860,7 @@ class App extends React.Component<AppProps, AppState> {
           pointFrom<GlobalPoint>(scenePointerX, scenePointerY),
           this.scene.getNonDeletedElements(),
           this.scene.getNonDeletedElementsMap(),
-          (el) => maxBindingDistance_simple(this.state.zoom),
+          (_el) => maxBindingDistance_simple(this.state.zoom),
         );
         if (hoveredElement) {
           this.setState({
@@ -5885,7 +5891,7 @@ class App extends React.Component<AppProps, AppState> {
             pointFrom<GlobalPoint>(scenePointerX, scenePointerY),
             this.scene.getNonDeletedElements(),
             this.scene.getNonDeletedElementsMap(),
-            (el) => maxBindingDistance_simple(this.state.zoom),
+            (_el) => maxBindingDistance_simple(this.state.zoom),
           );
         if (hoveredElement) {
           this.actionManager.executeAction(actionFinalize, "ui", {
@@ -6026,7 +6032,7 @@ class App extends React.Component<AppProps, AppState> {
         pointFrom<GlobalPoint>(scenePointerX, scenePointerY),
         this.scene.getNonDeletedElements(),
         this.scene.getNonDeletedElementsMap(),
-        (el) => maxBindingDistance_simple(this.state.zoom),
+        (_el) => maxBindingDistance_simple(this.state.zoom),
       );
       if (
         hit &&
@@ -6093,7 +6099,7 @@ class App extends React.Component<AppProps, AppState> {
           this.scene.getNonDeletedElementsMap(),
           this.editorInterface,
         );
-        if (elementWithTransformHandleType && elementWithTransformHandleType.transformHandleType) {
+        if (elementWithTransformHandleType?.transformHandleType) {
           setCursor(
             this.interactiveCanvas,
             getCursorForResizingElement(elementWithTransformHandleType),
@@ -6131,7 +6137,7 @@ class App extends React.Component<AppProps, AppState> {
     });
 
     let hitElement: DrawinkElement | null = null;
-    if (hitElementMightBeLocked && hitElementMightBeLocked.locked) {
+    if (hitElementMightBeLocked?.locked) {
       hitElement = null;
     } else {
       hitElement = hitElementMightBeLocked;
@@ -6246,7 +6252,7 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   // set touch moving for mobile context menu
-  private handleTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+  private handleTouchMove = (_event: React.TouchEvent<HTMLCanvasElement>) => {
     invalidateContextMenu = true;
   };
 
@@ -6456,7 +6462,7 @@ class App extends React.Component<AppProps, AppState> {
     //fires only once, if pen is detected, penMode is enabled
     //the user can disable this by toggling the penMode button
     if (!this.state.penDetected && event.pointerType === "pen") {
-      this.setState((prevState) => {
+      this.setState((_prevState) => {
         return {
           penMode: true,
           penDetected: true,
@@ -6858,7 +6864,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     let nextPastePrevented = false;
-    const isLinux = typeof window === undefined ? false : /Linux/.test(window.navigator.platform);
+    const isLinux = typeof window === "undefined" ? false : /Linux/.test(window.navigator.platform);
 
     setCursor(this.interactiveCanvas, CURSOR_TYPE.GRABBING);
     let { clientX: lastX, clientY: lastY } = event;
@@ -6903,27 +6909,27 @@ class App extends React.Component<AppProps, AppState> {
         scrollY: this.state.scrollY - deltaY / this.state.zoom.value,
       });
     });
-    const teardown = withBatchedUpdates(
-      (lastPointerUp = () => {
-        lastPointerUp = null;
-        isPanning = false;
-        if (!isHoldingSpace) {
-          if (this.state.viewModeEnabled) {
-            setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
-          } else {
-            setCursorForShape(this.interactiveCanvas, this.state);
-          }
+    const handlePointerUp = () => {
+      lastPointerUp = null;
+      isPanning = false;
+      if (!isHoldingSpace) {
+        if (this.state.viewModeEnabled) {
+          setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
+        } else {
+          setCursorForShape(this.interactiveCanvas, this.state);
         }
-        this.setState({
-          cursorButton: "up",
-        });
-        this.savePointer(event.clientX, event.clientY, "up");
-        window.removeEventListener(EVENT.POINTER_MOVE, onPointerMove);
-        window.removeEventListener(EVENT.POINTER_UP, teardown);
-        window.removeEventListener(EVENT.BLUR, teardown);
-        onPointerMove.flush();
-      }),
-    );
+      }
+      this.setState({
+        cursorButton: "up",
+      });
+      this.savePointer(event.clientX, event.clientY, "up");
+      window.removeEventListener(EVENT.POINTER_MOVE, onPointerMove);
+      window.removeEventListener(EVENT.POINTER_UP, teardown);
+      window.removeEventListener(EVENT.BLUR, teardown);
+      onPointerMove.flush();
+    };
+    lastPointerUp = handlePointerUp;
+    const teardown = withBatchedUpdates(handlePointerUp);
     window.addEventListener(EVENT.BLUR, teardown);
     window.addEventListener(EVENT.POINTER_MOVE, onPointerMove, {
       passive: true,
@@ -7188,8 +7194,7 @@ class App extends React.Component<AppProps, AppState> {
         }
 
         if (
-          hitElementMightBeLocked &&
-          hitElementMightBeLocked.locked &&
+          hitElementMightBeLocked?.locked &&
           !unlockedHitElements.some((el) => this.state.selectedElementIds[el.id])
         ) {
           pointerDownState.hit.element = null;
@@ -8109,8 +8114,7 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       if (
-        this.state.selectedLinearElement &&
-        this.state.selectedLinearElement.elbowed &&
+        this.state.selectedLinearElement?.elbowed &&
         this.state.selectedLinearElement.initialState.segmentMidpoint.index
       ) {
         const [gridX, gridY] = getGridPoint(
@@ -8251,12 +8255,14 @@ class App extends React.Component<AppProps, AppState> {
           });
 
           return;
-        } else if (
+        }
+        if (
           linearElementEditor.initialState.segmentMidpoint.value !== null &&
           !linearElementEditor.initialState.segmentMidpoint.added
         ) {
           return;
-        } else if (linearElementEditor.initialState.lastClickedPoint > -1) {
+        }
+        if (linearElementEditor.initialState.lastClickedPoint > -1) {
           const element = LinearElementEditor.getElement(
             linearElementEditor.elementId,
             elementsMap,
@@ -9187,7 +9193,7 @@ class App extends React.Component<AppProps, AppState> {
               ),
             }));
           } else {
-            this.setState((prevState) => ({
+            this.setState((_prevState) => ({
               newElement: null,
             }));
           }
@@ -9267,7 +9273,7 @@ class App extends React.Component<AppProps, AppState> {
         // when editing the points of a linear element, we check if the
         // linear element still is in the frame afterwards
         // if not, the linear element will be removed from its frame (if any)
-        if (this.state.selectedLinearElement && this.state.selectedLinearElement.isDragging) {
+        if (this.state.selectedLinearElement?.isDragging) {
           const linearElement = this.scene.getElement(this.state.selectedLinearElement.elementId);
 
           if (linearElement?.frameId) {
@@ -9471,7 +9477,8 @@ class App extends React.Component<AppProps, AppState> {
         }
         this.eraseElements();
         return;
-      } else if (this.elementsPendingErasure.size) {
+      }
+      if (this.elementsPendingErasure.size) {
         this.restoreReadyToEraseElements();
       }
 
@@ -9504,13 +9511,14 @@ class App extends React.Component<AppProps, AppState> {
                 )) {
                   delete nextSelectedElementIds[groupedElement.id];
                 }
+                const unselectedGroupIds = Object.fromEntries(
+                  hitElement.groupIds.map((groupId) => [groupId, false] as const),
+                );
 
                 return {
                   selectedGroupIds: {
-                    ..._prevState.selectedElementIds,
-                    ...hitElement.groupIds
-                      .map((gId) => ({ [gId]: false }))
-                      .reduce((prev, acc) => ({ ...prev, ...acc }), {}),
+                    ..._prevState.selectedGroupIds,
+                    ...unselectedGroupIds,
                   },
                   selectedElementIds: makeNextSelectedElementIds(
                     nextSelectedElementIds,
@@ -9874,56 +9882,54 @@ class App extends React.Component<AppProps, AppState> {
 
     const dataURL = this.files[fileId]?.dataURL || (await getDataURL(imageFile));
 
-    return new Promise<NonDeleted<InitializedDrawinkImageElement>>(async (resolve, reject) => {
-      try {
-        let initializedImageElement = this.getLatestInitializedImageElement(
+    try {
+      let initializedImageElement = this.getLatestInitializedImageElement(
+        placeholderImageElement,
+        fileId,
+      );
+
+      this.addMissingFiles([
+        {
+          mimeType,
+          id: fileId,
+          dataURL,
+          created: Date.now(),
+          lastRetrieved: Date.now(),
+        },
+      ]);
+
+      if (!this.imageCache.get(fileId)) {
+        this.addNewImagesToImageCache();
+
+        const { erroredFiles } = await this.updateImageCache([initializedImageElement]);
+
+        if (erroredFiles.size) {
+          throw new Error("Image cache update resulted with an error.");
+        }
+      }
+
+      const imageHTML = await this.imageCache.get(fileId)?.image;
+
+      if (imageHTML && this.state.newElement?.id !== initializedImageElement.id) {
+        initializedImageElement = this.getLatestInitializedImageElement(
           placeholderImageElement,
           fileId,
         );
 
-        this.addMissingFiles([
-          {
-            mimeType,
-            id: fileId,
-            dataURL,
-            created: Date.now(),
-            lastRetrieved: Date.now(),
-          },
-        ]);
+        const naturalDimensions = this.getImageNaturalDimensions(
+          initializedImageElement,
+          imageHTML,
+        );
 
-        if (!this.imageCache.get(fileId)) {
-          this.addNewImagesToImageCache();
-
-          const { erroredFiles } = await this.updateImageCache([initializedImageElement]);
-
-          if (erroredFiles.size) {
-            throw new Error("Image cache update resulted with an error.");
-          }
-        }
-
-        const imageHTML = await this.imageCache.get(fileId)?.image;
-
-        if (imageHTML && this.state.newElement?.id !== initializedImageElement.id) {
-          initializedImageElement = this.getLatestInitializedImageElement(
-            placeholderImageElement,
-            fileId,
-          );
-
-          const naturalDimensions = this.getImageNaturalDimensions(
-            initializedImageElement,
-            imageHTML,
-          );
-
-          // no need to create a new instance anymore, just assign the natural dimensions
-          Object.assign(initializedImageElement, naturalDimensions);
-        }
-
-        resolve(initializedImageElement);
-      } catch (error: any) {
-        console.error(error);
-        reject(new Error(t("errors.imageInsertError")));
+        // no need to create a new instance anymore, just assign the natural dimensions
+        Object.assign(initializedImageElement, naturalDimensions);
       }
-    });
+
+      return initializedImageElement;
+    } catch (error: any) {
+      console.error(error);
+      throw new Error(t("errors.imageInsertError"));
+    }
   };
 
   /**
@@ -10944,7 +10950,7 @@ class App extends React.Component<AppProps, AppState> {
       this.state,
     );
 
-    if (isNaN(sceneX) || isNaN(sceneY)) {
+    if (Number.isNaN(sceneX) || Number.isNaN(sceneY)) {
       // sometimes the pointer goes off screen
     }
 
@@ -11003,7 +11009,7 @@ class App extends React.Component<AppProps, AppState> {
           offsetTop,
         },
         () => {
-          cb && cb();
+          cb?.();
         },
       );
     }
@@ -11045,7 +11051,7 @@ export interface DrawinkWindowH {
   elements: readonly DrawinkElement[];
   state: AppState;
   setState: React.Component<any, AppState>["setState"];
-  watchState: (prev: any, next: any) => void | undefined;
+  watchState: (prev: any, next: any) => void;
   app: InstanceType<typeof App>;
   history: History;
   store: Store;

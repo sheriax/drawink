@@ -171,9 +171,9 @@ const languages: Record<string, string> = {
 const percentagesPath = resolve(__dirname, "../packages/drawink/locales/percentages.json");
 const rowData = JSON.parse(readFileSync(percentagesPath, "utf-8"));
 
-const coverages: Record<string, number> = Object.entries(rowData as Record<string, number>)
-  .sort(([, a], [, b]) => b - a)
-  .reduce((r, [k, v]) => ({ ...r, [k]: v }), {} as Record<string, number>);
+const coverages = Object.fromEntries(
+  Object.entries(rowData as Record<string, number>).sort(([, a], [, b]) => b - a),
+) as Record<string, number>;
 
 const boldIf = (text: string | number, condition: boolean): string =>
   condition ? `**${text}**` : String(text);

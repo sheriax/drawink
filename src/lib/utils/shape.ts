@@ -206,7 +206,7 @@ export const getCurvePathOps = (shape: Drawable): Op[] => {
 // linear
 export const getCurveShape = <Point extends GlobalPoint | LocalPoint>(
   roughShape: Drawable,
-  startingPoint: Point = pointFrom(0, 0),
+  startingPoint: Point,
   angleInRadian: Radians,
   center: Point,
 ): GeometricShape<Point> => {
@@ -287,7 +287,7 @@ export const getFreedrawShape = <Point extends GlobalPoint | LocalPoint>(
 export const getClosedCurveShape = <Point extends GlobalPoint | LocalPoint>(
   element: DrawinkLinearElement,
   roughShape: Drawable,
-  startingPoint: Point = pointFrom<Point>(0, 0),
+  startingPoint: Point,
   angleInRadian: Radians,
   center: Point,
 ): GeometricShape<Point> => {
@@ -400,8 +400,8 @@ const distanceToEllipse = <Point extends LocalPoint | GlobalPoint>(
   const px = Math.abs(rotatedPointX);
   const py = Math.abs(rotatedPointY);
 
-  let tx = 0.707;
-  let ty = 0.707;
+  let tx = Math.SQRT1_2;
+  let ty = Math.SQRT1_2;
 
   for (let i = 0; i < 3; i++) {
     const x = a * tx;

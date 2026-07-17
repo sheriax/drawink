@@ -14,7 +14,7 @@ import { THEME } from "@/lib/common";
 
 import type { Theme } from "@/lib/elements/types";
 
-export const iconFillColor = (theme: Theme) => "var(--icon-fill-color)";
+export const iconFillColor = (_theme: Theme) => "var(--icon-fill-color)";
 
 const handlerColor = (theme: Theme) => (theme === THEME.LIGHT ? oc.white : "#1e1e1e");
 
@@ -95,7 +95,7 @@ export const LibraryIcon = createIcon(
 
 // tabler-icons: plus
 export const PlusIcon = createIcon(
-  <svg strokeWidth="1.5">
+  <svg aria-hidden="true" strokeWidth="1.5">
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <line x1="12" y1="5" x2="12" y2="19" />
     <line x1="5" y1="12" x2="19" y2="12" />
@@ -106,10 +106,10 @@ export const PlusIcon = createIcon(
 // tabler-icons: dots-vertical
 export const DotsIcon = createIcon(
   <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <circle cx="12" cy="12" r="1"></circle>
-    <circle cx="12" cy="19" r="1"></circle>
-    <circle cx="12" cy="5" r="1"></circle>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <circle cx="12" cy="12" r="1" />
+    <circle cx="12" cy="19" r="1" />
+    <circle cx="12" cy="5" r="1" />
   </g>,
   tablerIconProps,
 );
@@ -127,11 +127,11 @@ export const DotsHorizontalIcon = createIcon(
 
 // tabler-icons: pinned
 export const PinIcon = createIcon(
-  <svg strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
-    <line x1="12" y1="16" x2="12" y2="21"></line>
-    <line x1="8" y1="4" x2="16" y2="4"></line>
+  <svg aria-hidden="true" strokeWidth="1.5">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" />
+    <line x1="12" y1="16" x2="12" y2="21" />
+    <line x1="8" y1="4" x2="16" y2="4" />
   </svg>,
   tablerIconProps,
 );
@@ -317,7 +317,7 @@ export const LassoIcon = createIcon(
 export const RectangleIcon = createIcon(
   <g strokeWidth="1.5">
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+    <rect x="4" y="4" width="16" height="16" rx="2" />
   </g>,
   tablerIconProps,
 );
@@ -336,7 +336,7 @@ export const DiamondIcon = createIcon(
 export const EllipseIcon = createIcon(
   <g strokeWidth="1.5">
     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <circle cx="12" cy="12" r="9"></circle>
+    <circle cx="12" cy="12" r="9" />
   </g>,
 
   tablerIconProps,
@@ -361,10 +361,10 @@ export const LineIcon = createIcon(
 
 export const PenModeIcon = createIcon(
   <g strokeWidth="1.25">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z"></path>
-    <path d="M16 7h4"></path>
-    <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z" />
+    <path d="M16 7h4" />
+    <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3" />
   </g>,
   tablerIconProps,
 );
@@ -390,7 +390,7 @@ export const TextIcon = createIcon(
     <line x1="14" y1="20" x2="21" y2="20" />
     <line x1="6.9" y1="15" x2="13.8" y2="15" />
     <line x1="10.2" y1="6.3" x2="16" y2="20" />
-    <polyline points="5 20 11 4 13 4 20 20"></polyline>
+    <polyline points="5 20 11 4 13 4 20 20" />
   </g>,
   tablerIconProps,
 );
@@ -494,10 +494,10 @@ export const SunIcon = createIcon(
 
 export const HamburgerMenuIcon = createIcon(
   <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <line x1="4" y1="6" x2="20" y2="6"></line>
-    <line x1="4" y1="12" x2="20" y2="12"></line>
-    <line x1="4" y1="18" x2="20" y2="18"></line>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <line x1="4" y1="6" x2="20" y2="6" />
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="18" x2="20" y2="18" />
   </g>,
   tablerIconProps,
 );
@@ -512,20 +512,20 @@ export const ExportIcon = createIcon(
 
 export const HelpIcon = createIcon(
   <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <circle cx="12" cy="12" r="9"></circle>
-    <line x1="12" y1="17" x2="12" y2="17.01"></line>
-    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <circle cx="12" cy="12" r="9" />
+    <line x1="12" y1="17" x2="12" y2="17.01" />
+    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
   </g>,
   tablerIconProps,
 );
 
 export const HelpIconThin = createIcon(
   <g strokeWidth="1.25">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <circle cx="12" cy="12" r="9"></circle>
-    <line x1="12" y1="17" x2="12" y2="17.01"></line>
-    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <circle cx="12" cy="12" r="9" />
+    <line x1="12" y1="17" x2="12" y2="17.01" />
+    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
   </g>,
   tablerIconProps,
 );
@@ -627,13 +627,13 @@ export const slashIcon = createIcon(
 
 export const ExportImageIcon = createIcon(
   <g strokeWidth="1.25">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M15 8h.01"></path>
-    <path d="M12 20h-5a3 3 0 0 1 -3 -3v-10a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v5"></path>
-    <path d="M4 15l4 -4c.928 -.893 2.072 -.893 3 0l4 4"></path>
-    <path d="M14 14l1 -1c.617 -.593 1.328 -.793 2.009 -.598"></path>
-    <path d="M19 16v6"></path>
-    <path d="M22 19l-3 3l-3 -3"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M15 8h.01" />
+    <path d="M12 20h-5a3 3 0 0 1 -3 -3v-10a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v5" />
+    <path d="M4 15l4 -4c.928 -.893 2.072 -.893 3 0l4 4" />
+    <path d="M14 14l1 -1c.617 -.593 1.328 -.793 2.009 -.598" />
+    <path d="M19 16v6" />
+    <path d="M22 19l-3 3l-3 -3" />
   </g>,
   tablerIconProps,
 );
@@ -899,11 +899,11 @@ export const CenterHorizontallyIcon = createIcon(
 
 export const usersIcon = createIcon(
   <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <circle cx="9" cy="7" r="4"></circle>
-    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
   </g>,
   tablerIconProps,
 );
@@ -1112,15 +1112,13 @@ export const FillSolidIcon = createIcon(
 );
 
 export const StrokeWidthBaseIcon = createIcon(
-  <>
-    <path
-      d="M4.167 10h11.666"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </>,
+  <path
+    d="M4.167 10h11.666"
+    stroke="currentColor"
+    strokeWidth="1.25"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />,
   modifiedTablerIconProps,
 );
 
@@ -1210,7 +1208,7 @@ export const SloppinessCartoonistIcon = createIcon(
 );
 
 export const EdgeSharpIcon = createIcon(
-  <svg strokeWidth="1.5">
+  <svg aria-hidden="true" strokeWidth="1.5">
     <path d="M3.33334 9.99998V6.66665C3.33334 6.04326 3.33403 4.9332 3.33539 3.33646C4.95233 3.33436 6.06276 3.33331 6.66668 3.33331H10" />
     <path d="M13.3333 3.33331V3.34331" />
     <path d="M16.6667 3.33331V3.34331" />
@@ -1483,15 +1481,13 @@ export const FontSizeLargeIcon = createIcon(
 );
 
 export const FontSizeExtraLargeIcon = createIcon(
-  <>
-    <path
-      d="m1.667 3.333 6.666 13.334M8.333 3.333 1.667 16.667M11.667 3.333v13.334h6.666"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </>,
+  <path
+    d="m1.667 3.333 6.666 13.334M8.333 3.333 1.667 16.667M11.667 3.333v13.334h6.666"
+    stroke="currentColor"
+    strokeWidth="1.25"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />,
   modifiedTablerIconProps,
 );
 
@@ -1509,27 +1505,23 @@ export const fontSizeIcon = createIcon(
 );
 
 export const FontFamilyHeadingIcon = createIcon(
-  <>
-    <g stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M7 12h10" />
-      <path d="M7 5v14" />
-      <path d="M17 5v14" />
-      <path d="M15 19h4" />
-      <path d="M15 5h4" />
-      <path d="M5 19h4" />
-      <path d="M5 5h4" />
-    </g>
-  </>,
+  <g stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M7 12h10" />
+    <path d="M7 5v14" />
+    <path d="M17 5v14" />
+    <path d="M15 19h4" />
+    <path d="M15 5h4" />
+    <path d="M5 19h4" />
+    <path d="M5 5h4" />
+  </g>,
   tablerIconProps,
 );
 
 export const FontFamilyNormalIcon = createIcon(
-  <>
-    <g stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5.833 16.667v-10a3.333 3.333 0 0 1 3.334-3.334h1.666a3.333 3.333 0 0 1 3.334 3.334v10M5.833 10.833h8.334" />
-    </g>
-  </>,
+  <g stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5.833 16.667v-10a3.333 3.333 0 0 1 3.334-3.334h1.666a3.333 3.333 0 0 1 3.334 3.334v10M5.833 10.833h8.334" />
+  </g>,
   modifiedTablerIconProps,
 );
 
@@ -1613,7 +1605,7 @@ export const TextAlignBottomIcon = React.memo(({ theme }: { theme: Theme }) =>
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <line x1="4" y1="20" x2="20" y2="20" />
-      <rect x="9" y="4" width="6" height="12" rx="2"></rect>
+      <rect x="9" y="4" width="6" height="12" rx="2" />
     </g>,
     tablerIconProps,
   ),
@@ -1664,30 +1656,30 @@ export const eraser = createIcon(
 
 export const handIcon = createIcon(
   <g strokeWidth={1.25}>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5"></path>
-    <path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5"></path>
-    <path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5"></path>
-    <path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5" />
+    <path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5" />
+    <path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5" />
+    <path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
   </g>,
   tablerIconProps,
 );
 
 export const downloadIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-    <path d="M7 11l5 5l5 -5"></path>
-    <path d="M12 4l0 12"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+    <path d="M7 11l5 5l5 -5" />
+    <path d="M12 4l0 12" />
   </>,
   tablerIconProps,
 );
 
 export const copyIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
-    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
+    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
   </>,
   tablerIconProps,
 );
@@ -1705,38 +1697,38 @@ export const cutIcon = createIcon(
 
 export const helpIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-    <path d="M12 17l0 .01"></path>
-    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+    <path d="M12 17l0 .01" />
+    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
   </>,
   tablerIconProps,
 );
 
 export const playerPlayIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M7 4v16l13 -8z"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M7 4v16l13 -8z" />
   </>,
   tablerIconProps,
 );
 
 export const playerStopFilledIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
     <path
       d="M17 4h-10a3 3 0 0 0 -3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3 -3v-10a3 3 0 0 0 -3 -3z"
       strokeWidth="0"
       fill="currentColor"
-    ></path>
+    />
   </>,
   tablerIconProps,
 );
 
 export const tablerCheckIcon = createIcon(
   <>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M5 12l5 5l10 -10"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M5 12l5 5l10 -10" />
   </>,
   tablerIconProps,
 );
@@ -1753,30 +1745,30 @@ export const alertTriangleIcon = createIcon(
 
 export const eyeDropperIcon = createIcon(
   <g strokeWidth={1.25}>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M11 7l6 6"></path>
-    <path d="M4 16l11.7 -11.7a1 1 0 0 1 1.4 0l2.6 2.6a1 1 0 0 1 0 1.4l-11.7 11.7h-4v-4z"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M11 7l6 6" />
+    <path d="M4 16l11.7 -11.7a1 1 0 0 1 1.4 0l2.6 2.6a1 1 0 0 1 0 1.4l-11.7 11.7h-4v-4z" />
   </g>,
   tablerIconProps,
 );
 
 export const extraToolsIcon = createIcon(
   <g strokeWidth={1.5}>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M12 3l-4 7h8z"></path>
-    <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-    <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M12 3l-4 7h8z" />
+    <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+    <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
   </g>,
   tablerIconProps,
 );
 
 export const frameToolIcon = createIcon(
   <g strokeWidth={1.5}>
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M4 7l16 0"></path>
-    <path d="M4 17l16 0"></path>
-    <path d="M7 4l0 16"></path>
-    <path d="M17 4l0 16"></path>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M4 7l16 0" />
+    <path d="M4 17l16 0" />
+    <path d="M7 4l0 16" />
+    <path d="M17 4l0 16" />
   </g>,
   tablerIconProps,
 );

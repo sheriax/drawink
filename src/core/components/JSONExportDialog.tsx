@@ -89,7 +89,7 @@ const JSONExportModal = ({
             />
           </Card>
         )}
-        {exportOpts.renderCustomUI && exportOpts.renderCustomUI(elements, appState, files, canvas)}
+        {exportOpts.renderCustomUI?.(elements, appState, files, canvas)}
       </div>
     </div>
   );

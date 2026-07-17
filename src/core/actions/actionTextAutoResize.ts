@@ -18,7 +18,7 @@ export const actionTextAutoResize = register({
   label: "labels.autoResize",
   icon: null,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _: unknown, app: AppClassProperties) => {
+  predicate: (elements, appState, _: unknown, _app: AppClassProperties) => {
     const selectedElements = getSelectedElements(elements, appState);
     return (
       selectedElements.length === 1 &&
@@ -26,7 +26,7 @@ export const actionTextAutoResize = register({
       !selectedElements[0].autoResize
     );
   },
-  perform: (elements, appState, _, app) => {
+  perform: (elements, appState, _, _app) => {
     const selectedElements = getSelectedElements(elements, appState);
 
     return {

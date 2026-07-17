@@ -222,7 +222,7 @@ const bindingStrategyForElbowArrowEndpointDragging = (
 
   const [pointIdx, { point }] = update;
   const globalPoint = LinearElementEditor.getPointGlobalCoordinates(arrow, point, elementsMap);
-  const hit = getHoveredElementForBinding(globalPoint, elements, elementsMap, (element) =>
+  const hit = getHoveredElementForBinding(globalPoint, elements, elementsMap, (_element) =>
     maxBindingDistance_simple(zoom),
   );
 
@@ -465,41 +465,38 @@ const bindingStrategyForSimpleArrowEndpointDragging_complex = (
       }
       // The opposite binding is inside the same element
       // eslint-disable-next-line no-else-return
-      else {
-        current = { element: hit, mode: "inside", focusPoint: point };
 
-        return { current, other: isMultiPoint ? { mode: undefined } : other };
-      }
-    }
-    // The opposite binding is on a different element (or nested)
-    // eslint-disable-next-line no-else-return
-    else {
-      // Handle the nested element case
-      if (isOverlapping && oppositeElement && !otherIsTransparent) {
-        current = {
-          element: oppositeElement,
-          mode: "inside",
-          focusPoint: point,
-        };
-      } else {
-        current = {
-          element: hit,
-          mode: "orbit",
-          focusPoint: isNested ? point : point,
-        };
-      }
+      current = { element: hit, mode: "inside", focusPoint: point };
 
       return { current, other: isMultiPoint ? { mode: undefined } : other };
     }
+    // The opposite binding is on a different element (or nested)
+    // eslint-disable-next-line no-else-return
+
+    // Handle the nested element case
+    if (isOverlapping && oppositeElement && !otherIsTransparent) {
+      current = {
+        element: oppositeElement,
+        mode: "inside",
+        focusPoint: point,
+      };
+    } else {
+      current = {
+        element: hit,
+        mode: "orbit",
+        focusPoint: isNested ? point : point,
+      };
+    }
+
+    return { current, other: isMultiPoint ? { mode: undefined } : other };
   }
   // The opposite binding is on a different element or no binding
-  else {
-    current = {
-      element: hit,
-      mode: "orbit",
-      focusPoint: point,
-    };
-  }
+
+  current = {
+    element: hit,
+    mode: "orbit",
+    focusPoint: point,
+  };
 
   // Must return as only one endpoint is dragged, therefore
   // the end binding strategy might accidentally gets overriden
@@ -605,7 +602,7 @@ const getBindingStrategyForDraggingBindingElementEndpoints_simple = (
     `Local point must be defined for ${startDragged ? "start" : "end"} dragging`,
   );
   const globalPoint = LinearElementEditor.getPointGlobalCoordinates(arrow, localPoint, elementsMap);
-  const hit = getHoveredElementForBinding(globalPoint, elements, elementsMap, (e) =>
+  const hit = getHoveredElementForBinding(globalPoint, elements, elementsMap, (_e) =>
     maxBindingDistance_simple(appState.zoom),
   );
   const pointInElement = hit && isPointInElement(globalPoint, hit, elementsMap);
@@ -1248,10 +1245,8 @@ export const avoidRectangularCorner = (
       center,
       bindTarget.angle,
     );
-  } else if (
-    nonRotatedPoint[0] < bindTarget.x &&
-    nonRotatedPoint[1] > bindTarget.y + bindTarget.height
-  ) {
+  }
+  if (nonRotatedPoint[0] < bindTarget.x && nonRotatedPoint[1] > bindTarget.y + bindTarget.height) {
     // Bottom left
     if (nonRotatedPoint[0] - bindTarget.x > -bindingGap) {
       return pointRotateRads(
@@ -1265,7 +1260,8 @@ export const avoidRectangularCorner = (
       center,
       bindTarget.angle,
     );
-  } else if (
+  }
+  if (
     nonRotatedPoint[0] > bindTarget.x + bindTarget.width &&
     nonRotatedPoint[1] > bindTarget.y + bindTarget.height
   ) {
@@ -1282,10 +1278,8 @@ export const avoidRectangularCorner = (
       center,
       bindTarget.angle,
     );
-  } else if (
-    nonRotatedPoint[0] > bindTarget.x + bindTarget.width &&
-    nonRotatedPoint[1] < bindTarget.y
-  ) {
+  }
+  if (nonRotatedPoint[0] > bindTarget.x + bindTarget.width && nonRotatedPoint[1] < bindTarget.y) {
     // Top right
     if (nonRotatedPoint[0] - bindTarget.x < bindTarget.width + bindingGap) {
       return pointRotateRads(
@@ -1334,28 +1328,32 @@ const snapToMid = (
   ) {
     // LEFT
     return pointRotateRads<GlobalPoint>(pointFrom(x - bindingGap, center[1]), center, angle);
-  } else if (
+  }
+  if (
     nonRotated[1] <= y + height / 2 &&
     nonRotated[0] > center[0] - horizontalThreshold &&
     nonRotated[0] < center[0] + horizontalThreshold
   ) {
     // TOP
     return pointRotateRads(pointFrom(center[0], y - bindingGap), center, angle);
-  } else if (
+  }
+  if (
     nonRotated[0] >= x + width / 2 &&
     nonRotated[1] > center[1] - verticalThreshold &&
     nonRotated[1] < center[1] + verticalThreshold
   ) {
     // RIGHT
     return pointRotateRads(pointFrom(x + width + bindingGap, center[1]), center, angle);
-  } else if (
+  }
+  if (
     nonRotated[1] >= y + height / 2 &&
     nonRotated[0] > center[0] - horizontalThreshold &&
     nonRotated[0] < center[0] + horizontalThreshold
   ) {
     // DOWN
     return pointRotateRads(pointFrom(center[0], y + height + bindingGap), center, angle);
-  } else if (bindTarget.type === "diamond") {
+  }
+  if (bindTarget.type === "diamond") {
     const distance = bindingGap;
     const topLeft = pointFrom<GlobalPoint>(x + width / 4 - distance, y + height / 4 - distance);
     const topRight = pointFrom<GlobalPoint>(

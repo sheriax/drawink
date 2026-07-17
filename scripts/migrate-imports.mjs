@@ -35,7 +35,7 @@ for (const file of files) {
 
     const matches = content.match(regex);
     if (matches) {
-      content = content.replace(regex, (match, prefix, subpath) => {
+      content = content.replace(regex, (_match, prefix, subpath) => {
         fileChanges++;
         return `${prefix}${newPath}${subpath || ""}"`;
       });
@@ -51,6 +51,6 @@ for (const file of files) {
   }
 }
 
-console.log(`\n✅ Migration complete!`);
+console.log("\n✅ Migration complete!");
 console.log(`📊 Updated ${totalChanges} imports across ${filesChanged} files`);
 console.log(`📁 Total files scanned: ${files.length}`);

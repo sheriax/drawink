@@ -29,7 +29,13 @@ const BillingSettings: React.FC = () => {
     );
   }
 
-  const planName = isBetaUser ? "Beta Access" : tier === "team" ? "Team" : tier === "pro" ? "Pro" : "Free";
+  const planName = isBetaUser
+    ? "Beta Access"
+    : tier === "team"
+      ? "Team"
+      : tier === "pro"
+        ? "Pro"
+        : "Free";
   const planPrice = isBetaUser ? "Free during beta" : "₹0/month";
 
   return (
@@ -61,8 +67,8 @@ const BillingSettings: React.FC = () => {
             {isBetaUser && (
               <div className="beta-warning">
                 <p>
-                  When the beta period ends, your account will move to the Free
-                  plan. Some features may require a paid plan at that point.
+                  When the beta period ends, your account will move to the Free plan. Some features
+                  may require a paid plan at that point.
                 </p>
               </div>
             )}

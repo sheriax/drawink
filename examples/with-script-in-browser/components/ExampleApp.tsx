@@ -249,7 +249,11 @@ export default function ExampleApp({
             }}
           />
         )}
-        <button onClick={() => alert("This is an empty top right UI")} style={{ height: "2.5rem" }}>
+        <button
+          type="button"
+          onClick={() => alert("This is an empty top right UI")}
+          style={{ height: "2.5rem" }}
+        >
           Click me
         </button>
       </>
@@ -581,7 +585,11 @@ export default function ExampleApp({
         </MainMenu.Group>
         <MainMenu.Separator />
         <MainMenu.ItemCustom>
-          <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
+          <button
+            type="button"
+            style={{ height: "2rem" }}
+            onClick={() => window.alert("custom menu item")}
+          >
             custom item
           </button>
         </MainMenu.ItemCustom>
@@ -598,11 +606,14 @@ export default function ExampleApp({
       {/* TODO fix type */}
       <ExampleSidebar>
         <div className="button-wrapper">
-          <button onClick={loadSceneOrLibrary}>Load Scene or Library</button>
-          <button className="update-scene" onClick={updateScene}>
+          <button type="button" onClick={loadSceneOrLibrary}>
+            Load Scene or Library
+          </button>
+          <button type="button" className="update-scene" onClick={updateScene}>
             Update Scene
           </button>
           <button
+            type="button"
             className="reset-scene"
             onClick={() => {
               drawinkAPI?.resetScene();
@@ -611,6 +622,7 @@ export default function ExampleApp({
             Reset Scene
           </button>
           <button
+            type="button"
             onClick={() => {
               const libraryItems: LibraryItems = [
                 {
@@ -721,9 +733,15 @@ export default function ExampleApp({
             Show collaborators
           </label>
           <div>
-            <button onClick={onCopy.bind(null, "png")}>Copy to Clipboard as PNG</button>
-            <button onClick={onCopy.bind(null, "svg")}>Copy to Clipboard as SVG</button>
-            <button onClick={onCopy.bind(null, "json")}>Copy to Clipboard as JSON</button>
+            <button type="button" onClick={onCopy.bind(null, "png")}>
+              Copy to Clipboard as PNG
+            </button>
+            <button type="button" onClick={onCopy.bind(null, "svg")}>
+              Copy to Clipboard as SVG
+            </button>
+            <button type="button" onClick={onCopy.bind(null, "json")}>
+              Copy to Clipboard as JSON
+            </button>
           </div>
           <div
             style={{
@@ -761,6 +779,7 @@ export default function ExampleApp({
             Export with embed scene
           </label>
           <button
+            type="button"
             onClick={async () => {
               if (!drawinkAPI) {
                 return;
@@ -781,9 +800,10 @@ export default function ExampleApp({
           >
             Export to SVG
           </button>
-          <div className="export export-svg"></div>
+          <div className="export export-svg" />
 
           <button
+            type="button"
             onClick={async () => {
               if (!drawinkAPI) {
                 return;
@@ -807,6 +827,7 @@ export default function ExampleApp({
             <img src={blobUrl} alt="" />
           </div>
           <button
+            type="button"
             onClick={async () => {
               if (!drawinkAPI) {
                 return;
@@ -828,6 +849,7 @@ export default function ExampleApp({
             Export to Canvas
           </button>
           <button
+            type="button"
             onClick={async () => {
               if (!drawinkAPI) {
                 return;

@@ -33,7 +33,7 @@ export const TTDDialogPanel = ({
   return (
     <div className="ttd-dialog-panel">
       <div className="ttd-dialog-panel__header">
-        <label>{label}</label>
+        <span>{label}</span>
         {renderTopRight?.()}
       </div>
 

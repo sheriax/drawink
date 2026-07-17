@@ -493,7 +493,6 @@ const getGapSnaps = (
           offset: sideOffsetLeft,
         };
         nearestSnapsX.push(snap);
-        continue;
       }
     }
     for (const gap of verticalGaps) {
@@ -562,7 +561,6 @@ const getGapSnaps = (
           offset: sideOffsetBottom,
         };
         nearestSnapsY.push(snap);
-        continue;
       }
     }
   }

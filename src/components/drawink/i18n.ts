@@ -1,1 +1,1 @@
-export { t } from "./dist/types/drawink/i18n";
+export { t } from "@/core/i18n";

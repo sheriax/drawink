@@ -4,6 +4,7 @@ import {
   MIME_TYPES,
   VERSIONS,
   getExportSource,
+  isDrawinkDataType,
 } from "@/lib/common";
 
 import type { DrawinkElement } from "@/lib/elements/types";
@@ -97,7 +98,7 @@ export const isValidDrawinkData = (data?: {
   appState?: any;
 }): data is ImportedDataState => {
   return (
-    data?.type === EXPORT_DATA_TYPES.drawink &&
+    isDrawinkDataType(data?.type) &&
     (!data.elements ||
       (Array.isArray(data.elements) && (!data.appState || typeof data.appState === "object")))
   );

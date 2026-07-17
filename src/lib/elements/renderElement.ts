@@ -134,7 +134,7 @@ export const getRenderOpacity = (
   // (so that erasing always results in lower opacity than original)
   if (
     elementsPendingErasure.has(element.id) ||
-    (pendingNodes && pendingNodes.some((node) => node.id === element.id)) ||
+    pendingNodes?.some((node) => node.id === element.id) ||
     (containingFrame && elementsPendingErasure.has(containingFrame.id))
   ) {
     opacity *= ELEMENT_READY_TO_ERASE_OPACITY / 100;

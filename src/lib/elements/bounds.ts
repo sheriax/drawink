@@ -149,7 +149,8 @@ export class ElementBounds {
       );
 
       return [minX + element.x, minY + element.y, maxX + element.x, maxY + element.y];
-    } else if (isLinearElement(element)) {
+    }
+    if (isLinearElement(element)) {
       bounds = getLinearElementRotatedBounds(element, cx, cy, elementsMap);
     } else if (element.type === "diamond") {
       const [x11, y11] = pointRotateRads(pointFrom(cx, y1), pointFrom(cx, cy), element.angle);
@@ -196,9 +197,11 @@ export const getElementAbsoluteCoords = (
 ): [number, number, number, number, number, number] => {
   if (isFreeDrawElement(element)) {
     return getFreeDrawElementAbsoluteCoords(element);
-  } else if (isLinearElement(element)) {
+  }
+  if (isLinearElement(element)) {
     return LinearElementEditor.getElementAbsoluteCoords(element, elementsMap, includeBoundText);
-  } else if (isTextElement(element)) {
+  }
+  if (isTextElement(element)) {
     const container = elementsMap ? getContainerElement(element, elementsMap) : null;
     if (isArrowElement(container)) {
       const { x, y } = LinearElementEditor.getBoundTextElementPosition(
@@ -280,16 +283,19 @@ export const getElementLineSegments = (
     }
 
     return segments;
-  } else if (shape.type === "polyline") {
+  }
+  if (shape.type === "polyline") {
     return shape.data as LineSegment<GlobalPoint>[];
-  } else if (_isRectanguloidElement(element)) {
+  }
+  if (_isRectanguloidElement(element)) {
     const [sides, corners] = deconstructRectanguloidElement(element);
     const cornerSegments: LineSegment<GlobalPoint>[] = corners.flatMap((corner) =>
       getSegmentsOnCurve(corner, center, element.angle),
     );
     const rotatedSides = getRotatedSides(sides, center, element.angle);
     return [...rotatedSides, ...cornerSegments];
-  } else if (element.type === "diamond") {
+  }
+  if (element.type === "diamond") {
     const [sides, corners] = deconstructDiamondElement(element);
     const cornerSegments = corners.flatMap((corner) =>
       getSegmentsOnCurve(corner, center, element.angle),
@@ -297,7 +303,8 @@ export const getElementLineSegments = (
     const rotatedSides = getRotatedSides(sides, center, element.angle);
 
     return [...rotatedSides, ...cornerSegments];
-  } else if (shape.type === "polygon") {
+  }
+  if (shape.type === "polygon") {
     if (isTextElement(element)) {
       const container = getContainerElement(element, elementsMap);
       if (container && isLinearElement(container)) {
@@ -317,7 +324,8 @@ export const getElementLineSegments = (
       segments.push(lineSegment(points[i], points[i + 1]));
     }
     return segments;
-  } else if (shape.type === "ellipse") {
+  }
+  if (shape.type === "ellipse") {
     return getSegmentsOnEllipse(element as DrawinkEllipseElement);
   }
 
@@ -457,10 +465,7 @@ export const getDiamondPoints = (element: DrawinkElement) => {
 const getBezierValueForT = (t: number, p0: number, p1: number, p2: number, p3: number) => {
   const oneMinusT = 1 - t;
   return (
-    Math.pow(oneMinusT, 3) * p0 +
-    3 * Math.pow(oneMinusT, 2) * t * p1 +
-    3 * oneMinusT * Math.pow(t, 2) * p2 +
-    Math.pow(t, 3) * p3
+    oneMinusT ** 3 * p0 + 3 * oneMinusT ** 2 * t * p1 + 3 * oneMinusT * t ** 2 * p2 + t ** 3 * p3
   );
 };
 
@@ -682,10 +687,10 @@ export const getArrowheadPoints = (
 
   // B(t) = p0 * (1-t)^3 + 3p1 * t * (1-t)^2 + 3p2 * t^2 * (1-t) + p3 * t^3
   const equation = (t: number, idx: number) =>
-    Math.pow(1 - t, 3) * p3[idx] +
-    3 * t * Math.pow(1 - t, 2) * p2[idx] +
-    3 * Math.pow(t, 2) * (1 - t) * p1[idx] +
-    p0[idx] * Math.pow(t, 3);
+    (1 - t) ** 3 * p3[idx] +
+    3 * t * (1 - t) ** 2 * p2[idx] +
+    3 * t ** 2 * (1 - t) * p1[idx] +
+    p0[idx] * t ** 3;
 
   // Ee know the last point of the arrow (or the first, if start arrowhead).
   const [x2, y2] = position === "start" ? p0 : p3;

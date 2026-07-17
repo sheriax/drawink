@@ -214,7 +214,11 @@ describe("<Drawink/>", () => {
           <Drawink UIOptions={{ canvasActions: { loadScene: false } }}>
             <MainMenu>
               <MainMenu.ItemCustom>
-                <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
+                <button
+                  type="button"
+                  style={{ height: "2rem" }}
+                  onClick={() => window.alert("custom menu item")}
+                >
                   custom item
                 </button>
               </MainMenu.ItemCustom>
@@ -321,7 +325,11 @@ describe("<Drawink/>", () => {
             <MainMenu.Item onSelect={() => window.alert("Clicked")}>Click me</MainMenu.Item>
             <MainMenu.ItemLink href="blog.excalidaw.com">Drawink blog</MainMenu.ItemLink>
             <MainMenu.ItemCustom>
-              <button style={{ height: "2rem" }} onClick={() => window.alert("custom menu item")}>
+              <button
+                type="button"
+                style={{ height: "2rem" }}
+                onClick={() => window.alert("custom menu item")}
+              >
                 custom menu item
               </button>
             </MainMenu.ItemCustom>

@@ -130,7 +130,8 @@ export const transformElements = (
       updateBoundElements(element, scene);
     }
     return true;
-  } else if (selectedElements.length > 1) {
+  }
+  if (selectedElements.length > 1) {
     if (transformHandleType === "rotation") {
       rotateMultipleElements(
         originalElements,
@@ -143,7 +144,8 @@ export const transformElements = (
         centerY,
       );
       return true;
-    } else if (transformHandleType) {
+    }
+    if (transformHandleType) {
       const { nextWidth, nextHeight, flipByX, flipByY, originalBoundingBox } =
         getNextMultipleWidthAndHeightFromPointer(
           selectedElements,
@@ -542,9 +544,11 @@ const getResizeAnchor = (
 
   if (["e", "se", "s"].includes(handleDirection)) {
     return "top-left";
-  } else if (["n", "nw", "w"].includes(handleDirection)) {
+  }
+  if (["n", "nw", "w"].includes(handleDirection)) {
     return "bottom-right";
-  } else if (handleDirection === "ne") {
+  }
+  if (handleDirection === "ne") {
     return "bottom-left";
   }
   return "top-right";
@@ -952,26 +956,27 @@ const getNextMultipleWidthAndHeightFromPointer = (
   // original elements from pointerDownState, so we have to find and add these
   // bound text elements manually. Additionally, the coordinates of bound text
   // elements aren't always up to date.
-  const boundTextElements = originalElementsArray.reduce((acc, orig) => {
-    if (!isLinearElement(orig)) {
-      return acc;
-    }
-    const textId = getBoundTextElementId(orig);
-    if (!textId) {
-      return acc;
-    }
-    const text = originalElementsMap.get(textId) ?? null;
-    if (!isBoundToContainer(text)) {
-      return acc;
-    }
-    return [
-      ...acc,
-      {
-        ...text,
-        ...LinearElementEditor.getBoundTextElementPosition(orig, text, elementsMap),
-      },
-    ];
-  }, [] as DrawinkTextElementWithContainer[]);
+  const boundTextElements = originalElementsArray.flatMap<DrawinkTextElementWithContainer>(
+    (orig) => {
+      if (!isLinearElement(orig)) {
+        return [];
+      }
+      const textId = getBoundTextElementId(orig);
+      if (!textId) {
+        return [];
+      }
+      const text = originalElementsMap.get(textId) ?? null;
+      if (!isBoundToContainer(text)) {
+        return [];
+      }
+      return [
+        {
+          ...text,
+          ...LinearElementEditor.getBoundTextElementPosition(orig, text, elementsMap),
+        },
+      ];
+    },
+  );
 
   const originalBoundingBox = getCommonBoundingBox(
     originalElementsArray.map((orig) => orig).concat(boundTextElements),
@@ -1116,26 +1121,27 @@ export const resizeMultipleElements = (
   if (originalBoundingBox) {
     boundingBox = originalBoundingBox;
   } else {
-    const boundTextElements = targetElements.reduce((acc, { orig }) => {
-      if (!isLinearElement(orig)) {
-        return acc;
-      }
-      const textId = getBoundTextElementId(orig);
-      if (!textId) {
-        return acc;
-      }
-      const text = originalElementsMap!.get(textId) ?? null;
-      if (!isBoundToContainer(text)) {
-        return acc;
-      }
-      return [
-        ...acc,
-        {
-          ...text,
-          ...LinearElementEditor.getBoundTextElementPosition(orig, text, elementsMap),
-        },
-      ];
-    }, [] as DrawinkTextElementWithContainer[]);
+    const boundTextElements = targetElements.flatMap<DrawinkTextElementWithContainer>(
+      ({ orig }) => {
+        if (!isLinearElement(orig)) {
+          return [];
+        }
+        const textId = getBoundTextElementId(orig);
+        if (!textId) {
+          return [];
+        }
+        const text = originalElementsMap!.get(textId) ?? null;
+        if (!isBoundToContainer(text)) {
+          return [];
+        }
+        return [
+          {
+            ...text,
+            ...LinearElementEditor.getBoundTextElementPosition(orig, text, elementsMap),
+          },
+        ];
+      },
+    );
 
     boundingBox = getCommonBoundingBox(
       targetElements.map(({ orig }) => orig).concat(boundTextElements),

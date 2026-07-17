@@ -33,7 +33,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      onClick={composeEventHandlers(rest.onClick, (event) => {
+      onClick={composeEventHandlers(rest.onClick, (_event) => {
         onSelect();
       })}
       type={type}

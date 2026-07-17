@@ -19,7 +19,7 @@ export const useHandleDropdownMenuItemClick = (
 ) => {
   const DropdownMenuContentProps = useContext(DropdownMenuContentPropsContext);
 
-  return composeEventHandlers(origOnClick, (event) => {
+  return composeEventHandlers(origOnClick, (_event) => {
     const itemSelectEvent = new CustomEvent(EVENT.MENU_ITEM_SELECT, {
       bubbles: true,
       cancelable: true,

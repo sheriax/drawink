@@ -15,7 +15,7 @@ export const actionToggleViewMode = register({
     category: "canvas",
     predicate: (appState) => !appState.viewModeEnabled,
   },
-  perform(elements, appState) {
+  perform(_elements, appState) {
     return {
       appState: {
         ...appState,
@@ -25,7 +25,7 @@ export const actionToggleViewMode = register({
     };
   },
   checked: (appState) => appState.viewModeEnabled,
-  predicate: (elements, appState, appProps) => {
+  predicate: (_elements, _appState, appProps) => {
     return typeof appProps.viewModeEnabled === "undefined";
   },
   keyTest: (event) => !event[KEYS.CTRL_OR_CMD] && event.altKey && event.code === CODES.R,

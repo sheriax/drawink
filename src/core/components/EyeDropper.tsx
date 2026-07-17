@@ -6,7 +6,7 @@ import { EVENT, KEYS, rgbToHex } from "@/lib/common";
 import type { DrawinkElement } from "@/lib/elements/types";
 
 import { useUIAppState } from "../context/ui-appState";
-import { atom } from "../editor-jotai";
+import { type PrimitiveAtom, atom } from "../editor-jotai";
 import { useCreatePortalContainer } from "../hooks/useCreatePortalContainer";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 import { useStable } from "../hooks/useStable";
@@ -31,7 +31,9 @@ export type EyeDropperProperties = {
   colorPickerType: ColorPickerType;
 };
 
-export const activeEyeDropperAtom = atom<null | EyeDropperProperties>(null);
+export const activeEyeDropperAtom = atom<null | EyeDropperProperties>(
+  null,
+) as PrimitiveAtom<null | EyeDropperProperties>;
 
 export const EyeDropper: React.FC<{
   onCancel: () => void;

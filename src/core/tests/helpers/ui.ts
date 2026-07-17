@@ -328,12 +328,8 @@ const transform = (
   const elements = Array.isArray(element) ? element : [element];
   act(() => {
     h.setState({
-      selectedElementIds: elements.reduce(
-        (acc, e) => ({
-          ...acc,
-          [e.id]: true,
-        }),
-        {},
+      selectedElementIds: Object.fromEntries(
+        elements.map((element) => [element.id, true] as const),
       ),
     });
   });
@@ -384,10 +380,10 @@ const proxy = <T extends DrawinkElement>(
   return new Proxy(
     {},
     {
-      get(target, prop) {
+      get(_target, prop) {
         const currentElement = h.elements.find(({ id }) => id === element.id) as any;
         if (prop === "get") {
-          if (currentElement.hasOwnProperty("get")) {
+          if (Object.hasOwn(currentElement, "get")) {
             throw new Error(
               "trying to get `get` test property, but DrawinkElement seems to define its own",
             );

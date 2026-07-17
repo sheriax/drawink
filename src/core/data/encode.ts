@@ -184,7 +184,7 @@ function dataView(
   value?: number,
 ): Uint8Array | number {
   if (value != null) {
-    if (value > Math.pow(2, DATA_VIEW_BITS_MAP[bytes]) - 1) {
+    if (value > 2 ** DATA_VIEW_BITS_MAP[bytes] - 1) {
       throw new Error(
         `attempting to set value higher than the allocated bytes (value: ${value}, bytes: ${bytes})`,
       );
@@ -367,7 +367,7 @@ export const decompressData = async <T extends Record<string, any>>(
       data: contentsBuffer,
     };
   } catch (error: any) {
-    console.error(`Error during decompressing and decrypting the file.`, encodingMetadata);
+    console.error("Error during decompressing and decrypting the file.", encodingMetadata);
     throw error;
   }
 };

@@ -91,7 +91,7 @@ export const actionLinkToElement = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
   },
-  predicate: (elements, appState, appProps, app) => {
+  predicate: (elements, appState, _appProps, _app) => {
     const selectedElements = getSelectedElements(elements, appState);
 
     return (

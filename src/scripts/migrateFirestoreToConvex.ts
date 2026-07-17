@@ -72,7 +72,7 @@ async function migrateWorkspace(firestoreWorkspaceId: string, workspaceData: any
     log(`📦 Migrating workspace: ${workspaceData.name} (${firestoreWorkspaceId})`);
 
     if (isDryRun) {
-      log(`  [DRY RUN] Would create workspace with data:`, {
+      log("  [DRY RUN] Would create workspace with data:", {
         name: workspaceData.name,
         ownerClerkId: workspaceData.ownerUserId,
       });
@@ -92,7 +92,7 @@ async function migrateWorkspace(firestoreWorkspaceId: string, workspaceData: any
 
     return convexWorkspaceId;
   } catch (error: any) {
-    log(`  ❌ Failed to migrate workspace:`, error.message);
+    log("  ❌ Failed to migrate workspace:", error.message);
     stats.workspaces.failed++;
     stats.errors.push({
       type: "workspace",
@@ -107,7 +107,7 @@ async function migrateWorkspace(firestoreWorkspaceId: string, workspaceData: any
  * Migrate a single board
  */
 async function migrateBoard(
-  firestoreWorkspaceId: string,
+  _firestoreWorkspaceId: string,
   convexWorkspaceId: string,
   firestoreBoardId: string,
   boardData: any,
@@ -118,7 +118,7 @@ async function migrateBoard(
     log(`  📄 Migrating board: ${boardData.name} (${firestoreBoardId})`);
 
     if (isDryRun) {
-      log(`    [DRY RUN] Would create board with data:`, {
+      log("    [DRY RUN] Would create board with data:", {
         workspaceId: convexWorkspaceId,
         name: boardData.name,
         isPublic: boardData.isPublic || false,
@@ -139,7 +139,7 @@ async function migrateBoard(
 
     return convexBoardId;
   } catch (error: any) {
-    log(`    ❌ Failed to migrate board:`, error.message);
+    log("    ❌ Failed to migrate board:", error.message);
     stats.boards.failed++;
     stats.errors.push({
       type: "board",
@@ -183,7 +183,7 @@ async function migrateBoardContent(
     const contentData = contentSnap.data();
 
     if (isDryRun) {
-      log(`    [DRY RUN] Would save board content (encrypted):`, {
+      log("    [DRY RUN] Would save board content (encrypted):", {
         boardId: convexBoardId,
         hasCiphertext: !!contentData.ciphertext,
         hasIv: !!contentData.iv,
@@ -209,20 +209,20 @@ async function migrateBoardContent(
         iv: ivBase64,
       });
 
-      log(`    ✅ Migrated encrypted board content`);
+      log("    ✅ Migrated encrypted board content");
     } else {
       // Handle legacy unencrypted data
-      const elements = JSON.parse(contentData.elementsJSON || "[]");
-      const appState = JSON.parse(contentData.appStateJSON || "{}");
+      const _elements = JSON.parse(contentData.elementsJSON || "[]");
+      const _appState = JSON.parse(contentData.appStateJSON || "{}");
 
-      log(`    ⚠️  Found unencrypted legacy data, migrating as-is...`);
+      log("    ⚠️  Found unencrypted legacy data, migrating as-is...");
       // Note: This might require a different Convex function for unencrypted data
       // For now, skip unencrypted data
     }
 
     stats.boardContent.succeeded++;
   } catch (error: any) {
-    log(`    ❌ Failed to migrate board content:`, error.message);
+    log("    ❌ Failed to migrate board content:", error.message);
     stats.boardContent.failed++;
     stats.errors.push({
       type: "boardContent",

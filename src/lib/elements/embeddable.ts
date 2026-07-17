@@ -1,4 +1,5 @@
 import { FONT_FAMILY, VERTICAL_ALIGN, escapeDoubleQuotes, getFontString } from "@/lib/common";
+import type { Radians } from "@/lib/math";
 
 import type { DrawinkProps } from "@/core/types";
 import type { MarkRequired } from "@/lib/common/utility-types";
@@ -49,7 +50,7 @@ const parseYouTubeTimestamp = (url: string): number => {
   try {
     const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
     timeParam = urlObj.searchParams.get("t") || urlObj.searchParams.get("start");
-  } catch (error) {
+  } catch (_error) {
     const timeMatch = url.match(/[?&#](?:t|start)=([^&#\s]+)/);
     timeParam = timeMatch?.[1];
   }
@@ -125,7 +126,7 @@ export const getEmbedLink = (link: string | null | undefined): IframeDataWithSan
   const ytLink = link.match(RE_YOUTUBE);
   if (ytLink?.[2]) {
     const startTime = parseYouTubeTimestamp(originalLink);
-    const time = startTime > 0 ? `&start=${startTime}` : ``;
+    const time = startTime > 0 ? `&start=${startTime}` : "";
     const isPortrait = link.includes("shorts");
     type = "video";
     switch (ytLink[1]) {
@@ -324,7 +325,7 @@ export const createPlaceholderEmbeddableLabel = (
     text: wrapText(text, fontString, element.width - 20),
     textAlign: "center",
     verticalAlign: VERTICAL_ALIGN.MIDDLE,
-    angle: element.angle ?? 0,
+    angle: (element.angle ?? 0) as Radians,
   });
 };
 
@@ -354,7 +355,7 @@ const matchHostname = (
     if (bareDomain === bareAllowedHostname) {
       return bareAllowedHostname;
     }
-  } catch (error) {
+  } catch (_error) {
     // ignore
   }
   return null;

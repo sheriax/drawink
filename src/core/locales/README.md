@@ -7,6 +7,14 @@ Please do not contribute changes directly to these files, as we manage them with
 
 ## Completion of translation
 
-[percentages.json](./percentages.json) holds a percentage of completion for each language. We generate these automatically [on build time](./../../.github/workflows/locales-coverage.yml) when a new translation PR appears.
+[percentages.json](./percentages.json) records the completion percentage for each
+language and controls which locales are exposed by the application.
 
-We only make a language available on the app if it exceeds a certain threshold of completion.
+The previous locale-coverage workflow is no longer present, and
+[`scripts/build-locales-coverage.ts`](../../../scripts/build-locales-coverage.ts)
+still targets the removed `packages/drawink/locales` path. Update that script to
+`src/core/locales` and restore a CI check before treating the percentages as
+automatically maintained.
+
+We only make a language available in the app if it exceeds the configured
+completion threshold.

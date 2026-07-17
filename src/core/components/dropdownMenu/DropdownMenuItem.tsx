@@ -105,7 +105,6 @@ export const DropDownMenuItemBadge = ({
         color: "darkred",
       });
       break;
-    case DropDownMenuItemBadgeType.BLUE:
     default:
       Object.assign(style, {
         background: "var(--color-promo)",

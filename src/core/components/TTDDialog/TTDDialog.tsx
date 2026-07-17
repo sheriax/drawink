@@ -6,7 +6,7 @@ import type { NonDeletedDrawinkElement } from "@/lib/elements/types";
 
 import { trackEvent } from "../../analytics";
 import { useUIAppState } from "../../context/ui-appState";
-import { atom, useAtom } from "../../editor-jotai";
+import { type PrimitiveAtom, atom, useAtom } from "../../editor-jotai";
 import { t } from "../../i18n";
 import { useApp, useDrawinkSetAppState } from "../App";
 import { Dialog } from "../Dialog";
@@ -37,15 +37,18 @@ import type { BinaryFiles } from "../../types";
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 1000;
 
-const rateLimitsAtom = atom<{
+type RateLimits = {
   rateLimit: number;
   rateLimitRemaining: number;
-} | null>(null);
+} | null;
 
-const ttdGenerationAtom = atom<{
+type TTDGeneration = {
   generatedResponse: string | null;
   prompt: string | null;
-} | null>(null);
+} | null;
+
+const rateLimitsAtom = atom<RateLimits>(null) as PrimitiveAtom<RateLimits>;
+const ttdGenerationAtom = atom<TTDGeneration>(null) as PrimitiveAtom<TTDGeneration>;
 
 type OnTestSubmitRetValue = {
   rateLimit?: number | null;

@@ -21,7 +21,7 @@ export function useCollaborationSession(
   userName: string,
   userPhotoUrl?: string,
 ) {
-  const convex = useConvex();
+  const _convex = useConvex();
   const join = useMutation(api.collaboration.join);
   const leave = useMutation(api.collaboration.leave);
   const heartbeat = useMutation(api.collaboration.heartbeat);

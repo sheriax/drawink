@@ -135,7 +135,7 @@ const createAndReturnOneDraw = (angle = 0) => {
 
 const createLinearElementWithCurveInsideMinMaxPoints = (
   type: "line" | "arrow",
-  extraProps: any = {},
+  _extraProps: any = {},
 ) => {
   return newLinearElement({
     type,
@@ -200,7 +200,7 @@ const createLinearElementsWithCurveOutsideMinMaxPoints = (
 const checkElementsBoundingBox = async (
   element1: DrawinkElement,
   element2: DrawinkElement,
-  toleranceInPx = 0,
+  _toleranceInPx = 0,
 ) => {
   const elementsMap = arrayToMap([element1, element2]);
   const [x1, y1, x2, y2] = getElementAbsoluteCoords(element1, elementsMap);

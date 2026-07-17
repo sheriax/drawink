@@ -70,9 +70,9 @@ export function isVector(v: unknown): v is Vector {
     Array.isArray(v) &&
     v.length === 2 &&
     typeof v[0] === "number" &&
-    !isNaN(v[0]) &&
+    !Number.isNaN(v[0]) &&
     typeof v[1] === "number" &&
-    !isNaN(v[1])
+    !Number.isNaN(v[1])
   );
 }
 

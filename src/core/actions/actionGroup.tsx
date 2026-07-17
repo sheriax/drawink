@@ -62,7 +62,7 @@ const allElementsInSameGroup = (elements: readonly DrawinkElement[]) => {
 };
 
 const enableActionGroup = (
-  elements: readonly DrawinkElement[],
+  _elements: readonly DrawinkElement[],
   appState: AppState,
   app: AppClassProperties,
 ) => {
@@ -131,7 +131,7 @@ export const actionGroup = register({
     if (groupingElementsFromDifferentFrames) {
       const frameElementsMap = groupByFrameLikes(selectedElements);
 
-      frameElementsMap.forEach((elementsInFrame, frameId) => {
+      frameElementsMap.forEach((elementsInFrame, _frameId) => {
         removeElementsFromFrame(elementsInFrame, app.scene.getNonDeletedElementsMap());
       });
     }
@@ -187,7 +187,7 @@ export const actionGroup = register({
       title={`${t("labels.group")} — ${getShortcutKey("CtrlOrCmd+G")}`}
       aria-label={t("labels.group")}
       visible={isSomeElementSelected(getNonDeletedElements(elements), appState)}
-    ></ToolButton>
+    />
   ),
 });
 
@@ -271,7 +271,7 @@ export const actionUngroup = register({
   },
   keyTest: (event) =>
     event.shiftKey && event[KEYS.CTRL_OR_CMD] && event.key === KEYS.G.toUpperCase(),
-  predicate: (elements, appState) => getSelectedGroupIds(appState).length > 0,
+  predicate: (_elements, appState) => getSelectedGroupIds(appState).length > 0,
 
   PanelComponent: ({ elements, appState, updateData }) => (
     <ToolButton
@@ -282,6 +282,6 @@ export const actionUngroup = register({
       title={`${t("labels.ungroup")} — ${getShortcutKey("CtrlOrCmd+Shift+G")}`}
       aria-label={t("labels.ungroup")}
       visible={isSomeElementSelected(getNonDeletedElements(elements), appState)}
-    ></ToolButton>
+    />
   ),
 });

@@ -187,7 +187,7 @@ export const actionDeleteSelected = register({
   label: "labels.delete",
   icon: TrashIcon,
   trackEvent: { category: "element", action: "delete" },
-  perform: (elements, appState, formData, app) => {
+  perform: (elements, appState, _formData, app) => {
     if (appState.selectedLinearElement?.isEditing) {
       const { elementId, selectedPointsIndices } = appState.selectedLinearElement;
       const elementsMap = app.scene.getNonDeletedElementsMap();
@@ -269,7 +269,7 @@ export const actionDeleteSelected = register({
         : CaptureUpdateAction.EVENTUALLY,
     };
   },
-  keyTest: (event, appState, elements) =>
+  keyTest: (event, _appState, _elements) =>
     (event.key === KEYS.BACKSPACE || event.key === KEYS.DELETE) && !event[KEYS.CTRL_OR_CMD],
   PanelComponent: ({ elements, appState, updateData, app }) => {
     const isMobile = useStylesPanelMode() === "mobile";

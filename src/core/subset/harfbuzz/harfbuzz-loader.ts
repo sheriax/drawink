@@ -16,27 +16,19 @@ import binary from "./harfbuzz-wasm";
 let loadedWasm: ReturnType<typeof load> | null = null;
 
 // TODO: consider adding support for fetching the wasm from an URL (external CDN, data URL, etc.)
-const load = (): Promise<{
+const load = async (): Promise<{
   subset: (fontBuffer: ArrayBuffer, codePoints: ReadonlySet<number>) => Uint8Array;
 }> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const module = await WebAssembly.instantiate(binary);
-      const harfbuzzJsWasm = module.instance.exports;
-      // @ts-expect-error since `.buffer` is custom prop
-      const heapu8 = new Uint8Array(harfbuzzJsWasm.memory.buffer);
+  const module = await WebAssembly.instantiate(binary);
+  const harfbuzzJsWasm = module.instance.exports;
+  // @ts-expect-error since `.buffer` is custom prop
+  const heapu8 = new Uint8Array(harfbuzzJsWasm.memory.buffer);
 
-      const hbSubset = {
-        subset: (fontBuffer: ArrayBuffer, codePoints: ReadonlySet<number>) => {
-          return bindings.subset(harfbuzzJsWasm, heapu8, fontBuffer, codePoints);
-        },
-      };
-
-      resolve(hbSubset);
-    } catch (e) {
-      reject(e);
-    }
-  });
+  return {
+    subset: (fontBuffer: ArrayBuffer, codePoints: ReadonlySet<number>) => {
+      return bindings.subset(harfbuzzJsWasm, heapu8, fontBuffer, codePoints);
+    },
+  };
 };
 
 // lazy load the default export

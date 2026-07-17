@@ -1,22 +1,20 @@
 import { URL } from "node:url";
 
-class ClipboardEvent {
+class ClipboardEvent extends Event {
+  readonly clipboardData: DataTransfer;
+
   constructor(
     type: "paste" | "copy",
     eventInitDict: {
       clipboardData: DataTransfer;
     },
   ) {
-    return Object.assign(
-      new Event("paste", {
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-      }),
-      {
-        clipboardData: eventInitDict.clipboardData,
-      },
-    ) as any as ClipboardEvent;
+    super(type, {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    this.clipboardData = eventInitDict.clipboardData;
   }
 }
 
@@ -57,7 +55,7 @@ class DataTransferItemList extends Array<DataTransferItem> {
   }
 
   clear(): void {
-    this.clear();
+    this.splice(0, this.length);
   }
 }
 

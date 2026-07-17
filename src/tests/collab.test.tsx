@@ -15,8 +15,12 @@ const { h } = window;
 
 Object.defineProperty(window, "crypto", {
   value: {
-    getRandomValues: (arr: number[]) =>
-      arr.forEach((v, i) => (arr[i] = Math.floor(Math.random() * 256))),
+    getRandomValues: (arr: number[]) => {
+      for (let index = 0; index < arr.length; index++) {
+        arr[index] = Math.floor(Math.random() * 256);
+      }
+      return arr;
+    },
     subtle: {
       generateKey: () => {},
       exportKey: () => ({ k: "sTdLvMC_M3V8_vGa3UVRDg" }),
@@ -45,6 +49,12 @@ vi.mock("../data/firebase.ts", () => {
     saveFilesToFirebase,
   };
 });
+
+vi.mock("../data/convexCollab.ts", () => ({
+  isSavedToConvex: () => true,
+  loadFromConvex: async () => null,
+  saveToConvex: async (_portal: unknown, elements: unknown[]) => elements,
+}));
 
 vi.mock("socket.io-client", () => {
   return {

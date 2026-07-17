@@ -297,7 +297,7 @@ export class Store {
       try {
         microAction();
       } catch (error) {
-        console.error(`Failed to execute scheduled micro action`, error);
+        console.error("Failed to execute scheduled micro action", error);
       }
     }
 
@@ -357,7 +357,7 @@ export class Store {
           this.emitEphemeralIncrement(nextSnapshot, change);
           break;
         default:
-          assertNever(action, `Unknown store action`);
+          assertNever(action, "Unknown store action");
       }
     } finally {
       // update the snapshot no-matter what, as it would mess up with the next action

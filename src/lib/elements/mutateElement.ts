@@ -118,7 +118,7 @@ export const mutateElement = <TElement extends Mutable<DrawinkElement>>(
   if (
     typeof updates.height !== "undefined" ||
     typeof updates.width !== "undefined" ||
-    typeof fileId != "undefined" ||
+    typeof fileId !== "undefined" ||
     typeof points !== "undefined"
   ) {
     ShapeCache.delete(element);

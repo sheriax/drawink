@@ -264,7 +264,7 @@ export const restoreElement = (
   element = { ...element };
 
   switch (element.type) {
-    case "text":
+    case "text": {
       // temp fix: cleanup legacy obsidian-drawink attribute else it'll
       // conflict when porting between the apps
       delete (element as any).rawText;
@@ -312,6 +312,7 @@ export const restoreElement = (
       }
 
       return element;
+    }
     case "freedraw": {
       return restoreElementWithProperties(element, {
         points: element.points,
@@ -329,7 +330,7 @@ export const restoreElement = (
     case "line":
     // @ts-ignore LEGACY type
     // eslint-disable-next-line no-fallthrough
-    case "draw":
+    case "draw": {
       const { startArrowhead = null, endArrowhead = null } = element;
       let x = element.x;
       let y = element.y;
@@ -358,6 +359,7 @@ export const restoreElement = (
           : {}),
         ...getSizeFromPoints(points),
       });
+    }
     case "arrow": {
       const { startArrowhead = null, endArrowhead = "arrow" } = element;
       const x: number | undefined = element.x;
@@ -505,7 +507,7 @@ const repairBoundElement = (
     !container.boundElements.find((binding) => binding.id === boundElement.id)
   ) {
     // copy because we're not cloning on restore, and we don't want to mutate upstream
-    const boundElements = (container.boundElements || (container.boundElements = [])).slice();
+    const boundElements = (container.boundElements ?? []).slice();
     boundElements.push({ type: "text", id: boundElement.id });
     container.boundElements = boundElements;
   }
@@ -810,11 +812,11 @@ const restoreLibraryItem = (libraryItem: LibraryItem) => {
 };
 
 export const restoreLibraryItems = (
-  libraryItems: ImportedDataState["libraryItems"] = [],
+  libraryItems: ImportedDataState["libraryItems"],
   defaultStatus: LibraryItem["status"],
 ) => {
   const restoredItems: LibraryItem[] = [];
-  for (const item of libraryItems) {
+  for (const item of libraryItems ?? []) {
     // migrate older libraries
     if (Array.isArray(item)) {
       const restoredItem = restoreLibraryItem({

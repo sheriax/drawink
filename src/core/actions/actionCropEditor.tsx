@@ -17,7 +17,7 @@ export const actionToggleCropEditor = register({
   viewMode: true,
   trackEvent: { category: "menu" },
   keywords: ["image", "crop"],
-  perform(elements, appState, _, app) {
+  perform(_elements, appState, _, app) {
     const selectedElement = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
       includeBoundTextElement: true,
@@ -32,7 +32,7 @@ export const actionToggleCropEditor = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
   },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     if (
       !appState.croppingElementId &&

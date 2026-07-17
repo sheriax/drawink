@@ -221,7 +221,7 @@ module.exports.woff2ServerPlugin = (options = {}) => {
             console.info(`- by merging ${Regular.length} woff2 fonts and related fallback fonts`);
           }
           console.info(`- with metrics ${baseFont.data.head.unitsPerEm}, ${ascent}, ${descent}`);
-          console.info(``);
+          console.info("");
         }
       });
     },

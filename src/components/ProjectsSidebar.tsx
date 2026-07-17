@@ -5,9 +5,9 @@
  */
 
 import {
+  boardErrorAtom,
   boardsAPIAtom,
   boardsAtom,
-  boardErrorAtom,
   createBoardAtom,
   currentBoardIdAtom,
   currentWorkspaceIdAtom,
@@ -19,8 +19,8 @@ import {
   updateBoardNameAtom,
 } from "@/core/atoms/boards";
 import { useAtom, useAtomValue, useSetAtom } from "@/core/editor-jotai";
-import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
 import type { Workspace } from "@/core/storage/types";
+import { hybridStorageAdapter } from "@/data/HybridStorageAdapter";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import "./ProjectsSidebar.scss";
@@ -37,9 +37,7 @@ export const ProjectsSidebar: React.FC = () => {
   const [newBoardName, setNewBoardName] = useState("");
 
   // Workspace state
-  const [currentWorkspaceId, setCurrentWorkspaceId] = useAtom(
-    currentWorkspaceIdAtom,
-  );
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useAtom(currentWorkspaceIdAtom);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [workspacesLoading, setWorkspacesLoading] = useState(false);
 
@@ -126,19 +124,13 @@ export const ProjectsSidebar: React.FC = () => {
     }
   };
 
-  const startEditing = (
-    e: React.MouseEvent,
-    board: { id: string; name: string },
-  ) => {
+  const startEditing = (e: React.MouseEvent, board: { id: string; name: string }) => {
     e.stopPropagation();
     setEditingBoardId(board.id);
     setNewBoardName(board.name);
   };
 
-  const saveBoardName = async (
-    e: React.MouseEvent | React.FormEvent,
-    id: string,
-  ) => {
+  const saveBoardName = async (e: React.MouseEvent | React.FormEvent, id: string) => {
     e.stopPropagation();
     if (newBoardName.trim()) {
       await updateBoardName({ id, name: newBoardName.trim() });
@@ -168,9 +160,7 @@ export const ProjectsSidebar: React.FC = () => {
     );
   }
 
-  const currentWorkspace = workspaces.find(
-    (ws) => ws.id === currentWorkspaceId,
-  );
+  const currentWorkspace = workspaces.find((ws) => ws.id === currentWorkspaceId);
 
   return (
     <div className="projects-sidebar">
@@ -194,10 +184,9 @@ export const ProjectsSidebar: React.FC = () => {
 
       {/* Header with create button */}
       <div className="projects-sidebar__header">
-        <h3>
-          {currentWorkspace ? `${currentWorkspace.name}` : "Boards"}
-        </h3>
+        <h3>{currentWorkspace ? `${currentWorkspace.name}` : "Boards"}</h3>
         <button
+          type="button"
           onClick={handleCreateBoard}
           className="projects-sidebar__create-btn"
           title="Create new board"
@@ -215,6 +204,7 @@ export const ProjectsSidebar: React.FC = () => {
       ) : boards.length === 0 ? (
         <div className="projects-sidebar__empty">
           <svg
+            aria-hidden="true"
             width="48"
             height="48"
             viewBox="0 0 24 24"
@@ -225,16 +215,12 @@ export const ProjectsSidebar: React.FC = () => {
             <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <p>No boards yet</p>
-          <button onClick={handleCreateBoard} className="btn-small">
+          <button type="button" onClick={handleCreateBoard} className="btn-small">
             Create Board
           </button>
         </div>
       ) : (
-        <div
-          className="projects-sidebar__list"
-          role="listbox"
-          aria-label="Boards"
-        >
+        <div className="projects-sidebar__list" role="listbox" aria-label="Boards" tabIndex={0}>
           {boardError && (
             <div className="projects-sidebar__error" role="alert">
               {boardError}
@@ -256,10 +242,7 @@ export const ProjectsSidebar: React.FC = () => {
               tabIndex={0}
             >
               {editingBoardId === board.id ? (
-                <div
-                  className="board-item__edit"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <div className="board-item__edit" onClick={(e) => e.stopPropagation()}>
                   <input
                     type="text"
                     value={newBoardName}
@@ -272,10 +255,12 @@ export const ProjectsSidebar: React.FC = () => {
                     onBlur={() => setEditingBoardId(null)}
                   />
                   <button
+                    type="button"
                     className="board-item__save-btn"
                     onMouseDown={(e) => saveBoardName(e, board.id)}
                   >
                     <svg
+                      aria-hidden="true"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -290,6 +275,7 @@ export const ProjectsSidebar: React.FC = () => {
               ) : (
                 <>
                   <svg
+                    aria-hidden="true"
                     className="board-item__icon"
                     width="16"
                     height="16"
@@ -303,11 +289,13 @@ export const ProjectsSidebar: React.FC = () => {
                   <span className="board-item__name">{board.name}</span>
                   <div className="board-item__actions">
                     <button
+                      type="button"
                       className="board-item__action-btn"
                       onClick={(e) => startEditing(e, board)}
                       title="Rename"
                     >
                       <svg
+                        aria-hidden="true"
                         width="12"
                         height="12"
                         viewBox="0 0 24 24"
@@ -321,11 +309,13 @@ export const ProjectsSidebar: React.FC = () => {
                     </button>
                     {boards.length > 1 && (
                       <button
+                        type="button"
                         className="board-item__action-btn board-item__action-btn--delete"
                         onClick={(e) => handleDeleteBoard(e, board.id)}
                         title="Delete"
                       >
                         <svg
+                          aria-hidden="true"
                           width="12"
                           height="12"
                           viewBox="0 0 24 24"

@@ -141,7 +141,9 @@ export const remove = mutation({
       const isAdmin = workspaceMember?.role === "owner" || workspaceMember?.role === "admin";
 
       if (!isOwner && !isAdmin) {
-        throw new Error("Access denied: only the file creator, board owner, or workspace admin can delete files");
+        throw new Error(
+          "Access denied: only the file creator, board owner, or workspace admin can delete files",
+        );
       }
     }
 

@@ -279,7 +279,7 @@ export class API {
           ...base,
         });
         break;
-      case "text":
+      case "text": {
         const fontSize = rest.fontSize ?? appState.currentItemFontSize;
         const fontFamily = rest.fontFamily ?? appState.currentItemFontFamily;
         element = newTextElement({
@@ -294,6 +294,7 @@ export class API {
         element.width = width;
         element.height = height;
         break;
+      }
       case "freedraw":
         element = newFreeDrawElement({
           type: type as "freedraw",
@@ -468,7 +469,7 @@ export class API {
         // https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/files
         files,
         // https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/items
-        items: items.map((item, idx) => {
+        items: items.map((item, _idx) => {
           if (item.kind === "string") {
             return {
               kind: "string",

@@ -64,7 +64,7 @@ export const actionSelectAllElementsInFrame = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
   },
-  predicate: (elements, appState, _, app) => isSingleFrameSelected(appState, app),
+  predicate: (_elements, appState, _, app) => isSingleFrameSelected(appState, app),
 });
 
 export const actionRemoveAllElementsFromFrame = register({
@@ -93,7 +93,7 @@ export const actionRemoveAllElementsFromFrame = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
   },
-  predicate: (elements, appState, _, app) => isSingleFrameSelected(appState, app),
+  predicate: (_elements, appState, _, app) => isSingleFrameSelected(appState, app),
 });
 
 export const actionupdateFrameRendering = register({
@@ -155,7 +155,7 @@ export const actionWrapSelectionInFrame = register({
   name: "wrapSelectionInFrame",
   label: "labels.wrapSelectionInFrame",
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _, app) => {
+  predicate: (elements, appState, _, _app) => {
     const selectedElements = getSelectedElements(elements, appState);
 
     return (

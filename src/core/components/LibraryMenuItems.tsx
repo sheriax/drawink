@@ -292,7 +292,7 @@ export default function LibraryMenuItems({
             className="library-menu-items-container__header__hint"
             style={{ cursor: "pointer" }}
             onPointerDown={(e) => e.preventDefault()}
-            onClick={(event) => {
+            onClick={(_event) => {
               setSearchInputValue("");
             }}
           >

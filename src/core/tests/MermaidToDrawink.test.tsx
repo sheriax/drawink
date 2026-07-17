@@ -8,7 +8,7 @@ import { render, waitFor } from "./test-utils";
 
 mockMermaidToDrawink({
   mockRef: true,
-  parseMermaidToDrawink: async (definition) => {
+  parseMermaidToExcalidraw: async (definition) => {
     const firstLine = definition.split("\n")[0];
     return new Promise((resolve, reject) => {
       if (firstLine === "flowchart TD") {

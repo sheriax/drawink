@@ -1,432 +1,310 @@
-# Drawink Deployment Guide
+# Deployment guide
 
-Drawink uses a **3-service architecture** deployed across different platforms:
+This runbook describes the current deployment topology.
 
-| Service | Platform | URL |
-|---------|----------|-----|
-| **Frontend** (React + Vite) | Vercel | `https://drawink.app` |
-| **Collab Server** (Socket.io) | Google Cloud Run | `https://collab.drawink.app` |
-| **Backend** (Database, Auth, Logic) | Convex Cloud | `https://clean-tapir-713.convex.cloud` |
-| **File Storage** | Firebase Storage | (managed, no deploy needed) |
+> **Before deploying:** Review the P0/P1 findings in
+> [Project status](../PROJECT_STATUS.md). The repository currently has an exposed
+> credential in Git history, permissive Firebase rules, incomplete product and
+> security controls, and production protections that require administrator setup.
 
-```
-┌──────────────┐     ┌──────────────────┐     ┌────────────────┐
-│   Vercel     │────▶│  Google Cloud Run │     │  Convex Cloud  │
-│  (Frontend)  │     │  (Collab Server)  │     │   (Backend)    │
-│  drawink.app │     │ collab.drawink.app│     │   Real-time DB │
-└──────┬───────┘     └──────────────────┘     └───────┬────────┘
-       │                                               │
-       │              ┌──────────────────┐             │
-       └─────────────▶│ Firebase Storage │◀────────────┘
-                      │   (File Uploads) │
-                      └──────────────────┘
-```
+## Topology
 
----
+| Service | Current platform | Current target |
+|---|---|---|
+| React/Vite frontend | Vercel | `https://drawink.app` |
+| Socket.io collaboration server | Google Cloud Run | `drawink-collab`, `us-central1` |
+| Functions and structured data | Convex Cloud | project deployment selected by `CONVEX_DEPLOY_KEY`/CLI |
+| Encrypted binary assets | Firebase Storage | GCP/Firebase project `drawink-2026` |
+| Authentication | Clerk | Clerk application configured for Convex JWTs and webhooks |
 
-## Prerequisites
+The Cloud Run project, region, repository, service, and domain are hard-coded in
+`scripts/deploy.ts`. Change the script before reusing this deployment setup for a
+different environment.
 
-- **Node.js** 18+ and **Bun** installed
-- **Vercel CLI**: `npm i -g vercel`
-- **Convex CLI**: `npm i -g convex`
-- **Google Cloud SDK**: `brew install --cask google-cloud-sdk`
-- **Docker Desktop** installed and running
-- Access to DNS settings for `drawink.app`
+## Preflight
 
----
+Required access and tools:
 
-## 1. Convex Backend
+- Bun and Node.js 20.19+;
+- Convex CLI access or a production deploy key;
+- Clerk dashboard access;
+- `gcloud` access to project `drawink-2026`;
+- Docker for the current collaboration deploy script;
+- Vercel project access;
+- Firebase project access;
+- DNS control for `drawink.app`.
 
-Convex is deployed to Convex Cloud. No Docker or server management needed.
-
-### First-Time Setup
+From a clean commit, run all quality gates and both builds. The same commands are
+required by CI before deployment jobs can start.
 
 ```bash
-# Login to Convex
-npx convex login
-
-# Create a production deployment (run from project root)
-npx convex deploy
+bun install --frozen-lockfile
+bun run verify
 ```
 
-### Production URLs
+Never deploy from a working tree containing unreviewed local environment files.
 
-| Type | URL |
-|------|-----|
-| **Cloud URL** (WebSocket / DB) | `https://clean-tapir-713.convex.cloud` |
-| **Site URL** (HTTP actions) | `https://clean-tapir-713.convex.site` |
+## 1. Convex
 
-Use the **Cloud URL** as `VITE_CONVEX_URL` in Vercel.
+### Configure deployment variables
 
-### Configure Clerk Authentication
-
-1. Go to [Clerk Dashboard](https://dashboard.clerk.com) → **JWT Templates**
-2. Create a template named `convex`
-3. Set the Issuer to your Clerk domain
-4. In [Convex Dashboard](https://dashboard.convex.dev) → **Settings** → **Environment Variables**, add:
-
-| Variable | Value |
-|----------|-------|
-| `CLERK_JWT_ISSUER_DOMAIN` | `https://your-clerk-domain.clerk.accounts.dev` |
-
-### Deploy Updates
+Convex secrets belong in the deployment environment, not `convex/.env`.
 
 ```bash
-# Deploy Convex functions and schema changes
-npx convex deploy
+# Enter values interactively to avoid putting them in shell history.
+bunx convex env set --prod CLERK_FRONTEND_API_URL
+bunx convex env set --prod CLERK_WEBHOOK_SECRET
+bunx convex env set --prod AI_BASE_URL
+bunx convex env set --prod AI_API_KEY
+bunx convex env set --prod AI_MODEL
 ```
 
-### Useful Commands
+List names without printing values:
 
 ```bash
-# Open Convex dashboard
-npx convex dashboard
-
-# View logs
-npx convex logs
-
-# Run a function manually
-npx convex run functionName '{"arg": "value"}'
+bunx convex env list --prod --names-only
 ```
 
-### Environment Variables (Convex Dashboard)
+Convex environment variables are deployment-specific. See the official
+[environment variable guide](https://docs.convex.dev/production/environment-variables)
+and [Convex environment CLI reference](https://docs.convex.dev/cli/reference/env).
 
-Set these in [Convex Dashboard](https://dashboard.convex.dev) → **Settings** → **Environment Variables**:
+### Configure Clerk
 
-| Variable | Value | Where to get it |
-|----------|-------|-----------------|
-| `CLERK_JWT_ISSUER_DOMAIN` | `https://your-clerk-domain.clerk.accounts.dev` | [Clerk Dashboard](https://dashboard.clerk.com) → API Keys → Issuer URL |
-
----
-
-## 2. Collab Server (Google Cloud Run)
-
-The Socket.io collaboration server handles real-time presence, cursor sync, and encrypted scene broadcasts.
-
-### Project Configuration
-
-| Setting | Value |
-|---------|-------|
-| **GCP Project** | `drawink-2026` |
-| **Region** | `us-central1` |
-| **Service Name** | `drawink-collab` |
-| **Domain** | `collab.drawink.app` |
-
-### First-Time Setup
-
-```bash
-# Set GCP project
-gcloud config set project drawink-2026
-
-# Enable required APIs
-gcloud services enable \
-  artifactregistry.googleapis.com \
-  run.googleapis.com \
-  --project=drawink-2026
-
-# Create Artifact Registry repo (if not exists)
-gcloud artifacts repositories create drawink \
-  --repository-format=docker \
-  --location=us-central1 \
-  --description="Drawink Docker images" \
-  --project=drawink-2026
-
-# Configure Docker auth
-gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
-```
-
-### Deploy the Collab Server
-
-We provide an automated deployment script that builds, tags, and deploys the Cloud Run service with the exact required settings (like session-affinity and long timeouts for WebSockets).
-
-```bash
-# From the project root
-bun ./scripts/deploy.ts
-```
-
-> **Note:** `--timeout=3600` (1 hour) is needed for long-lived WebSocket connections.
-> `--session-affinity` ensures the same client hits the same instance for Socket.io.
-
-### Environment Variables (Cloud Run)
-
-Set via `--set-env-vars` in the deploy command, or in the Cloud Run console:
-
-| Variable | Production Value | Purpose |
-|----------|-----------------|---------|
-| `PORT` | `3003` | Server listen port (must match `--port`) |
-| `NODE_ENV` | `production` | Enables production optimizations |
-| `CORS_ORIGIN` | `https://drawink.app` | Must match your frontend domain exactly |
-
-### Custom Domain for Collab Server (100% Free via Cloudflare)
-
-If you use Cloudflare for your DNS (free plan), you can easily map `collab.drawink.app` to your Cloud Run service for **free** without needing an expensive GCP Load Balancer. This approach costs $0/month.
-
-**Note on Region Support:** Custom domain mapping in Cloud Run is not supported in all regions (e.g., `asia-south1`). Make sure your Cloud Run service is deployed in a supported region like `us-central1`.
-
-1. Go to your **GCP Console** → **Cloud Run** → click on your `drawink-collab` service.
-2. Click the **Integrations** tab.
-3. Click **Add Integration** → select **Custom domains - Cloudflare**.
-4. It will provide you with a **hostname** (e.g. `ghs.googlehosted.com`) or a CNAME record to add.
-5. Go to your **Cloudflare Dashboard** → **DNS**.
-6. Add the CNAME record:
-
-| Type | Name | Content | Proxy status |
-|------|------|---------|--------------|
-| `CNAME` | `collab` | `<cloud-run-url-without-https>` or `ghs.googlehosted.com` | **Proxied (Orange Cloud)** |
-
-Cloudflare will handle the SSL certificate and route the WebSocket traffic perfectly fine on the free plan.
-
-### Quick Redeploy (Server Updates)
-
-```bash
-# The deployment script supports a --quick flag to skip the confirmation prompt:
-bun ./scripts/deploy.ts --quick
-```
-
----
-
-## 3. Frontend (Vercel)
-
-The frontend is a static Vite build deployed to Vercel.
-
-### First-Time Setup
-
-```bash
-# Login to Vercel
-vercel login
-
-# Link project (run from project root)
-vercel link
-```
-
-When prompted:
-- **Project name:** `drawink`
-- **Framework:** Vite
-- **Build command:** `bun run build`
-- **Output directory:** `dist`
-- **Install command:** `bun install`
-
-### Environment Variables (Vercel Dashboard)
-
-Go to [Vercel Dashboard](https://vercel.com) → **drawink** → **Settings** → **Environment Variables**.
-
-**Required:**
-
-| Variable | Value | Where to get it |
-|----------|-------|-----------------|
-| `VITE_CLERK_PUBLISHABLE_KEY` | `pk_live_...` | [Clerk Dashboard](https://dashboard.clerk.com) → API Keys |
-| `VITE_CONVEX_URL` | `https://clean-tapir-713.convex.cloud` | [Convex Dashboard](https://dashboard.convex.dev) → Settings → URL |
-| `VITE_APP_FIREBASE_CONFIG` | `{"apiKey":"...","projectId":"...","storageBucket":"..."}` | Firebase Console → Project Settings → Web app config |
-| `VITE_APP_WS_SERVER_URL` | `https://collab.drawink.app` (or Cloud Run URL) | Your deployed collab server URL |
-
-**Recommended for production:**
-
-| Variable | Value | Purpose |
-|----------|-------|---------|
-| `VITE_APP_ENABLE_TRACKING` | `true` | Enable analytics |
-| `VITE_APP_DISABLE_PREVENT_UNLOAD` | `false` | Show "unsaved changes" warning |
-| `VITE_APP_DISABLE_PWA` | `false` | Enable service worker / PWA |
-| `VITE_APP_DISABLE_SENTRY` | `false` | Enable Sentry error tracking |
-| `VITE_APP_GIT_SHA` | _(leave empty)_ | Vercel auto-provides `VERCEL_GIT_COMMIT_SHA` |
-
-**Optional (set only if you use these features):**
-
-| Variable | Value | Purpose |
-|----------|-------|---------|
-| `VITE_SENTRY_DSN` | `https://...@sentry.io/...` | Error tracking |
-| `VITE_APP_AI_BACKEND` | `https://your-ai-api.com` | AI diagram-to-code / text-to-diagram |
-| `VITE_APP_LIBRARY_URL` | `https://libraries.excalidraw.com` | Excalidraw community library |
-| `VITE_APP_LIBRARY_BACKEND` | `https://us-central1-excalidraw-room-persistence.cloudfunctions.net/libraries` | Library submission API |
-| `VITE_APP_PLUS_APP` | URL | Drawink Plus integration |
-| `VITE_APP_PLUS_LP` | URL | Drawink Plus landing page |
-| `VITE_APP_PLUS_EXPORT_PUBLIC_KEY` | key | Plus export encryption |
-
-**Legacy (remove after Convex migration is complete):**
-
-| Variable | Value | Purpose |
-|----------|-------|---------|
-| `VITE_API_URL` | `https://...` | Old tRPC API |
-| `VITE_APP_BACKEND_V2_GET_URL` | `https://.../api/v2/` | Old JSON backend GET |
-| `VITE_APP_BACKEND_V2_POST_URL` | `https://.../api/v2/post` | Old JSON backend POST |
-
-### Custom Domain
-
-In Vercel Dashboard → **drawink** → **Settings** → **Domains**:
-1. Add `drawink.app`
-2. Follow Vercel's DNS instructions (add A/CNAME records at your registrar)
+1. Create the Convex JWT template expected by the frontend.
+2. Set the corresponding Clerk frontend/issuer domain as
+   `CLERK_FRONTEND_API_URL` in Convex.
+3. Configure a Clerk webhook at
+   `https://<convex-deployment>.convex.site/clerk-webhook`.
+4. Subscribe to `user.created`, `user.updated`, and `user.deleted`.
+5. Store the endpoint signing secret as `CLERK_WEBHOOK_SECRET` in Convex.
 
 ### Deploy
 
 ```bash
-# Deploy to preview
-vercel
+bun run convex:deploy
+```
 
-# Deploy to production
+CI uses the `CONVEX_DEPLOY_KEY` secret in the GitHub `Production` environment.
+
+### Verify
+
+```bash
+bunx convex logs --prod
+bunx convex env list --prod --names-only
+```
+
+Verify sign-in, webhook user creation, workspace creation, board save/load, public
+share creation, and both AI actions with a non-production test user first.
+
+## 2. Collaboration server on Cloud Run
+
+### Current configuration
+
+| Setting | Value |
+|---|---|
+| GCP project | `drawink-2026` |
+| Region | `us-central1` |
+| Artifact Registry repository | `drawink` |
+| Cloud Run service | `drawink-collab` |
+| Container port | `3003` |
+| Expected frontend origin | `https://drawink.app` |
+| Intended custom domain | `https://collab.drawink.app` |
+
+The deploy script enables session affinity, a 3,600-second timeout, zero minimum
+instances, and a maximum of three instances. Reassess these values against real
+WebSocket load and cost before production changes.
+
+### First-time GCP setup
+
+```bash
+gcloud config set project drawink-2026
+gcloud services enable artifactregistry.googleapis.com run.googleapis.com
+gcloud artifacts repositories create drawink \
+  --repository-format=docker \
+  --location=us-central1 \
+  --project=drawink-2026
+gcloud auth configure-docker us-central1-docker.pkg.dev
+```
+
+### Deploy
+
+```bash
+bun ./scripts/deploy.ts
+```
+
+CI uses the non-interactive form:
+
+```bash
+bun ./scripts/deploy.ts --quick
+```
+
+The current script publishes a mutable `latest` tag. A production-safe follow-up
+should tag with the commit SHA, record the resulting Cloud Run revision, and
+retain a known-good rollback revision.
+
+### Verify
+
+```bash
+gcloud run services describe drawink-collab \
+  --region=us-central1 \
+  --project=drawink-2026
+
+gcloud run services logs read drawink-collab \
+  --region=us-central1 \
+  --project=drawink-2026 \
+  --limit=100
+```
+
+Check the generated `run.app` URL's `/` health response and establish a real
+Socket.io connection from an allowed frontend origin.
+
+### Custom domain
+
+Custom-domain options and regional support change over time. Follow the official
+[Cloud Run custom-domain guide](https://cloud.google.com/run/docs/mapping-custom-domains)
+instead of copying a guessed CNAME target, then record the selected approach in
+this runbook.
+
+If Cloudflare manages DNS, add the exact records Cloud Run or the load balancer
+returns. Disable proxy/interception while certificate validation is pending and
+confirm renewal works before enabling any proxy feature. A DNS provider does not
+make Cloud Run compute, egress, or load-balancer usage unconditionally free.
+
+## 3. Frontend on Vercel
+
+### Required browser variables
+
+Configure these for the appropriate Vercel environments:
+
+| Variable | Purpose |
+|---|---|
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk browser key |
+| `VITE_CONVEX_URL` | Convex cloud URL |
+| `VITE_APP_WS_SERVER_URL` | Socket.io collaboration endpoint |
+| `VITE_APP_FIREBASE_CONFIG` | Firebase browser configuration JSON |
+
+Optional integrations include `VITE_SENTRY_DSN`, library backend/URL values,
+Drawink Plus URLs/keys, and the documented `VITE_APP_*` feature flags in
+`.env.example`.
+
+AI provider keys, Clerk webhook secrets, deploy keys, Stripe secrets, and cloud
+credentials must never use the `VITE_` prefix or be stored in Vercel browser
+variables.
+
+### Deploy
+
+```bash
+vercel link
 vercel --prod
 ```
 
-Or simply push to your main branch — Vercel auto-deploys on git push if connected to your repo.
+`vercel.json` builds with `bun run build`, serves `dist`, applies security/cache
+headers, and rewrites application routes to `index.html`.
 
-### Update `vercel.json`
+The frontend job in `.github/workflows/deploy.yml` is currently commented out.
+Until it is restored and protected, frontend deployment is a separate manual or
+Vercel Git-integration operation.
 
-The existing `vercel.json` needs updating for the new architecture:
+### Verify
 
-```json
-{
-  "public": true,
-  "buildCommand": "bun run build",
-  "outputDirectory": "dist",
-  "installCommand": "bun install",
-  "framework": "vite",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "origin" }
-      ]
-    },
-    {
-      "source": "/:file*.woff2",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
-    }
-  ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
-```
-
-The `rewrites` rule ensures client-side routing works (SPA fallback).
-
----
+- Load `/`, `/sign-in`, `/dashboard`, `/billing`, and a workspace board URL.
+- Confirm a direct refresh on nested routes returns the SPA.
+- Verify Clerk sign-in and Convex authentication.
+- Create/save/reopen a board.
+- Start/join a collaboration room in two browsers.
+- Upload and reload an image.
+- Create and open an encrypted public share.
+- Check browser console, Sentry, and network failures.
 
 ## 4. Firebase Storage
 
-Firebase Storage is used only for file uploads (images, sketches). No deployment step is needed — it's a managed service.
+The current browser client uploads encrypted room/share assets directly to
+Firebase Storage. The checked-in rules allow anonymous writes and must not be
+treated as production-safe.
 
-### Setup (One-Time)
-
-1. Go to [Firebase Console](https://console.firebase.google.com) → your project
-2. Enable **Storage**
-3. Set security rules:
-
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
-```
-
-4. Copy the config values into your `VITE_APP_FIREBASE_CONFIG` env var
-
----
-
-## Full Deployment Checklist
-
-When deploying everything from scratch:
-
-- [ ] **Convex**: `npx convex deploy` — deploy backend functions and schema
-- [ ] **Convex**: Set `CLERK_JWT_ISSUER_DOMAIN` env var in Convex Dashboard
-- [ ] **Cloud Run**: Build, push, and deploy the collab server Docker image
-- [ ] **Cloud Run**: Set env vars (`CORS_ORIGIN`, `NODE_ENV`, `PORT`)
-- [ ] **Cloud Run**: (Optional) Set up custom domain `collab.drawink.app`
-- [ ] **Vercel**: Set all `VITE_*` env vars in Vercel Dashboard
-- [ ] **Vercel**: Deploy with `vercel --prod` or git push
-- [ ] **Vercel**: Configure custom domain `drawink.app`
-- [ ] **Firebase**: Verify Storage rules are set
-- [ ] **DNS**: A records pointing to Vercel and Cloud Run IPs
-- [ ] **Test**: Verify app loads, auth works, collab works, files upload
-
----
-
-## Monitoring & Troubleshooting
-
-### Vercel
+After implementing and testing secure rules:
 
 ```bash
-# View deployment logs
-vercel logs drawink.app
-
-# List deployments
-vercel ls
+cd firebase-project
+firebase deploy --only storage --project drawink-2026
 ```
 
-Or use the [Vercel Dashboard](https://vercel.com) for logs, analytics, and deployment history.
+Do not deploy the legacy Firestore rules until their public access has been
+removed or Firestore has been deleted from the active configuration.
 
-### Cloud Run (Collab Server)
+Add emulator tests for allowed owner/member operations, denied cross-tenant
+operations, size/content-type limits, overwrite/delete behavior, and undeclared
+paths.
+
+## 5. GitHub Actions behavior
+
+| Workflow | Trigger | Current behavior |
+|---|---|---|
+| `ci.yml` | Push to `master`, pull requests | Frozen install, Biome, both type-checks, Vitest, and both builds |
+| `deploy.yml` | Push to `master`, manual dispatch | Runs the same gates, then deploys Convex and Cloud Run; frontend job disabled |
+| `blacksmith-testbox.yml` | Manual dispatch with a testbox ID | Runs commands in an existing remote test environment |
+
+Repository automation now pins Bun, uses frozen installs, and serializes
+production deployments. Administrators still need to:
+
+1. Require pull requests and passing type-check/lint/tests on `master`.
+2. Add reviewers and branch restrictions to the GitHub `Production` environment.
+3. Use path filters and separate deployable service changes.
+4. Record deployed commit/revision identifiers.
+
+## Rollback
+
+### Cloud Run
+
+List revisions and route traffic back to a known-good revision:
 
 ```bash
-# View logs
-gcloud run services logs read drawink-collab \
-  --region=us-central1 --project=drawink-2026 --limit=50
+gcloud run revisions list \
+  --service=drawink-collab \
+  --region=us-central1 \
+  --project=drawink-2026
 
-# Check service status
-gcloud run services describe drawink-collab \
-  --region=us-central1 --project=drawink-2026
+gcloud run services update-traffic drawink-collab \
+  --to-revisions=<KNOWN_GOOD_REVISION>=100 \
+  --region=us-central1 \
+  --project=drawink-2026
 ```
+
+### Frontend
+
+Promote or redeploy the last verified Vercel deployment, then rerun the route and
+auth smoke tests.
 
 ### Convex
 
-```bash
-# View logs
-npx convex logs
+Redeploy the last known-good function commit. Treat schema/data migrations as
+forward-compatible operations and create an explicit data backup/repair plan;
+code rollback does not automatically reverse data mutations.
 
-# Open dashboard
-npx convex dashboard
-```
+## Monitoring and cost controls
 
-### DNS Verification
+- Create billing budgets/alerts for GCP, Firebase, Convex, Vercel, Clerk, and the
+  AI provider.
+- Monitor Cloud Run instance count, WebSocket errors, latency, and egress.
+- Monitor anonymous share creation, Firebase writes, stored bytes, and cleanup.
+- Monitor AI request count/cost independently of the application UI counter.
+- Route frontend and backend errors to an owned alert channel.
 
-```bash
-# Check frontend
-dig drawink.app A +short
+Pricing changes over time and depends on region/usage. Use the official
+[Cloud Run pricing page](https://cloud.google.com/run/pricing) and each provider's
+calculator rather than assuming a fixed monthly or free-tier cost.
 
-# Check collab server
-dig collab.drawink.app A +short
-```
+## Release checklist
 
-### Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| WebSocket disconnects | Ensure Cloud Run `--timeout=3600` and `--session-affinity` are set |
-| CORS errors | Verify `CORS_ORIGIN` on Cloud Run matches frontend domain exactly |
-| Auth fails | Check Clerk JWT template is named `convex`, issuer URL is correct |
-| Files won't upload | Check Firebase Storage rules allow authenticated writes |
-| Convex errors | Run `npx convex logs` to see server-side errors |
-| Blank page on Vercel | Ensure `rewrites` in `vercel.json` has SPA fallback |
-
----
-
-## Cost Overview
-
-| Service | Expected Cost |
-|---------|--------------|
-| **Vercel** (Hobby) | Free (100GB bandwidth/month) |
-| **Vercel** (Pro) | $20/month (1TB bandwidth) |
-| **Cloud Run** | $0/month (Free Tier: 2M requests & 180k vCPU-seconds/mo. 0 min instances) |
-| **Convex** | Free tier (then $25/month for Pro) |
-| **Firebase Storage** | ~$0.026/GB stored + $0.12/GB downloaded |
-| **Clerk** | Free up to 10k MAU |
-
----
-
-## Console Links
-
-| Resource | URL |
-|----------|-----|
-| Vercel Dashboard | [vercel.com/dashboard](https://vercel.com/dashboard) |
-| Convex Dashboard | [dashboard.convex.dev](https://dashboard.convex.dev) |
-| Cloud Run | [console.cloud.google.com/run?project=drawink-2026](https://console.cloud.google.com/run?project=drawink-2026) |
-| Artifact Registry | [console.cloud.google.com/artifacts?project=drawink-2026](https://console.cloud.google.com/artifacts?project=drawink-2026) |
-| Firebase Console | [console.firebase.google.com](https://console.firebase.google.com) |
-| Clerk Dashboard | [dashboard.clerk.com](https://dashboard.clerk.com) |
+- [ ] Exposed credentials rotated and history cleanup coordinated
+- [ ] Firebase rules hardened and emulator-tested
+- [ ] Type-check, lint, tests, and both builds pass
+- [ ] Required production environment variable names verified without printing values
+- [ ] Database/schema compatibility reviewed and backup plan recorded
+- [ ] Cloud Run image tagged with immutable commit identifier
+- [ ] Convex deployed and smoke-tested
+- [ ] Collaboration revision deployed and WebSocket-tested
+- [ ] Frontend deployed and nested routes/auth tested
+- [ ] Public share and encrypted file round-trip tested
+- [ ] Monitoring, alerts, and rollback owner confirmed

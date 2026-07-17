@@ -1,1 +1,1 @@
-export { getDefaultAppState } from "./dist/types/drawink/appState";
+export { getDefaultAppState } from "@/core/appState";
