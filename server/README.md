@@ -12,7 +12,8 @@ Handles real-time collaboration features that need low-latency WebSocket connect
 - **User following** — sync viewports between users
 - **Volatile broadcasts** — ephemeral updates (cursors) that don't need guaranteed delivery
 
-> All persistent data (boards, users, files) lives in **Convex** — this server only handles real-time transport.
+> Structured persistent data lives in **Convex**, while encrypted binary assets
+> use **Firebase Storage**. This server only handles real-time transport.
 
 ## Architecture
 
@@ -33,7 +34,7 @@ Handles real-time collaboration features that need low-latency WebSocket connect
 
 ```bash
 # Install dependencies
-bun install
+bun install --frozen-lockfile
 
 # Start with hot reload
 bun run dev
@@ -44,7 +45,8 @@ bun run start
 
 The server runs on `http://localhost:3003` by default.
 
-> **Tip:** From the root project, `bun dev` starts both the Vite app and this collab server concurrently.
+> **Tip:** From the root project, `bun run dev` starts Convex, the Vite app, and
+> this collaboration server concurrently.
 
 ## Environment Variables
 
@@ -54,7 +56,9 @@ The server runs on `http://localhost:3003` by default.
 | `NODE_ENV` | `development` | `production` | Environment |
 | `CORS_ORIGIN` | `http://localhost:5173` | `https://drawink.app` | Allowed frontend origin |
 
-Config files: `.env.development` (local) and `.env.production` (deployed).
+The server reads `.env.development` in development and `.env.production`
+otherwise, with process variables taking precedence. The committed files must
+contain non-secret defaults only.
 
 ## Deployment
 
@@ -76,7 +80,9 @@ We highly recommend using our automated deployment script from the project root.
 bun ./scripts/deploy.ts
 ```
 
-> **Note:** The server is mapped to `collab.drawink.app` via Cloudflare which routes directly to the Cloud Run service.
+> **Note:** The intended custom domain is `collab.drawink.app`. Follow the
+> repository [deployment guide](../docs/deployment/DEPLOY.md) and the current
+> Cloud Run domain-mapping guidance; do not infer a DNS target from this README.
 
 ## Socket.io Protocol
 
@@ -103,4 +109,21 @@ bun ./scripts/deploy.ts
 
 ## Security
 
-All scene data is **end-to-end encrypted** — the server only relays opaque encrypted blobs and never sees drawing content.
+Scene payloads are **end-to-end encrypted** — the server relays opaque encrypted
+blobs and does not need a scene decryption key.
+
+The endpoint is intentionally reachable without application authentication.
+Current safeguards validate room IDs, cap individual Socket.io messages at 5 MB,
+and limit each socket to 60 handled messages per second. Per-socket limiting does
+not prevent connection-churn or distributed abuse, so production still needs
+edge-level connection/rate controls, monitoring, and resource budgets.
+
+The server does not persist room state. Clients must recover durable state from
+Convex/Firebase as appropriate.
+
+## Verification status
+
+`bun run build` is exercised by the repository build workflow. There is no
+dedicated server unit/integration suite yet; protocol validation, CORS behavior,
+disconnect cleanup, load behavior, and abuse controls should be covered before
+treating the service as release-complete.

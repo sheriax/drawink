@@ -179,7 +179,8 @@ export const colorPickerKeyNavHandler = ({
         ([name, shades]) => {
           if (Array.isArray(shades)) {
             return shades.includes(color);
-          } else if (shades === color) {
+          }
+          if (shades === color) {
             return name;
           }
           return null;

@@ -21,7 +21,7 @@ export const actionSendBackward = register({
   keywords: ["move down", "zindex", "layer"],
   icon: SendBackwardIcon,
   trackEvent: { category: "element" },
-  perform: (elements, appState, value, app) => {
+  perform: (elements, appState, _value, app) => {
     return {
       elements: moveOneLeft(elements, appState, app.scene),
       appState,
@@ -49,7 +49,7 @@ export const actionBringForward = register({
   keywords: ["move up", "zindex", "layer"],
   icon: BringForwardIcon,
   trackEvent: { category: "element" },
-  perform: (elements, appState, value, app) => {
+  perform: (elements, appState, _value, app) => {
     return {
       elements: moveOneRight(elements, appState, app.scene),
       appState,
@@ -124,7 +124,7 @@ export const actionBringToFront = register({
     <button
       type="button"
       className="zIndexButton"
-      onClick={(event) => updateData(null)}
+      onClick={(_event) => updateData(null)}
       title={`${t("labels.bringToFront")} — ${
         isDarwin ? getShortcutKey("CtrlOrCmd+Alt+]") : getShortcutKey("CtrlOrCmd+Shift+]")
       }`}

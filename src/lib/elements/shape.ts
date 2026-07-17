@@ -226,7 +226,8 @@ const modifyIframeLikeForRoughOptions = (
       backgroundColor: "#d3d3d3",
       fillStyle: "solid",
     } as const;
-  } else if (isIframeElement(element)) {
+  }
+  if (isIframeElement(element)) {
     return {
       ...element,
       strokeColor: isTransparent(element.strokeColor) ? "#000000" : element.strokeColor,
@@ -332,10 +333,6 @@ const getArrowheadShapes = (
     }
     case "crowfoot_one":
       return generateCrowfootOne(arrowheadPoints, options);
-    case "bar":
-    case "arrow":
-    case "crowfoot_many":
-    case "crowfoot_one_or_many":
     default: {
       const [x2, y2, x3, y3, x4, y4] = arrowheadPoints;
 
@@ -402,7 +399,8 @@ export const generateLinearCollisionShape = (
 
       if (isElbowArrow(element)) {
         return generator.path(generateElbowArrowShape(points, 16), options).sets[0].ops;
-      } else if (!element.roundness) {
+      }
+      if (!element.roundness) {
         return points.map((point, idx) => {
           const p = pointRotateRads(
             pointFrom<GlobalPoint>(element.x + point[0], element.y + point[1]),
@@ -627,7 +625,7 @@ const generateElementShape = (
         // NOTE (mtolmacs): Temporary fix for extremely big arrow shapes
         if (!points.every((point) => Math.abs(point[0]) <= 1e6 && Math.abs(point[1]) <= 1e6)) {
           console.error(
-            `Elbow arrow with extreme point positions detected. Arrow not rendered.`,
+            "Elbow arrow with extreme point positions detected. Arrow not rendered.",
             element.id,
             JSON.stringify(points),
           );

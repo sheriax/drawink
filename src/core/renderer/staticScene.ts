@@ -103,7 +103,7 @@ const strokeGrid = (
 export const frameClip = (
   frame: DrawinkFrameLikeElement,
   context: CanvasRenderingContext2D,
-  renderConfig: StaticCanvasRenderConfig,
+  _renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState,
 ) => {
   context.translate(frame.x + appState.scrollX, frame.y + appState.scrollY);

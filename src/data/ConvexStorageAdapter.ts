@@ -152,7 +152,7 @@ export class ConvexStorageAdapter implements StorageAdapter {
           console.log("[ConvexStorageAdapter] Auth token set");
           return;
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           `[ConvexStorageAdapter] Auth token not ready (attempt ${i + 1}/${maxRetries})`,
         );

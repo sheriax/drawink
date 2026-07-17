@@ -45,7 +45,7 @@ const OverwriteConfirmDialog = Object.assign(
             >
               <div className="OverwriteConfirm__Description__icon">{alertTriangleIcon}</div>
               <div>{overwriteConfirmState.description}</div>
-              <div className="OverwriteConfirm__Description__spacer"></div>
+              <div className="OverwriteConfirm__Description__spacer" />
               <FilledButton
                 color={overwriteConfirmState.color}
                 size="large"

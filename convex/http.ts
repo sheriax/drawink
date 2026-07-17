@@ -12,8 +12,8 @@
 
 import { httpRouter } from "convex/server";
 import { Webhook } from "svix";
-import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { httpAction } from "./_generated/server";
 
 const http = httpRouter();
 
@@ -60,7 +60,9 @@ http.route({
         const { id, email_addresses, first_name, last_name, image_url } = evt.data;
         const primaryEmail =
           email_addresses?.find((e: any) => e.id === evt.data.primary_email_address_id)
-            ?.email_address ?? email_addresses?.[0]?.email_address ?? "";
+            ?.email_address ??
+          email_addresses?.[0]?.email_address ??
+          "";
 
         const name = [first_name, last_name].filter(Boolean).join(" ") || "User";
 

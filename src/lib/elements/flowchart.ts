@@ -66,12 +66,14 @@ const getNodeRelatives = (
 ) => {
   const items = [...elementsMap.values()].reduce(
     (acc: { relative: DrawinkBindableElement; heading: Heading }[], el) => {
-      let oppositeBinding;
+      const oppositeBinding = isElbowArrow(el)
+        ? el[type === "predecessors" ? "startBinding" : "endBinding"]
+        : null;
       if (
         isElbowArrow(el) &&
         // we want check existence of the opposite binding, in the direction
         // we're interested in
-        (oppositeBinding = el[type === "predecessors" ? "startBinding" : "endBinding"]) &&
+        oppositeBinding &&
         // similarly, we need to filter only arrows bound to target node
         el[type === "predecessors" ? "endBinding" : "startBinding"]?.elementId === node.id
       ) {

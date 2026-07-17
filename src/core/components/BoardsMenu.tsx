@@ -83,7 +83,7 @@ export const BoardsMenu = () => {
   return (
     <div className="boards-menu">
       <div className="boards-menu-header">
-        <button className="boards-menu-create-btn" onClick={handleCreateBoard}>
+        <button type="button" className="boards-menu-create-btn" onClick={handleCreateBoard}>
           {PlusIcon} {t("buttons.createBoard")}
         </button>
       </div>
@@ -110,15 +110,23 @@ export const BoardsMenu = () => {
                     }
                   }}
                 />
-                <button onClick={(e) => saveBoardName(e, board.id)}>{checkIcon}</button>
+                <button type="button" onClick={(e) => saveBoardName(e, board.id)}>
+                  {checkIcon}
+                </button>
               </div>
             ) : (
               <>
                 <span className="boards-menu-item-name">{board.name}</span>
                 <div className="boards-menu-item-actions">
-                  <button onClick={(e) => startEditing(e, board)}>{FreedrawIcon}</button>
+                  <button type="button" onClick={(e) => startEditing(e, board)}>
+                    {FreedrawIcon}
+                  </button>
                   {boards.length > 1 && (
-                    <button className="delete-btn" onClick={(e) => handleDeleteBoard(e, board.id)}>
+                    <button
+                      type="button"
+                      className="delete-btn"
+                      onClick={(e) => handleDeleteBoard(e, board.id)}
+                    >
                       {TrashIcon}
                     </button>
                   )}

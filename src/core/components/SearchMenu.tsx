@@ -18,7 +18,7 @@ import { getDefaultFrameName } from "@/lib/elements/frame";
 
 import type { DrawinkFrameLikeElement, DrawinkTextElement } from "@/lib/elements/types";
 
-import { atom, useAtom } from "../editor-jotai";
+import { type PrimitiveAtom, atom, useAtom } from "../editor-jotai";
 
 import { useStable } from "../hooks/useStable";
 import { t } from "../i18n";
@@ -33,7 +33,7 @@ import "./SearchMenu.scss";
 import type { AppClassProperties, SearchMatch } from "../types";
 
 const searchQueryAtom = atom<string>("");
-export const searchItemInFocusAtom = atom<number | null>(null);
+export const searchItemInFocusAtom = atom<number | null>(null) as PrimitiveAtom<number | null>;
 
 const SEARCH_DEBOUNCE = 350;
 
@@ -87,7 +87,7 @@ export const SearchMenu = () => {
       app.scene.getSceneNonce() !== lastSceneNonceRef.current
     ) {
       searchedQueryRef.current = null;
-      handleSearch(searchQuery, app, (matchItems, index) => {
+      handleSearch(searchQuery, app, (matchItems, _index) => {
         setSearchMatches({
           nonce: randomInteger(),
           items: matchItems,
@@ -729,10 +729,10 @@ const handleSearch = debounce(
     const regex = new RegExp(escapeSpecialCharacters(searchQuery), "gi");
 
     for (const textEl of texts) {
-      let match = null;
       const text = textEl.originalText;
 
-      while ((match = regex.exec(text)) !== null) {
+      let match = regex.exec(text);
+      while (match !== null) {
         const preview = getMatchPreview(text, match.index, searchQuery);
         const matchedLines = getMatchedLines(textEl, searchQuery, match.index);
 
@@ -745,16 +745,17 @@ const handleSearch = debounce(
             matchedLines,
           });
         }
+        match = regex.exec(text);
       }
     }
 
     const frameMatches: SearchMatchItem[] = [];
 
     for (const frame of frames) {
-      let match = null;
       const name = frame.name ?? getDefaultFrameName(frame);
 
-      while ((match = regex.exec(name)) !== null) {
+      let match = regex.exec(name);
+      while (match !== null) {
         const preview = getMatchPreview(name, match.index, searchQuery);
         const matchedLines = getMatchInFrame(frame, searchQuery, match.index, app.state.zoom.value);
 
@@ -767,6 +768,7 @@ const handleSearch = debounce(
             matchedLines,
           });
         }
+        match = regex.exec(name);
       }
     }
 
@@ -775,8 +777,10 @@ const handleSearch = debounce(
     // putting frame matches first
     const matchItems: SearchMatchItem[] = [...frameMatches, ...textMatches];
 
-    const focusIndex =
-      matchItems.findIndex((matchItem) => visibleIds.has(matchItem.element.id)) ?? null;
+    const firstVisibleIndex = matchItems.findIndex((matchItem) =>
+      visibleIds.has(matchItem.element.id),
+    );
+    const focusIndex = firstVisibleIndex >= 0 ? firstVisibleIndex : null;
 
     cb(matchItems, focusIndex);
   },

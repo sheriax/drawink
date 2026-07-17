@@ -13,7 +13,7 @@ import type { DrawinkElement } from "./types";
 export const defaultGetElementLinkFromSelection: Exclude<
   AppProps["generateLinkForSelection"],
   undefined
-> = (id, type) => {
+> = (id, _type) => {
   const url = window.location.href;
 
   try {
@@ -78,7 +78,7 @@ export const isElementLink = (url: string) => {
   try {
     const _url = new URL(url);
     return _url.searchParams.has(ELEMENT_LINK_KEY) && _url.host === window.location.host;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };

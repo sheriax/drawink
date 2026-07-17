@@ -61,7 +61,8 @@ const calculateTranslation = (
       ...noTranslation,
       [axis]: selectionBoundingBox[min] - groupBoundingBox[min],
     };
-  } else if (position === "end") {
+  }
+  if (position === "end") {
     return {
       ...noTranslation,
       [axis]: selectionBoundingBox[max] - groupBoundingBox[max],

@@ -73,7 +73,7 @@ export const actionAlignTop = register({
   label: "labels.alignTop",
   icon: AlignTopIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,
@@ -103,7 +103,7 @@ export const actionAlignBottom = register({
   label: "labels.alignBottom",
   icon: AlignBottomIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,
@@ -133,7 +133,7 @@ export const actionAlignLeft = register({
   label: "labels.alignLeft",
   icon: AlignLeftIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,
@@ -163,7 +163,7 @@ export const actionAlignRight = register({
   label: "labels.alignRight",
   icon: AlignRightIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,
@@ -193,7 +193,7 @@ export const actionAlignVerticallyCentered = register({
   label: "labels.centerVertically",
   icon: CenterVerticallyIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,
@@ -222,7 +222,7 @@ export const actionAlignHorizontallyCentered = register({
   label: "labels.centerHorizontally",
   icon: CenterHorizontallyIcon,
   trackEvent: { category: "element" },
-  predicate: (elements, appState, appProps, app) => alignActionsPredicate(appState, app),
+  predicate: (_elements, appState, _appProps, app) => alignActionsPredicate(appState, app),
   perform: (elements, appState, _, app) => {
     return {
       appState,

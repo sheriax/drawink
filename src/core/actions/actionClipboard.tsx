@@ -25,7 +25,7 @@ export const actionCopy = register<ClipboardEvent | null>({
   label: "labels.copy",
   icon: DuplicateIcon,
   trackEvent: { category: "element" },
-  perform: async (elements, appState, event, app) => {
+  perform: async (_elements, appState, event, app) => {
     const elementsToCopy = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
       includeBoundTextElement: true,
@@ -56,7 +56,7 @@ export const actionPaste = register({
   name: "paste",
   label: "labels.paste",
   trackEvent: { category: "element" },
-  perform: async (elements, appState, data, app) => {
+  perform: async (_elements, appState, _data, app) => {
     let types;
     try {
       types = await readSystemClipboard();
@@ -237,7 +237,7 @@ export const copyText = register({
   name: "copyText",
   label: "labels.copyText",
   trackEvent: { category: "element" },
-  perform: (elements, appState, _, app) => {
+  perform: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
       includeBoundTextElement: true,
@@ -245,14 +245,14 @@ export const copyText = register({
 
     try {
       copyTextToSystemClipboard(getTextFromElements(selectedElements));
-    } catch (e) {
+    } catch (_e) {
       throw new Error(t("errors.copyToSystemClipboardFailed"));
     }
     return {
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
   },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     return (
       probablySupportsClipboardWriteText &&
       app.scene

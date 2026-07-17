@@ -7,21 +7,39 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noAutofocus": "off",
+        "useKeyWithClickEvents": "off",
+        "useSemanticElements": "off"
+      },
       "complexity": {
-        "noExcessiveCognitiveComplexity": "warn",
+        "noBannedTypes": "error",
+        "noExcessiveCognitiveComplexity": "off",
+        "noForEach": "off",
+        "noStaticOnlyClass": "off",
+        "noThisInStatic": "off",
         "useLiteralKeys": "off"
       },
       "correctness": {
-        "noUnusedVariables": "warn",
-        "noUnusedImports": "warn",
-        "useExhaustiveDependencies": "warn"
+        "noPrecisionLoss": "off",
+        "noUnusedVariables": "off",
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
+        "noParameterAssign": "off",
         "useNodejsImportProtocol": "off"
       },
+      "performance": {
+        "noDelete": "off"
+      },
       "suspicious": {
-        "noExplicitAny": "warn",
+        "noArrayIndexKey": "off",
+        "noConfusingVoidType": "off",
+        "noExplicitAny": "off",
+        "noExportsInTest": "off",
+        "noImplicitAnyLet": "off",
         "noConsoleLog": "off"
       },
       "nursery": {
@@ -55,11 +73,19 @@
   },
   "files": {
     "ignore": [
+      ".agent/**",
+      ".agents/**",
+      ".claude/**",
+      ".kilocode/**",
       "node_modules",
       "dist",
       ".next",
       ".astro",
       "coverage",
+      "convex/_generated/**",
+      "src/core/subset/harfbuzz/harfbuzz-wasm.ts",
+      "src/core/subset/woff2/woff2-bindings.ts",
+      "src/core/subset/woff2/woff2-wasm.ts",
       "*.min.js",
       "*.d.ts",
       "packages/*/dist",

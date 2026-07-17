@@ -39,8 +39,8 @@ describe("move element", () => {
       fireEvent.pointerMove(canvas, { clientX: 60, clientY: 70 });
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
-      expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("5");
+      expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("5");
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(1);
       expect(h.state.selectedElementIds[h.elements[0].id]).toBeTruthy();
@@ -54,8 +54,8 @@ describe("move element", () => {
     fireEvent.pointerMove(canvas, { clientX: 20, clientY: 40 });
     fireEvent.pointerUp(canvas);
 
-    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`3`);
-    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`2`);
+    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("3");
+    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("2");
     expect(h.state.selectionElement).toBeNull();
     expect(h.elements.length).toEqual(1);
     expect([h.elements[0].x, h.elements[0].y]).toEqual([0, 40]);
@@ -92,8 +92,8 @@ describe("move element", () => {
     // select the second rectangle
     new Pointer("mouse").clickOn(rectB);
 
-    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`16`);
-    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`15`);
+    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("16");
+    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("15");
     expect(h.state.selectionElement).toBeNull();
     expect(h.elements.length).toEqual(3);
     expect(h.state.selectedElementIds[rectB.id]).toBeTruthy();
@@ -111,8 +111,8 @@ describe("move element", () => {
     Keyboard.keyDown(KEYS.ARROW_DOWN);
 
     // Check that the arrow size has been changed according to moving the rectangle
-    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`3`);
-    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`3`);
+    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("3");
+    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("3");
     expect(h.state.selectionElement).toBeNull();
     expect(h.elements.length).toEqual(3);
     expect(h.state.selectedElementIds[rectB.id]).toBeTruthy();
@@ -138,8 +138,8 @@ describe("duplicate element on move when ALT is clicked", () => {
       fireEvent.pointerMove(canvas, { clientX: 60, clientY: 70 });
       fireEvent.pointerUp(canvas);
 
-      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`5`);
-      expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`5`);
+      expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("5");
+      expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("5");
       expect(h.state.selectionElement).toBeNull();
       expect(h.elements.length).toEqual(1);
       expect(h.state.selectedElementIds[h.elements[0].id]).toBeTruthy();
@@ -158,8 +158,8 @@ describe("duplicate element on move when ALT is clicked", () => {
     fireEvent.pointerMove(canvas, { clientX: 10, clientY: 60 });
     fireEvent.pointerUp(canvas);
 
-    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot(`4`);
-    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot(`3`);
+    expect(renderInteractiveScene.mock.calls.length).toMatchInlineSnapshot("4");
+    expect(renderStaticScene.mock.calls.length).toMatchInlineSnapshot("3");
     expect(h.state.selectionElement).toBeNull();
     expect(h.elements.length).toEqual(2);
 

@@ -13,7 +13,7 @@ export const actionToggleStats = register({
   viewMode: true,
   trackEvent: { category: "menu" },
   keywords: ["edit", "attributes", "customize"],
-  perform(elements, appState) {
+  perform(_elements, appState) {
     return {
       appState: {
         ...appState,

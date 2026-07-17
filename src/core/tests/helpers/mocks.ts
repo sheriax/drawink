@@ -1,29 +1,32 @@
-import * as MermaidToDrawink from "@drawink/mermaid-to-drawink";
 import React from "react";
 import { vi } from "vitest";
 
-import type { parseMermaidToDrawink } from "@drawink/mermaid-to-drawink";
+import type { parseMermaidToExcalidraw } from "@drawink/mermaid-to-drawink";
+
+const mermaidMocks = vi.hoisted(() => ({
+  parseMermaidToExcalidraw: vi.fn(),
+}));
+
+vi.mock("@drawink/mermaid-to-drawink", async (importOriginal) => {
+  const module = await importOriginal<typeof import("@drawink/mermaid-to-drawink")>();
+  return {
+    ...module,
+    parseMermaidToExcalidraw: mermaidMocks.parseMermaidToExcalidraw,
+  };
+});
 
 export const mockMermaidToDrawink = (opts: {
-  parseMermaidToDrawink: typeof parseMermaidToDrawink;
+  parseMermaidToExcalidraw: typeof parseMermaidToExcalidraw;
   mockRef?: boolean;
 }) => {
-  vi.mock("@drawink/mermaid-to-drawink", async (importActual) => {
-    const module = (await importActual()) as any;
-
-    return {
-      __esModule: true,
-      ...module,
-    };
-  });
-  const parseMermaidToDrawinkSpy = vi.spyOn(MermaidToDrawink, "parseMermaidToDrawink");
-
-  parseMermaidToDrawinkSpy.mockImplementation(opts.parseMermaidToDrawink);
+  const parseMermaidToDrawinkSpy = mermaidMocks.parseMermaidToExcalidraw.mockImplementation(
+    opts.parseMermaidToExcalidraw,
+  );
 
   if (opts.mockRef) {
     vi.spyOn(React, "useRef").mockReturnValue({
       current: {
-        parseMermaidToDrawink: parseMermaidToDrawinkSpy,
+        parseMermaidToExcalidraw: parseMermaidToDrawinkSpy,
       },
     });
   }

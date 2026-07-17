@@ -182,7 +182,7 @@ export const actionFinalize = register<FormData>({
       if (
         appState.selectedLinearElement &&
         appState.multiElement &&
-        element.type !== "freedraw" &&
+        isLinearElement(element) &&
         appState.lastPointerDownWith !== "touch"
       ) {
         const { points } = element;

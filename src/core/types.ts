@@ -461,7 +461,7 @@ export type UIAppState = Omit<
   "startBoundElement" | "cursorButton" | "scrollX" | "scrollY"
 >;
 
-export type { NormalizedZoomValue, Zoom } from "@/lib/types";
+export type { NormalizedZoomValue } from "@/lib/types";
 
 export type PointerCoords = Readonly<{
   x: number;
@@ -788,8 +788,6 @@ export type PointerDownState = Readonly<{
     hasOccurred: boolean;
   };
 }>;
-
-export type { UnsubscribeCallback } from "@/lib/types";
 
 export interface DrawinkImperativeAPI {
   updateScene: InstanceType<typeof App>["updateScene"];

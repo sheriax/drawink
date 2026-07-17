@@ -1,2 +1,1 @@
-// Re-export analytics functions from the built package
-export { trackEvent } from "./dist/types/drawink/analytics";
+export { trackEvent } from "@/core/analytics";

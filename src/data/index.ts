@@ -156,7 +156,7 @@ const legacy_decodeFromBackend = async ({
     const iv = buffer.slice(0, IV_LENGTH_BYTES);
     const encrypted = buffer.slice(IV_LENGTH_BYTES, buffer.byteLength);
     decrypted = await decryptData(new Uint8Array(iv), encrypted, decryptionKey);
-  } catch (error: any) {
+  } catch (_error: any) {
     // Fixed IV (old format, backward compatibility)
     const fixedIv = new Uint8Array(IV_LENGTH_BYTES);
     decrypted = await decryptData(fixedIv, buffer, decryptionKey);
@@ -363,7 +363,7 @@ export const exportToBackend = async (
 
     const response = await fetch(BACKEND_V2_POST, {
       method: "POST",
-      body: payload.buffer,
+      body: new Uint8Array(payload).buffer,
     });
     const json = await response.json();
     if (json.id) {
@@ -377,7 +377,8 @@ export const exportToBackend = async (
       });
 
       return { url: urlString, errorMessage: null };
-    } else if (json.error_class === "RequestTooLargeError") {
+    }
+    if (json.error_class === "RequestTooLargeError") {
       return {
         url: null,
         errorMessage: t("alerts.couldNotCreateShareableLinkTooBig"),

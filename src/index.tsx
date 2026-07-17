@@ -16,7 +16,7 @@ window.__DRAWINK_SHA__ = import.meta.env.VITE_APP_GIT_SHA;
 
 // Set font asset path - the DrawinkFontFace class looks for EXCALIDRAW_ASSET_PATH
 // Point to local public folder instead of external CDN
-window.EXCALIDRAW_ASSET_PATH = window.location.origin + "/";
+window.EXCALIDRAW_ASSET_PATH = `${window.location.origin}/`;
 const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
 
@@ -41,10 +41,7 @@ root.render(
             <Route path="/sign-up/*" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/billing" element={<BillingSettings />} />
-            <Route
-              path="/workspace/:workspaceId/board/:boardId"
-              element={<DrawinkApp />}
-            />
+            <Route path="/workspace/:workspaceId/board/:boardId" element={<DrawinkApp />} />
             <Route path="/*" element={<DrawinkApp />} />
           </Routes>
         </BrowserRouter>

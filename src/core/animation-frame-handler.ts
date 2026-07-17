@@ -74,6 +74,6 @@ export class AnimationFrameHandler {
   private onFrame(target: AnimationTarget, timestamp: number): boolean {
     const shouldAbort = target.callback(timestamp);
 
-    return shouldAbort ?? false;
+    return shouldAbort === true;
   }
 }

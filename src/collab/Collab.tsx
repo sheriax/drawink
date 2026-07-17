@@ -334,11 +334,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
       const lastBoardId = localStorage.getItem("drawink-current-board-id");
       const lastWsId = localStorage.getItem("selectedWorkspaceId");
       if (lastBoardId && lastWsId) {
-        window.history.pushState(
-          {},
-          APP_NAME,
-          `/workspace/${lastWsId}/board/${lastBoardId}`,
-        );
+        window.history.pushState({}, APP_NAME, `/workspace/${lastWsId}/board/${lastBoardId}`);
       } else {
         window.history.pushState({}, APP_NAME, window.location.origin);
       }

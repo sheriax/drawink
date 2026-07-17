@@ -46,7 +46,7 @@ export class AnimatedTrail implements Trail {
       this.trailElement.setAttribute("stroke-dasharray", "7 7");
       this.trailElement.setAttribute("stroke-dashoffset", "10");
       this.trailAnimation.setAttribute("from", "0");
-      this.trailAnimation.setAttribute("to", `-14`);
+      this.trailAnimation.setAttribute("to", "-14");
       this.trailAnimation.setAttribute("dur", "0.3s");
       this.trailElement.appendChild(this.trailAnimation);
     }

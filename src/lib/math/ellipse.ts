@@ -80,8 +80,8 @@ export const ellipseDistanceFromPoint = <Point extends GlobalPoint | LocalPoint>
   const px = Math.abs(translatedPoint[0]);
   const py = Math.abs(translatedPoint[1]);
 
-  let tx = 0.707;
-  let ty = 0.707;
+  let tx = Math.SQRT1_2;
+  let ty = Math.SQRT1_2;
 
   for (let i = 0; i < 3; i++) {
     const x = a * tx;
@@ -173,18 +173,15 @@ export function ellipseLineIntersectionPoints<Point extends GlobalPoint | LocalP
   const y1 = g[1] - cy;
   const x2 = h[0] - cx;
   const y2 = h[1] - cy;
-  const a =
-    Math.pow(x2 - x1, 2) / Math.pow(halfWidth, 2) + Math.pow(y2 - y1, 2) / Math.pow(halfHeight, 2);
-  const b =
-    2 * ((x1 * (x2 - x1)) / Math.pow(halfWidth, 2) + (y1 * (y2 - y1)) / Math.pow(halfHeight, 2));
-  const c =
-    Math.pow(x1, 2) / Math.pow(halfWidth, 2) + Math.pow(y1, 2) / Math.pow(halfHeight, 2) - 1;
-  const t1 = (-b + Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
-  const t2 = (-b - Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
+  const a = (x2 - x1) ** 2 / halfWidth ** 2 + (y2 - y1) ** 2 / halfHeight ** 2;
+  const b = 2 * ((x1 * (x2 - x1)) / halfWidth ** 2 + (y1 * (y2 - y1)) / halfHeight ** 2);
+  const c = x1 ** 2 / halfWidth ** 2 + y1 ** 2 / halfHeight ** 2 - 1;
+  const t1 = (-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
+  const t2 = (-b - Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
   const candidates = [
     pointFrom<Point>(x1 + t1 * (x2 - x1) + cx, y1 + t1 * (y2 - y1) + cy),
     pointFrom<Point>(x1 + t2 * (x2 - x1) + cx, y1 + t2 * (y2 - y1) + cy),
-  ].filter((p) => !isNaN(p[0]) && !isNaN(p[1]));
+  ].filter((p) => !Number.isNaN(p[0]) && !Number.isNaN(p[1]));
 
   if (candidates.length === 2 && pointsEqual(candidates[0], candidates[1])) {
     return [candidates[0]];

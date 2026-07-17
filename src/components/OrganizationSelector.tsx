@@ -58,13 +58,20 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
                   {(selectedWorkspace.name?.[0] || "?").toUpperCase()}
                 </span>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <svg
+                  aria-hidden="true"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
                   <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6z" />
                 </svg>
               )}
             </div>
             <span className="organization-selector__name">{displayName}</span>
             <svg
+              aria-hidden="true"
               width="12"
               height="12"
               viewBox="0 0 12 12"
@@ -84,7 +91,7 @@ export const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({
             onSelect={() => handleSelect(null)}
             className={!selectedWorkspace ? "organization-selector__item--active" : ""}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6z" />
             </svg>
             <span>Personal</span>

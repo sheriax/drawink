@@ -1,1 +1,1 @@
-export { copyTextToSystemClipboard } from "./dist/types/drawink/clipboard";
+export { copyTextToSystemClipboard } from "@/core/clipboard";

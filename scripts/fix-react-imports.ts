@@ -6,7 +6,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { glob } from "glob";
 
-const REACT_IMPORT_PATTERNS = {
+const _REACT_IMPORT_PATTERNS = {
   // Hook imports that need to be direct
   hooks: ["useEffect", "useMemo", "useRef", "useState", "useContext", "createRef"],
 
@@ -23,7 +23,7 @@ const REACT_IMPORT_PATTERNS = {
 async function analyzeReactImports() {
   console.log("🔍 Analyzing React import patterns...");
 
-  const files = await glob("packages/drawink/**/*.{ts,tsx}", {
+  const files = await glob("src/**/*.{ts,tsx}", {
     ignore: ["**/node_modules/**", "**/dist/**", "**/*.d.ts"],
   });
 
@@ -67,7 +67,7 @@ async function analyzeReactImports() {
             message,
             matches: matches.length,
             fix,
-            preview: matches[0]?.substring(0, 100) + "...",
+            preview: `${matches[0]?.substring(0, 100)}...`,
           });
         }
       }
@@ -82,81 +82,13 @@ async function analyzeReactImports() {
 async function fixReactImports() {
   console.log("🛠️  Fixing React import patterns...");
 
-  const files = await glob("packages/drawink/**/*.{ts,tsx}", {
+  const files = await glob("src/**/*.{ts,tsx}", {
     ignore: ["**/node_modules/**", "**/dist/**", "**/*.d.ts"],
   });
 
   let fixedCount = 0;
-  
+
   for (const file of files) {
-    try {
-      let content = await readFile(file, 'utf-8');
-      const originalContent = content;
-      
-      // Fix React.Component → Component
-      content = content.replace(/extends\s+React\.Component/g, 'extends Component');
-      
-      // Fix React namespace usage in types and hooks
-      content = content.replace(/React\.(JSX|ReactNode|FC|KeyboardEvent|PointerEvent|MouseEvent|TouchEvent)/g, '$1');
-      
-      // Fix React namespace usage in hooks
-      content = content.replace(/React\.(useState|useEffect|useMemo|useRef|useContext|createRef|createContext)/g, '$1');
-      
-      // Fix mixed imports: import React, { useState } from "react"
-      if (content.includes('import React, {') && content.includes('} from "react"')) {
-        const matches = content.match(/import React, {([^}]+)} from "react"/);
-        if (matches) {
-          const destructured = matches[1].trim();
-          content = content.replace(
-            /import React, {[^}]+} from "react"/,
-            `import React from "react"\nimport { ${destructured} } from "react"`
-          );
-        }
-      }
-      
-      // Add direct imports for commonly used items
-      const neededImports: string[] = [];
-      
-      if (content.includes('Component') && !content.includes('import { Component }')) {
-        neededImports.push('Component');
-      }
-      
-      if (content.includes('JSX') && !content.includes('import { JSX }')) {
-        neededImports.push('JSX');
-      }
-      
-      if (content.includes('ReactNode') && !content.includes('import { ReactNode }')) {
-        neededImports.push('ReactNode');
-      }
-      
-      if (content.includes('FC') && !content.includes('import { FC }')) {
-        neededImports.push('FC');
-      }
-      
-      if (neededImports.length > 0) {
-        const importStatement = `import { ${neededImports.join(', ')} } from "react";\n`;
-        
-        // Find the existing react import and add after it
-        const reactImportMatch = content.match(/import[^;]+from\s+["']react["'];?/);
-        if (reactImportMatch) {
-          const insertIndex = reactImportMatch.index! + reactImportMatch[0].length;
-          content = content.slice(0, insertIndex) + '\n' + importStatement + content.slice(insertIndex);
-        } else {
-          // Add at the top
-          content = importStatement + content;
-        }
-      }
-      
-      if (content !== originalContent) {
-        await writeFile(file, content, 'utf-8');
-        fixedCount++;
-        console.log(`✅ Fixed: ${file}`);
-      }
-      
-    } catch (error) {
-      console.error(`Error processing ${file}:`, error);
-    }
-  }
     try {
       let content = await readFile(file, "utf-8");
       const originalContent = content;
@@ -189,7 +121,7 @@ async function fixReactImports() {
       }
 
       // Add direct imports for commonly used items
-      const neededImports = [];
+      const neededImports: string[] = [];
 
       if (content.includes("Component") && !content.includes("import { Component }")) {
         neededImports.push("Component");
@@ -214,8 +146,7 @@ async function fixReactImports() {
         const reactImportMatch = content.match(/import[^;]+from\s+["']react["'];?/);
         if (reactImportMatch) {
           const insertIndex = reactImportMatch.index! + reactImportMatch[0].length;
-          content =
-            content.slice(0, insertIndex) + "\n" + importStatement + content.slice(insertIndex);
+          content = `${content.slice(0, insertIndex)}\n${importStatement}${content.slice(insertIndex)}`;
         } else {
           // Add at the top
           content = importStatement + content;

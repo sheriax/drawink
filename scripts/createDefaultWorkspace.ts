@@ -1,5 +1,5 @@
 /**
- * One-time script to create a default workspace for a specific user
+ * One-time script to create a default workspace for the signed-in user
  *
  * Usage:
  * 1. Make sure you're logged in to the app in your browser
@@ -16,7 +16,6 @@ import { api } from "../convex/_generated/api";
 
 // Configuration
 const CONVEX_URL = process.env.VITE_CONVEX_URL || ""; // Set your Convex URL here
-const USER_ID = "user_38ljbaWYvlAfHZUpYZ82pcNPAOE"; // Youhana's Clerk user ID
 
 /**
  * Create default workspace for a user

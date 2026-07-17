@@ -16,7 +16,7 @@ import { getShortcutFromShortcutName } from "../../actions/shortcuts";
 import { trackEvent } from "../../analytics";
 import { useUIAppState } from "../../context/ui-appState";
 import { deburr } from "../../deburr";
-import { atom, editorJotaiStore, useAtom } from "../../editor-jotai";
+import { type PrimitiveAtom, atom, editorJotaiStore, useAtom } from "../../editor-jotai";
 import { t } from "../../i18n";
 import { getSelectedElements } from "../../scene";
 import { useApp, useAppProps, useDrawinkActionManager, useDrawinkSetAppState } from "../App";
@@ -57,7 +57,9 @@ import type { TranslationKeys } from "../../i18n";
 import type { AppProps, AppState, LibraryItem, UIAppState } from "../../types";
 import type { CommandPaletteItem } from "./types";
 
-const lastUsedPaletteItem = atom<CommandPaletteItem | null>(null);
+const lastUsedPaletteItem = atom<CommandPaletteItem | null>(
+  null,
+) as PrimitiveAtom<CommandPaletteItem | null>;
 
 export const DEFAULT_CATEGORIES = {
   app: "App",
@@ -101,7 +103,7 @@ const CommandShortcutHint = ({
 
   return (
     <div className={clsx("shortcut", className)}>
-      {shortcuts.map((item, idx) => {
+      {shortcuts.map((item, _idx) => {
         return (
           <div className="shortcut-wrapper" key={item}>
             <div className="shortcut-key">{item === "$" ? "+" : item}</div>
@@ -305,7 +307,7 @@ function CommandPaletteInner({ customCommandPaletteItems }: CommandPaletteProps)
           ...command,
           predicate: action.predicate
             ? action.predicate
-            : (elements, appState, appProps, app) => {
+            : (elements, appState, _appProps, _app) => {
                 const selectedElements = getSelectedElements(elements, appState);
                 return selectedElements.length > 0;
               },
@@ -418,7 +420,7 @@ function CommandPaletteInner({ customCommandPaletteItems }: CommandPaletteProps)
             return selectedElements.length > 0 && canChangeStrokeColor(appState, selectedElements);
           },
           perform: () => {
-            setAppState((prevState) => ({
+            setAppState((_prevState) => ({
               openPopup: "elementStroke",
             }));
           },
@@ -436,7 +438,7 @@ function CommandPaletteInner({ customCommandPaletteItems }: CommandPaletteProps)
             );
           },
           perform: () => {
-            setAppState((prevState) => ({
+            setAppState((_prevState) => ({
               openPopup: "elementBackground",
             }));
           },
@@ -850,7 +852,7 @@ function CommandPaletteInner({ customCommandPaletteItems }: CommandPaletteProps)
         )}
 
         {Object.keys(commandsByCategory).length > 0 ? (
-          Object.keys(commandsByCategory).map((category, idx) => {
+          Object.keys(commandsByCategory).map((category, _idx) => {
             return (
               <div className="command-category" key={category}>
                 <div className="command-category-title">{category}</div>

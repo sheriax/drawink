@@ -58,7 +58,7 @@ export const validateFractionalIndices = (
   },
 ) => {
   const errorMessages = [];
-  const stringifyElement = (element: DrawinkElement | void) =>
+  const stringifyElement = (element: DrawinkElement | undefined) =>
     `${element?.index}:${element?.id}:${element?.type}:${element?.isDeleted}:${element?.version}:${element?.versionNonce}`;
 
   const indices = elements.map((x) => x.index);
@@ -127,7 +127,8 @@ export const orderByFractionalIndex = (elements: OrderedDrawinkElement[]) => {
     if (isOrderedElement(a) && isOrderedElement(b)) {
       if (a.index < b.index) {
         return -1;
-      } else if (a.index > b.index) {
+      }
+      if (a.index > b.index) {
         return 1;
       }
 
@@ -179,7 +180,7 @@ export const syncMovedIndices = (
     for (const [element, { index }] of elementsUpdates) {
       mutateElement(element, elementsMap, { index });
     }
-  } catch (e) {
+  } catch (_e) {
     // fallback to default sync
     syncInvalidIndices(elements);
   }

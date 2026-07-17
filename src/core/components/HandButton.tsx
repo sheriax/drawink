@@ -27,7 +27,7 @@ export const HandButton = (props: LockIconProps) => {
       keyBindingLabel={!props.isMobile ? KEYS.H.toLocaleUpperCase() : undefined}
       aria-label={`${props.title} — H`}
       aria-keyshortcuts={KEYS.H}
-      data-testid={`toolbar-hand`}
+      data-testid={"toolbar-hand"}
       onChange={() => props.onChange?.()}
     />
   );

@@ -95,7 +95,7 @@ const updateChangelog = async (nextVersion: string): Promise<void> => {
     existingChangeLog.slice(lastVersionIndex);
   const currentDate = new Date().toISOString().slice(0, 10);
   const newVersion = `## ${nextVersion} (${currentDate})`;
-  updatedContent = updatedContent.replace(`## Unreleased`, newVersion);
+  updatedContent = updatedContent.replace("## Unreleased", newVersion);
   writeFileSync(resolve(drawinkDir, "CHANGELOG.md"), updatedContent, "utf8");
 };
 

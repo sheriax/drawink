@@ -45,13 +45,13 @@ describe("element locking", () => {
         currentItemBackgroundColor: color,
         currentItemFillStyle: "hachure",
       });
-      const hachureFillButton = queryByTestId(document.body, `fill-hachure`);
+      const hachureFillButton = queryByTestId(document.body, "fill-hachure");
 
       expect(hachureFillButton).toHaveClass("active");
       API.setAppState({
         currentItemFillStyle: "solid",
       });
-      const solidFillStyle = queryByTestId(document.body, `fill-solid`);
+      const solidFillStyle = queryByTestId(document.body, "fill-solid");
       expect(solidFillStyle).toHaveClass("active");
     });
 
@@ -62,7 +62,7 @@ describe("element locking", () => {
         currentItemBackgroundColor: COLOR_PALETTE.transparent,
         currentItemFillStyle: "hachure",
       });
-      const hachureFillButton = queryByTestId(document.body, `fill-hachure`);
+      const hachureFillButton = queryByTestId(document.body, "fill-hachure");
 
       expect(hachureFillButton).toBe(null);
     });
@@ -74,7 +74,7 @@ describe("element locking", () => {
         currentItemTextAlign: "right",
       });
 
-      const centerTextAlign = queryByTestId(document.body, `align-right`);
+      const centerTextAlign = queryByTestId(document.body, "align-right");
       expect(centerTextAlign).toBeChecked();
     });
   });
@@ -89,7 +89,7 @@ describe("element locking", () => {
       API.setElements([rect]);
       API.setSelectedElements([rect]);
 
-      const crossHatchButton = queryByTestId(document.body, `fill-cross-hatch`);
+      const crossHatchButton = queryByTestId(document.body, "fill-cross-hatch");
       expect(crossHatchButton).toHaveClass("active");
     });
 
@@ -102,7 +102,7 @@ describe("element locking", () => {
       API.setElements([rect]);
       API.setSelectedElements([rect]);
 
-      const crossHatchButton = queryByTestId(document.body, `fill-cross-hatch`);
+      const crossHatchButton = queryByTestId(document.body, "fill-cross-hatch");
       expect(crossHatchButton).toBe(null);
     });
 
@@ -118,7 +118,7 @@ describe("element locking", () => {
       API.setElements([rect1, rect2]);
       API.setSelectedElements([rect1, rect2]);
 
-      const thinStrokeWidthButton = queryByTestId(document.body, `strokeWidth-thin`);
+      const thinStrokeWidthButton = queryByTestId(document.body, "strokeWidth-thin");
       expect(thinStrokeWidthButton).toBeChecked();
     });
 
@@ -134,10 +134,10 @@ describe("element locking", () => {
       API.setElements([rect1, rect2]);
       API.setSelectedElements([rect1, rect2]);
 
-      expect(queryByTestId(document.body, `strokeWidth-thin`)).not.toBe(null);
-      expect(queryByTestId(document.body, `strokeWidth-thin`)).not.toBeChecked();
-      expect(queryByTestId(document.body, `strokeWidth-bold`)).not.toBeChecked();
-      expect(queryByTestId(document.body, `strokeWidth-extraBold`)).not.toBeChecked();
+      expect(queryByTestId(document.body, "strokeWidth-thin")).not.toBe(null);
+      expect(queryByTestId(document.body, "strokeWidth-thin")).not.toBeChecked();
+      expect(queryByTestId(document.body, "strokeWidth-bold")).not.toBeChecked();
+      expect(queryByTestId(document.body, "strokeWidth-extraBold")).not.toBeChecked();
     });
 
     it("should show properties of different element types when selected", () => {
@@ -152,8 +152,8 @@ describe("element locking", () => {
       API.setElements([rect, text]);
       API.setSelectedElements([rect, text]);
 
-      expect(queryByTestId(document.body, `strokeWidth-bold`)).toBeChecked();
-      expect(queryByTestId(document.body, `font-family-code`)).toHaveClass("active");
+      expect(queryByTestId(document.body, "strokeWidth-bold")).toBeChecked();
+      expect(queryByTestId(document.body, "font-family-code")).toHaveClass("active");
     });
   });
 });

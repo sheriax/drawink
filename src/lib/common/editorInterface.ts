@@ -180,7 +180,7 @@ export const loadDesktopUIModePreference = () => {
     if (stored === "compact" || stored === "full") {
       return stored as EditorInterface["desktopUIMode"];
     }
-  } catch (error) {
+  } catch (_error) {
     // ignore storage access issues (e.g., Safari private mode)
   }
 
@@ -193,7 +193,7 @@ const persistDesktopUIMode = (mode: EditorInterface["desktopUIMode"]) => {
   }
   try {
     window.localStorage.setItem(DESKTOP_UI_MODE_STORAGE_KEY, mode);
-  } catch (error) {
+  } catch (_error) {
     // ignore storage access issues (e.g., Safari private mode)
   }
 };

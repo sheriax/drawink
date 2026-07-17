@@ -1,75 +1,53 @@
-# Documentation
+# Drawink documentation
 
-This directory contains all project documentation organized by topic.
+This directory is the source of truth for developing, operating, and assessing
+the current `master` branch.
 
-## 📁 Directory Structure
+## Start here
 
-```
-docs/
-├── README.md (this file)
-└── deployment/
-    ├── DEPLOY.md                    # Complete deployment guide
-    ├── COST_OPTIMIZATION.md         # Comprehensive cost optimization guide
-    ├── OPTIMIZATION_STEPS.md        # Step-by-step optimization instructions
-    └── OPTIMIZATION_STATUS.md       # Optimization status and quick reference
-```
+| Document | Use it for |
+|---|---|
+| [Development guide](./DEVELOPMENT.md) | Local setup, environment variables, service startup, scripts, and troubleshooting |
+| [Architecture](./ARCHITECTURE.md) | Current runtime topology, component ownership, data flows, and system boundaries |
+| [Deployment guide](./deployment/DEPLOY.md) | Convex, Cloud Run, Vercel, Firebase, DNS, verification, and rollback operations |
+| [Project status](./PROJECT_STATUS.md) | Prioritized security, quality, product-completeness, and maintainability findings |
 
-## 📚 Documentation Index
+## Component documentation
 
-### Deployment & Infrastructure
+| Document | Scope |
+|---|---|
+| [Collaboration server](../server/README.md) | Socket.io protocol, server configuration, and Cloud Run target |
+| [Editor core](../src/core/README.md) | Embedding the Drawink editor component |
+| [Localization](../src/core/locales/README.md) | Translation ownership and completion data |
+| [Editor changelog](../src/core/CHANGELOG.md) | Historical editor/library releases |
+| [Next.js example](../examples/with-nextjs/README.md) | Legacy example status and prerequisites for restoring it |
 
-- **[DEPLOY.md](./deployment/DEPLOY.md)** - Complete guide for deploying Drawink to Google Cloud Run
-  - Prerequisites and setup
-  - First-time deployment
-  - Custom domain configuration
-  - Monitoring and troubleshooting
+## Historical planning
 
-- **[COST_OPTIMIZATION.md](./deployment/COST_OPTIMIZATION.md)** - Comprehensive cost optimization guide
-  - Understanding Cloud Run free tier
-  - Cost optimization strategies
-  - Implementation steps
-  - Monitoring and alerts
-  - Troubleshooting
+[The complete revamp plan](./archive/complete-revamp-plan.md) is retained for
+context only. It proposes a Turborepo layout with `apps/` and `packages/` that is
+not present on the current branch. It must not be used as current setup or
+deployment guidance.
 
-- **[OPTIMIZATION_STEPS.md](./deployment/OPTIMIZATION_STEPS.md)** - Step-by-step optimization instructions
-  - Automated script usage
-  - Manual step-by-step guide
-  - Verification commands
-  - Troubleshooting tips
+## Documentation ownership
 
-- **[OPTIMIZATION_STATUS.md](./deployment/OPTIMIZATION_STATUS.md)** - Quick reference and status
-  - What's been completed
-  - Next steps
-  - Expected results
-  - Quick commands
+Update documentation in the same change when you modify:
 
-## 🚀 Quick Links
+- required environment variables;
+- service boundaries, persistence, or authentication flows;
+- local commands or supported runtime versions;
+- deployment platforms, domains, regions, or CI behavior;
+- feature status or known operational limitations.
 
-### For Deployment
-- [Quick Deploy Guide](./deployment/DEPLOY.md#quick-deploy-existing-setup)
-- [First-Time Setup](./deployment/DEPLOY.md#first-time-setup-complete-guide)
-- [Custom Domain Setup](./deployment/DEPLOY.md#custom-domain-setup-load-balancer)
+Do not add secrets, live credentials, copied environment exports, or private
+account details to documentation. Link to provider dashboards and describe
+where a value comes from without committing the value itself.
 
-### For Cost Optimization
-- [Apply Optimizations Script](../apply-cost-optimizations.sh)
-- [Cost Optimization Guide](./deployment/COST_OPTIMIZATION.md)
-- [Quick Update Commands](./deployment/OPTIMIZATION_STATUS.md#next-steps-action-required)
+## Scope note
 
-## 📖 Other Documentation
+Agent skill documentation under `.agents/` is tooling metadata and is not part
+of the product documentation set. The architecture and status guides audit its
+repository impact where relevant, but the product docs do not duplicate those
+instructions.
 
-- **Root README.md** - Project overview and getting started
-- **CONTRIBUTING.md** - Contribution guidelines
-- **apps/docs/** - Development documentation (Docusaurus site)
-- **apps/api/README.md** - API server documentation (tRPC + Hono)
-- **apps/ws/README.md** - WebSocket server documentation
-
-## 🔍 Finding Documentation
-
-- **Deployment questions?** → See `docs/deployment/`
-- **Cost optimization?** → See `docs/deployment/COST_OPTIMIZATION.md`
-- **Development docs?** → See `apps/docs/`
-- **API documentation?** → See `apps/api/README.md` and `apps/ws/README.md`
-
----
-
-**Last Updated**: January 2026
+Last reviewed: **2026-07-17**

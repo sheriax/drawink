@@ -50,11 +50,11 @@ export const subsetToBinary = async (
   const { compress, decompress } = await loadWoff2();
   const { subset } = await loadHbSubset();
 
-  const decompressedBinary = decompress(arrayBuffer).buffer;
+  const decompressedBinary = new Uint8Array(decompress(arrayBuffer)).buffer;
   const snftSubset = subset(decompressedBinary, new Set(codePoints));
-  const compressedBinary = compress(snftSubset.buffer);
+  const compressedBinary = compress(new Uint8Array(snftSubset).buffer);
 
-  return compressedBinary.buffer;
+  return new Uint8Array(compressedBinary).buffer;
 };
 
 /**

@@ -43,6 +43,7 @@ exports[`<Drawink/> > <MainMenu/> > should render main menu with host menu items
     >
       <button
         style="height: 2rem;"
+        type="button"
       >
         custom menu item
       </button>
@@ -414,7 +415,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
       </div>
     </button>
     <div
-      style="height: 1px; margin: .5rem 0px; flex: 0 0 auto;"
+      style="height: 1px; background-color: var(--default-border-color); margin: 0.5rem 0px; flex: 0 0 auto;"
     />
     <div
       class="dropdown-menu-group "
@@ -558,7 +559,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
       </a>
     </div>
     <div
-      style="height: 1px; margin: .5rem 0px; flex: 0 0 auto;"
+      style="height: 1px; background-color: var(--default-border-color); margin: 0.5rem 0px; flex: 0 0 auto;"
     />
     <button
       aria-label="Dark mode"
@@ -607,7 +608,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
     >
       <div
         data-testid="canvas-background-label"
-        style="font-size: .75rem; margin-bottom: .5rem;"
+        style="font-size: 0.75rem; margin-bottom: 0.5rem;"
       >
         Canvas background
       </div>
@@ -680,7 +681,7 @@ exports[`<Drawink/> > Test UIOptions prop > Test canvasActions > should render m
               </button>
             </div>
             <div
-              style="width: 1px; height: 1rem; margin: 0px auto;"
+              style="width: 1px; height: 1rem; background-color: var(--default-border-color); margin: 0px auto;"
             />
             <button
               aria-controls="radix-:r0:"

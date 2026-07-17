@@ -32,7 +32,7 @@ import type {
 
 import type { Assert, Mutable, SameType } from "@/lib/common/utility-types";
 
-import type { AppState } from "../../drawink/types";
+import type { AppState } from "@/core/types";
 
 type SceneStateCallback = () => void;
 type SceneStateCallbackRemover = () => void;

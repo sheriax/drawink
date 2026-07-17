@@ -63,7 +63,7 @@ import type { Scene } from "@/lib/elements";
 
 import { ROUNDNESS, bumpVersion, mutateElement, sceneCoordsToViewportCoords } from "..";
 import { trackEvent } from "../analytics";
-import { atom } from "../editor-jotai";
+import { type PrimitiveAtom, atom } from "../editor-jotai";
 
 import "./ConvertElementTypePopup.scss";
 import { ToolButton } from "./ToolButton";
@@ -105,9 +105,11 @@ const isConvertibleGenericType = (elementType: string): elementType is Convertib
 const isConvertibleLinearType = (elementType: string): elementType is ConvertibleLinearTypes =>
   elementType === "arrow" || CONVERTIBLE_LINEAR_TYPES.has(elementType as ConvertibleLinearTypes);
 
-export const convertElementTypePopupAtom = atom<{
-  type: "panel";
-} | null>(null);
+type ConvertElementTypePopupState = { type: "panel" } | null;
+
+export const convertElementTypePopupAtom = atom<ConvertElementTypePopupState>(
+  null,
+) as PrimitiveAtom<ConvertElementTypePopupState>;
 
 type CacheKey = string & { _brand: "CacheKey" };
 
@@ -352,9 +354,8 @@ export const convertElementTypes = (
 
   const selectedElements = app.scene.getSelectedElements(app.state);
 
-  const selectedElementIds = selectedElements.reduce(
-    (acc, element) => ({ ...acc, [element.id]: true }),
-    {},
+  const selectedElementIds = Object.fromEntries(
+    selectedElements.map((element) => [element.id, true] as const),
   );
 
   const advancement = direction === "right" ? 1 : -1;

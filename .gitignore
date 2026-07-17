@@ -1,4 +1,5 @@
 .DS_Store
+.env
 .env.development.local
 .env.local
 .env.production
@@ -20,7 +21,6 @@ logs
 node_modules
 npm-debug.log*
 package-lock.json
-bun.lock
 yarn-debug.log*
 yarn-error.log*
 packages/drawink/types
@@ -31,6 +31,7 @@ meta*.json
 .turbo
 
 # Convex compiled files (auto-generated, should not be committed)
+convex/.env
 convex/*.js
 convex/*.d.ts
 convex/*.js.map

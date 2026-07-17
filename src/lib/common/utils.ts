@@ -193,7 +193,7 @@ export const throttleRAF = <T extends any[]>(
  * @returns {number} The tweened value.
  */
 export const easeOut = (k: number) => {
-  return 1 - Math.pow(1 - k, 4);
+  return 1 - (1 - k) ** 4;
 };
 
 const easeOutInterpolate = (from: number, to: number, progress: number) => {
@@ -331,7 +331,10 @@ export const chunk = <T>(array: readonly T[], size: number): T[][] => {
   let resIndex = 0;
   const result = Array(Math.ceil(array.length / size));
   while (index < array.length) {
-    result[resIndex++] = array.slice(index, (index += size));
+    const chunkStart = index;
+    index += size;
+    result[resIndex] = array.slice(chunkStart, index);
+    resIndex += 1;
   }
   return result;
 };
@@ -765,7 +768,7 @@ export const isPrimitive = (val: any) => {
 export const getFrame = () => {
   try {
     return window.self === window.top ? "top" : "iframe";
-  } catch (error) {
+  } catch (_error) {
     return "iframe";
   }
 };
@@ -959,7 +962,7 @@ export const isMemberOf = <T extends string>(
     ? collection.has(value as T)
     : "includes" in collection
       ? collection.includes(value as T)
-      : collection.hasOwnProperty(value);
+      : Object.hasOwn(collection, value);
 };
 
 export const cloneJSON = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
@@ -1042,7 +1045,7 @@ export function getSvgPathFromStroke(points: number[][], closed = true) {
   const len = points.length;
 
   if (len < 4) {
-    return ``;
+    return "";
   }
 
   let a = points[0];

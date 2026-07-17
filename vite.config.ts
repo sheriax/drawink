@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import svgrPlugin from "vite-plugin-svgr";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
+  const _env = loadEnv(mode, process.cwd(), "");
 
   return {
     plugins: [

@@ -27,7 +27,7 @@ const CONFIG = {
   serviceName: "drawink-collab",
   imageName: "drawink-collab",
   repositoryName: "drawink",
-  registry: `us-central1-docker.pkg.dev/drawink-2026/drawink`,
+  registry: "us-central1-docker.pkg.dev/drawink-2026/drawink",
   port: 3003,
 } as const;
 
@@ -256,7 +256,7 @@ async function main() {
 
   console.log(`\n${colors.green}${colors.bright}🎉 Deployment complete!${colors.reset}`);
   console.log(`\nService URL: https://${CONFIG.serviceName}-731425062456.${CONFIG.region}.run.app`);
-  console.log(`Custom Domain: https://drawink.app`);
+  console.log("Custom Domain: https://drawink.app");
 }
 
 main().catch((err) => {

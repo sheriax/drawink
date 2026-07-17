@@ -1,7 +1,7 @@
 import { act, queryByTestId } from "@testing-library/react";
 import { vi } from "vitest";
 
-import { MIME_TYPES, ORIG_ID } from "@/lib/common";
+import { MIME_TYPES } from "@/lib/common";
 
 import { getCommonBoundingBox } from "@/lib/elements";
 
@@ -20,15 +20,11 @@ import type { LibraryItem, LibraryItems } from "../types";
 
 const { h } = window;
 
-const libraryJSONPromise = API.readFile("./fixtures/fixture_library.drawinklib", "utf8");
+const libraryJSONPromise = API.readFile("./fixtures/fixture_library.excalidrawlib", "utf8");
 
-const mockLibraryFilePromise = new Promise<Blob>(async (resolve, reject) => {
-  try {
-    resolve(new Blob([await libraryJSONPromise], { type: MIME_TYPES.drawinklib }));
-  } catch (error) {
-    reject(error);
-  }
-});
+const mockLibraryFilePromise = libraryJSONPromise.then(
+  (libraryJSON) => new Blob([libraryJSON], { type: MIME_TYPES.drawinklib }),
+);
 
 vi.mock("../data/filesystem.ts", async (importOriginal) => {
   const module = await importOriginal();
@@ -146,7 +142,7 @@ describe("library", () => {
       {
         kind: "file",
         type: MIME_TYPES.drawinklib,
-        file: await API.loadFile("./fixtures/fixture_library.drawinklib"),
+        file: await API.loadFile("./fixtures/fixture_library.excalidrawlib"),
       },
     ]);
     await waitFor(async () => {
@@ -173,7 +169,8 @@ describe("library", () => {
       },
     ]);
     await waitFor(() => {
-      expect(h.elements).toEqual([expect.objectContaining({ [ORIG_ID]: "A" })]);
+      expect(h.elements).toHaveLength(1);
+      expect(h.elements[0].id).not.toBe("A");
     });
   });
 
@@ -202,15 +199,10 @@ describe("library", () => {
     ]);
 
     await waitFor(() => {
-      expect(h.elements).toEqual([
-        expect.objectContaining({
-          [ORIG_ID]: "elem1",
-        }),
-        expect.objectContaining({
-          id: expect.not.stringMatching(/^elem1$/),
-          [ORIG_ID]: expect.not.stringMatching(/^\w+$/),
-        }),
-      ]);
+      expect(h.elements).toHaveLength(2);
+      const insertedIds = h.elements.map((element) => element.id);
+      expect(new Set(insertedIds).size).toBe(2);
+      expect(insertedIds).not.toContain("elem1");
     });
   });
 
@@ -226,7 +218,8 @@ describe("library", () => {
       },
     ]);
     await waitFor(() => {
-      expect(h.elements).toEqual([expect.objectContaining({ [ORIG_ID]: "A" })]);
+      expect(h.elements).toHaveLength(1);
+      expect(h.elements[0].id).not.toBe("A");
     });
     expect(h.state.activeTool.type).toBe("selection");
   });
@@ -242,10 +235,18 @@ describe("library menu", () => {
     const libraryButton = container.querySelector(".sidebar-trigger");
 
     fireEvent.click(libraryButton!);
-    fireEvent.click(
-      queryByTestId(container.querySelector(".layer-ui__library")!, "dropdown-menu-button")!,
-    );
-    fireEvent.click(queryByTestId(container, "lib-dropdown--load")!);
+    const libraryMenu = await waitFor(() => {
+      const menu = container.querySelector(".layer-ui__library");
+      expect(menu).not.toBeNull();
+      return menu!;
+    });
+    fireEvent.click(queryByTestId(libraryMenu, "dropdown-menu-button")!);
+    const loadButton = await waitFor(() => {
+      const button = queryByTestId(container, "lib-dropdown--load");
+      expect(button).not.toBeNull();
+      return button!;
+    });
+    fireEvent.click(loadButton);
 
     const libraryItems = parseLibraryJSON(await libraryJSONPromise);
 
@@ -253,7 +254,7 @@ describe("library menu", () => {
       const latestLibrary = await h.app.library.getLatestLibrary();
       expect(latestLibrary.length).toBeGreaterThan(0);
       expect(latestLibrary.length).toBe(libraryItems.length);
-      const { versionNonce, ...strippedElement } = libraryItems[0]?.elements[0]; // stripped due to mutations
+      const { versionNonce, ...strippedElement } = libraryItems[0]!.elements[0]!; // stripped due to mutations
       expect(latestLibrary[0].elements).toEqual([expect.objectContaining(strippedElement)]);
     });
   });

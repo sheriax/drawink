@@ -2916,7 +2916,7 @@ const Module = (() => {
     };
     const asm = Module.asm(asmGlobalArg, asmLibraryArg, buffer);
     Module.asm = asm;
-    var __ZSt18uncaught_exceptionv = (Module.__ZSt18uncaught_exceptionv = () => {
+    var __ZSt18uncaught_exceptionv = (Module.__ZSt18uncaught_exceptionv = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2927,7 +2927,7 @@ const Module = (() => {
       );
       return Module.asm.__ZSt18uncaught_exceptionv.apply(null, arguments);
     });
-    const ___cxa_demangle = (Module.___cxa_demangle = () => {
+    const ___cxa_demangle = (Module.___cxa_demangle = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2939,7 +2939,7 @@ const Module = (() => {
       return Module.asm.___cxa_demangle.apply(null, arguments);
     });
     const ___embind_register_native_and_builtin_types =
-      (Module.___embind_register_native_and_builtin_types = () => {
+      (Module.___embind_register_native_and_builtin_types = function () {
         assert(
           runtimeInitialized,
           "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2950,7 +2950,7 @@ const Module = (() => {
         );
         return Module.asm.___embind_register_native_and_builtin_types.apply(null, arguments);
       });
-    var ___getTypeName = (Module.___getTypeName = () => {
+    var ___getTypeName = (Module.___getTypeName = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2961,7 +2961,7 @@ const Module = (() => {
       );
       return Module.asm.___getTypeName.apply(null, arguments);
     });
-    const _fflush = (Module._fflush = () => {
+    const _fflush = (Module._fflush = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2972,7 +2972,7 @@ const Module = (() => {
       );
       return Module.asm._fflush.apply(null, arguments);
     });
-    var _free = (Module._free = () => {
+    var _free = (Module._free = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2983,7 +2983,7 @@ const Module = (() => {
       );
       return Module.asm._free.apply(null, arguments);
     });
-    var _malloc = (Module._malloc = () => {
+    var _malloc = (Module._malloc = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -2994,7 +2994,7 @@ const Module = (() => {
       );
       return Module.asm._malloc.apply(null, arguments);
     });
-    const establishStackSpace = (Module.establishStackSpace = () => {
+    const establishStackSpace = (Module.establishStackSpace = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3005,7 +3005,7 @@ const Module = (() => {
       );
       return Module.asm.establishStackSpace.apply(null, arguments);
     });
-    var globalCtors = (Module.globalCtors = () => {
+    var globalCtors = (Module.globalCtors = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3016,7 +3016,7 @@ const Module = (() => {
       );
       return Module.asm.globalCtors.apply(null, arguments);
     });
-    var stackAlloc = (Module.stackAlloc = () => {
+    var stackAlloc = (Module.stackAlloc = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3027,7 +3027,7 @@ const Module = (() => {
       );
       return Module.asm.stackAlloc.apply(null, arguments);
     });
-    var stackRestore = (Module.stackRestore = () => {
+    var stackRestore = (Module.stackRestore = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3038,7 +3038,7 @@ const Module = (() => {
       );
       return Module.asm.stackRestore.apply(null, arguments);
     });
-    var stackSave = (Module.stackSave = () => {
+    var stackSave = (Module.stackSave = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3049,7 +3049,7 @@ const Module = (() => {
       );
       return Module.asm.stackSave.apply(null, arguments);
     });
-    const dynCall_i = (Module.dynCall_i = () => {
+    const dynCall_i = (Module.dynCall_i = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3060,7 +3060,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_i.apply(null, arguments);
     });
-    const dynCall_ii = (Module.dynCall_ii = () => {
+    const dynCall_ii = (Module.dynCall_ii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3071,7 +3071,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_ii.apply(null, arguments);
     });
-    const dynCall_iidiiii = (Module.dynCall_iidiiii = () => {
+    const dynCall_iidiiii = (Module.dynCall_iidiiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3082,7 +3082,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_iidiiii.apply(null, arguments);
     });
-    const dynCall_iii = (Module.dynCall_iii = () => {
+    const dynCall_iii = (Module.dynCall_iii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3093,7 +3093,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_iii.apply(null, arguments);
     });
-    const dynCall_iiii = (Module.dynCall_iiii = () => {
+    const dynCall_iiii = (Module.dynCall_iiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3104,7 +3104,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_iiii.apply(null, arguments);
     });
-    const dynCall_iiiii = (Module.dynCall_iiiii = () => {
+    const dynCall_iiiii = (Module.dynCall_iiiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3115,7 +3115,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_iiiii.apply(null, arguments);
     });
-    const dynCall_jiji = (Module.dynCall_jiji = () => {
+    const dynCall_jiji = (Module.dynCall_jiji = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3126,7 +3126,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_jiji.apply(null, arguments);
     });
-    const dynCall_v = (Module.dynCall_v = () => {
+    const dynCall_v = (Module.dynCall_v = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3137,7 +3137,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_v.apply(null, arguments);
     });
-    const dynCall_vi = (Module.dynCall_vi = () => {
+    const dynCall_vi = (Module.dynCall_vi = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3148,7 +3148,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_vi.apply(null, arguments);
     });
-    const dynCall_vii = (Module.dynCall_vii = () => {
+    const dynCall_vii = (Module.dynCall_vii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3159,7 +3159,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_vii.apply(null, arguments);
     });
-    const dynCall_viii = (Module.dynCall_viii = () => {
+    const dynCall_viii = (Module.dynCall_viii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3170,7 +3170,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_viii.apply(null, arguments);
     });
-    const dynCall_viiii = (Module.dynCall_viiii = () => {
+    const dynCall_viiii = (Module.dynCall_viiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3181,7 +3181,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_viiii.apply(null, arguments);
     });
-    const dynCall_viiiii = (Module.dynCall_viiiii = () => {
+    const dynCall_viiiii = (Module.dynCall_viiiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",
@@ -3192,7 +3192,7 @@ const Module = (() => {
       );
       return Module.asm.dynCall_viiiii.apply(null, arguments);
     });
-    const dynCall_viiiiii = (Module.dynCall_viiiiii = () => {
+    const dynCall_viiiiii = (Module.dynCall_viiiiii = function () {
       assert(
         runtimeInitialized,
         "you need to wait for the runtime to be ready (e.g. wait for main() to be called)",

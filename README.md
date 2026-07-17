@@ -79,7 +79,7 @@ The Drawink editor (npm package) supports:
 The app hosted at [drawink.app](https://drawink.app) is a showcase of what you can build with Drawink and features:
 
 - 📡&nbsp;PWA support (works offline).
-- 🤼&nbsp;Real-time collaboration (powered by Convex).
+- 🤼&nbsp;Real-time collaboration (Socket.io transport with Convex persistence).
 - 🔒&nbsp;End-to-end encryption.
 - 💾&nbsp;Local-first support (autosaves to the browser).
 - 🔗&nbsp;Shareable links (export to a readonly link you can share with others).
@@ -88,39 +88,55 @@ The app hosted at [drawink.app](https://drawink.app) is a showcase of what you c
 
 ### For Development
 
+> Lint, frontend and collaboration type-checks, the full Vitest suite, and both
+> production builds are enforced by CI. Review the
+> [project status](./docs/PROJECT_STATUS.md) for operational and product work
+> that remains outside those code-quality gates.
+
 **Prerequisites:**
-- Node.js >= 18.0.0
-- Bun (recommended) or npm
+
+- Node.js 20.19+ or 22.12+
+- Bun 1.3.14+
+- Convex, Clerk, and Firebase projects for the hosted application features
 
 **Installation:**
 
 ```bash
 # Clone the repository
-git clone https://github.com/drawink/drawink.git
+git clone https://github.com/sheriax/drawink.git
 cd drawink
 
-# Install dependencies
-bun install
+# Install dependencies from the pinned lockfile
+bun install --frozen-lockfile
+cd server && bun install --frozen-lockfile && cd ..
 
-# Copy environment variables
+# Copy public/client environment variables
 cp .env.example .env.local
 
-# Start development server (runs both Convex and Vite)
-bun dev
+# Start Convex, the collaboration server, and Vite
+bun run dev
 ```
 
-The app will be available at [http://localhost:5173](http://localhost:5173)
+The app is available at [http://localhost:5173](http://localhost:5173), and the
+collaboration server defaults to `http://localhost:3003`.
 
 **Environment Setup:**
 
 1. Create a Convex account at [convex.dev](https://convex.dev)
 2. Create a Clerk account at [clerk.com](https://clerk.com)
-3. Update `.env.local` with your credentials:
+3. Update `.env.local` with public browser configuration:
 
 ```bash
 VITE_CONVEX_URL=https://your-project.convex.cloud
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
 ```
+
+4. Store server-side Convex secrets with `bunx convex env set`; never commit them
+   in `convex/.env`.
+
+See the complete [development guide](./docs/DEVELOPMENT.md) for Clerk webhooks,
+Convex variables, Firebase configuration, service-by-service startup, and the
+quality-gate workflow.
 
 ### For npm Package Usage
 
@@ -134,65 +150,79 @@ yarn add react react-dom @drawink/drawink
 
 Check out our [documentation](https://docs.drawink.app/docs/@drawink/drawink/installation) for more details!
 
+The current repository is configured as a private application package and does
+not have a working root publish pipeline for `@drawink/drawink`. Package
+publication and the included Next.js consumer example are tracked as incomplete
+in the [project status](./docs/PROJECT_STATUS.md).
+
 ## Architecture
 
-Drawink uses a **modern, simplified architecture**:
+Drawink currently uses a multi-service architecture:
 
-- **Frontend:** React 19 + TypeScript + Vite
-- **Backend:** Convex (serverless, real-time database)
-- **Authentication:** Clerk
-- **Deployment:** Static hosting (Vercel, Netlify, Cloudflare Pages, etc.)
+- **Frontend:** React 19, TypeScript, and Vite (Vercel)
+- **Structured backend:** Convex functions and data
+- **Authentication:** Clerk with Convex JWT integration and webhooks
+- **Live collaboration:** Socket.io/Bun server on Google Cloud Run
+- **Binary storage:** Firebase Storage for encrypted room/share assets
 
-**No Docker, no complex monorepo setup** - just a clean, single-app architecture.
+The application is a single-repository layout, while the collaboration server
+is containerized separately. See [Architecture](./docs/ARCHITECTURE.md) for
+component boundaries and data flows.
 
 ## Scripts
 
 ```bash
 # Development
-bun dev              # Start both Convex and Vite
-bun dev:convex       # Start only Convex
-bun dev:vite         # Start only Vite
+bun run dev          # Start Convex, collaboration server, and Vite
+bun run dev:convex   # Start only Convex
+bun run dev:vite     # Start only Vite
+bun run dev:collab   # Start only the collaboration server
 
 # Build
-bun build            # Build for production
-bun preview          # Preview production build
+bun run build        # Build for production
+bun run build:collab # Build the collaboration server
+bun run preview      # Preview production build
 
 # Convex
-bun convex:deploy    # Deploy Convex functions
-bun convex:dashboard # Open Convex dashboard
+bun run convex:deploy    # Deploy Convex functions
+bun run convex:dashboard # Open Convex dashboard
 
 # Code Quality
-bun lint             # Lint code
-bun lint:fix         # Lint and fix
-bun typecheck        # Type check
-bun clean            # Clean build artifacts
+bun run lint             # Lint code
+bun run lint:fix         # Lint and fix
+bun run typecheck        # Type check
+bun run typecheck:collab # Type check the collaboration server
+bun run test             # Run Vitest
+bun run test:coverage    # Run tests with coverage
+bun run audit            # Audit root and collaboration dependencies
+bun run check            # Run lint, both type-checks, and tests
+bun run verify           # Run every quality gate and both builds
+bun run clean            # Clean build artifacts
 ```
 
 ## Deployment
 
-See [DEPLOY.md](./DEPLOY.md) for detailed deployment instructions.
+See the [deployment guide](./docs/deployment/DEPLOY.md) for the current Convex,
+Cloud Run, Vercel, Firebase, DNS, verification, and rollback workflow.
 
-**Quick deploy:**
+**Build the deployable application targets:**
 
 ```bash
-# Build
-bun build
-
-# Deploy to Vercel (recommended)
-vercel --prod
-
-# Or deploy to Netlify
-netlify deploy --prod
-
-# Or deploy to Firebase
-firebase deploy --only hosting
+bun run build
+bun run build:collab
 ```
+
+The full product also requires a Convex deployment, the Cloud Run collaboration
+service, hardened Firebase Storage rules, and the correct environment variables;
+follow the runbook rather than deploying the static output alone.
 
 ## Contributing
 
-- Missing something or found a bug? [Report here](https://github.com/drawink/drawink/issues).
-- Want to contribute? Check out our [contribution guide](https://docs.drawink.app/docs/introduction/contributing) or let us know on [Discord](https://discord.gg/UexuTaE).
-- Want to help with translations? See the [translation guide](https://docs.drawink.app/docs/introduction/contributing#translating).
+GitHub Issues are currently disabled for this repository, and a local
+`CONTRIBUTING.md` has not yet been added. Review the
+[project status](./docs/PROJECT_STATUS.md) before starting a change. Package and
+upstream contribution guidance remains available in the external
+[Drawink documentation](https://docs.drawink.app/docs/introduction/contributing).
 
 ## Integrations
 

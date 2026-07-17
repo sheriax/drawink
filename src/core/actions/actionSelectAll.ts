@@ -20,7 +20,7 @@ export const actionSelectAll = register({
   icon: selectAllIcon,
   trackEvent: { category: "canvas" },
   viewMode: false,
-  perform: (elements, appState, value, app) => {
+  perform: (elements, appState, _value, app) => {
     if (appState.selectedLinearElement?.isEditing) {
       return false;
     }

@@ -228,7 +228,7 @@ export const togglePopover = (label: string) => {
 
 expect.extend({
   toBeNonNaNNumber(received) {
-    const pass = typeof received === "number" && !isNaN(received);
+    const pass = typeof received === "number" && !Number.isNaN(received);
     if (pass) {
       return {
         message: () => `expected ${received} not to be a non-NaN number`,

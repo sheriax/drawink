@@ -326,21 +326,20 @@ export const saveCollaborativeScene = mutation({
       });
 
       return { success: true, roomId: args.roomId, version: args.sceneVersion };
-    } else {
-      // Create new room
-      await ctx.db.insert("collaborativeRooms", {
-        roomId: args.roomId,
-        ciphertext: args.ciphertext,
-        iv: args.iv,
-        sceneVersion: args.sceneVersion,
-        createdAt: now,
-        updatedAt: now,
-        lastEditedBy: userId, // Use authenticated userId
-        expiresAt,
-      });
-
-      return { success: true, roomId: args.roomId, version: args.sceneVersion };
     }
+    // Create new room
+    await ctx.db.insert("collaborativeRooms", {
+      roomId: args.roomId,
+      ciphertext: args.ciphertext,
+      iv: args.iv,
+      sceneVersion: args.sceneVersion,
+      createdAt: now,
+      updatedAt: now,
+      lastEditedBy: userId, // Use authenticated userId
+      expiresAt,
+    });
+
+    return { success: true, roomId: args.roomId, version: args.sceneVersion };
   },
 });
 

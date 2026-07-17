@@ -19,7 +19,7 @@ import { register } from "./register";
 export const actionToggleLinearEditor = register({
   name: "toggleLinearEditor",
   category: DEFAULT_CATEGORIES.elements,
-  label: (elements, appState, app) => {
+  label: (_elements, appState, app) => {
     const selectedElement = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
     })[0] as DrawinkLinearElement | undefined;
@@ -32,7 +32,7 @@ export const actionToggleLinearEditor = register({
   trackEvent: {
     category: "element",
   },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     if (
       !appState.selectedLinearElement?.isEditing &&
@@ -44,7 +44,7 @@ export const actionToggleLinearEditor = register({
     }
     return false;
   },
-  perform(elements, appState, _, app) {
+  perform(_elements, appState, _, app) {
     const selectedElement = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
       includeBoundTextElement: true,
@@ -99,7 +99,7 @@ export const actionTogglePolygon = register({
   category: DEFAULT_CATEGORIES.elements,
   icon: polygonIcon,
   keywords: ["loop"],
-  label: (elements, appState, app) => {
+  label: (_elements, appState, app) => {
     const selectedElements = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
     });
@@ -113,7 +113,7 @@ export const actionTogglePolygon = register({
   trackEvent: {
     category: "element",
   },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements({
       selectedElementIds: appState.selectedElementIds,
     });

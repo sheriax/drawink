@@ -8,7 +8,6 @@ import {
 } from "@/lib/common";
 import {
   getOriginalContainerHeightFromCache,
-  isBoundToContainer,
   resetOriginalContainerCache,
   updateOriginalContainerCache,
 } from "@/lib/elements";
@@ -55,7 +54,7 @@ export const actionUnbindText = register({
   name: "unbindText",
   label: "labels.unbindText",
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
 
     return selectedElements.some((element) => hasBoundTextElement(element));
@@ -100,7 +99,7 @@ export const actionBindText = register({
   name: "bindText",
   label: "labels.bindText",
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
 
     if (selectedElements.length === 2) {
@@ -198,10 +197,10 @@ export const actionWrapTextInContainer = register({
   name: "wrapTextInContainer",
   label: "labels.createContainerFromText",
   trackEvent: { category: "element" },
-  predicate: (elements, appState, _, app) => {
+  predicate: (_elements, appState, _, app) => {
     const selectedElements = app.scene.getSelectedElements(appState);
     const someTextElements = selectedElements.some(
-      (el) => isTextElement(el) && !isBoundToContainer(el),
+      (el) => isTextElement(el) && el.containerId === null,
     );
     return selectedElements.length > 0 && someTextElements;
   },
@@ -211,7 +210,7 @@ export const actionWrapTextInContainer = register({
     const containerIds: Mutable<AppState["selectedElementIds"]> = {};
 
     for (const textElement of selectedElements) {
-      if (isTextElement(textElement) && !isBoundToContainer(textElement)) {
+      if (isTextElement(textElement) && textElement.containerId === null) {
         const container = newElement({
           type: "rectangle",
           backgroundColor: appState.currentItemBackgroundColor,

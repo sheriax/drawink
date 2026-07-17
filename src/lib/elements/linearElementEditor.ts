@@ -687,8 +687,7 @@ export class LinearElementEditor {
           ? !isDragging &&
             event.shiftKey &&
             pointerDownState.prevSelectedPointsIndices?.includes(pointerDownState.lastClickedPoint)
-            ? selectedPointsIndices &&
-              selectedPointsIndices.filter(
+            ? selectedPointsIndices?.filter(
                 (pointIndex) => pointIndex !== pointerDownState.lastClickedPoint,
               )
             : selectedPointsIndices

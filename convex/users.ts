@@ -6,12 +6,7 @@
  */
 
 import { v } from "convex/values";
-import {
-  type MutationCtx,
-  type QueryCtx,
-  internalMutation,
-  query,
-} from "./_generated/server";
+import { type MutationCtx, type QueryCtx, internalMutation, query } from "./_generated/server";
 
 // =========================================================================
 // HELPER FUNCTIONS
@@ -153,22 +148,21 @@ export const upsertFromClerk = internalMutation({
       });
 
       return existingUser._id;
-    } else {
-      // Create new user
-      const betaEnabled = process.env.BETA_ENABLED === "true";
-      const userId = await ctx.db.insert("users", {
-        clerkId: args.clerkId,
-        email: args.email,
-        name: args.name,
-        photoUrl: args.photoUrl,
-        subscriptionTier: "free",
-        isBetaUser: betaEnabled ? true : undefined,
-        createdAt: now,
-        lastLoginAt: now,
-      });
-
-      return userId;
     }
+    // Create new user
+    const betaEnabled = process.env.BETA_ENABLED === "true";
+    const userId = await ctx.db.insert("users", {
+      clerkId: args.clerkId,
+      email: args.email,
+      name: args.name,
+      photoUrl: args.photoUrl,
+      subscriptionTier: "free",
+      isBetaUser: betaEnabled ? true : undefined,
+      createdAt: now,
+      lastLoginAt: now,
+    });
+
+    return userId;
   },
 });
 

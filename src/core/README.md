@@ -2,6 +2,12 @@
 
 **Drawink** is exported as a component to be directly embedded in your project.
 
+> **Repository status:** This page documents the published package interface.
+> The current fork is configured as a private application and does not have a
+> working package build/publish pipeline. See the
+> [project status](../../docs/PROJECT_STATUS.md#12-package-distribution-is-not-wired)
+> before using this checkout as a package source.
+
 ## Installation
 
 Use `npm` or `yarn` to install the package.

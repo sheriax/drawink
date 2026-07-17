@@ -257,6 +257,7 @@ const DashboardContent: React.FC = () => {
       {/* Nav bar */}
       <header className="drawink-dashboard__nav">
         <button
+          type="button"
           className="drawink-dashboard__back-btn"
           onClick={() => {
             const lastBoardId = localStorage.getItem("drawink-current-board-id");
@@ -270,6 +271,7 @@ const DashboardContent: React.FC = () => {
           title="Back to canvas"
         >
           <svg
+            aria-hidden="true"
             width="20"
             height="20"
             viewBox="0 0 24 24"
@@ -297,6 +299,7 @@ const DashboardContent: React.FC = () => {
           <div className="drawink-dashboard__sidebar-header">
             <span className="drawink-dashboard__sidebar-title">Workspaces</span>
             <button
+              type="button"
               className="drawink-dashboard__sidebar-add"
               onClick={() => {
                 setCreatingWorkspace(true);
@@ -305,6 +308,7 @@ const DashboardContent: React.FC = () => {
               title="Create workspace"
             >
               <svg
+                aria-hidden="true"
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"
@@ -381,13 +385,20 @@ const DashboardContent: React.FC = () => {
                       <span className="drawink-dashboard__ws-name">{ws.name}</span>
                       {ws.ownerId === user?.id && (
                         <button
+                          type="button"
                           className="drawink-dashboard__ws-menu-btn"
                           onClick={(e) => {
                             e.stopPropagation();
                             setContextMenu({ workspaceId: ws._id, x: e.clientX, y: e.clientY });
                           }}
                         >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <svg
+                            aria-hidden="true"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
                             <circle cx="12" cy="5" r="2" />
                             <circle cx="12" cy="12" r="2" />
                             <circle cx="12" cy="19" r="2" />
@@ -410,6 +421,7 @@ const DashboardContent: React.FC = () => {
             style={{ top: contextMenu.y, left: contextMenu.x }}
           >
             <button
+              type="button"
               onClick={() => {
                 const ws = workspaces?.find((w) => w._id === contextMenu.workspaceId);
                 if (ws) {
@@ -422,6 +434,7 @@ const DashboardContent: React.FC = () => {
               Rename
             </button>
             <button
+              type="button"
               onClick={() => {
                 setPickerFor({ id: contextMenu.workspaceId, type: "icon" });
                 setContextMenu(null);
@@ -430,6 +443,7 @@ const DashboardContent: React.FC = () => {
               Change Icon
             </button>
             <button
+              type="button"
               onClick={() => {
                 setPickerFor({ id: contextMenu.workspaceId, type: "color" });
                 setContextMenu(null);
@@ -439,6 +453,7 @@ const DashboardContent: React.FC = () => {
             </button>
             <div className="drawink-dashboard__ctx-divider" />
             <button
+              type="button"
               className="drawink-dashboard__ctx-danger"
               onClick={() => {
                 const ws = workspaces?.find((w) => w._id === contextMenu.workspaceId);
@@ -460,6 +475,7 @@ const DashboardContent: React.FC = () => {
                 {pickerFor.type === "icon"
                   ? WORKSPACE_ICONS.map((icon) => (
                       <button
+                        type="button"
                         key={icon}
                         className="drawink-dashboard__picker-item"
                         onClick={() => {
@@ -472,6 +488,7 @@ const DashboardContent: React.FC = () => {
                     ))
                   : WORKSPACE_COLORS.map((color) => (
                       <button
+                        type="button"
                         key={color}
                         className="drawink-dashboard__picker-item drawink-dashboard__picker-color"
                         style={{ background: color }}
@@ -510,12 +527,14 @@ const DashboardContent: React.FC = () => {
               />
               <div className="drawink-dashboard__modal-actions">
                 <button
+                  type="button"
                   className="drawink-dashboard__modal-cancel"
                   onClick={() => setDeleteConfirm(null)}
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   className="drawink-dashboard__modal-delete"
                   disabled={deleteInput !== deleteConfirm.name}
                   onClick={handleDelete}
@@ -536,8 +555,13 @@ const DashboardContent: React.FC = () => {
               )}
               {selectedWorkspace?.name || "Boards"}
             </h1>
-            <button className="drawink-dashboard__create-btn" onClick={handleCreateBoard}>
+            <button
+              type="button"
+              className="drawink-dashboard__create-btn"
+              onClick={handleCreateBoard}
+            >
               <svg
+                aria-hidden="true"
                 width="16"
                 height="16"
                 viewBox="0 0 24 24"
@@ -560,6 +584,7 @@ const DashboardContent: React.FC = () => {
             <div className="drawink-dashboard__empty">
               <div className="drawink-dashboard__empty-icon">
                 <svg
+                  aria-hidden="true"
                   width="56"
                   height="56"
                   viewBox="0 0 24 24"
@@ -573,8 +598,13 @@ const DashboardContent: React.FC = () => {
               </div>
               <h2>No boards yet</h2>
               <p>Create your first board to start drawing</p>
-              <button className="drawink-dashboard__create-btn" onClick={handleCreateBoard}>
+              <button
+                type="button"
+                className="drawink-dashboard__create-btn"
+                onClick={handleCreateBoard}
+              >
                 <svg
+                  aria-hidden="true"
                   width="16"
                   height="16"
                   viewBox="0 0 24 24"
@@ -591,10 +621,12 @@ const DashboardContent: React.FC = () => {
             <>
               <div className="drawink-dashboard__grid">
                 <button
+                  type="button"
                   className="drawink-dashboard__card drawink-dashboard__card--new"
                   onClick={handleCreateBoard}
                 >
                   <svg
+                    aria-hidden="true"
                     width="32"
                     height="32"
                     viewBox="0 0 24 24"
@@ -631,6 +663,7 @@ const DashboardContent: React.FC = () => {
                         <img src={board.thumbnailUrl} alt={board.name} />
                       ) : (
                         <svg
+                          aria-hidden="true"
                           width="36"
                           height="36"
                           viewBox="0 0 24 24"
@@ -644,6 +677,7 @@ const DashboardContent: React.FC = () => {
                       )}
                     </div>
                     <button
+                      type="button"
                       className="drawink-dashboard__card-menu"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -655,7 +689,13 @@ const DashboardContent: React.FC = () => {
                         });
                       }}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <svg
+                        aria-hidden="true"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
                         <circle cx="12" cy="5" r="2" />
                         <circle cx="12" cy="12" r="2" />
                         <circle cx="12" cy="19" r="2" />
@@ -695,6 +735,7 @@ const DashboardContent: React.FC = () => {
                   style={{ top: boardContextMenu.y, left: boardContextMenu.x }}
                 >
                   <button
+                    type="button"
                     onClick={() => {
                       setRenamingBoardId(boardContextMenu.boardId);
                       setBoardRenameValue(boardContextMenu.boardName);
@@ -706,6 +747,7 @@ const DashboardContent: React.FC = () => {
                   <div className="drawink-dashboard__ctx-divider" />
                   {recentBoards && recentBoards.length > 1 ? (
                     <button
+                      type="button"
                       className="drawink-dashboard__ctx-danger"
                       onClick={() => {
                         setDeleteBoardConfirm({
@@ -719,6 +761,7 @@ const DashboardContent: React.FC = () => {
                     </button>
                   ) : (
                     <button
+                      type="button"
                       className="drawink-dashboard__ctx-disabled"
                       title="Cannot delete the last board"
                       onClick={(e) => e.preventDefault()}
@@ -743,12 +786,14 @@ const DashboardContent: React.FC = () => {
                     </p>
                     <div className="drawink-dashboard__modal-actions">
                       <button
+                        type="button"
                         className="drawink-dashboard__modal-cancel"
                         onClick={() => setDeleteBoardConfirm(null)}
                       >
                         Cancel
                       </button>
                       <button
+                        type="button"
                         className="drawink-dashboard__modal-delete"
                         onClick={handleBoardDelete}
                       >

@@ -18,7 +18,7 @@ export const actionToggleGridMode = register({
     category: "canvas",
     predicate: (appState) => appState.gridModeEnabled,
   },
-  perform(elements, appState) {
+  perform(_elements, appState) {
     return {
       appState: {
         ...appState,
@@ -29,7 +29,7 @@ export const actionToggleGridMode = register({
     };
   },
   checked: (appState: AppState) => appState.gridModeEnabled,
-  predicate: (element, appState, props) => {
+  predicate: (_element, _appState, props) => {
     return props.gridModeEnabled === undefined;
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.code === CODES.QUOTE,

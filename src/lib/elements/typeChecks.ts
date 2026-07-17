@@ -4,8 +4,6 @@ import { pointsEqual } from "@/lib/math";
 
 import type { ElementOrToolType } from "@/core/types";
 
-import type { MarkNonNullable } from "@/lib/common/utility-types";
-
 import type { Bounds } from "./bounds";
 import type {
   DrawinkArrowElement,
@@ -245,9 +243,7 @@ export const isFlowchartNodeElement = (
   return element.type === "rectangle" || element.type === "ellipse" || element.type === "diamond";
 };
 
-export const hasBoundTextElement = (
-  element: DrawinkElement | null,
-): element is MarkNonNullable<DrawinkBindableElement, "boundElements"> => {
+export const hasBoundTextElement = (element: DrawinkElement | null): boolean => {
   return (
     isTextBindableContainer(element) && !!element.boundElements?.some(({ type }) => type === "text")
   );

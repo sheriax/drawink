@@ -75,7 +75,7 @@ describe("export", () => {
     );
     const svgText = svg.outerHTML;
 
-    expect(svgText).toMatchSnapshot(`svg-embdedded scene export output`);
+    expect(svgText).toMatchSnapshot("svg-embdedded scene export output");
   });
 
   it("import embedded png (legacy v1)", async () => {
@@ -193,6 +193,6 @@ describe("export", () => {
 
     // in case of regressions, save the SVG to a file and visually compare to:
     // src/tests/fixtures/svg-image-exporting-reference.svg
-    expect(svgText).toMatchSnapshot(`svg export output`);
+    expect(svgText).toMatchSnapshot("svg export output");
   });
 });

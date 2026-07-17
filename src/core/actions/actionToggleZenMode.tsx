@@ -15,7 +15,7 @@ export const actionToggleZenMode = register({
     category: "canvas",
     predicate: (appState) => !appState.zenModeEnabled,
   },
-  perform(elements, appState) {
+  perform(_elements, appState) {
     return {
       appState: {
         ...appState,
@@ -25,7 +25,7 @@ export const actionToggleZenMode = register({
     };
   },
   checked: (appState) => appState.zenModeEnabled,
-  predicate: (elements, appState, appProps, app) => {
+  predicate: (_elements, _appState, appProps, app) => {
     return (
       app.editorInterface.formFactor !== "phone" && typeof appProps.zenModeEnabled === "undefined"
     );

@@ -14,7 +14,7 @@ export type SidebarTriggerProps = {
   style?: React.CSSProperties;
 };
 
-export type SidebarProps<P = {}> = {
+export type SidebarProps<P = unknown> = {
   name: SidebarName;
   children: React.ReactNode;
   /**

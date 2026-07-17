@@ -1,12 +1,15 @@
 # Project coding standards
 
-## Generic Communication Guidelines
+These instructions describe the current single-repository layout. Consult
+[`docs/DEVELOPMENT.md`](../docs/DEVELOPMENT.md) for setup and
+[`docs/PROJECT_STATUS.md`](../docs/PROJECT_STATUS.md) before assuming the quality
+gates are green.
 
-- Be succint and be aware that expansive generative AI answers are costly and slow
-- Avoid providing explanations, trying to teach unless asked for, your chat partner is an expert
-- Stop apologising if corrected, just provide the correct information or code
-- Prefer code unless asked for explanation
-- Stop summarizing what you've changed after modifications unless asked for
+## Communication
+
+- Be concise and assume the collaborator is comfortable with technical detail.
+- Prefer concrete code and evidence over generic explanations.
+- State verification results and unresolved risks after making changes.
 
 ## TypeScript Guidelines
 
@@ -37,9 +40,14 @@
 
 ## Testing
 
-- Always attempt to fix #problems
-- Always offer to run `yarn test:app` in the project root after modifications are complete and attempt fixing the issues reported
+- Run the checks relevant to a change: `bun run typecheck`, `bun run lint`,
+  `bun run test`, `bun run build`, and `bun run build:collab`.
+- Do not describe a green build-only workflow as a passing test suite.
+- The baseline currently has known type, lint, and test failures; distinguish
+  pre-existing failures from regressions.
 
-## Types
+## Math types
 
-- Always include `packages/math/src/types.ts` in the context when your write math related code and always use the Point type instead of { x, y}
+- Read `src/lib/math/types.ts` when changing math code.
+- Use the branded `LocalPoint` and `GlobalPoint` types rather than ad hoc
+  `{ x, y }` objects.

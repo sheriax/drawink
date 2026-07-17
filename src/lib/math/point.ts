@@ -63,9 +63,9 @@ export function isPoint(p: unknown): p is LocalPoint | GlobalPoint {
     Array.isArray(p) &&
     p.length === 2 &&
     typeof p[0] === "number" &&
-    !isNaN(p[0]) &&
+    !Number.isNaN(p[0]) &&
     typeof p[1] === "number" &&
-    !isNaN(p[1])
+    !Number.isNaN(p[1])
   );
 }
 

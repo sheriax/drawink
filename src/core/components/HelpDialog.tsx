@@ -183,12 +183,12 @@ export const HelpDialog = ({ onClose }: { onClose?: () => void }) => {
           <ShortcutIsland className="HelpDialog__island--editor" caption={t("helpDialog.editor")}>
             <Shortcut
               label={t("helpDialog.createFlowchart")}
-              shortcuts={[getShortcutKey(`CtrlOrCmd+Arrow Key`)]}
+              shortcuts={[getShortcutKey("CtrlOrCmd+Arrow Key")]}
               isOr={true}
             />
             <Shortcut
               label={t("helpDialog.navigateFlowchart")}
-              shortcuts={[getShortcutKey(`Alt+Arrow Key`)]}
+              shortcuts={[getShortcutKey("Alt+Arrow Key")]}
               isOr={true}
             />
             <Shortcut

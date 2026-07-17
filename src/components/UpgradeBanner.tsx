@@ -24,7 +24,7 @@ const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, message, compact
     <div className={`upgrade-banner ${compact ? "compact" : ""}`}>
       <div className="upgrade-banner-content">
         <div className="icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M12 2L2 7L12 12L22 7L12 2Z"
               stroke="currentColor"
@@ -51,7 +51,7 @@ const UpgradeBanner: React.FC<UpgradeBannerProps> = ({ feature, message, compact
         <div className="message">
           <p>{message || defaultMessage}</p>
         </div>
-        <button className="upgrade-button" onClick={() => navigate("/billing")}>
+        <button type="button" className="upgrade-button" onClick={() => navigate("/billing")}>
           Upgrade Now
         </button>
       </div>

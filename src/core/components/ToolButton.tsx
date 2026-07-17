@@ -81,9 +81,8 @@ export const ToolButton = React.forwardRef(
         } catch (error: any) {
           if (!(error instanceof AbortError)) {
             throw error;
-          } else {
-            console.warn(error);
           }
+          console.warn(error);
         } finally {
           if (isMountedRef.current) {
             setIsLoading(false);

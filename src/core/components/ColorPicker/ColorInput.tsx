@@ -89,7 +89,8 @@ export const ColorInput = ({
         onKeyDown={(event) => {
           if (event.key === KEYS.TAB) {
             return;
-          } else if (event.key === KEYS.ESCAPE) {
+          }
+          if (event.key === KEYS.ESCAPE) {
             eyeDropperTriggerRef.current?.focus();
           }
           event.stopPropagation();

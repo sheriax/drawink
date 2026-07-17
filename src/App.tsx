@@ -118,16 +118,12 @@ import "./index.css"; // Tailwind CSS
 import "./index.scss"; // Legacy SCSS (to be migrated)
 
 import { type AuthUser, authStateAtom, cloudEnabledAtom } from "@/core/atoms/auth";
-import {
-  boardsAPIAtom,
-  currentBoardIdAtom,
-  currentWorkspaceIdAtom,
-} from "@/core/atoms/boards";
+import { boardsAPIAtom, currentBoardIdAtom, currentWorkspaceIdAtom } from "@/core/atoms/boards";
 import { editorJotaiStore } from "@/core/editor-jotai";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
-import { useBoardRoute } from "./hooks/useBoardRoute";
 import { AppSidebar } from "./components/AppSidebar";
 import { DrawinkPlusPromoBanner } from "./components/DrawinkPlusPromoBanner";
+import { useBoardRoute } from "./hooks/useBoardRoute";
 
 import type { CollabAPI } from "./collab/Collab";
 
@@ -177,7 +173,7 @@ if (window.self !== window.top) {
     if (parentUrl.origin === currentUrl.origin) {
       isSelfEmbedding = true;
     }
-  } catch (error) {
+  } catch (_error) {
     // ignore
   }
 }
@@ -201,9 +197,7 @@ const shareableLinkConfirmDialog = {
  * otherwise fall back to origin (root).
  */
 const getPostLoadUrl = (): string => {
-  const lastBoardId = localStorage.getItem(
-    STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
-  );
+  const lastBoardId = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID);
   const lastWsId = localStorage.getItem("selectedWorkspaceId");
   if (lastBoardId && lastWsId) {
     return `/workspace/${lastWsId}/board/${lastBoardId}`;
@@ -228,28 +222,14 @@ const initializeScene = async (opts: {
 
   // Backward compat: bare board ID in hash (old /#boardId format)
   // Redirect to proper /workspace/:wsId/board/:boardId URL
-  if (
-    window.location.hash &&
-    !jsonBackendMatch &&
-    !shareMatch &&
-    !externalUrlMatch
-  ) {
-    const bareBoardIdMatch = window.location.hash.match(
-      /^#([a-zA-Z0-9_]+)$/,
-    );
+  if (window.location.hash && !jsonBackendMatch && !shareMatch && !externalUrlMatch) {
+    const bareBoardIdMatch = window.location.hash.match(/^#([a-zA-Z0-9_]+)$/);
     if (bareBoardIdMatch) {
       const boardId = bareBoardIdMatch[1];
       const wsId = localStorage.getItem("selectedWorkspaceId");
       if (wsId) {
-        localStorage.setItem(
-          STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID,
-          boardId,
-        );
-        window.history.replaceState(
-          {},
-          "",
-          `/workspace/${wsId}/board/${boardId}`,
-        );
+        localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_CURRENT_BOARD_ID, boardId);
+        window.history.replaceState({}, "", `/workspace/${wsId}/board/${boardId}`);
       }
     }
   }
@@ -315,7 +295,7 @@ const initializeScene = async (opts: {
         // @ts-ignore - complex discriminated union type
         return { scene: data, isExternalScene };
       }
-    } catch (error: any) {
+    } catch (_error: any) {
       // @ts-ignore - complex discriminated union type
       return {
         scene: {
@@ -361,7 +341,8 @@ const initializeScene = async (opts: {
       id: roomLinkData.roomId,
       key: roomLinkData.roomKey,
     };
-  } else if (scene) {
+  }
+  if (scene) {
     return isExternalScene && jsonBackendMatch
       ? {
           scene,
@@ -382,7 +363,7 @@ const DrawinkWrapper = () => {
 
   const [langCode, setLangCode] = useAppLangCode();
 
-  const editorInterface = useEditorInterface();
+  const _editorInterface = useEditorInterface();
 
   // Board route params (/workspace/:wsId/board/:boardId)
   const boardRoute = useBoardRoute();
@@ -401,9 +382,7 @@ const DrawinkWrapper = () => {
     localStorage.setItem("selectedWorkspaceId", workspaceId);
 
     // Set workspace on cloud adapter (async, but localStorage is already set)
-    hybridStorageAdapter
-      .setWorkspaceAndBoard(workspaceId, boardId)
-      .catch(console.error);
+    hybridStorageAdapter.setWorkspaceAndBoard(workspaceId, boardId).catch(console.error);
 
     // Update Jotai atoms
     editorJotaiStore.set(currentWorkspaceIdAtom, workspaceId);
@@ -464,7 +443,7 @@ const DrawinkWrapper = () => {
   }, [drawinkAPI]);
 
   // Clerk auth state
-  const { user: clerkUser, isLoaded: isUserLoaded } = useUser();
+  const { user: clerkUser, isLoaded: isUserLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const { getToken } = useAuth();
 
@@ -797,11 +776,7 @@ const DrawinkWrapper = () => {
       // Sync URL to reflect the new board
       const wsId = localStorage.getItem("selectedWorkspaceId");
       if (wsId) {
-        window.history.replaceState(
-          {},
-          "",
-          `/workspace/${wsId}/board/${boardId}`,
-        );
+        window.history.replaceState({}, "", `/workspace/${wsId}/board/${boardId}`);
       }
     };
 
@@ -944,7 +919,7 @@ const DrawinkWrapper = () => {
     icon: <div style={{ width: 14 }}>{ExcalLogo}</div>,
     keywords: ["plus", "cloud", "server"],
     perform: () => {
-      window.open(`/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette`, "_blank");
+      window.open("/plus?utm_source=drawink&utm_medium=app&utm_content=command_palette", "_blank");
     },
   };
   const DrawinkPlusAppCommand = {
@@ -1014,9 +989,48 @@ const DrawinkWrapper = () => {
         handleKeyboardGlobally={true}
         autoFocus={true}
         theme={editorTheme}
-        renderTopRightUI={(isMobile) => {
+        renderTopRightUI={(_isMobile) => {
           return (
             <div className="drawink-ui-top-right">
+              {isSignedIn && (
+                <button
+                  type="button"
+                  className="dashboard-btn"
+                  onClick={() => {
+                    window.location.href = "/dashboard";
+                  }}
+                  title="Go to Dashboard"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "36px",
+                    height: "36px",
+                    border: "none",
+                    borderRadius: "8px",
+                    background: "var(--color-surface-mid)",
+                    cursor: "pointer",
+                    color: "var(--color-on-surface)",
+                  }}
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                </button>
+              )}
               {drawinkAPI?.getEditorInterface().formFactor === "desktop" && (
                 <DrawinkPlusPromoBanner isSignedIn={isDrawinkPlusSignedUser} />
               )}

@@ -73,9 +73,12 @@ const toContiguousGroups = (array: number[]) => {
   let cursor = 0;
   return array.reduce((acc, value, index) => {
     if (index > 0 && array[index - 1] !== value - 1) {
-      cursor = ++cursor;
+      cursor += 1;
     }
-    (acc[cursor] || (acc[cursor] = [])).push(value);
+    if (!acc[cursor]) {
+      acc[cursor] = [];
+    }
+    acc[cursor].push(value);
     return acc;
   }, [] as number[][]);
 };
@@ -226,7 +229,8 @@ const getTargetIndex = (
         getTargetIndexAccountingForBinding(nextElement, elements, direction, scene) ??
         candidateIndex
       );
-    } else if (!nextElement?.groupIds.includes(appState.editingGroupId)) {
+    }
+    if (!nextElement?.groupIds.includes(appState.editingGroupId)) {
       // candidate element is outside current editing group → prevent
       return -1;
     }
@@ -295,7 +299,7 @@ const shiftElementsByOne = (
     indicesToMove.filter((idx) => isFrameLikeElement(elements[idx])).map((idx) => elements[idx].id),
   );
 
-  groupedIndices.forEach((indices, i) => {
+  groupedIndices.forEach((indices, _i) => {
     const leadingIndex = indices[0];
     const trailingIndex = indices[indices.length - 1];
     const boundaryIndex = direction === "left" ? leadingIndex : trailingIndex;

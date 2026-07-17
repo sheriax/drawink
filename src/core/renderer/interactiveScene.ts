@@ -215,7 +215,7 @@ const renderBindingHighlightForBindableElement_simple = (
 
       context.lineWidth = FRAME_STYLE.strokeWidth / appState.zoom.value;
       context.strokeStyle =
-        appState.theme === THEME.DARK ? `rgba(3, 93, 161, 1)` : `rgba(106, 189, 252, 1)`;
+        appState.theme === THEME.DARK ? "rgba(3, 93, 161, 1)" : "rgba(106, 189, 252, 1)";
 
       if (FRAME_STYLE.radius && context.roundRect) {
         context.beginPath();
@@ -234,7 +234,7 @@ const renderBindingHighlightForBindableElement_simple = (
 
       context.restore();
       break;
-    default:
+    default: {
       context.save();
 
       const center = elementCenterPoint(element, elementsMap);
@@ -247,7 +247,7 @@ const renderBindingHighlightForBindableElement_simple = (
 
       context.lineWidth = clamp(1.75, element.strokeWidth, 4) / Math.max(0.25, appState.zoom.value);
       context.strokeStyle =
-        appState.theme === THEME.DARK ? `rgba(3, 93, 161, 1)` : `rgba(106, 189, 252, 1)`;
+        appState.theme === THEME.DARK ? "rgba(3, 93, 161, 1)" : "rgba(106, 189, 252, 1)";
 
       switch (element.type) {
         case "ellipse":
@@ -329,6 +329,7 @@ const renderBindingHighlightForBindableElement_simple = (
       context.restore();
 
       break;
+    }
   }
 };
 
@@ -404,7 +405,7 @@ const renderBindingHighlightForBindableElement_complex = (
 
       context.restore();
       break;
-    default:
+    default: {
       context.save();
 
       const center = elementCenterPoint(element, allElementsMap);
@@ -519,6 +520,7 @@ const renderBindingHighlightForBindableElement_complex = (
       context.restore();
 
       break;
+    }
   }
 
   // Middle indicator is not rendered after it expired
@@ -712,8 +714,8 @@ const renderElementsBoxHighlight = (
   };
 
   Object.entries(selectGroupsFromGivenElements(elementsInGroups, appState))
-    .filter(([id, isSelected]) => isSelected)
-    .map(([id, isSelected]) => id)
+    .filter(([_id, isSelected]) => isSelected)
+    .map(([id, _isSelected]) => id)
     .map((groupId) => getSelectionForGroupId(groupId))
     .concat(individualElements.map((element) => getSelectionFromElements([element])))
     .forEach((selection) => renderSelectionBorder(context, appState, selection));

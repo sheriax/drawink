@@ -116,13 +116,13 @@ function Picker<T>({
   const renderOptions = (options: Option<T>[]) => {
     return (
       <div className="picker-content">
-        {options.map((option, i) => (
+        {options.map((option, _i) => (
           <button
             type="button"
             className={clsx("picker-option", {
               active: value === option.value,
             })}
-            onClick={(event) => {
+            onClick={(_event) => {
               onChange(option.value);
             }}
             title={`${option.text} ${option.keyBinding && `— ${option.keyBinding.toUpperCase()}`}`}
@@ -157,7 +157,7 @@ function Picker<T>({
       onKeyDown={handleKeyDown}
       collisionBoundary={container ?? undefined}
     >
-      <div className={`picker`} role="dialog" aria-modal="true" aria-label={label}>
+      <div className={"picker"} role="dialog" aria-modal="true" aria-label={label}>
         {renderOptions(alwaysVisibleOptions)}
 
         {moreOptions.length > 0 && (

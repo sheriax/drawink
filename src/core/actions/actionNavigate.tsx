@@ -91,7 +91,7 @@ export const actionGoToCollaborator = register<Collaborator>({
     return withName ? (
       <div
         className={`dropdown-menu-item dropdown-menu-item-base UserList__collaborator ${statusClassNames}`}
-        style={{ [`--avatar-size` as any]: "1.5rem" }}
+        style={{ ["--avatar-size" as any]: "1.5rem" }}
         onClick={() => updateData<Collaborator>(collaborator)}
       >
         <Avatar

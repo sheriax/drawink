@@ -17,6 +17,7 @@ export const GitHubCorner = React.memo(({ theme, dir }: { theme: Theme; dir: str
       [dir === "rtl" ? "marginLeft" : "marginRight"]: "calc(var(--space-factor) * -1)",
     }}
   >
+    <title>GitHub repository</title>
     <a
       href="https://github.com/drawink/drawink"
       target="_blank"

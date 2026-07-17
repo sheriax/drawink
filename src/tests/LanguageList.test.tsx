@@ -1,8 +1,13 @@
 import { defaultLang } from "@/core/i18n";
 import { UI } from "@/core/tests/helpers/ui";
 import { fireEvent, render, screen, waitFor } from "@/core/tests/test-utils";
+import { vi } from "vitest";
 
 import DrawinkApp from "../App";
+
+vi.mock("../components/AI", () => ({
+  AIComponents: () => null,
+}));
 
 describe("Test LanguageList", () => {
   it("rerenders UI on language change", async () => {

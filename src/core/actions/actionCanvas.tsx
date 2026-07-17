@@ -51,7 +51,7 @@ export const actionChangeViewBackgroundColor = register<Partial<AppState>>({
   name: "changeViewBackgroundColor",
   label: "labels.canvasBackground",
   trackEvent: false,
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, appState, _props, app) => {
     return (
       !!app.props.UIOptions.canvasActions.changeViewBackgroundColor && !appState.viewModeEnabled
     );
@@ -59,7 +59,7 @@ export const actionChangeViewBackgroundColor = register<Partial<AppState>>({
   perform: (_, appState, value) => {
     return {
       appState: { ...appState, ...value },
-      captureUpdate: !!value?.viewBackgroundColor
+      captureUpdate: value?.viewBackgroundColor
         ? CaptureUpdateAction.IMMEDIATELY
         : CaptureUpdateAction.EVENTUALLY,
     };
@@ -88,7 +88,7 @@ export const actionClearCanvas = register({
   label: "labels.clearCanvas",
   icon: TrashIcon,
   trackEvent: { category: "canvas" },
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, appState, _props, app) => {
     return (
       !!app.props.UIOptions.canvasActions.clearCanvas &&
       !appState.viewModeEnabled &&
@@ -131,7 +131,7 @@ export const actionZoomIn = register({
   viewMode: true,
   icon: ZoomInIcon,
   trackEvent: { category: "canvas" },
-  perform: (_elements, appState, _, app) => {
+  perform: (_elements, appState, _, _app) => {
     return {
       appState: {
         ...appState,
@@ -172,7 +172,7 @@ export const actionZoomOut = register({
   icon: ZoomOutIcon,
   viewMode: true,
   trackEvent: { category: "canvas" },
-  perform: (_elements, appState, _, app) => {
+  perform: (_elements, appState, _, _app) => {
     return {
       appState: {
         ...appState,
@@ -213,7 +213,7 @@ export const actionResetZoom = register({
   icon: ZoomResetIcon,
   viewMode: true,
   trackEvent: { category: "canvas" },
-  perform: (_elements, appState, _, app) => {
+  perform: (_elements, appState, _, _app) => {
     return {
       appState: {
         ...appState,
@@ -453,7 +453,7 @@ export const actionToggleTheme = register<AppState["theme"]>({
     return appState.theme === THEME.DARK ? "buttons.lightMode" : "buttons.darkMode";
   },
   keywords: ["toggle", "dark", "light", "mode", "theme"],
-  icon: (appState, elements) => (appState.theme === THEME.LIGHT ? MoonIcon : SunIcon),
+  icon: (appState, _elements) => (appState.theme === THEME.LIGHT ? MoonIcon : SunIcon),
   viewMode: true,
   trackEvent: { category: "canvas" },
   perform: (_, appState, value) => {
@@ -466,7 +466,7 @@ export const actionToggleTheme = register<AppState["theme"]>({
     };
   },
   keyTest: (event) => event.altKey && event.shiftKey && event.code === CODES.D,
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, _appState, _props, app) => {
     return !!app.props.UIOptions.canvasActions.toggleTheme;
   },
 });
@@ -475,7 +475,7 @@ export const actionToggleEraserTool = register({
   name: "toggleEraserTool",
   label: "toolBar.eraser",
   trackEvent: { category: "toolbar" },
-  perform: (elements, appState, _, app) => {
+  perform: (_elements, appState, _, app) => {
     let activeTool: AppState["activeTool"];
 
     if (isEraserActive(appState)) {
@@ -511,10 +511,10 @@ export const actionToggleLassoTool = register({
   label: "toolBar.lasso",
   icon: LassoIcon,
   trackEvent: { category: "toolbar" },
-  predicate: (elements, appState, props, app) => {
+  predicate: (_elements, _appState, _props, app) => {
     return app.state.preferredSelectionTool.type !== "lasso";
   },
-  perform: (elements, appState, _, app) => {
+  perform: (_elements, appState, _, app) => {
     let activeTool: AppState["activeTool"];
 
     if (appState.activeTool.type !== "lasso") {
@@ -548,7 +548,7 @@ export const actionToggleHandTool = register({
   trackEvent: { category: "toolbar" },
   icon: handIcon,
   viewMode: false,
-  perform: (elements, appState, _, app) => {
+  perform: (_elements, appState, _, app) => {
     let activeTool: AppState["activeTool"];
 
     if (isHandToolActive(appState)) {

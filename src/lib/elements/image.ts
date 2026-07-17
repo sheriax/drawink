@@ -61,7 +61,7 @@ export const updateImageCache = async ({
               const image = await imagePromise;
 
               imageCache.set(fileId, { ...data, image });
-            } catch (error: any) {
+            } catch (_error: any) {
               erroredFiles.set(fileId, true);
             }
           })(),
@@ -97,45 +97,44 @@ export const normalizeSVG = (SVGString: string) => {
   const errorNode = doc.querySelector("parsererror");
   if (errorNode || !isHTMLSVGElement(svg)) {
     throw new Error("Invalid SVG");
-  } else {
-    if (!svg.hasAttribute("xmlns")) {
-      svg.setAttribute("xmlns", SVG_NS);
-    }
-
-    let width = svg.getAttribute("width");
-    let height = svg.getAttribute("height");
-
-    // Do not use % or auto values for width/height
-    // to avoid scaling issues when rendering at different sizes/zoom levels
-    if (width?.includes("%") || width === "auto") {
-      width = null;
-    }
-    if (height?.includes("%") || height === "auto") {
-      height = null;
-    }
-
-    const viewBox = svg.getAttribute("viewBox");
-
-    if (!width || !height) {
-      width = width || "50";
-      height = height || "50";
-
-      if (viewBox) {
-        const match = viewBox.match(/\d+ +\d+ +(\d+(?:\.\d+)?) +(\d+(?:\.\d+)?)/);
-        if (match) {
-          [, width, height] = match;
-        }
-      }
-
-      svg.setAttribute("width", width);
-      svg.setAttribute("height", height);
-    }
-
-    // Make sure viewBox is set
-    if (!viewBox) {
-      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    }
-
-    return svg.outerHTML;
   }
+  if (!svg.hasAttribute("xmlns")) {
+    svg.setAttribute("xmlns", SVG_NS);
+  }
+
+  let width = svg.getAttribute("width");
+  let height = svg.getAttribute("height");
+
+  // Do not use % or auto values for width/height
+  // to avoid scaling issues when rendering at different sizes/zoom levels
+  if (width?.includes("%") || width === "auto") {
+    width = null;
+  }
+  if (height?.includes("%") || height === "auto") {
+    height = null;
+  }
+
+  const viewBox = svg.getAttribute("viewBox");
+
+  if (!width || !height) {
+    width = width || "50";
+    height = height || "50";
+
+    if (viewBox) {
+      const match = viewBox.match(/\d+ +\d+ +(\d+(?:\.\d+)?) +(\d+(?:\.\d+)?)/);
+      if (match) {
+        [, width, height] = match;
+      }
+    }
+
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", height);
+  }
+
+  // Make sure viewBox is set
+  if (!viewBox) {
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  }
+
+  return svg.outerHTML;
 };

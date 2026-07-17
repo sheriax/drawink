@@ -109,7 +109,7 @@ const StatsDragInput = <T extends StatsInputProperty, E extends DrawinkElement =
     stateRef.current.updatePending = false;
 
     const parsed = Number(updatedValue);
-    if (isNaN(parsed)) {
+    if (Number.isNaN(parsed)) {
       setInputValue(value.toString());
       return;
     }
@@ -122,7 +122,7 @@ const StatsDragInput = <T extends StatsInputProperty, E extends DrawinkElement =
     // 2. original was not "Mixed" and the difference between a new value and previous value is greater
     //    than the smallest delta allowed, which is 0.01
     // reason: idempotent to avoid unnecessary
-    if (isNaN(original) || Math.abs(rounded - original) >= SMALLEST_DELTA) {
+    if (Number.isNaN(original) || Math.abs(rounded - original) >= SMALLEST_DELTA) {
       stateRef.current.lastUpdatedValue = updatedValue;
       dragInputCallback({
         accumulatedChange: 0,
@@ -194,12 +194,12 @@ const StatsDragInput = <T extends StatsInputProperty, E extends DrawinkElement =
       <div
         className="drag-input-label"
         ref={labelRef}
-        onPointerDown={(event) => {
+        onPointerDown={(_event) => {
           if (inputRef.current && editable) {
             document.body.classList.add("drawink-cursor-resize");
 
             let startValue = Number(inputRef.current.value);
-            if (isNaN(startValue)) {
+            if (Number.isNaN(startValue)) {
               startValue = 0;
             }
 

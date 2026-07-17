@@ -404,7 +404,8 @@ const handleSegmentRelease = (
         });
 
         return [];
-      } else if (compareHeading(prevHeading, flipHeading(nextHeading))) {
+      }
+      if (compareHeading(prevHeading, flipHeading(nextHeading))) {
         // Update subsequent fixed segment indices
         nextFixedSegments.forEach((segment) => {
           if (segment.index > i) {
@@ -520,7 +521,7 @@ const handleSegmentMove = (
   }));
 
   // For start, clone old arrow points
-  const newPoints: GlobalPoint[] = arrow.points.map((p, i) =>
+  const newPoints: GlobalPoint[] = arrow.points.map((p, _i) =>
     pointFrom<GlobalPoint>(arrow.x + p[0], arrow.y + p[1]),
   );
 
@@ -1460,9 +1461,7 @@ const astar = (
 
       const directionChange = previousDirection !== neighborHeading;
       const gScore =
-        current.g +
-        m_dist(neighbor.pos, current.pos) +
-        (directionChange ? Math.pow(bendMultiplier, 3) : 0);
+        current.g + m_dist(neighbor.pos, current.pos) + (directionChange ? bendMultiplier ** 3 : 0);
 
       const beenVisited = neighbor.visited;
 
@@ -1471,7 +1470,7 @@ const astar = (
         // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
         neighbor.visited = true;
         neighbor.parent = current;
-        neighbor.h = m_dist(end.pos, neighbor.pos) + estBendCount * Math.pow(bendMultiplier, 2);
+        neighbor.h = m_dist(end.pos, neighbor.pos) + estBendCount * bendMultiplier ** 2;
         neighbor.g = gScore;
         neighbor.f = neighbor.g + neighbor.h;
         if (!beenVisited) {
@@ -1612,7 +1611,8 @@ const generateDynamicAABBs = (
         [first[0], cY, first[2], first[3]],
         [second[0], second[1], second[2], cY],
       ];
-    } else if (a[2] < b[0] && a[3] < b[1]) {
+    }
+    if (a[2] < b[0] && a[3] < b[1]) {
       // TOP LEFT
       const cX = first[2] + (second[0] - first[2]) / 2;
       const cY = first[3] + (second[1] - first[3]) / 2;
@@ -1633,7 +1633,8 @@ const generateDynamicAABBs = (
         [first[0], first[1], cX, first[3]],
         [cX, second[1], second[2], second[3]],
       ];
-    } else if (a[0] > b[2] && a[3] < b[1]) {
+    }
+    if (a[0] > b[2] && a[3] < b[1]) {
       // TOP RIGHT
       const cX = second[2] + (first[0] - second[2]) / 2;
       const cY = first[3] + (second[1] - first[3]) / 2;
@@ -1654,7 +1655,8 @@ const generateDynamicAABBs = (
         [first[0], first[1], first[2], cY],
         [second[0], cY, second[2], second[3]],
       ];
-    } else if (a[0] > b[2] && a[1] > b[3]) {
+    }
+    if (a[0] > b[2] && a[1] > b[3]) {
       // BOTTOM RIGHT
       const cX = second[2] + (first[0] - second[2]) / 2;
       const cY = second[3] + (first[1] - second[3]) / 2;
@@ -1790,7 +1792,8 @@ const estimateSegmentCount = (
         }
         return 2;
     }
-  } else if (endHeading === HEADING_LEFT) {
+  }
+  if (endHeading === HEADING_LEFT) {
     switch (startHeading) {
       case HEADING_RIGHT:
         if (start.pos[1] === end.pos[1]) {
@@ -1816,7 +1819,8 @@ const estimateSegmentCount = (
         }
         return 2;
     }
-  } else if (endHeading === HEADING_UP) {
+  }
+  if (endHeading === HEADING_UP) {
     switch (startHeading) {
       case HEADING_RIGHT:
         if (start.pos[1] > end.pos[1] && start.pos[0] < end.pos[0]) {
@@ -1842,7 +1846,8 @@ const estimateSegmentCount = (
         }
         return 3;
     }
-  } else if (endHeading === HEADING_DOWN) {
+  }
+  if (endHeading === HEADING_DOWN) {
     switch (startHeading) {
       case HEADING_RIGHT:
         if (start.pos[1] < end.pos[1] && start.pos[0] < end.pos[0]) {
@@ -2089,7 +2094,7 @@ const getHoveredElement = (
   elements: readonly Ordered<NonDeletedDrawinkElement>[],
   zoom?: AppState["zoom"],
 ) => {
-  return getHoveredElementForBinding(origPoint, elements, elementsMap, (element) =>
+  return getHoveredElementForBinding(origPoint, elements, elementsMap, (_element) =>
     maxBindingDistance_simple(zoom),
   );
 };

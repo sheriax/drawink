@@ -142,11 +142,12 @@ export const exportCanvas = async (
           fileHandle,
         },
       );
-    } else if (type === "clipboard-svg") {
+    }
+    if (type === "clipboard-svg") {
       const svg = await svgPromise.then((svg) => svg.outerHTML);
       try {
         await copyTextToSystemClipboard(svg);
-      } catch (e) {
+      } catch (_e) {
         throw new Error(t("errors.copyToSystemClipboardFailed"));
       }
       return;
@@ -181,7 +182,8 @@ export const exportCanvas = async (
       mimeTypes: [IMAGE_MIME_TYPES.png],
       fileHandle,
     });
-  } else if (type === "clipboard") {
+  }
+  if (type === "clipboard") {
     try {
       const blob = canvasToBlob(tempCanvas);
       await copyBlobToClipboardAsPng(blob);
@@ -196,9 +198,8 @@ export const exportCanvas = async (
         throw new Error(
           `${t("alerts.couldNotCopyToClipboard")}\n\n${t("hints.firefox_clipboard_write")}`,
         );
-      } else {
-        throw new Error(t("alerts.couldNotCopyToClipboard"));
       }
+      throw new Error(t("alerts.couldNotCopyToClipboard"));
     }
   } else {
     // shouldn't happen

@@ -171,7 +171,6 @@ export const getSelectedElements = (
     ) {
       selectedElements.push(element);
       addedElements.add(element.id);
-      continue;
     }
   }
 

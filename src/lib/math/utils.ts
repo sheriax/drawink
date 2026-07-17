@@ -9,7 +9,7 @@ export const round = (
   precision: number,
   func: "round" | "floor" | "ceil" = "round",
 ) => {
-  const multiplier = Math.pow(10, precision);
+  const multiplier = 10 ** precision;
 
   return Math[func]((value + Number.EPSILON) * multiplier) / multiplier;
 };

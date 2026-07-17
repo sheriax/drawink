@@ -55,7 +55,12 @@ export const Modal: React.FC<{
         className="Modal__background"
         onClick={closeOnClickOutside ? props.onCloseRequest : undefined}
       />
-      <div className="Modal__content" style={{ "--max-width": `${props.maxWidth}px` }} tabIndex={0}>
+      <div
+        className="Modal__content"
+        style={{ "--max-width": `${props.maxWidth}px` }}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: Modal content is an intentional keyboard focus target.
+        tabIndex={0}
+      >
         {props.children}
       </div>
     </div>,

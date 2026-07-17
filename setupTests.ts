@@ -3,11 +3,49 @@ import fs from "fs";
 // vitest.setup.ts
 import "vitest-canvas-mock";
 import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { afterEach, beforeEach, vi } from "vitest";
 
 import polyfill from "./src/core/polyfill";
 import { yellow } from "./src/core/tests/helpers/colorize";
 import { testPolyfills } from "./src/core/tests/helpers/polyfills";
+
+vi.mock("@clerk/clerk-react", () => ({
+  ClerkProvider: ({ children }: { children: ReactNode }) => children,
+  RedirectToSignIn: () => null,
+  SignedIn: () => null,
+  SignedOut: ({ children }: { children: ReactNode }) => children,
+  SignIn: () => null,
+  SignUp: () => null,
+  useAuth: () => ({
+    getToken: vi.fn().mockResolvedValue(null),
+    isLoaded: true,
+    isSignedIn: false,
+    userId: null,
+  }),
+  useClerk: () => ({
+    openSignIn: vi.fn(),
+    signOut: vi.fn().mockResolvedValue(undefined),
+  }),
+  useUser: () => ({
+    isLoaded: true,
+    isSignedIn: false,
+    user: null,
+  }),
+}));
+
+vi.mock("./src/components/AI", () => ({
+  AIComponents: () => null,
+}));
+
+beforeEach(() => {
+  cleanup();
+});
+
+afterEach(() => {
+  cleanup();
+});
 
 // mock for pep.js not working with setPointerCapture()
 HTMLElement.prototype.setPointerCapture = vi.fn();

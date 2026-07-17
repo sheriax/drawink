@@ -78,7 +78,7 @@ export const convertMermaidToDrawink = async ({
     let ret;
     try {
       ret = await api.parseMermaidToExcalidraw(mermaidDefinition);
-    } catch (err: any) {
+    } catch (_err: any) {
       ret = await api.parseMermaidToExcalidraw(mermaidDefinition.replace(/"/g, "'"));
     }
     const { elements, files } = ret;

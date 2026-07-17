@@ -2348,7 +2348,7 @@ Check out the [release notes](https://github.com/drawink/drawink/releases/tag/v0
 ### Improvements
 
 - Added Zen Mode to the context menu [#2734](https://github.com/drawink/drawink/pull/2734)
-- Do not reset to selection for draw tool [#2721]((https://github.com/drawink/drawink/pull/2721)
+- Do not reset to selection for draw tool [#2721](https://github.com/drawink/drawink/pull/2721)
 - Make dialogs look more like dialogs [#2686](https://github.com/drawink/drawink/pull/2686)
 - Browse libraries styles fixed [#2694](https://github.com/drawink/drawink/pull/2694)
 - Change hint for 2-point lines on resize [#2655](https://github.com/drawink/drawink/pull/2655)

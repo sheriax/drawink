@@ -124,7 +124,7 @@ const askToCommit = (tag: string, nextVersion: string): Promise<void> => {
     rl.question("Would you like to commit these changes to git? (Y/n): ", (answer) => {
       rl.close();
       if (answer.toLowerCase() === "y") {
-        execSync(`git add -u`);
+        execSync("git add -u");
         execSync(`git commit -m "chore: release @drawink/drawink@${nextVersion} 🎉"`);
       } else {
         console.warn("Skipping commit. Don't forget to commit manually later!");
@@ -136,14 +136,14 @@ const askToCommit = (tag: string, nextVersion: string): Promise<void> => {
 
 const buildPackages = (): void => {
   console.info("Running bun install...");
-  execSync(`bun install --frozen-lockfile`, { stdio: "inherit" });
+  execSync("bun install --frozen-lockfile", { stdio: "inherit" });
 
   console.info("Removing existing build artifacts...");
-  execSync(`bun run rm:build`, { stdio: "inherit" });
+  execSync("bun run rm:build", { stdio: "inherit" });
 
   for (const packageName of PACKAGES) {
     console.info(`Building "@drawink/${packageName}"...`);
-    execSync(`bun run build:esm`, {
+    execSync("bun run build:esm", {
       cwd: resolve(PACKAGES_DIR, packageName),
       stdio: "inherit",
     });

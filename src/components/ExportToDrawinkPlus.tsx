@@ -84,7 +84,7 @@ export const ExportToDrawinkPlus: React.FC<{
       <div className="Card-icon">
         <DrawinkLogo
           style={{
-            [`--color-logo-icon` as any]: "#fff",
+            ["--color-logo-icon" as any]: "#fff",
             width: "2.8rem",
             height: "2.8rem",
           }}

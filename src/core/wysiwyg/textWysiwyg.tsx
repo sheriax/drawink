@@ -176,7 +176,8 @@ export const textWysiwyg = ({
 
           app.scene.mutateElement(container, { height: targetContainerHeight });
           return;
-        } else if (
+        }
+        if (
           // autoshrink container height until original container height
           // is reached when text is removed
           !isArrowElement(container) &&
@@ -372,7 +373,8 @@ export const textWysiwyg = ({
       event.preventDefault();
       if (event.isComposing) {
         return;
-      } else if (event.shiftKey || event.code === CODES.BRACKET_LEFT) {
+      }
+      if (event.shiftKey || event.code === CODES.BRACKET_LEFT) {
         outdent();
       } else {
         indent();
@@ -461,7 +463,7 @@ export const textWysiwyg = ({
     return selected
       .split("\n")
       .reduce(
-        (startIndices, line, idx, lines) =>
+        (startIndices, _line, idx, lines) =>
           startIndices.concat(
             idx
               ? // curr line index is prev line's start + prev line's length + \n

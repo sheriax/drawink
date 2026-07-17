@@ -325,7 +325,7 @@ export const isVisualDebuggerEnabled = () => Array.isArray(window.visualDebug?.d
 
 export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
   const moveForward = useCallback(() => {
-    if (!window.visualDebug?.currentFrame || isNaN(window.visualDebug?.currentFrame ?? -1)) {
+    if (!window.visualDebug?.currentFrame || Number.isNaN(window.visualDebug?.currentFrame ?? -1)) {
       window.visualDebug!.currentFrame = 0;
     }
     window.visualDebug!.currentFrame += 1;
@@ -334,7 +334,7 @@ export const DebugFooter = ({ onChange }: { onChange: () => void }) => {
   const moveBackward = useCallback(() => {
     if (
       !window.visualDebug?.currentFrame ||
-      isNaN(window.visualDebug?.currentFrame ?? -1) ||
+      Number.isNaN(window.visualDebug?.currentFrame ?? -1) ||
       window.visualDebug?.currentFrame < 1
     ) {
       window.visualDebug!.currentFrame = 1;

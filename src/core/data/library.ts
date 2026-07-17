@@ -258,19 +258,16 @@ class Library {
   /**
    * @returns latest cloned libraryItems. Awaits all in-progress updates first.
    */
-  getLatestLibrary = (): Promise<LibraryItems> => {
-    return new Promise(async (resolve) => {
-      try {
-        const libraryItems = await (this.getLastUpdateTask() || this.currLibraryItems);
-        if (this.updateQueue.length > 0) {
-          resolve(this.getLatestLibrary());
-        } else {
-          resolve(cloneLibraryItems(libraryItems));
-        }
-      } catch (error) {
-        return resolve(this.currLibraryItems);
+  getLatestLibrary = async (): Promise<LibraryItems> => {
+    try {
+      const libraryItems = await (this.getLastUpdateTask() || this.currLibraryItems);
+      if (this.updateQueue.length > 0) {
+        return this.getLatestLibrary();
       }
-    });
+      return cloneLibraryItems(libraryItems);
+    } catch (_error) {
+      return this.currLibraryItems;
+    }
   };
 
   // NOTE this is a high-level public API (exposed on DrawinkAPI) with
@@ -295,48 +292,39 @@ class Library {
       });
     }
 
-    return this.setLibrary(() => {
-      return new Promise<LibraryItems>(async (resolve, reject) => {
-        try {
-          const source = await (typeof libraryItems === "function" &&
-          !(libraryItems instanceof Blob)
-            ? libraryItems(this.currLibraryItems)
-            : libraryItems);
+    return this.setLibrary(async () => {
+      const source = await (typeof libraryItems === "function" && !(libraryItems instanceof Blob)
+        ? libraryItems(this.currLibraryItems)
+        : libraryItems);
 
-          let nextItems;
+      let nextItems;
 
-          if (source instanceof Blob) {
-            nextItems = await loadLibraryFromBlob(source, defaultStatus);
-          } else {
-            nextItems = restoreLibraryItems(source, defaultStatus);
-          }
-          if (
-            !prompt ||
-            window.confirm(
-              t("alerts.confirmAddLibrary", {
-                numShapes: nextItems.length,
-              }),
-            )
-          ) {
-            if (prompt) {
-              // focus container if we've prompted. We focus conditionally
-              // lest `props.autoFocus` is disabled (in which case we should
-              // focus only on user action such as prompt confirm)
-              this.app.focusContainer();
-            }
-
-            if (merge) {
-              resolve(mergeLibraryItems(this.currLibraryItems, nextItems));
-            } else {
-              resolve(nextItems);
-            }
-          } else {
-            reject(new AbortError());
-          }
-        } catch (error: any) {
-          reject(error);
+      if (source instanceof Blob) {
+        nextItems = await loadLibraryFromBlob(source, defaultStatus);
+      } else {
+        nextItems = restoreLibraryItems(source, defaultStatus);
+      }
+      if (
+        !prompt ||
+        window.confirm(
+          t("alerts.confirmAddLibrary", {
+            numShapes: nextItems.length,
+          }),
+        )
+      ) {
+        if (prompt) {
+          // focus container if we've prompted. We focus conditionally
+          // lest `props.autoFocus` is disabled (in which case we should
+          // focus only on user action such as prompt confirm)
+          this.app.focusContainer();
         }
-      });
+
+        if (merge) {
+          return mergeLibraryItems(this.currLibraryItems, nextItems);
+        }
+        return nextItems;
+      }
+      throw new AbortError();
     });
   };
 
@@ -356,21 +344,17 @@ class Library {
       | Promise<LibraryItems>
       | ((latestLibraryItems: LibraryItems) => LibraryItems | Promise<LibraryItems>),
   ): Promise<LibraryItems> => {
-    const task = new Promise<LibraryItems>(async (resolve, reject) => {
-      try {
-        await this.getLastUpdateTask();
+    const task = (async () => {
+      await this.getLastUpdateTask();
 
-        if (typeof libraryItems === "function") {
-          libraryItems = libraryItems(this.currLibraryItems);
-        }
-
-        this.currLibraryItems = cloneLibraryItems(await libraryItems);
-
-        resolve(this.currLibraryItems);
-      } catch (error: any) {
-        reject(error);
+      if (typeof libraryItems === "function") {
+        libraryItems = libraryItems(this.currLibraryItems);
       }
-    })
+
+      this.currLibraryItems = cloneLibraryItems(await libraryItems);
+
+      return this.currLibraryItems;
+    })()
       .catch((error) => {
         if (error.name === "AbortError") {
           console.warn("Library update aborted by user");
@@ -530,15 +514,10 @@ class AdapterTransaction {
     source: LibraryAdatapterSource,
     _queue = true,
   ): Promise<LibraryItems> {
-    const task = () =>
-      new Promise<LibraryItems>(async (resolve, reject) => {
-        try {
-          const data = await adapter.load({ source });
-          resolve(restoreLibraryItems(data?.libraryItems || [], "published"));
-        } catch (error: any) {
-          reject(error);
-        }
-      });
+    const task = async () => {
+      const data = await adapter.load({ source });
+      return restoreLibraryItems(data?.libraryItems || [], "published");
+    };
 
     if (_queue) {
       return AdapterTransaction.queue.push(task);
@@ -698,21 +677,16 @@ export const useHandleLibrary = (
       libraryUrl: string;
       idToken: string | null;
     }) => {
-      const libraryPromise = new Promise<Blob>(async (resolve, reject) => {
-        try {
-          libraryUrl = decodeURIComponent(libraryUrl);
+      const libraryPromise = (async () => {
+        libraryUrl = decodeURIComponent(libraryUrl);
 
-          libraryUrl = toValidURL(libraryUrl);
+        libraryUrl = toValidURL(libraryUrl);
 
-          validateLibraryUrl(libraryUrl, optsRef.current.validateLibraryUrl);
+        validateLibraryUrl(libraryUrl, optsRef.current.validateLibraryUrl);
 
-          const request = await fetch(libraryUrl);
-          const blob = await request.blob();
-          resolve(blob);
-        } catch (error: any) {
-          reject(error);
-        }
-      });
+        const request = await fetch(libraryUrl);
+        return request.blob();
+      })();
 
       const shouldPrompt = idToken !== drawinkAPI.id;
 

@@ -233,6 +233,8 @@ export const STRING_MIME_TYPES = {
   json: "application/json",
   // drawink data
   drawink: "application/vnd.drawink+json",
+  // legacy Excalidraw data embedded in exported images
+  excalidraw: "application/vnd.excalidraw+json",
   // LEGACY: fully-qualified library JSON data
   drawinklib: "application/vnd.drawinklib+json",
   // list of drawink library item ids
@@ -250,6 +252,9 @@ export const MIME_TYPES = {
   ...IMAGE_MIME_TYPES,
 } as const;
 
+export const isDrawinkDataMimeType = (type: unknown): boolean =>
+  type === MIME_TYPES.drawink || type === MIME_TYPES.excalidraw;
+
 export const ALLOWED_PASTE_MIME_TYPES = [
   MIME_TYPES.text,
   MIME_TYPES.html,
@@ -264,10 +269,15 @@ export const EXPORT_IMAGE_TYPES = {
 
 export const EXPORT_DATA_TYPES = {
   drawink: "drawink",
+  /** Original Excalidraw scene type, retained for backwards-compatible imports. */
+  excalidraw: "excalidraw",
   drawinkClipboard: "drawink/clipboard",
   drawinkLibrary: "drawinklib",
   drawinkClipboardWithAPI: "drawink-api/clipboard",
 } as const;
+
+export const isDrawinkDataType = (type: unknown): boolean =>
+  type === EXPORT_DATA_TYPES.drawink || type === EXPORT_DATA_TYPES.excalidraw;
 
 export const getExportSource = () => window.EXCALIDRAW_EXPORT_SOURCE || window.location.origin;
 

@@ -148,7 +148,7 @@ export const serializeAsClipboardJSON = ({
   const _files = elements.reduce((acc, element) => {
     if (isInitializedImageElement(element)) {
       foundFile = true;
-      if (files && files[element.fileId]) {
+      if (files?.[element.fileId]) {
         acc[element.fileId] = files[element.fileId];
       }
     }
@@ -214,7 +214,7 @@ function parseHTMLTree(el: ChildNode) {
       }
     } else if (node instanceof HTMLImageElement) {
       const url = node.getAttribute("src");
-      if (url && url.startsWith("http")) {
+      if (url?.startsWith("http")) {
         result.push({ type: "imageUrl", value: url });
       }
     } else {

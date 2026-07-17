@@ -169,9 +169,7 @@ export const groupsAreAtLeastIntersectingTheFrame = (
     return true;
   }
 
-  return !!elementsInGroup.find(
-    (element) => elementOverlapsWithFrame(element, frame, elementsMap),
-  );
+  return !!elementsInGroup.find((element) => elementOverlapsWithFrame(element, frame, elementsMap));
 };
 
 export const groupsAreCompletelyOutOfFrame = (
@@ -187,9 +185,8 @@ export const groupsAreCompletelyOutOfFrame = (
   }
 
   return (
-    elementsInGroup.find(
-      (element) => elementOverlapsWithFrame(element, frame, elementsMap),
-    ) === undefined
+    elementsInGroup.find((element) => elementOverlapsWithFrame(element, frame, elementsMap)) ===
+    undefined
   );
 };
 

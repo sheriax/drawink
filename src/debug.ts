@@ -69,10 +69,12 @@ export class Debug {
   public static logTime = (time?: number, name = "default") => {
     Debug.setupInterval();
     const now = performance.now();
-    const { t, times } = (Debug.TIMES_AGGR[name] = Debug.TIMES_AGGR[name] || {
+    const timing = Debug.TIMES_AGGR[name] || {
       t: 0,
       times: [],
-    });
+    };
+    Debug.TIMES_AGGR[name] = timing;
+    const { t, times } = timing;
     if (t) {
       times.push(time != null ? time : now - t);
     }
@@ -81,10 +83,13 @@ export class Debug {
   public static logTimeAverage = (time?: number, name = "default") => {
     Debug.setupInterval();
     const now = performance.now();
-    const { t, times } = (Debug.TIMES_AVG[name] = Debug.TIMES_AVG[name] || {
+    const timing = Debug.TIMES_AVG[name] || {
       t: 0,
       times: [],
-    });
+      avg: null,
+    };
+    Debug.TIMES_AVG[name] = timing;
+    const { t, times } = timing;
     if (t) {
       times.push(time != null ? time : now - t);
     }
@@ -92,7 +97,7 @@ export class Debug {
   };
 
   private static logWrapper =
-    (type: "logTime" | "logTimeAverage") =>
+    (_type: "logTime" | "logTimeAverage") =>
     <T extends any[], R>(fn: (...args: T) => R, name = "default") => {
       return (...args: T) => {
         const t0 = performance.now();

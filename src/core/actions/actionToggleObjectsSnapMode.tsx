@@ -15,7 +15,7 @@ export const actionToggleObjectsSnapMode = register({
     category: "canvas",
     predicate: (appState) => !appState.objectsSnapModeEnabled,
   },
-  perform(elements, appState) {
+  perform(_elements, appState) {
     return {
       appState: {
         ...appState,
@@ -26,7 +26,7 @@ export const actionToggleObjectsSnapMode = register({
     };
   },
   checked: (appState) => appState.objectsSnapModeEnabled,
-  predicate: (elements, appState, appProps) => {
+  predicate: (_elements, _appState, appProps) => {
     return typeof appProps.objectsSnapModeEnabled === "undefined";
   },
   keyTest: (event) => !event[KEYS.CTRL_OR_CMD] && event.altKey && event.code === CODES.S,

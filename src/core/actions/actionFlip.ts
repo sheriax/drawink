@@ -141,19 +141,15 @@ const flipElements = (
   // of the selection, so we need to center the group back to the original
   // position so that repeated flips don't accumulate the offset
 
-  const { elbowArrows, otherElements } = selectedElements.reduce(
-    (
-      acc: {
-        elbowArrows: DrawinkElbowArrowElement[];
-        otherElements: DrawinkElement[];
-      },
-      element,
-    ) =>
-      isElbowArrow(element)
-        ? { ...acc, elbowArrows: acc.elbowArrows.concat(element) }
-        : { ...acc, otherElements: acc.otherElements.concat(element) },
-    { elbowArrows: [], otherElements: [] },
-  );
+  const elbowArrows: DrawinkElbowArrowElement[] = [];
+  const otherElements: DrawinkElement[] = [];
+  for (const element of selectedElements) {
+    if (isElbowArrow(element)) {
+      elbowArrows.push(element);
+    } else {
+      otherElements.push(element);
+    }
+  }
 
   const { midX: newMidX, midY: newMidY } = getCommonBoundingBox(selectedElements);
   const [diffX, diffY] = [midX - newMidX, midY - newMidY];

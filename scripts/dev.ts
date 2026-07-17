@@ -73,7 +73,7 @@ function log(service: Service, message: string) {
 
 function startService(service: Service): Promise<void> {
   return new Promise((resolve, reject) => {
-    log(service, `Starting...`);
+    log(service, "Starting...");
 
     const proc = spawn({
       cmd: service.command,
@@ -157,7 +157,7 @@ async function main() {
       if (proc) {
         try {
           proc.kill();
-        } catch (e) {
+        } catch (_e) {
           // Ignore errors
         }
       }
