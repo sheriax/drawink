@@ -13,6 +13,7 @@
 .vercel
 .vscode
 .yarn
+gha-creds-*.json
 *.log
 *.tgz
 build

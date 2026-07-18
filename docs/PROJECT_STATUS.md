@@ -16,7 +16,7 @@ security decisions, and incomplete product surfaces. “Implemented” does not 
 | Current branch quality gates | Testbox passed; CI pending | Frozen install, zero-vulnerability audit, Biome, TypeScript, 586 passing tests (9 skipped), and production/PWA build passed in Testbox on 2026-07-18 |
 | Previous quality baseline | Passed | The merged quality branch had clean audit/lint/types/tests/builds |
 | Documentation | Reorganized | Architecture, development, deployment, retirement, and status scopes are explicit |
-| Credential exposure | External P0 remains | Populated `convex/.env` was untracked, but provider-key rotation and coordinated history rewrite still require owner action |
+| Credential exposure | External P0 remains | The AI provider key and the migration service-account key require administrator revocation; the GitHub GCP secret was deleted and ephemeral files destroyed |
 | Production protections | Partially configured | CI/deploy gates exist; repository/environment protection settings need administrator verification |
 
 ## Implemented in the Convex migration
@@ -39,6 +39,15 @@ security decisions, and incomplete product surfaces. “Implemented” does not 
   iframe integration remains.
 
 ## P0: owner/external actions
+
+### Revoke the exposed migration service-account key
+
+A temporary credentialed Testbox workflow allowed an unignored Google auth file
+to be included in Biome output. The `GCP_CREDENTIALS` GitHub secret was deleted,
+the files were shredded, and the VM was destroyed on 2026-07-18. The service
+account cannot revoke its own key, so a Google Cloud IAM administrator must
+delete that key before any further migration work. Use short-lived federation
+instead of restoring a static JSON key.
 
 ### Rotate the exposed AI credential and clean Git history
 

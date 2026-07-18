@@ -131,7 +131,9 @@ the Convex-only build.
       it.
 - [ ] Search repository, Vercel, and GitHub configuration for the project ID,
       old service URL, and object-storage variables.
-- [ ] Remove the Production `GCP_CREDENTIALS` GitHub secret after migration.
+- [x] Remove the `GCP_CREDENTIALS` GitHub secret. It was deleted on 2026-07-18
+      after the static key appeared in Testbox lint output. A Google Cloud IAM
+      administrator must still revoke the corresponding service-account key.
 - [ ] Confirm no scheduled workflow or external webhook deploys the old server.
 - [ ] Retain only this historical runbook/migration audit trail.
 
@@ -192,6 +194,7 @@ export or rerunning the migration while the source is still readable.
 | Convex-only production frontend live | Pending |
 | Final no-write-window migration | Pending |
 | Vercel variables removed | Pending |
-| DNS and GitHub credential removed | Pending |
+| GitHub GCP credential removed | Complete on 2026-07-18; cloud key revocation pending |
+| Legacy DNS removed | Pending |
 | Billing disabled | Pending |
 | Project lifecycle `DELETE_REQUESTED` | Pending |

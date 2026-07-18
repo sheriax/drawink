@@ -14,9 +14,6 @@ jobs:
   run-testbox:
     name: Run Testbox Session
     runs-on: blacksmith-4vcpu-ubuntu-2404
-    environment: Production
-    env:
-      CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
     steps:
       - name: Begin Testbox
         uses: useblacksmith/begin-testbox@v2
@@ -28,18 +25,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.14
-      - name: Authenticate to Google Cloud for migration checks
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          project_id: drawink-2026
-      - name: Setup Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-      - name: Stage Convex credential for the ephemeral session
-        shell: bash
-        run: |
-          umask 077
-          printf '%s' "$CONVEX_DEPLOY_KEY" > /tmp/drawink-convex-deploy-key
       - name: Install Dependencies
         run: bun install --frozen-lockfile
       - name: Run Testbox
