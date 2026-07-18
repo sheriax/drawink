@@ -125,12 +125,12 @@ complete only when both `package.json` and `bun.lock` are updated.
 - Delete replaced objects and clean up failed uploads when possible.
 - Add a deletion path before introducing a new file scope.
 
-## One-time cloud retirement tool
+## Legacy cloud retirement record
 
-`scripts/migrate-google-cloud-to-convex.ts` exists only for the documented
-legacy cutover. Normal development must not call it. It requires authenticated
-production credentials and must run in the Blacksmith Testbox as described in
-the [retirement runbook](./deployment/GOOGLE_CLOUD_RETIREMENT.md).
+The Google Cloud cutover is complete and its executable migration helpers have
+been removed. The retained
+[retirement record](./deployment/GOOGLE_CLOUD_RETIREMENT.md) documents migrated
+counts, verification evidence, backups, and recovery constraints.
 
 ## Troubleshooting
 

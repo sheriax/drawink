@@ -10,13 +10,12 @@ security decisions, and incomplete product surfaces. “Implemented” does not 
 
 | Area | Status | Evidence or remaining work |
 | --- | --- | --- |
-| Convex-only backend code | Backend live; frontend cutover pending | Production schema/functions were deployed on 2026-07-18; the Vercel frontend still awaits the reviewed branch cutover |
-| Legacy data migration | Blocked on temporary read-only IAM | The runner and byte verification are ready, but the migration service account still needs Firestore and object-bucket viewer roles |
-| Legacy project shutdown | Pending | Billing/project deletion must wait for final migration and production cutover |
-| Current branch quality gates | Testbox passed; CI pending | Frozen install, zero-vulnerability audit, Biome, TypeScript, 586 passing tests (9 skipped), and production/PWA build passed in Testbox on 2026-07-18 |
-| Previous quality baseline | Passed | The merged quality branch had clean audit/lint/types/tests/builds |
+| Convex-only production | Live | PR #16 (`56806206`) deployed the Convex realtime/storage frontend and backend on 2026-07-18 |
+| Legacy data and identity migration | Complete | Google application data passed byte verification; 3 Firebase users moved to Clerk; 2 owners were relinked and 1 orphan was preserved |
+| Legacy project shutdown | Complete | `drawink-2026` has billing disabled and lifecycle `DELETE_REQUESTED` |
+| Quality baseline | Passed | Frozen install, zero-vulnerability audit, Biome, TypeScript, 586 passing tests (9 skipped), and production/PWA build passed on 2026-07-18; CI remains a PR gate |
 | Documentation | Reorganized | Architecture, development, deployment, retirement, and status scopes are explicit |
-| Credential exposure | External P0 remains | The AI provider key and the migration service-account key require administrator revocation; the GitHub GCP secret was deleted and ephemeral files destroyed |
+| Credential exposure | One external P0 remains | The Google key/secret incident is resolved; the previously tracked AI provider key still requires rotation and history cleanup |
 | Production protections | Partially configured | CI/deploy gates exist; repository/environment protection settings need administrator verification |
 
 ## Implemented in the Convex migration
@@ -38,16 +37,21 @@ security decisions, and incomplete product surfaces. “Implemented” does not 
 - Removed the obsolete storage-based Drawink Pro export bridge; the maintained
   iframe integration remains.
 
+## Completed production actions
+
+- Copied and verified all Firestore application records and Firebase Storage
+  objects in Convex, including a separate 18-of-18 room ciphertext audit.
+- Migrated all three Firebase Auth accounts to Clerk and configured verified
+  Clerk-to-Convex user webhooks.
+- Re-encrypted the matched personal-board content for its destination Clerk ID;
+  preserved the unmatched workspace and encryption context without guessing an
+  owner.
+- Deleted the compromised Google service-account key and GitHub secret.
+- Disabled Google Cloud billing and requested deletion of `drawink-2026`.
+- Removed the executable migration runner and internal Convex migration API
+  after retaining checksummed backups and the retirement record.
+
 ## P0: owner/external actions
-
-### Revoke the exposed migration service-account key
-
-A temporary credentialed Testbox workflow allowed an unignored Google auth file
-to be included in Biome output. The `GCP_CREDENTIALS` GitHub secret was deleted,
-the files were shredded, and the VM was destroyed on 2026-07-18. The service
-account cannot revoke its own key, so a Google Cloud IAM administrator must
-delete that key before any further migration work. Use short-lived federation
-instead of restoring a static JSON key.
 
 ### Rotate the exposed AI credential and clean Git history
 
@@ -61,14 +65,6 @@ Required owner actions:
 3. Store replacements only in Convex environment variables.
 4. Coordinate `git filter-repo` or equivalent across all branches/clones.
 5. Force-push only in an announced maintenance window.
-
-### Complete the production cutover and project deletion
-
-Do not remove the source early. Complete both migration passes, verify the new
-Vercel deployment, observe a no-write window for already-open/PWA clients,
-remove external references, disable billing, and confirm `DELETE_REQUESTED`.
-The exact checklist is in
-[`deployment/GOOGLE_CLOUD_RETIREMENT.md`](./deployment/GOOGLE_CLOUD_RETIREMENT.md).
 
 ### Verify production governance
 
@@ -113,14 +109,13 @@ and expiry behavior.
 enforce entitlement atomically before a request, cap input/output, and define
 rollback behavior on provider failure. Client-side plan checks are not a quota.
 
-### Finish migration cleanup
+### Resolve retained legacy ownership and provenance
 
-After the source project is deleted and production data is verified:
-
-- map or archive the two migrated workspaces whose legacy owner IDs are not
-  current Clerk-style IDs;
-- remove migration-only functions and provenance indexes when no longer needed;
-- retain only a non-executable migration audit record.
+- Assign or deliberately archive the one preserved workspace whose legacy owner
+  no longer exists in Firebase Auth.
+- After the Google recovery window, decide whether historical migration fields
+  and indexes should remain for auditability or be removed with a verified
+  Convex backfill.
 
 ### Expand authorization coverage
 
@@ -197,12 +192,10 @@ reviewed bundle budget.
 
 ## Recommended order
 
-1. Pass all branch quality gates and deploy the additive Convex backend.
-2. Execute/verify initial migration, merge, and validate the production cutover.
-3. Execute the final no-write-window migration and retire the legacy project.
-4. Rotate the exposed AI credential and schedule the history rewrite.
-5. Verify branch/environment protections and implement anonymous abuse controls.
-6. Design secure multi-device personal-board key management.
-7. Add backend/realtime/storage authorization and lifecycle coverage.
-8. Complete or hide billing, organizations, projects, templates, history, and
+1. Rotate the exposed AI credential and schedule the history rewrite.
+2. Assign or archive the one orphaned workspace.
+3. Verify branch/environment protections and implement anonymous abuse controls.
+4. Design secure multi-device personal-board key management.
+5. Add backend/realtime/storage authorization and lifecycle coverage.
+6. Complete or hide billing, organizations, projects, templates, history, and
    package-publication surfaces.

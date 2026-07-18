@@ -1,200 +1,131 @@
-# Legacy cloud retirement runbook
+# Google Cloud retirement record
 
-This is a one-time runbook for moving the remaining Drawink records and encrypted
-files to Convex, then shutting down the dedicated `drawink-2026` project so it
-cannot generate future charges.
+Status: **completed on 2026-07-18**.
 
-Do not delete or disable the source project until every gate below is complete.
-The currently deployed pre-cutover frontend still writes to those services.
+The dedicated Drawink project `drawink-2026` is no longer part of the runtime
+architecture. Billing is disabled, the project lifecycle is
+`DELETE_REQUESTED`, and the executable migration helpers have been removed from
+the repository. This file is a historical audit and recovery record.
 
-## Latest read-only inventory
+## Migrated application data
 
-Inventory taken on 2026-07-18. The migration script re-reads the source at run
-time; its counts are authoritative if they differ from this snapshot.
-
-| Source | Observed data/resources |
+| Legacy source | Verified Convex or Clerk target |
 | --- | --- |
-| Firestore `scenes` | 15 encrypted collaboration-room snapshots and 11 legacy share payloads |
-| Firestore workspaces | 3 workspaces, 3 boards, 2 encrypted board-content records |
-| Application object bucket | 3 encrypted share files, 12,933 bytes total |
-| Build artifact bucket | 2 build objects, about 12.2 MB |
-| Cloud Run | 2 regional `drawink-collab` services and 7 revisions |
-| Cloud Run domain | `collab.drawink.app` mapping in `us-central1` |
-| Artifact Registry | 3 repositories and 16 container images |
-| Other project assets | identity configuration, service accounts/keys, default network, and certificates |
+| 18 encrypted Firestore collaboration scenes | 18 `collaborativeRooms` records |
+| 11 Firestore legacy share payloads | 11 `publicShares` records |
+| 3 workspaces and owner memberships | 3 `workspaces` and 3 `workspaceMembers` records |
+| 3 boards and 2 encrypted board contents | 3 `boards` and 2 `boardContent` records |
+| 3 encrypted Firebase Storage objects (12,933 bytes) | 3 Convex `files` and 3 storage objects (12,933 bytes) |
+| 3 Firebase Auth users | 3 production Clerk users and 3 Convex users |
 
-The project appeared dedicated to Drawink; no unrelated application resources
-were found. Project deletion is therefore the final target, rather than keeping
-an empty billable project.
+The final source fingerprint was
+`c9e625ad7d5997c8727ff58bed65455a63f969f66d3e38acffe9872bc99ca478`.
+The application-data pass was repeated in verification-only mode and confirmed
+that the source remained unchanged during the copy.
 
-## Target mapping
+## Identity and encrypted ownership migration
 
-| Legacy data | Convex target |
+The three Firebase accounts used OAuth: two Google accounts and one GitHub
+account. Their external Firebase IDs, email-verification state, profile data,
+and original signup timestamps were retained in production Clerk. Production
+Clerk has both Google and GitHub sign-in enabled.
+
+Two workspace owners matched active Firebase accounts. Those workspaces, their
+memberships, and their two boards were relinked to the destination Clerk IDs.
+The single matched encrypted board content was decrypted with its legacy
+Firebase-ID-derived key, re-encrypted with its Clerk-ID-derived key, and then
+decrypted from Convex to verify identical canonical plaintext.
+
+One workspace owner no longer existed in Firebase Auth. Its workspace,
+membership, board, and encrypted board content remain intact under the legacy
+owner ID so no data was guessed, reassigned, or discarded. An owner must decide
+who should receive that orphaned workspace before it becomes accessible through
+a current Clerk account.
+
+The production Clerk webhook now sends `user.created`, `user.updated`, and
+`user.deleted` to the Convex HTTP endpoint. Its signing secret is stored only in
+the production Convex environment, and a signed no-op delivery returned HTTP
+200.
+
+## Verification evidence
+
+- Every migrated room, share, workspace, board, board-content record, and file
+  passed the migration runner's target verification.
+- A separate post-migration audit queried all 18 room IDs one at a time and
+  confirmed 18 of 18 ciphertext and IV pairs byte-for-byte.
+- Matched personal-board content passed source decryption, destination
+  decryption, and plaintext SHA-256 comparison.
+- The orphaned workspace was excluded from ownership mutation and retained with
+  its legacy encryption context.
+- The final Convex export contains 3 users, 3 workspaces, 3 memberships, 3
+  boards, 2 board contents, 18 rooms, 11 shares, 3 file records, and 3 stored
+  objects totaling 12,933 bytes.
+
+## Retained Convex backups
+
+These ZIP files include Convex file storage, passed `unzip -t`, and are ignored
+by Git. They exist on the migration workstation rather than in the repository.
+
+| Checkpoint | Local file | SHA-256 |
+| --- | --- | --- |
+| Before execution | `.migration-backups/convex-production-pre-execution-2026-07-18.zip` | `cf1f914197932cad937ba1a3a484d8fbaa377a642c8502b48e8e533db1e37122` |
+| After Google application-data copy | `.migration-backups/convex-production-post-google-cloud-migration-2026-07-18.zip` | `26655dff8f9fb845dea5e23a5659ce3b3ab550855fdd4524c84e046659f0c8fd` |
+| Before owner relink | `.migration-backups/convex-production-pre-owner-relink-2026-07-18.zip` | `1831ed5afbc31d64238f66a504ce35e4a1c958623be0a9351953df08b1516141` |
+| Final post-auth migration | `.migration-backups/convex-production-post-auth-migration-2026-07-18.zip` | `de42f5fc59defeabd07ccfcc9562d4dc0225e3d19feb1491c4b20414821de74a` |
+
+## Retired infrastructure
+
+The final project inventory contained only Drawink resources:
+
+- two zero-minimum-scale `drawink-collab` Cloud Run services and seven
+  revisions across `asia-south1` and `us-central1`;
+- one `collab.drawink.app` Cloud Run domain mapping;
+- three Artifact Registry repositories and 16 container images;
+- one Firestore database and Firebase Auth configuration;
+- one application bucket containing the three migrated files;
+- one Cloud Build bucket containing two build archives (12,187,188 bytes);
+- Firebase rules/configuration, service accounts, the default VPC, and a managed
+  certificate.
+
+The compromised user-managed service-account key and the GitHub
+`GCP_CREDENTIALS` secret were deleted before project shutdown. No user-managed
+service-account keys remained at the final audit.
+
+Repository runtime code and workflows no longer reference Firebase, Cloud Run,
+the old storage bucket, or the realtime domain. The Convex-only production
+release was merged as PR #16 at commit `56806206`.
+
+## Shutdown evidence
+
+The project was explicitly resolved before shutdown and the active account had
+the Owner role. The terminal checks returned:
+
+| Check | Final result |
 | --- | --- |
-| Encrypted collaboration scene | `collaborativeRooms` |
-| Legacy public-share scene | `publicShares.shortId` |
-| Workspace/board/content | `workspaces`, `boards`, `boardContent` |
-| Encrypted room/share object | Convex Storage plus the matching `files` scope |
-| Realtime transport | `collaborationSessions` and short-lived `collaborationMessages` |
+| Billing account link | Empty |
+| `billingEnabled` | `false` |
+| Project lifecycle | `DELETE_REQUESTED` |
 
-Payloads remain encrypted; the migration copies ciphertext and IVs without
-decrypting them.
+Disabling billing stops billable services. Project deletion entered Google's
+limited recovery period; Google may permanently remove individual service data
+before that period ends.
 
-## Gate 1: replacement readiness
+## Recovery and remaining cleanup
 
-- [x] The Convex-only branch passes `bun run verify` in Testbox; GitHub CI
-      remains a PR gate.
-- [x] New Convex functions/schema were deployed to production on 2026-07-18
-      after a production dry-run and empty legacy-file-table check.
-- [ ] Old browser clients remain compatible with that additive backend deploy.
-- [ ] The Vercel preview passes board, share, file, and two-client collaboration
-      smoke tests.
-- [x] A production Convex export, including file storage, was retained and its
-      ZIP checksum/integrity verified on 2026-07-18. The Git-ignored local file
-      is `.migration-backups/convex-production-pre-google-cloud-migration-2026-07-18.zip`;
-      SHA-256 is
-      `88e937012a0cef399de31025b7e2bbb388b237512ebdc3788a617457e5bdf253`.
-
-The first deployed retention run removed the sole pre-existing Convex public
-share because it was already 102 whole days past its stored `expiresAt`. The
-verified pre-deploy export retains that expired record if recovery is needed.
-
-## Gate 2: initial migration
-
-Run from the authenticated Blacksmith Testbox. The Testbox must have the
-Production `CONVEX_DEPLOY_KEY` and short-lived cloud authentication. Do not run
-the migration from a developer laptop.
-
-The dedicated migration identity needs only these temporary source-read roles:
-
-```bash
-gcloud projects add-iam-policy-binding drawink-2026 \
-  --member='serviceAccount:drawink-github-actions@drawink-2026.iam.gserviceaccount.com' \
-  --role='roles/datastore.viewer'
-
-gcloud storage buckets add-iam-policy-binding \
-  gs://drawink-2026.firebasestorage.app \
-  --member='serviceAccount:drawink-github-actions@drawink-2026.iam.gserviceaccount.com' \
-  --role='roles/storage.objectViewer'
-```
-
-Remove both bindings after the final verified pass if project deletion is not
-performed immediately. The 2026-07-18 initial attempt stopped with `403` before
-reading source data or writing any migration target.
-
-```bash
-# Read-only inventory.
-bun scripts/migrate-google-cloud-to-convex.ts
-
-# Idempotent copy followed by byte-for-byte verification.
-bun scripts/migrate-google-cloud-to-convex.ts --execute
-
-# Independent repeat verification.
-bun scripts/migrate-google-cloud-to-convex.ts --verify-only
-```
-
-The runner fails if:
-
-- a source document has an unknown shape;
-- an object is outside the supported `rooms`, `publicShares`, or legacy
-  `shareLinks` paths;
-- a target record/object is missing;
-- ciphertext, IV, file bytes, or versions differ;
-- an object changes size while downloading; or
-- the source snapshot changes during the migration window.
-
-Store the command summary and source counts with the release record. Never log
-payload contents, access tokens, or deployment keys.
-
-## Gate 3: application cutover
-
-1. Merge the reviewed branch.
-2. Wait for the Convex production job and Vercel production deployment to pass.
-3. Confirm the deployed frontend SHA matches the merged commit.
-4. Run the production smoke tests in `DEPLOY.md`.
-5. Confirm browser traffic no longer targets the legacy realtime domain,
-   Firestore, or the old object bucket.
-6. Remove the obsolete browser variables from Vercel Development, Preview, and
-   Production environments.
-7. Run the migration again to capture writes made between the first copy and
-   frontend cutover.
-8. Observe a no-write window long enough to flush already-open/PWA clients,
-   then run `--verify-only` once more.
-
-Do not treat deletion of Vercel variables as a migration: variables are baked
-into old frontend deployments. The live production deployment must already be
-the Convex-only build.
-
-## Gate 4: external references
-
-- [ ] Remove the `collab.drawink.app` DNS record after production no longer uses
-      it.
-- [ ] Search repository, Vercel, and GitHub configuration for the project ID,
-      old service URL, and object-storage variables.
-- [x] Remove the `GCP_CREDENTIALS` GitHub secret. It was deleted on 2026-07-18
-      after the static key appeared in Testbox lint output. A Google Cloud IAM
-      administrator must still revoke the corresponding service-account key.
-- [ ] Confirm no scheduled workflow or external webhook deploys the old server.
-- [ ] Retain only this historical runbook/migration audit trail.
-
-## Gate 5: disable billing and delete the project
-
-Resolve the exact target first:
-
-```bash
-gcloud projects describe drawink-2026 \
-  --format='value(projectId,lifecycleState)'
-gcloud billing projects describe drawink-2026 \
-  --format='value(projectId,billingEnabled)'
-```
-
-After every preceding checkbox is complete, disable billing and request project
-deletion:
-
-```bash
-gcloud billing projects unlink drawink-2026 --quiet
-gcloud projects delete drawink-2026 --quiet
-```
-
-Verify the terminal state:
-
-```bash
-gcloud projects describe drawink-2026 \
-  --format='value(projectId,lifecycleState)'
-gcloud billing projects describe drawink-2026 \
-  --format='value(projectId,billingEnabled)'
-```
-
-Expected lifecycle state is `DELETE_REQUESTED`; billing should be disabled.
-According to the official
-[project deletion guide](https://docs.cloud.google.com/resource-manager/docs/delete-restore-projects),
-the project has a 30-day recovery window, but some services can remove data
-sooner. Billing unlink immediately stops billable services, according to the
-[`gcloud billing projects unlink` reference](https://docs.cloud.google.com/sdk/gcloud/reference/billing/projects/unlink).
-
-## Recovery
-
-If a post-cutover data loss is discovered during the recovery window:
+If a critical omission is discovered while Google still permits recovery, an
+Owner can request restoration with:
 
 ```bash
 gcloud projects undelete drawink-2026
 ```
 
-Restoring the project does not automatically re-enable billing and service
-recovery can be incomplete or delayed. Prefer restoring the verified Convex
-export or rerunning the migration while the source is still readable.
+Restoration does not automatically re-enable billing, and service recovery may
+be incomplete. Prefer the verified Convex backups for data recovery.
 
-## Completion record
+Remaining non-Google actions are tracked in `docs/PROJECT_STATUS.md`:
 
-| Check | Result |
-| --- | --- |
-| Pre-migration Convex export | Complete, retained locally, checksum-verified on 2026-07-18 |
-| Convex production schema/functions | Deployed and schema-validated on 2026-07-18 |
-| Initial migration and byte verification | Blocked on temporary source viewer roles; no migration writes made |
-| Convex-only production frontend live | Pending |
-| Final no-write-window migration | Pending |
-| Vercel variables removed | Pending |
-| GitHub GCP credential removed | Complete on 2026-07-18; cloud key revocation pending |
-| Legacy DNS removed | Pending |
-| Billing disabled | Pending |
-| Project lifecycle `DELETE_REQUESTED` | Pending |
+- assign or deliberately archive the one orphaned workspace;
+- remove the obsolete `collab.drawink.app` DNS record at its DNS provider if it
+  still exists; and
+- remove historical migration provenance fields/indexes after the recovery
+  window if the audit trail is no longer needed.

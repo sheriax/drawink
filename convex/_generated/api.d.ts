@@ -15,7 +15,6 @@ import type * as cleanup from "../cleanup.js";
 import type * as collaboration from "../collaboration.js";
 import type * as crons from "../crons.js";
 import type * as files from "../files.js";
-import type * as googleCloudMigration from "../googleCloudMigration.js";
 import type * as http from "../http.js";
 import type * as publicShares from "../publicShares.js";
 import type * as realtime from "../realtime.js";
@@ -37,7 +36,6 @@ declare const fullApi: ApiFromModules<{
   collaboration: typeof collaboration;
   crons: typeof crons;
   files: typeof files;
-  googleCloudMigration: typeof googleCloudMigration;
   http: typeof http;
   publicShares: typeof publicShares;
   realtime: typeof realtime;
