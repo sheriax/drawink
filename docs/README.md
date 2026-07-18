@@ -13,6 +13,7 @@ relevant document in the same pull request as the code change.
 | [Deployment](./deployment/DEPLOY.md) | Convex and Vercel release, verification, rollback, and cost controls |
 | [Cloud retirement](./deployment/GOOGLE_CLOUD_RETIREMENT.md) | One-time data migration and safe deletion of the legacy cloud project |
 | [Project status](./PROJECT_STATUS.md) | Completed work, known limitations, and prioritized improvements |
+| [Dashboard backlog](./backlog/DASHBOARD.md) | Deferred dashboard feature inventory and requirements for a safe reimplementation |
 
 ## Component references
 

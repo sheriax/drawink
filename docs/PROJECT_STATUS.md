@@ -135,11 +135,14 @@ authoritative entitlement model are not implemented end to end.
 
 Workspace roles and Clerk organization identifiers exist, but invitations,
 organization sync, member administration, and direct board-collaborator UI do
-not form a complete tested workflow.
+not form a complete tested workflow. The deferred dashboard and invitation scope
+is preserved in [`backlog/DASHBOARD.md`](./backlog/DASHBOARD.md).
 
 ### Projects, templates, and version history
 
 - Projects and templates have schema/UI concepts without complete CRUD flows.
+- The desired dashboard project/template workflows and their security requirements
+  are preserved in [`backlog/DASHBOARD.md`](./backlog/DASHBOARD.md).
 - Board versions are not consistently created or exposed for restore.
 - Conflict logs lack a complete recording and inspection workflow.
 
