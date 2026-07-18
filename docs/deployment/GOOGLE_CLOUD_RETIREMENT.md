@@ -55,6 +55,10 @@ decrypting them.
       SHA-256 is
       `88e937012a0cef399de31025b7e2bbb388b237512ebdc3788a617457e5bdf253`.
 
+The first deployed retention run removed the sole pre-existing Convex public
+share because it was already 102 whole days past its stored `expiresAt`. The
+verified pre-deploy export retains that expired record if recovery is needed.
+
 ## Gate 2: initial migration
 
 Run from the authenticated Blacksmith Testbox. The Testbox must have the
