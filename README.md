@@ -79,7 +79,7 @@ The Drawink editor (npm package) supports:
 The app hosted at [drawink.app](https://drawink.app) is a showcase of what you can build with Drawink and features:
 
 - 📡&nbsp;PWA support (works offline).
-- 🤼&nbsp;Real-time collaboration (Socket.io transport with Convex persistence).
+- 🤼&nbsp;Real-time collaboration through Convex subscriptions.
 - 🔒&nbsp;End-to-end encryption.
 - 💾&nbsp;Local-first support (autosaves to the browser).
 - 🔗&nbsp;Shareable links (export to a readonly link you can share with others).
@@ -88,8 +88,8 @@ The app hosted at [drawink.app](https://drawink.app) is a showcase of what you c
 
 ### For Development
 
-> Lint, frontend and collaboration type-checks, the full Vitest suite, and both
-> production builds are enforced by CI. Review the
+> Lint, TypeScript, Vitest, dependency-audit, and production-build gates are
+> enforced by CI. Review the
 > [project status](./docs/PROJECT_STATUS.md) for operational and product work
 > that remains outside those code-quality gates.
 
@@ -97,7 +97,7 @@ The app hosted at [drawink.app](https://drawink.app) is a showcase of what you c
 
 - Node.js 20.19+ or 22.12+
 - Bun 1.3.14+
-- Convex, Clerk, and Firebase projects for the hosted application features
+- Convex and Clerk projects for the hosted application features
 
 **Installation:**
 
@@ -108,17 +108,17 @@ cd drawink
 
 # Install dependencies from the pinned lockfile
 bun install --frozen-lockfile
-cd server && bun install --frozen-lockfile && cd ..
 
 # Copy public/client environment variables
 cp .env.example .env.local
 
-# Start Convex, the collaboration server, and Vite
+# Start Convex and Vite
 bun run dev
 ```
 
-The app is available at [http://localhost:5173](http://localhost:5173), and the
-collaboration server defaults to `http://localhost:3003`.
+The app is available at [http://localhost:5173](http://localhost:5173). Convex
+provides the database, realtime subscriptions, scheduled cleanup, and encrypted
+file storage; no separate collaboration process is required.
 
 **Environment Setup:**
 
@@ -135,8 +135,7 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
    in `convex/.env`.
 
 See the complete [development guide](./docs/DEVELOPMENT.md) for Clerk webhooks,
-Convex variables, Firebase configuration, service-by-service startup, and the
-quality-gate workflow.
+Convex variables, local startup, and the quality-gate workflow.
 
 ### For npm Package Usage
 
@@ -157,31 +156,28 @@ in the [project status](./docs/PROJECT_STATUS.md).
 
 ## Architecture
 
-Drawink currently uses a multi-service architecture:
+Drawink uses a small managed-service architecture:
 
 - **Frontend:** React 19, TypeScript, and Vite (Vercel)
 - **Structured backend:** Convex functions and data
 - **Authentication:** Clerk with Convex JWT integration and webhooks
-- **Live collaboration:** Socket.io/Bun server on Google Cloud Run
-- **Binary storage:** Firebase Storage for encrypted room/share assets
+- **Live collaboration:** encrypted messages relayed by Convex reactive queries
+- **Binary storage:** Convex Storage for encrypted room/share assets
 
-The application is a single-repository layout, while the collaboration server
-is containerized separately. See [Architecture](./docs/ARCHITECTURE.md) for
-component boundaries and data flows.
+The application and backend functions live in one repository. See
+[Architecture](./docs/ARCHITECTURE.md) for component boundaries and data flows.
 
 ## Scripts
 
 ```bash
 # Development
-bun run dev          # Start Convex, collaboration server, and Vite
+bun run dev          # Start Convex and Vite
 bun run dev:convex   # Start only Convex
 bun run dev:vite     # Start only Vite
-bun run dev:collab   # Start only the collaboration server
 
 # Build
-bun run build        # Build for production
-bun run build:collab # Build the collaboration server
-bun run preview      # Preview production build
+bun run build   # Build for production
+bun run preview # Preview production build
 
 # Convex
 bun run convex:deploy    # Deploy Convex functions
@@ -191,30 +187,28 @@ bun run convex:dashboard # Open Convex dashboard
 bun run lint             # Lint code
 bun run lint:fix         # Lint and fix
 bun run typecheck        # Type check
-bun run typecheck:collab # Type check the collaboration server
 bun run test             # Run Vitest
 bun run test:coverage    # Run tests with coverage
-bun run audit            # Audit root and collaboration dependencies
-bun run check            # Run lint, both type-checks, and tests
-bun run verify           # Run every quality gate and both builds
+bun run audit            # Audit dependencies
+bun run check            # Run lint, type-check, and tests
+bun run verify           # Run every quality gate and the production build
 bun run clean            # Clean build artifacts
 ```
 
 ## Deployment
 
-See the [deployment guide](./docs/deployment/DEPLOY.md) for the current Convex,
-Cloud Run, Vercel, Firebase, DNS, verification, and rollback workflow.
+See the [deployment guide](./docs/deployment/DEPLOY.md) for the Convex and
+Vercel deployment, verification, and rollback workflow.
 
 **Build the deployable application targets:**
 
 ```bash
 bun run build
-bun run build:collab
 ```
 
-The full product also requires a Convex deployment, the Cloud Run collaboration
-service, hardened Firebase Storage rules, and the correct environment variables;
-follow the runbook rather than deploying the static output alone.
+The hosted product requires a Convex production deployment, Clerk integration,
+and the documented Vercel variables; follow the runbook rather than deploying
+the static output alone.
 
 ## Contributing
 

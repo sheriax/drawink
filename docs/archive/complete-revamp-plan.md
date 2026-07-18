@@ -1,10 +1,11 @@
 # Archived: Drawink Complete Revamp Plan
 
 > **Status:** Historical planning record. This proposal describes a Turborepo-based
-> architecture that was not adopted by the current `master` branch. Do not use it as
-> setup, architecture, deployment, or implementation guidance. See
-> [Architecture](../ARCHITECTURE.md) and [Project status](../PROJECT_STATUS.md) for the
-> current repository state.
+> architecture and legacy provider topology that were not adopted by the current
+> application. Do not use it as setup, architecture, deployment, or implementation
+> guidance. See [Architecture](../ARCHITECTURE.md),
+> [Deployment](../deployment/DEPLOY.md), and [Project status](../PROJECT_STATUS.md)
+> for the current Convex-only backend.
 
 # Drawink Complete Revamp Plan
 

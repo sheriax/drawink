@@ -18,6 +18,7 @@ const workspaceValidator = v.object({
   createdAt: v.number(),
   updatedAt: v.number(),
   memberCount: v.number(),
+  legacyFirestoreId: v.optional(v.string()),
 });
 
 // Shared validator for member with user details
@@ -417,14 +418,6 @@ export const deleteWorkspace = mutation({
         .collect();
       for (const c of collabs) {
         await ctx.db.delete(c._id);
-      }
-
-      const files = await ctx.db
-        .query("files")
-        .withIndex("by_board", (q) => q.eq("boardId", board._id))
-        .collect();
-      for (const f of files) {
-        await ctx.db.delete(f._id);
       }
 
       const sessions = await ctx.db

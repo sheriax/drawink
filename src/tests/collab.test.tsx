@@ -28,25 +28,19 @@ Object.defineProperty(window, "crypto", {
   },
 });
 
-vi.mock("../data/firebase.ts", () => {
-  const loadFromFirebase = async () => null;
-  const saveToFirebase = () => {};
-  const isSavedToFirebase = () => true;
-  const loadFilesFromFirebase = async () => ({
+vi.mock("../data/convexFiles.ts", () => {
+  const loadFilesFromConvex = async () => ({
     loadedFiles: [],
-    erroredFiles: [],
-  });
-  const saveFilesToFirebase = async () => ({
-    savedFiles: new Map(),
     erroredFiles: new Map(),
+  });
+  const saveFilesToConvex = async () => ({
+    savedFiles: [],
+    erroredFiles: [],
   });
 
   return {
-    loadFromFirebase,
-    saveToFirebase,
-    isSavedToFirebase,
-    loadFilesFromFirebase,
-    saveFilesToFirebase,
+    loadFilesFromConvex,
+    saveFilesToConvex,
   };
 });
 
@@ -56,19 +50,17 @@ vi.mock("../data/convexCollab.ts", () => ({
   saveToConvex: async (_portal: unknown, elements: unknown[]) => elements,
 }));
 
-vi.mock("socket.io-client", () => {
-  return {
-    default: () => {
-      return {
-        close: () => {},
-        on: () => {},
-        once: () => {},
-        off: () => {},
-        emit: () => {},
-      };
-    },
-  };
-});
+vi.mock("../data/ConvexRealtimeClient.ts", () => ({
+  createConvexRealtimeClient: () => ({
+    id: "test-session",
+    close: () => {},
+    on: () => {},
+    once: () => {},
+    off: () => {},
+    emit: () => {},
+    waitUntilReady: async () => {},
+  }),
+}));
 
 /**
  * These test would deserve to be extended by testing collab with (at least) two clients simultanouesly,

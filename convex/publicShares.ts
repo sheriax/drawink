@@ -7,9 +7,16 @@
 
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { assertLegacyShareAccess, assertPublicShareAccess } from "./roomAccess";
+
+const publicShareResult = v.object({
+  payload: v.bytes(),
+  title: v.string(),
+  createdAt: v.number(),
+});
 
 /**
- * Create a public shareable link (NO AUTH REQUIRED)
+ * Create a public shareable link without requiring a signed-in identity.
  * Stores encrypted scene data and returns a unique link ID
  */
 export const createPublicShare = mutation({
@@ -20,12 +27,21 @@ export const createPublicShare = mutation({
 
     // Optional metadata
     title: v.optional(v.string()),
+    accessToken: v.optional(v.string()),
   },
+  returns: v.object({ shareId: v.id("publicShares") }),
   handler: async (ctx, args) => {
-    // NO AUTH CHECK - Allow anonymous sharing!
+    // Anonymous creation is intentional. New clients attach a fragment-key
+    // proof that is required for subsequent reads and scoped file operations.
+    if (
+      args.accessToken !== undefined &&
+      (args.accessToken.length < 32 || args.accessToken.length > 128)
+    ) {
+      throw new Error("Invalid access token");
+    }
 
-    // Validate payload size (max 5MB)
-    const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+    // Leave headroom under Convex's per-document limit for metadata.
+    const MAX_PAYLOAD_BYTES = 900 * 1024;
     if (args.payload.byteLength > MAX_PAYLOAD_BYTES) {
       throw new Error(
         `Payload too large: ${args.payload.byteLength} bytes exceeds maximum of ${MAX_PAYLOAD_BYTES} bytes`,
@@ -39,6 +55,7 @@ export const createPublicShare = mutation({
     const shareId = await ctx.db.insert("publicShares", {
       payload: args.payload,
       title,
+      accessToken: args.accessToken,
 
       // Metadata
       createdAt: Date.now(),
@@ -53,21 +70,16 @@ export const createPublicShare = mutation({
 });
 
 /**
- * Get public share by ID (NO AUTH REQUIRED)
- * Anyone with the link can view
+ * Get a public share by ID using its fragment-key access proof.
  */
 export const getPublicShare = query({
   args: {
     shareId: v.id("publicShares"),
+    accessToken: v.optional(v.string()),
   },
+  returns: publicShareResult,
   handler: async (ctx, args) => {
-    // NO AUTH CHECK - Public links are accessible to anyone
-
-    const share = await ctx.db.get(args.shareId);
-
-    if (!share) {
-      throw new Error("Share not found");
-    }
+    const share = await assertPublicShareAccess(ctx, args.shareId, args.accessToken);
 
     // Check expiration
     if (share.expiresAt && share.expiresAt < Date.now()) {
@@ -92,17 +104,11 @@ export const getPublicShare = query({
 export const getPublicShareByShortId = query({
   args: {
     shortId: v.string(),
+    accessToken: v.optional(v.string()),
   },
+  returns: publicShareResult,
   handler: async (ctx, args) => {
-    // Query by short ID
-    const share = await ctx.db
-      .query("publicShares")
-      .withIndex("by_short_id", (q) => q.eq("shortId", args.shortId))
-      .first();
-
-    if (!share) {
-      throw new Error("Share not found");
-    }
+    const share = await assertLegacyShareAccess(ctx, args.shortId, args.accessToken);
 
     // Check expiration
     if (share.expiresAt && share.expiresAt < Date.now()) {

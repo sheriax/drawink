@@ -29,10 +29,6 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install Collaboration Server Dependencies
-        working-directory: server
-        run: bun install --frozen-lockfile
-
       - name: Audit Dependencies
         run: bun run audit
 
@@ -42,9 +38,6 @@ jobs:
       - name: Type Check Frontend and Convex
         run: bun run typecheck
 
-      - name: Type Check Collaboration Server
-        run: bun run typecheck:collab
-
       - name: Test
         run: bun run test
 
@@ -53,6 +46,3 @@ jobs:
         env:
           VITE_CLERK_PUBLISHABLE_KEY: pk_test_dummy
           VITE_CONVEX_URL: https://dummy.convex.cloud
-
-      - name: Build Collab Server
-        run: bun run build:collab

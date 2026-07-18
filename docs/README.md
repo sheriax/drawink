@@ -1,53 +1,45 @@
 # Drawink documentation
 
-This directory is the source of truth for developing, operating, and assessing
-the current `master` branch.
+This directory is the operational source of truth for the hosted Drawink app.
+Code behavior wins if a document and the implementation disagree; update the
+relevant document in the same pull request as the code change.
 
 ## Start here
 
-| Document | Use it for |
-|---|---|
-| [Development guide](./DEVELOPMENT.md) | Local setup, environment variables, service startup, scripts, and troubleshooting |
-| [Architecture](./ARCHITECTURE.md) | Current runtime topology, component ownership, data flows, and system boundaries |
-| [Deployment guide](./deployment/DEPLOY.md) | Convex, Cloud Run, Vercel, Firebase, DNS, verification, and rollback operations |
-| [Project status](./PROJECT_STATUS.md) | Prioritized security, quality, product-completeness, and maintainability findings |
+| Document | Purpose |
+| --- | --- |
+| [Architecture](./ARCHITECTURE.md) | Runtime topology, trust boundaries, data flows, retention, and repository map |
+| [Development](./DEVELOPMENT.md) | Local setup, environment variables, commands, checks, and troubleshooting |
+| [Deployment](./deployment/DEPLOY.md) | Convex and Vercel release, verification, rollback, and cost controls |
+| [Cloud retirement](./deployment/GOOGLE_CLOUD_RETIREMENT.md) | One-time data migration and safe deletion of the legacy cloud project |
+| [Project status](./PROJECT_STATUS.md) | Completed work, known limitations, and prioritized improvements |
 
-## Component documentation
+## Component references
 
-| Document | Scope |
-|---|---|
-| [Collaboration server](../server/README.md) | Socket.io protocol, server configuration, and Cloud Run target |
-| [Editor core](../src/core/README.md) | Embedding the Drawink editor component |
-| [Localization](../src/core/locales/README.md) | Translation ownership and completion data |
-| [Editor changelog](../src/core/CHANGELOG.md) | Historical editor/library releases |
-| [Next.js example](../examples/with-nextjs/README.md) | Legacy example status and prerequisites for restoring it |
+| Area | Location |
+| --- | --- |
+| Convex schema and functions | [`../convex`](../convex) |
+| Realtime browser adapter | [`../src/data/ConvexRealtimeClient.ts`](../src/data/ConvexRealtimeClient.ts) |
+| Encrypted file browser adapter | [`../src/data/convexFiles.ts`](../src/data/convexFiles.ts) |
+| Clerk and cloud-sync adapters | [`../src/data`](../src/data) |
+| GitHub Actions | [`../.github/workflows`](../.github/workflows) |
+
+There is no standalone collaboration server or second object-storage backend.
+Convex provides the database, reactive subscriptions, scheduled functions, and
+file storage used by the application.
 
 ## Historical planning
 
-[The complete revamp plan](./archive/complete-revamp-plan.md) is retained for
-context only. It proposes a Turborepo layout with `apps/` and `packages/` that is
-not present on the current branch. It must not be used as current setup or
-deployment guidance.
+[`archive/complete-revamp-plan.md`](./archive/complete-revamp-plan.md) is retained
+for decision history only. It predates the Convex-only backend and must not be
+used as a current deployment guide.
 
-## Documentation ownership
+## Documentation checklist
 
-Update documentation in the same change when you modify:
+When changing behavior, update:
 
-- required environment variables;
-- service boundaries, persistence, or authentication flows;
-- local commands or supported runtime versions;
-- deployment platforms, domains, regions, or CI behavior;
-- feature status or known operational limitations.
-
-Do not add secrets, live credentials, copied environment exports, or private
-account details to documentation. Link to provider dashboards and describe
-where a value comes from without committing the value itself.
-
-## Scope note
-
-Agent skill documentation under `.agents/` is tooling metadata and is not part
-of the product documentation set. The architecture and status guides audit its
-repository impact where relevant, but the product docs do not duplicate those
-instructions.
-
-Last reviewed: **2026-07-17**
+1. `README.md` for user-facing setup or architecture changes.
+2. `ARCHITECTURE.md` for boundaries, ownership, or data-flow changes.
+3. `DEVELOPMENT.md` for commands, variables, and local tooling.
+4. `deployment/DEPLOY.md` for production or rollback changes.
+5. `PROJECT_STATUS.md` when a limitation is added or resolved.

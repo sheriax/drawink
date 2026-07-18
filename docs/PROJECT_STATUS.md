@@ -1,201 +1,208 @@
 # Project status and improvement register
 
-Audit date: **2026-07-17**
+Audit updated: **2026-07-18**
 
-Quality branch: `codex/fix-all-quality-gates`
-
-Audited base: `2744ce5868abc2e7b6a9889f89dcea6db0a987b0`
-
-This document separates verified repository health from product, security, and
-operations work that still requires design decisions or external access.
+This register separates implemented repository changes from production cutover,
+security decisions, and incomplete product surfaces. “Implemented” does not mean
+“live” until the deployment and smoke-test evidence exists.
 
 ## Executive status
 
 | Area | Status | Evidence or remaining work |
-|---|---|---|
-| Git sync | Current | `origin/master` and the audited local base were both at `2744ce58` before this branch was created |
-| Biome | Passing | 679 files checked with no diagnostics |
-| Frontend and Convex types | Passing | `bun run typecheck` exits successfully |
-| Collaboration server types | Passing | Dedicated strict `server/tsconfig.json` and `bun run typecheck:collab` exit successfully |
-| Tests | Passing | 53 files; 584 passed and 9 intentionally skipped |
-| Production builds | Passing | Vite/PWA frontend and Bun collaboration-server bundles both build successfully |
-| CI | Enforced | Frozen install, lint, both type-checks, tests, and both builds are required on pull requests |
-| Package management | Reproducible | Bun 1.3.14 is pinned; root and server installs use committed lockfiles |
-| Dependency audit | Passing | Root application and collaboration-server lockfiles report no known vulnerabilities |
-| Documentation | Reorganized | Architecture, development, deployment, and status documents have explicit scopes |
-| Credential exposure | Partially remediated | `convex/.env` is removed from tracking and ignored; provider rotation and a coordinated history rewrite remain external actions |
-| Production security | Blocked | Firebase rules, backend abuse controls, and deployment protections still need owner decisions and external configuration |
+| --- | --- | --- |
+| Convex-only backend code | Backend live; frontend cutover pending | Production schema/functions were deployed on 2026-07-18; the Vercel frontend still awaits the reviewed branch cutover |
+| Legacy data migration | Blocked on temporary read-only IAM | The runner and byte verification are ready, but the migration service account still needs Firestore and object-bucket viewer roles |
+| Legacy project shutdown | Pending | Billing/project deletion must wait for final migration and production cutover |
+| Current branch quality gates | Testbox passed; CI pending | Frozen install, zero-vulnerability audit, Biome, TypeScript, 586 passing tests (9 skipped), and production/PWA build passed in Testbox on 2026-07-18 |
+| Previous quality baseline | Passed | The merged quality branch had clean audit/lint/types/tests/builds |
+| Documentation | Reorganized | Architecture, development, deployment, retirement, and status scopes are explicit |
+| Credential exposure | External P0 remains | The AI provider key and the migration service-account key require administrator revocation; the GitHub GCP secret was deleted and ephemeral files destroyed |
+| Production protections | Partially configured | CI/deploy gates exist; repository/environment protection settings need administrator verification |
 
-## Completed on the quality branch
+## Implemented in the Convex migration
 
-- Removed all reported TypeScript and Biome diagnostics while retaining explicit
-  exceptions only where the editor's keyboard-application semantics require one.
-- Repaired the reusable editor boundary so Clerk-specific dashboard behavior
-  lives in the application shell.
-- Restored history polymorphism, WOFF2 bindings, editor focus behavior, library
-  navigation, clipboard/image flows, and legacy Excalidraw image imports.
-- Repaired and isolated the test harness, refreshed reviewed snapshots, and made
-  all 593 collected tests deterministic.
-- Added a real collaboration-server TypeScript project instead of accidentally
-  inheriting a root config that excluded the server.
-- Pinned Bun, replaced the mixed root pnpm/Bun setup, and enabled frozen installs.
-- Updated vulnerable direct dependencies and pinned patched transitive releases;
-  both Bun lockfiles now pass `bun audit` with no known vulnerabilities.
-- Changed CI and deployment verification from build-only checks to complete
-  quality gates.
-- Removed the populated Convex environment file from Git tracking, added a
-  placeholder-only template, and retained the developer's ignored local copy.
-- Archived the obsolete revamp plan and added current architecture, development,
-  deployment, and documentation indexes.
+- Replaced the standalone realtime process with a Convex reactive-query adapter
+  while preserving the editor's event contract.
+- Bound realtime sessions to one-way room-key proofs and added identifier,
+  payload-size, channel, and per-session rate checks.
+- Added short TTLs for relay messages and cleanup for stale presence.
+- Replaced external object uploads with encrypted Convex Storage uploads scoped
+  to rooms or shares.
+- Added cleanup of expired rooms, public shares, metadata, and storage objects.
+- Added access proofs for new collaboration rooms and public shares without
+  sending fragment encryption keys to the backend.
+- Kept migrated links backward-compatible and added an idempotent, byte-verified
+  migration for scenes, workspaces, boards, content, and files.
+- Removed the old server package, container/deploy automation, provider SDK,
+  storage rules, environment declarations, and deployment job.
+- Removed the obsolete storage-based Drawink Pro export bridge; the maintained
+  iframe integration remains.
 
-## P0: external security actions
+## P0: owner/external actions
+
+### Revoke the exposed migration service-account key
+
+A temporary credentialed Testbox workflow allowed an unignored Google auth file
+to be included in Biome output. The `GCP_CREDENTIALS` GitHub secret was deleted,
+the files were shredded, and the VM was destroyed on 2026-07-18. The service
+account cannot revoke its own key, so a Google Cloud IAM administrator must
+delete that key before any further migration work. Use short-lived federation
+instead of restoring a static JSON key.
 
 ### Rotate the exposed AI credential and clean Git history
 
-The previously tracked `convex/.env` contained a populated `AI_API_KEY`. This
-branch prevents future commits of that file, but deleting a tracked file does not
-invalidate a credential or remove it from existing commits.
+A previously tracked `convex/.env` contained a populated `AI_API_KEY`. Removing
+the file does not invalidate the key or erase earlier commits.
 
-Repository/provider owners must:
+Required owner actions:
 
 1. Disable and rotate the exposed provider key.
 2. Review provider usage from the first exposed commit onward.
-3. Store replacements with `bunx convex env set` and `--prod`, never in Git.
-4. Coordinate `git filter-repo` (or equivalent) across every branch and clone.
-5. Force-push only during an announced maintenance window.
+3. Store replacements only in Convex environment variables.
+4. Coordinate `git filter-repo` or equivalent across all branches/clones.
+5. Force-push only in an announced maintenance window.
 
-History rewriting is intentionally not performed in this feature branch because
-it is destructive and requires repository-owner coordination.
+### Complete the production cutover and project deletion
 
-### Replace permissive Firebase rules
+Do not remove the source early. Complete both migration passes, verify the new
+Vercel deployment, observe a no-write window for already-open/PWA clients,
+remove external references, disable billing, and confirm `DELETE_REQUESTED`.
+The exact checklist is in
+[`deployment/GOOGLE_CLOUD_RETIREMENT.md`](./deployment/GOOGLE_CLOUD_RETIREMENT.md).
 
-`firebase-project/storage.rules` permits anonymous room/share-link object writes,
-and the legacy Firestore rules permit public scene/workspace access. Encryption
-does not prevent overwrite, deletion, quota abuse, or unexpected storage cost.
+### Verify production governance
 
-Required work:
+Repository administrators should require:
 
-- choose Clerk-to-Firebase authorization or a verified signed-URL/server flow;
-- validate ownership, immutable identifiers, content type, and size;
-- deny undeclared paths;
-- remove legacy Firestore deployment if it is no longer used; and
-- add emulator-backed rules tests before production deployment.
+- pull requests and the `Quality Gates` check on `master`;
+- reviewed access to the GitHub `Production` environment;
+- restricted deployment branches and secret access;
+- an owner-only path for destructive data/project operations; and
+- a documented security-reporting channel.
 
-## P1: backend and operational hardening
+## P1: security and backend hardening
 
-### Enforce AI limits inside the action
+### Replace deterministic personal-board encryption
 
-`convex/aiUsage.ts` exposes usage information, but the external-provider action
-must own the authoritative entitlement and quota decision. Reserve usage
-atomically before the provider call, cap input/output sizes, and define rollback
-behavior for failed calls.
+`ConvexStorageAdapter` currently derives the personal-board encryption key from
+the Clerk user ID and a fixed salt. This encrypts bytes in transit/storage but
+does not protect them from a party that knows the user ID and derivation logic.
+Do not describe authenticated personal-board storage as server-resistant
+end-to-end encryption until a multi-device key-management design is implemented.
 
-### Close authorization and abuse gaps
+Collaboration and public-share keys are random fragment secrets and have a
+stronger confidentiality model.
 
-- Verify workspace membership inside every board/workspace query, not only at the
-  client route.
-- Add quotas for anonymous public-share creation and a retention job for expired
-  shares.
-- Add authenticated or signed room admission to the Socket.io server; per-socket
-  rate limiting can be bypassed by reconnecting.
-- Add authorization tests for every public Convex query, mutation, and action.
-- Decide whether Firebase or Convex owns each binary/metadata lifecycle.
+### Add anonymous abuse controls
 
-### Protect production outside the repository
+Current controls bound payload sizes, TTLs, channels, and writes per active
+realtime session. A bot can still create many fresh anonymous room/share tokens.
+Choose and implement one or more of:
 
-The workflows now gate deployment and serialize production runs, but GitHub
-administrators still need to configure:
+- Clerk-required creation with anonymous read/join;
+- CAPTCHA/Turnstile admission;
+- a trusted edge-issued rate token; or
+- deployment-level quotas and alerts with a controlled failure mode.
 
-- required pull requests and the `Quality Gates` status check on `master`;
-- required reviewers for the `Production` environment;
-- restricted deployment branches and secret access; and
-- an immutable image-tag/rollback policy for Cloud Run.
+Add tests proving unauthorized access, replay, oversized input, channel spoofing,
+and expiry behavior.
 
-Path filters should be added once service ownership is finalized so a docs-only
-change cannot redeploy backend infrastructure.
+### Enforce AI limits in the provider action
+
+`convex/aiUsage.ts` exposes usage data, but the provider action must reserve and
+enforce entitlement atomically before a request, cap input/output, and define
+rollback behavior on provider failure. Client-side plan checks are not a quota.
+
+### Finish migration cleanup
+
+After the source project is deleted and production data is verified:
+
+- map or archive the two migrated workspaces whose legacy owner IDs are not
+  current Clerk-style IDs;
+- remove migration-only functions and provenance indexes when no longer needed;
+- retain only a non-executable migration audit record.
+
+### Expand authorization coverage
+
+Audit every public Convex query, mutation, action, and HTTP route. Add backend
+tests for owner/member/collaborator roles, anonymous link proofs, cross-workspace
+IDs, storage scope mismatches, and webhook verification.
 
 ## P1: incomplete product surfaces
 
 ### Billing
 
-Stripe fields and placeholder UI exist, but checkout, customer portal, verified
-webhooks, product/price configuration, and subscription reconciliation are not
-implemented end to end. Plan entitlement logic is also duplicated and can treat
-`pro`, `team`, and beta users inconsistently.
+Subscription fields and placeholder UI exist, but checkout, customer portal,
+verified billing webhooks, product/price configuration, reconciliation, and one
+authoritative entitlement model are not implemented end to end.
 
-### Organizations and sharing
+### Organizations and board sharing
 
-Workspace roles and Clerk organization identifiers exist, but invite/add-member,
-organization sync, and board-collaborator management do not form a complete UI
-and backend workflow.
+Workspace roles and Clerk organization identifiers exist, but invitations,
+organization sync, member administration, and direct board-collaborator UI do
+not form a complete tested workflow.
 
 ### Projects, templates, and version history
 
-- `projects` and `templates` have schema/UI concepts without complete CRUD flows.
-- `boardVersions` can be cleaned up, but versions are not consistently created or
-  exposed for restore.
-- `conflictLogs` exists without a complete recording or inspection workflow.
+- Projects and templates have schema/UI concepts without complete CRUD flows.
+- Board versions are not consistently created or exposed for restore.
+- Conflict logs lack a complete recording and inspection workflow.
 
-Implement and test each surface end to end, or feature-flag/remove claims until
-it is supported.
-
-### File lifecycle
-
-Workspace/board metadata deletion can leave Firebase objects behind. Consolidate
-the active storage adapter, add idempotent server-side cleanup and retention, and
-cover room, share-link, public-share, and board paths with integration tests.
+Complete each surface end to end or hide/remove unfinished claims.
 
 ### Package distribution
 
-The root is a private hosted application, while the README still documents the
-published `@drawink/drawink` consumer package. The repository has no maintained
-root publish pipeline, and the Next.js example reflects an older workspace
-layout. Decide whether this repository owns package publication; then either
-restore a tested package build/release flow or move package instructions and
-examples to their actual source repository.
+The root is a private hosted application while the README still documents the
+published editor package. There is no maintained root publication pipeline, and
+the included consumer guidance may belong to another source repository. Decide
+ownership, then restore a tested release flow or move the package instructions.
 
-## P2: maintainability and quality improvements
+## P2: reliability and maintainability
+
+### Realtime integration coverage
+
+Add multi-client tests for join/leave, reconnect, first-user initialization,
+message ordering, burst behavior, follow mode, persistence fallback, files, and
+cleanup. The current query deliberately returns a bounded recent window, so
+tests must prove periodic full-scene synchronization converges after a burst.
+
+### Payload-limit UX
+
+Convex database documents are bounded. Current application limits are 700 KiB
+per relay message and 900 KiB per public-share payload. Provide preflight size
+feedback and a documented fallback for very large scenes instead of surfacing a
+generic save failure.
 
 ### Test output and coverage
 
-The suite passes, but a few tests intentionally exercise error paths and React
-19 emits `act()`/lifecycle warnings in older editor tests. Remove those warnings
-incrementally, add backend authorization tests, and establish coverage thresholds
-for Convex, storage adapters, and the collaboration protocol.
+Remove remaining expected React lifecycle/`act()` warnings, increase Convex and
+adapter coverage, and set reviewed thresholds for authorization and storage
+lifecycles rather than relying mainly on editor-unit coverage.
 
 ### Bundle size and loading
 
-The production build succeeds but reports large main/WASM chunks and several
-modules imported both statically and dynamically. Profile real loading behavior,
-split optional Mermaid/font-subsetting features, and set a reviewed bundle budget
-instead of merely raising Vite's warning limit.
+Profile large main/WASM chunks and modules imported both statically and
+dynamically. Split optional Mermaid/font-subsetting features and enforce a
+reviewed bundle budget.
 
-### Dependency maintenance
+### Dependency and source maintenance
 
-Automate reviewed dependency and browser-data updates. Keep Bun, the server
-container image, Vite, Vitest, and their Node engine requirements synchronized.
+- Automate reviewed dependency/browser-data updates while keeping Bun, Node,
+  Vite, and Vitest requirements aligned.
+- Continue moving hosted-product concerns out of reusable `src/core` code.
+- Reduce remaining broad `any`/`@ts-ignore` boundaries in app initialization,
+  external-share IDs, and board switching.
+- Add decision records for key management, offline conflicts, anonymous abuse,
+  and package ownership.
 
-### Source boundaries
+## Recommended order
 
-Continue moving hosted-product concerns out of `src/core/`, reduce duplicate
-storage and migration helpers, and document architectural decisions for
-authentication, persistence ownership, offline conflict resolution, and public
-sharing.
-
-### Repository metadata
-
-Confirm the intended license, support policy, security reporting channel, and
-code-owner/reviewer map. Add the corresponding top-level metadata if this
-repository will accept external contributions.
-
-## Recommended execution order
-
-1. Rotate the exposed credential and schedule the history rewrite.
-2. Replace Firebase rules and add authorization/rules tests.
-3. Enable GitHub branch and Production-environment protections.
-4. Enforce AI quotas and audit all public backend authorization paths.
-5. Add backend/protocol coverage and eliminate remaining test warnings.
-6. Decide package-publication ownership and remove stale consumer claims.
-7. Complete or feature-flag billing, organizations, projects, templates, and
-   version history.
-8. Profile and split the largest frontend chunks.
+1. Pass all branch quality gates and deploy the additive Convex backend.
+2. Execute/verify initial migration, merge, and validate the production cutover.
+3. Execute the final no-write-window migration and retire the legacy project.
+4. Rotate the exposed AI credential and schedule the history rewrite.
+5. Verify branch/environment protections and implement anonymous abuse controls.
+6. Design secure multi-device personal-board key management.
+7. Add backend/realtime/storage authorization and lifecycle coverage.
+8. Complete or hide billing, organizations, projects, templates, history, and
+   package-publication surfaces.

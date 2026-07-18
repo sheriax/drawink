@@ -11,6 +11,7 @@
 import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { type QueryCtx, internalMutation, mutation, query } from "./_generated/server";
+import { assertRoomAccess } from "./roomAccess";
 import { getUserId } from "./users";
 
 /**
@@ -63,6 +64,7 @@ export const join = mutation({
     if (existing) {
       // Reactivate existing session
       await ctx.db.patch(existing._id, {
+        sessionType: "board",
         isActive: true,
         lastHeartbeat: Date.now(),
         userName: args.userName, // Update name in case it changed
@@ -74,6 +76,7 @@ export const join = mutation({
     // Create new session
     return await ctx.db.insert("collaborationSessions", {
       boardId: args.boardId,
+      sessionType: "board",
       userId,
       userName: args.userName,
       userPhotoUrl: args.userPhotoUrl,
@@ -281,29 +284,73 @@ export const cleanupStaleSessions = internalMutation({
 });
 
 // =========================================================================
-// COLLABORATIVE ROOM STORAGE (Replaces Firebase Firestore "scenes")
+// COLLABORATIVE ROOM STORAGE
 // =========================================================================
 
+const MAX_STORED_SCENE_BYTES = 900 * 1024;
+
 /**
- * Save collaborative scene to Convex
- * Replaces Firebase's saveToFirebase() function
- * Requires authentication.
+ * Save an end-to-end encrypted collaborative scene to Convex. Anonymous link
+ * users prove access with a one-way token derived from the fragment-only key.
  */
 export const saveCollaborativeScene = mutation({
   args: {
     roomId: v.string(),
+    accessToken: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
     ciphertext: v.bytes(), // Encrypted scene data
     iv: v.bytes(), // Encryption IV
     sceneVersion: v.number(),
-    lastEditedBy: v.optional(v.string()), // Optional Clerk user ID
+    // Accepted only for compatibility with the pre-cutover client. The value
+    // is never trusted; authenticated identity always comes from Convex.
+    lastEditedBy: v.optional(v.string()),
   },
+  returns: v.object({
+    success: v.boolean(),
+    roomId: v.string(),
+    version: v.number(),
+  }),
   handler: async (ctx, args) => {
-    // Skip save if user is not authenticated (auto-save fires even when signed out)
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return { success: false, roomId: args.roomId, version: args.sceneVersion };
+    if (args.roomId.length === 0 || args.roomId.length > 128) {
+      throw new Error("Invalid room ID");
     }
-    const userId = identity.subject;
+    if (args.ciphertext.byteLength + args.iv.byteLength > MAX_STORED_SCENE_BYTES) {
+      throw new Error("Collaborative scene is too large");
+    }
+    if (args.iv.byteLength < 12 || args.iv.byteLength > 32) {
+      throw new Error("Invalid encryption IV");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+    const hasAnyAccessProof = args.accessToken !== undefined || args.sessionId !== undefined;
+    let editorId: string;
+    if (hasAnyAccessProof) {
+      if (
+        !args.accessToken ||
+        args.accessToken.length < 32 ||
+        args.accessToken.length > 128 ||
+        !args.sessionId
+      ) {
+        throw new Error("Access denied");
+      }
+      const session = await ctx.db
+        .query("collaborationSessions")
+        .withIndex("by_room_and_session", (q) =>
+          q.eq("roomId", args.roomId).eq("sessionId", args.sessionId),
+        )
+        .first();
+      if (!session || session.accessToken !== args.accessToken) {
+        throw new Error("Access denied");
+      }
+      editorId = identity?.subject ?? session.sessionId ?? session.userId;
+    } else {
+      // Preserve the old signed-in behavior during rollout, but never accept
+      // an anonymous write without a fragment-key proof.
+      if (!identity) {
+        return { success: false, roomId: args.roomId, version: args.sceneVersion };
+      }
+      editorId = identity.subject;
+    }
 
     // Check if room already exists
     const existingRoom = await ctx.db
@@ -315,13 +362,18 @@ export const saveCollaborativeScene = mutation({
     const expiresAt = now + 30 * 24 * 60 * 60 * 1000; // 30 days from now
 
     if (existingRoom) {
+      if (existingRoom.accessToken !== undefined && existingRoom.accessToken !== args.accessToken) {
+        throw new Error("Access denied");
+      }
+
       // Update existing room
       await ctx.db.patch(existingRoom._id, {
+        accessToken: existingRoom.accessToken ?? args.accessToken,
         ciphertext: args.ciphertext,
         iv: args.iv,
         sceneVersion: args.sceneVersion,
         updatedAt: now,
-        lastEditedBy: userId, // Use authenticated userId, not client-supplied value
+        lastEditedBy: editorId,
         expiresAt, // Reset expiry on update
       });
 
@@ -330,12 +382,13 @@ export const saveCollaborativeScene = mutation({
     // Create new room
     await ctx.db.insert("collaborativeRooms", {
       roomId: args.roomId,
+      accessToken: args.accessToken,
       ciphertext: args.ciphertext,
       iv: args.iv,
       sceneVersion: args.sceneVersion,
       createdAt: now,
       updatedAt: now,
-      lastEditedBy: userId, // Use authenticated userId
+      lastEditedBy: editorId,
       expiresAt,
     });
 
@@ -344,20 +397,23 @@ export const saveCollaborativeScene = mutation({
 });
 
 /**
- * Load collaborative scene from Convex
- * Replaces Firebase's loadFromFirebase() function
- * Requires authentication to prevent unauthenticated access to encrypted scene data.
+ * Load an end-to-end encrypted collaborative scene from Convex.
  */
 export const loadCollaborativeScene = query({
   args: {
     roomId: v.string(),
+    accessToken: v.optional(v.string()),
   },
+  returns: v.union(
+    v.object({
+      ciphertext: v.bytes(),
+      iv: v.bytes(),
+      sceneVersion: v.number(),
+      updatedAt: v.number(),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized: authentication required to load collaborative scenes");
-    }
-
     const room = await ctx.db
       .query("collaborativeRooms")
       .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
@@ -366,6 +422,8 @@ export const loadCollaborativeScene = query({
     if (!room) {
       return null; // Room doesn't exist yet
     }
+
+    await assertRoomAccess(ctx, args.roomId, args.accessToken);
 
     return {
       ciphertext: room.ciphertext,
@@ -376,40 +434,40 @@ export const loadCollaborativeScene = query({
   },
 });
 
-/**
- * Check if room exists (for initialization logic)
- */
+/** Compatibility metadata query retained for clients deployed before cutover. */
 export const roomExists = query({
-  args: {
-    roomId: v.string(),
-  },
+  args: { roomId: v.string() },
+  returns: v.boolean(),
   handler: async (ctx, args) => {
     const room = await ctx.db
       .query("collaborativeRooms")
       .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
       .first();
-
     return room !== null;
   },
 });
 
-/**
- * Get room info (metadata only, no encrypted data)
- */
+/** Compatibility metadata query retained for clients deployed before cutover. */
 export const getRoomInfo = query({
-  args: {
-    roomId: v.string(),
-  },
+  args: { roomId: v.string() },
+  returns: v.union(
+    v.object({
+      roomId: v.string(),
+      sceneVersion: v.number(),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+      lastEditedBy: v.optional(v.string()),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
     const room = await ctx.db
       .query("collaborativeRooms")
       .withIndex("by_room_id", (q) => q.eq("roomId", args.roomId))
       .first();
-
     if (!room) {
       return null;
     }
-
     return {
       roomId: room.roomId,
       sceneVersion: room.sceneVersion,

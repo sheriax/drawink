@@ -2,7 +2,7 @@
  * Storage Adapter Interface
  *
  * This interface abstracts storage operations for boards and their content.
- * It can be implemented by LocalStorageAdapter, CloudStorageAdapter, or HybridStorageAdapter.
+ * It can be implemented by LocalStorageAdapter, ConvexStorageAdapter, or HybridStorageAdapter.
  */
 
 import type { DrawinkElement } from "@/lib/elements/types";
@@ -32,7 +32,7 @@ export interface Workspace {
 
 /**
  * Storage adapter interface that abstracts board storage operations.
- * Implemented by LocalStorageAdapter and CloudStorageAdapter.
+ * Implemented by LocalStorageAdapter and ConvexStorageAdapter.
  */
 export interface StorageAdapter {
   // Board operations

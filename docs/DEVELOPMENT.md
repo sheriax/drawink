@@ -2,51 +2,53 @@
 
 ## Prerequisites
 
-- Node.js 20.19+ or 22.12+ (required by the installed Vite generation)
+- Node.js 20.19+ or 22.12+
 - Bun 1.3.14+
 - A Convex project
-- A Clerk application with a Convex JWT template
-- A Firebase project when testing binary uploads
+- A Clerk application when testing authenticated cloud sync
 
-The root package manager is pinned in `package.json` and `bun.lock`. The
-collaboration server keeps a separate frozen lock because its Docker build uses
-`server/` as the build context.
+Anonymous local drawing works without Clerk. Collaboration, public shares, and
+remote persistence require a reachable Convex development deployment.
 
-## Install
+## Install and run
 
 ```bash
 git clone https://github.com/sheriax/drawink.git
 cd drawink
 bun install --frozen-lockfile
-cd server && bun install --frozen-lockfile && cd ..
+cp .env.example .env.local
+bun run dev
 ```
 
-Do not commit generated local environment files or provider credentials.
+`bun run dev` starts `convex dev` and Vite together. The frontend defaults to
+<http://localhost:5173>. There is no separate collaboration server.
 
-## Client environment
-
-Copy the public/client template:
+Use individual processes when diagnosing startup:
 
 ```bash
-cp .env.example .env.local
+bun run dev:convex
+bun run dev:vite
 ```
 
-At minimum, configure:
+## Browser environment
 
-```dotenv
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+Only `VITE_*` values are bundled into browser code. Minimum hosted setup:
+
+```bash
 VITE_CONVEX_URL=https://your-deployment.convex.cloud
-VITE_APP_WS_SERVER_URL=http://localhost:3003
-VITE_APP_FIREBASE_CONFIG='{"apiKey":"...","projectId":"...","storageBucket":"..."}'
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
 ```
 
-Only `VITE_*` values are available to browser code. They are public by design;
-never place secret keys in a `VITE_*` variable.
+Start from `.env.example` for optional feature flags and external integrations.
+Do not add private API keys to a `VITE_*` variable.
+
+No realtime-server URL or second object-storage configuration is used. If an
+old local environment still contains those variables, remove them after moving
+to this branch; the application no longer reads them.
 
 ## Convex environment
 
-Convex function secrets are deployment environment variables. Set them through
-the Convex dashboard or CLI, not in a tracked `convex/.env` file.
+Configure server-only values in Convex, not `.env.local`:
 
 ```bash
 # Omit the value to enter it interactively and keep it out of shell history.
@@ -57,123 +59,110 @@ bunx convex env set AI_API_KEY
 bunx convex env set AI_MODEL
 ```
 
-Use `--prod` for the production deployment:
-
-```bash
-bunx convex env set --prod AI_API_KEY
-```
-
-`BETA_ENABLED` is optional and controls the default beta flag assigned by the
-Clerk user-sync mutation.
+Use `--prod` only when changing the production deployment. `BETA_ENABLED` is
+optional. Billing variables should not be added until the server-side billing
+flow in `PROJECT_STATUS.md` is implemented.
 
 ## Clerk setup
 
-1. Create the Clerk application.
-2. Create the Convex JWT template expected by the app.
-3. Set the Clerk frontend/issuer domain in the Convex environment as
-   `CLERK_FRONTEND_API_URL`.
-4. Add a Clerk webhook pointing to
-   `https://<deployment>.convex.site/clerk-webhook`.
-5. Subscribe to `user.created`, `user.updated`, and `user.deleted`.
-6. Set the signing secret as `CLERK_WEBHOOK_SECRET` in the matching Convex
-   deployment.
+1. Create or select the Clerk application.
+2. Add a Convex JWT template named `convex` with the expected audience.
+3. Set the frontend publishable key in `.env.local`.
+4. Set Clerk server variables in the matching Convex deployment.
+5. Point the Clerk webhook at the Convex HTTP endpoint and subscribe only to
+   events handled by `convex/http.ts`.
+6. Test sign-in, sign-out, workspace creation, and a second-device sync.
 
-## Collaboration server environment
+Never trust a client-supplied user ID. Convex functions must derive authenticated
+identity from `ctx.auth.getUserIdentity()`.
 
-The committed server environment files currently contain non-secret defaults.
-For local overrides, use an ignored local file or exported process variables.
-The server reads these keys:
-
-```dotenv
-PORT=3003
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
-```
-
-## Run locally
-
-The convenience command starts Convex, the Socket.io server, and Vite:
-
-```bash
-bun run dev
-```
-
-Run services separately when debugging startup or environment issues:
-
-```bash
-# Terminal 1
-bun run dev:convex
-
-# Terminal 2
-bun run dev:collab
-
-# Terminal 3
-bun run dev:vite
-```
-
-The frontend is served at `http://localhost:5173`; the collaboration server
-defaults to `http://localhost:3003`.
-
-## Scripts
+## Common commands
 
 | Command | Purpose |
-|---|---|
-| `bun run dev` | Start Convex, collaboration server, and Vite |
-| `bun run dev:vite` | Start only the frontend |
-| `bun run dev:convex` | Start only Convex development |
-| `bun run dev:collab` | Start only the Socket.io server |
-| `bun run build` | Build the frontend |
-| `bun run build:collab` | Build the collaboration server |
-| `bun run preview` | Preview the frontend production build |
-| `bun run typecheck` | Run TypeScript without emitting |
-| `bun run typecheck:collab` | Type-check the collaboration server |
-| `bun run lint` | Run Biome checks |
-| `bun run test` | Run Vitest once |
-| `bun run test:coverage` | Run Vitest with coverage |
-| `bun run audit` | Audit root and collaboration-server lockfiles |
-| `bun run check` | Run lint, both type-checks, and Vitest |
-| `bun run verify` | Run dependency audits, all quality gates, and both production builds |
-| `bun run convex:deploy` | Deploy Convex functions/schema |
+| --- | --- |
+| `bun run dev` | Start Convex and Vite |
+| `bun run build` | Create the production frontend build |
+| `bun run preview` | Serve the built frontend locally |
+| `bun run lint` | Run Biome without writing changes |
+| `bun run lint:fix` | Apply Biome-safe fixes and formatting |
+| `bun run typecheck` | Run TypeScript without emitting files |
+| `bun run test` | Run the Vitest suite once |
+| `bun run test:coverage` | Produce coverage output |
+| `bun run audit` | Audit the dependency graph |
+| `bun run check` | Lint, type-check, and test |
+| `bun run verify` | Audit, check, and production-build |
+| `bun run convex:deploy` | Deploy functions/schema to production |
 
-## Quality status
+CI runs from the pinned Bun version and frozen lockfile. A dependency change is
+complete only when both `package.json` and `bun.lock` are updated.
 
-The audit branch is clean across both dependency audits, Biome,
-frontend/Convex TypeScript, collaboration-server TypeScript, all 53 Vitest
-files, and both production builds. GitHub's `Drawink CI` workflow enforces
-those gates on pull requests and `master`.
+## Change guidelines
 
-See [Project status](./PROJECT_STATUS.md) for the current counts, root causes,
-and recommended repair order.
+### Convex functions
 
-## Adding or changing code
+- Define argument and return validators.
+- Use indexes instead of filtering full tables when an index can represent the
+  lookup.
+- Authenticate personal workspace/board functions and check resource access.
+- Bound anonymous payload size and retention.
+- Keep administrative and migration functions internal.
+- Make schema transitions additive until production data is migrated.
 
-- Keep product-specific auth/dashboard code in `src/`, outside `src/core/`.
-- Add Convex validators and authorization checks to every public function.
-- Add tests for application features under `src/tests/` and backend behavior in
-  a dedicated Convex/server test layer.
-- Keep generated files, local outputs, backups, and secrets out of Git.
-- Update this guide, [Architecture](./ARCHITECTURE.md), and
-  [Deployment](./deployment/DEPLOY.md) when runtime behavior changes.
+### Realtime collaboration
+
+- Preserve end-to-end encryption; only ciphertext and routing metadata may be
+  relayed.
+- Keep the browser event contract in `Portal` compatible with
+  `ConvexRealtimeClient`.
+- Update retention and payload-limit docs when constants change.
+- Cover join, leave, publish, subscription, reconnect, and unauthorized-access
+  behavior when changing the relay.
+
+### File storage
+
+- Upload encrypted bytes only.
+- Register each storage ID with a room/share scope.
+- Delete replaced objects and clean up failed uploads when possible.
+- Add a deletion path before introducing a new file scope.
+
+## One-time cloud retirement tool
+
+`scripts/migrate-google-cloud-to-convex.ts` exists only for the documented
+legacy cutover. Normal development must not call it. It requires authenticated
+production credentials and must run in the Blacksmith Testbox as described in
+the [retirement runbook](./deployment/GOOGLE_CLOUD_RETIREMENT.md).
 
 ## Troubleshooting
 
-### `bun install --frozen-lockfile` reports a changed lockfile
+### Frozen install reports a changed lockfile
 
-Use Bun 1.3.14 or newer. If dependencies intentionally changed, regenerate the
-lock with the pinned Bun version and include the reviewed `bun.lock` diff.
+Use the pinned Bun version, update dependencies intentionally, regenerate
+`bun.lock`, and commit both files. Do not bypass `--frozen-lockfile` in CI.
+
+### Convex URL is missing
+
+Run `bunx convex dev` once or set `VITE_CONVEX_URL` in `.env.local`. Confirm it
+points to the same development deployment whose functions are running.
 
 ### Convex authentication is empty
 
-Verify the Clerk JWT template, `CLERK_FRONTEND_API_URL`, the frontend
-`VITE_CONVEX_URL`, and that the Clerk webhook has created the user record.
+Check the Clerk JWT template name/audience, Convex auth configuration, and the
+server-side Clerk URL. Sign out and in again after changing templates.
+
+### Collaboration connects but receives no updates
+
+Confirm both clients use the exact same room link, including the fragment key.
+Inspect Convex function logs for access-proof, session, rate-limit, or payload-
+size failures. A key mismatch intentionally appears as access denied or decrypt
+failure.
+
+### Shared images do not load
+
+Confirm the scene contains initialized image file IDs and that matching `files`
+metadata exists for the same room/share scope. The storage object itself is
+encrypted, so downloading it directly should not produce a readable image.
 
 ### AI reports that it is not configured
 
-Check the Convex deployment variables with `bunx convex env list --names-only`.
-Do not create or commit a populated `convex/.env` file.
-
-### Collaboration works without images
-
-Check the Firebase browser configuration and Storage rules. The current rules
-need security hardening before production use; see the P0 findings in the status
-document.
+Set `AI_BASE_URL`, `AI_API_KEY`, and `AI_MODEL` in the active Convex deployment.
+Never place the provider secret in a browser variable.

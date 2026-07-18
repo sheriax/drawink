@@ -1,14 +1,10 @@
-/**
- * Database shared types
- * Firestore common interfaces
- */
+/** Shared database value types used by the typed model interfaces. */
 
 export interface Timestamp {
   seconds: number;
   nanoseconds: number;
 }
 
-// Scenes collection (existing collaboration rooms)
 export interface Scene {
   id: string;
   data: string;

@@ -1,11 +1,7 @@
 /**
  * Convex Collaboration Adapter
  *
- * Replaces Firebase Firestore for collaborative scene storage.
- * Firebase Storage is still used for file uploads (cost-effective for large binaries).
- *
- * This file provides saveToConvex() and loadFromConvex() functions
- * that work similarly to the old Firebase saveToFirebase() / loadFromFirebase().
+ * Persists end-to-end encrypted collaborative scenes in Convex.
  */
 
 import { reconcileElements } from "@/core";
@@ -16,11 +12,12 @@ import type { AppState } from "@/core/types";
 import { getSceneVersion } from "@/lib/elements";
 import type { DrawinkElement, OrderedDrawinkElement } from "@/lib/elements/types";
 import { ConvexHttpClient } from "convex/browser";
-import type { Socket } from "socket.io-client";
 import type { SyncableDrawinkElement } from ".";
 import { getSyncableElements } from ".";
 import { api } from "../../convex/_generated/api";
 import type Portal from "../collab/Portal";
+import type { ConvexRealtimeClient } from "./ConvexRealtimeClient";
+import { deriveConvexAccessToken } from "./convexAccess";
 
 // Initialize Convex client
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
@@ -30,15 +27,15 @@ if (!CONVEX_URL) {
 
 const convex = new ConvexHttpClient(CONVEX_URL);
 
-// Scene version cache (same as Firebase implementation)
+// Scene version cache prevents redundant persistence writes.
 class ConvexSceneVersionCache {
-  private static cache = new WeakMap<Socket, number>();
+  private static cache = new WeakMap<ConvexRealtimeClient, number>();
 
-  static get = (socket: Socket) => {
+  static get = (socket: ConvexRealtimeClient) => {
     return ConvexSceneVersionCache.cache.get(socket);
   };
 
-  static set = (socket: Socket, elements: readonly SyncableDrawinkElement[]) => {
+  static set = (socket: ConvexRealtimeClient, elements: readonly SyncableDrawinkElement[]) => {
     ConvexSceneVersionCache.cache.set(socket, getSceneVersion(elements));
   };
 }
@@ -81,7 +78,7 @@ async function decryptElements(
 }
 
 /**
- * Save collaborative scene to Convex (replaces saveToFirebase)
+ * Save a collaborative scene to Convex.
  */
 export const saveToConvex = async (
   portal: Portal,
@@ -96,9 +93,12 @@ export const saveToConvex = async (
   }
 
   try {
+    await socket.waitUntilReady();
+    const accessToken = await deriveConvexAccessToken("room", roomKey);
     // Load existing scene from Convex
     const existingScene = await convex.query(api.collaboration.loadCollaborativeScene, {
       roomId,
+      accessToken,
     });
 
     let reconciledElements: readonly SyncableDrawinkElement[];
@@ -136,36 +136,38 @@ export const saveToConvex = async (
     // Convex v.bytes() expects ArrayBuffer, not Uint8Array
     await convex.mutation(api.collaboration.saveCollaborativeScene, {
       roomId,
+      accessToken,
+      sessionId: socket.id,
       ciphertext:
         ciphertext instanceof ArrayBuffer
           ? ciphertext
           : (new Uint8Array(ciphertext).buffer as ArrayBuffer),
       iv: iv instanceof ArrayBuffer ? iv : (iv.buffer as ArrayBuffer),
       sceneVersion,
-      lastEditedBy: undefined, // Optional: could pass Clerk user ID if authenticated
     });
 
     // Update cache
     ConvexSceneVersionCache.set(socket, reconciledElements);
 
     return reconciledElements;
-  } catch (error: any) {
+  } catch (error) {
     console.error("[ConvexCollab] Save failed:", error);
     throw error;
   }
 };
 
 /**
- * Load collaborative scene from Convex (replaces loadFromFirebase)
+ * Load a collaborative scene from Convex.
  */
 export const loadFromConvex = async (
   roomId: string,
   roomKey: string,
-  socket: Socket | null,
+  socket: ConvexRealtimeClient | null,
 ): Promise<readonly SyncableDrawinkElement[] | null> => {
   try {
     const scene = await convex.query(api.collaboration.loadCollaborativeScene, {
       roomId,
+      accessToken: await deriveConvexAccessToken("room", roomKey),
     });
 
     if (!scene) {
@@ -187,7 +189,7 @@ export const loadFromConvex = async (
     }
 
     return elements;
-  } catch (error: any) {
+  } catch (error) {
     console.error("[ConvexCollab] Load failed:", error);
     throw error;
   }

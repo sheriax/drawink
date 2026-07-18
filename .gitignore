@@ -9,14 +9,15 @@
 .eslintcache
 .history
 .idea
+.migration-backups
 .vercel
 .vscode
 .yarn
+gha-creds-*.json
 *.log
 *.tgz
 build
 dist
-firebase
 logs
 node_modules
 npm-debug.log*

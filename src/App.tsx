@@ -42,7 +42,6 @@ import {
   ExcalLogo,
   GithubIcon,
   XBrandIcon,
-  exportToPlus,
   share,
   usersIcon,
   youtubeIcon,
@@ -75,17 +74,11 @@ import {
   useAtomValue,
   useAtomWithInitialValue,
 } from "./app-jotai";
-import {
-  FIREBASE_STORAGE_PREFIXES,
-  STORAGE_KEYS,
-  SYNC_BROWSER_TABS_TIMEOUT,
-  isDrawinkPlusSignedUser,
-} from "./app_constants";
+import { STORAGE_KEYS, SYNC_BROWSER_TABS_TIMEOUT, isDrawinkPlusSignedUser } from "./app_constants";
 import Collab, { collabAPIAtom, isCollaboratingAtom, isOfflineAtom } from "./collab/Collab";
 import { AppFooter } from "./components/AppFooter";
 import { AppMainMenu } from "./components/AppMainMenu";
 import { AppWelcomeScreen } from "./components/AppWelcomeScreen";
-import { ExportToDrawinkPlus, exportToDrawinkPlus } from "./components/ExportToDrawinkPlus";
 import { TopErrorBoundary } from "./components/TopErrorBoundary";
 
 import { exportToBackend, getCollaborationLinkData, isCollaborationLink, loadScene } from "./data";
@@ -109,7 +102,8 @@ import {
   LibraryIndexedDBAdapter,
   LibraryLocalStorageMigrationAdapter,
 } from "./data/LocalStorageAdapter";
-import { loadFilesFromFirebase } from "./data/firebase";
+import { deriveConvexAccessToken } from "./data/convexAccess";
+import { loadFilesFromConvex } from "./data/convexFiles";
 import { isBrowserStorageStateNewer } from "./data/tabSync";
 import { ShareDialog, shareDialogStateAtom } from "./share/ShareDialog";
 import { useHandleAppTheme } from "./useHandleAppTheme";
@@ -210,7 +204,12 @@ const initializeScene = async (opts: {
   drawinkAPI: DrawinkImperativeAPI;
 }): Promise<
   { scene: DrawinkInitialDataState | null } & (
-    | { isExternalScene: true; id: string; key: string }
+    | {
+        isExternalScene: true;
+        id: string;
+        key: string;
+        source: "legacyShare" | "publicShare" | "room";
+      }
     | { isExternalScene: false; id?: null; key?: null }
   )
 > => {
@@ -254,7 +253,7 @@ const initializeScene = async (opts: {
       if (jsonBackendMatch) {
         scene = await loadScene(jsonBackendMatch[1], jsonBackendMatch[2], localDataState);
       } else if (shareMatch) {
-        // Load from Convex public share (NO AUTH REQUIRED)
+        // Load from Convex using the proof derived from the fragment key.
         const { importFromConvex } = await import("@/data/index");
         const shareData = await importFromConvex(shareMatch[1], shareMatch[2]);
         scene = restore(shareData, localDataState?.appState, localDataState?.elements, {
@@ -340,15 +339,17 @@ const initializeScene = async (opts: {
       isExternalScene: true,
       id: roomLinkData.roomId,
       key: roomLinkData.roomKey,
+      source: "room",
     };
   }
   if (scene) {
-    return isExternalScene && jsonBackendMatch
+    return isExternalScene && (jsonBackendMatch || shareMatch)
       ? {
           scene,
           isExternalScene,
-          id: jsonBackendMatch[1],
-          key: jsonBackendMatch[2],
+          id: (jsonBackendMatch ?? shareMatch)![1],
+          key: (jsonBackendMatch ?? shareMatch)![2],
+          source: jsonBackendMatch ? "legacyShare" : "publicShare",
         }
       : { scene, isExternalScene: false };
   }
@@ -541,7 +542,7 @@ const DrawinkWrapper = () => {
       if (collabAPI?.isCollaborating()) {
         if (data.scene.elements) {
           collabAPI
-            .fetchImageFilesFromFirebase({
+            .fetchImageFilesFromConvex({
               elements: data.scene.elements,
               forceFetchFiles: true,
             })
@@ -563,19 +564,26 @@ const DrawinkWrapper = () => {
             return acc;
           }, [] as FileId[]) || [];
 
-        if (data.isExternalScene) {
-          loadFilesFromFirebase(
-            `${FIREBASE_STORAGE_PREFIXES.shareLinkFiles}/${data.id}`,
-            data.key,
-            fileIds,
-          ).then(({ loadedFiles, erroredFiles }) => {
-            drawinkAPI.addFiles(loadedFiles);
-            updateStaleImageStatuses({
-              drawinkAPI,
-              erroredFiles,
-              elements: drawinkAPI.getSceneElementsIncludingDeleted(),
-            });
-          });
+        if (data.isExternalScene && data.source !== "room") {
+          deriveConvexAccessToken(data.source, data.key)
+            .then((accessToken) =>
+              loadFilesFromConvex({
+                scope: data.source,
+                scopeId: data.id,
+                accessToken,
+                decryptionKey: data.key,
+                fileIds,
+              }),
+            )
+            .then(({ loadedFiles, erroredFiles }) => {
+              drawinkAPI.addFiles(loadedFiles);
+              updateStaleImageStatuses({
+                drawinkAPI,
+                erroredFiles,
+                elements: drawinkAPI.getSceneElementsIncludingDeleted(),
+              });
+            })
+            .catch((error) => console.error("Failed to load shared files from Convex", error));
         } else if (isInitialLoad) {
           if (fileIds.length) {
             hybridStorageAdapter.fileStorage
@@ -956,30 +964,6 @@ const DrawinkWrapper = () => {
             toggleTheme: true,
             export: {
               onExportToBackend,
-              renderCustomUI: drawinkAPI
-                ? (elements, appState, files) => {
-                    return (
-                      <ExportToDrawinkPlus
-                        elements={elements}
-                        appState={appState}
-                        files={files}
-                        name={drawinkAPI.getName()}
-                        onError={(error) => {
-                          drawinkAPI?.updateScene({
-                            appState: {
-                              errorMessage: error.message,
-                            },
-                          });
-                        }}
-                        onSuccess={() => {
-                          drawinkAPI.updateScene({
-                            appState: { openDialog: null },
-                          });
-                        }}
-                      />
-                    );
-                  }
-                : undefined,
             },
           },
         }}
@@ -1074,22 +1058,6 @@ const DrawinkWrapper = () => {
         <OverwriteConfirmDialog>
           <OverwriteConfirmDialog.Actions.ExportToImage />
           <OverwriteConfirmDialog.Actions.SaveToDisk />
-          {drawinkAPI && (
-            <OverwriteConfirmDialog.Action
-              title={t("overwriteConfirm.action.drawinkPlus.title")}
-              actionLabel={t("overwriteConfirm.action.drawinkPlus.button")}
-              onClick={() => {
-                exportToDrawinkPlus(
-                  drawinkAPI.getSceneElements(),
-                  drawinkAPI.getAppState(),
-                  drawinkAPI.getFiles(),
-                  drawinkAPI.getName(),
-                );
-              }}
-            >
-              {t("overwriteConfirm.action.drawinkPlus.description")}
-            </OverwriteConfirmDialog.Action>
-          )}
         </OverwriteConfirmDialog>
         <AppFooter onChange={() => drawinkAPI?.refresh()} />
         {drawinkAPI && <AIComponents drawinkAPI={drawinkAPI} />}
@@ -1243,23 +1211,6 @@ const DrawinkWrapper = () => {
                 ]
               : [DrawinkPlusCommand, DrawinkPlusAppCommand]),
 
-            {
-              label: t("overwriteConfirm.action.drawinkPlus.button"),
-              category: DEFAULT_CATEGORIES.export,
-              icon: exportToPlus,
-              predicate: true,
-              keywords: ["plus", "export", "save", "backup"],
-              perform: () => {
-                if (drawinkAPI) {
-                  exportToDrawinkPlus(
-                    drawinkAPI.getSceneElements(),
-                    drawinkAPI.getAppState(),
-                    drawinkAPI.getFiles(),
-                    drawinkAPI.getName(),
-                  );
-                }
-              },
-            },
             {
               ...CommandPalette.defaultItems.toggleTheme,
               perform: () => {

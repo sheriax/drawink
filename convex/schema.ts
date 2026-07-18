@@ -2,8 +2,8 @@
  * Convex Schema for Drawink
  *
  * This schema defines the database structure for Drawink using Convex.
- * Files are stored in Firebase Storage (cost-effective), while metadata
- * and board data are stored in Convex for reactive real-time updates.
+ * Convex is the system of record for application data, realtime collaboration,
+ * and encrypted binary files.
  */
 
 import { defineSchema, defineTable } from "convex/server";
@@ -54,9 +54,13 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
     memberCount: v.number(),
+
+    // One-time Google Cloud migration provenance.
+    legacyFirestoreId: v.optional(v.string()),
   })
     .index("by_owner", ["ownerId"])
-    .index("by_clerk_org", ["clerkOrgId"]),
+    .index("by_clerk_org", ["clerkOrgId"])
+    .index("by_legacy_firestore_id", ["legacyFirestoreId"]),
 
   // =========================================================================
   // WORKSPACE MEMBERS
@@ -101,7 +105,7 @@ export default defineSchema({
   boards: defineTable({
     name: v.string(),
 
-    // Firebase Storage URL for thumbnail (NOT stored in Convex!)
+    // Convex Storage URL for the current thumbnail.
     thumbnailUrl: v.optional(v.string()),
 
     // Organization
@@ -121,13 +125,18 @@ export default defineSchema({
 
     // Version for conflict resolution
     version: v.number(),
+
+    // One-time Google Cloud migration provenance.
+    legacyFirestoreId: v.optional(v.string()),
+    legacyWorkspaceId: v.optional(v.string()),
   })
     .index("by_workspace", ["workspaceId"])
     .index("by_project", ["projectId"])
     .index("by_owner", ["ownerId"])
     .index("by_workspace_not_archived", ["workspaceId", "archivedAt"])
     .index("by_public_link", ["publicLinkId"])
-    .index("by_workspace_recent", ["workspaceId", "lastOpenedAt"]),
+    .index("by_workspace_recent", ["workspaceId", "lastOpenedAt"])
+    .index("by_legacy_workspace_and_board", ["legacyWorkspaceId", "legacyFirestoreId"]),
 
   // =========================================================================
   // BOARD COLLABORATORS (Direct board sharing)
@@ -185,15 +194,13 @@ export default defineSchema({
     .index("by_board_and_version", ["boardId", "version"]),
 
   // =========================================================================
-  // FILES (Metadata only - actual files in Firebase Storage)
+  // FILES (Convex Storage metadata)
   // =========================================================================
   files: defineTable({
     fileId: v.string(), // File ID used in elements
-    boardId: v.id("boards"),
-
-    // Firebase Storage reference
-    firebaseStorageUrl: v.string(), // Full Firebase Storage URL
-    firebaseStoragePath: v.string(), // Path for deletion
+    storageId: v.id("_storage"),
+    scope: v.union(v.literal("room"), v.literal("publicShare"), v.literal("legacyShare")),
+    scopeId: v.string(),
 
     // File info
     mimeType: v.string(),
@@ -201,10 +208,11 @@ export default defineSchema({
 
     // Metadata
     createdAt: v.number(),
-    createdBy: v.string(), // Clerk user ID
+    createdBy: v.optional(v.string()), // Clerk user ID for authenticated files
   })
-    .index("by_board", ["boardId"])
-    .index("by_file_id", ["fileId"]),
+    .index("by_storage_id", ["storageId"])
+    .index("by_scope", ["scope", "scopeId"])
+    .index("by_scope_and_file", ["scope", "scopeId", "fileId"]),
 
   // =========================================================================
   // TEMPLATES
@@ -214,7 +222,7 @@ export default defineSchema({
     description: v.optional(v.string()),
     category: v.string(), // "Flowchart", "Mindmap", "Wireframe", etc.
 
-    // Firebase Storage URL for thumbnail
+    // Convex Storage URL for thumbnail
     thumbnailUrl: v.optional(v.string()),
 
     // Encrypted template content
@@ -241,6 +249,10 @@ export default defineSchema({
   collaborativeRooms: defineTable({
     roomId: v.string(), // Public room ID (shared in URL)
 
+    // A one-way proof derived from the fragment-only encryption key. Legacy
+    // rooms omit it until their first post-migration write.
+    accessToken: v.optional(v.string()),
+
     // Encrypted scene data (encrypted with roomKey on client)
     // Contains: { elements: [], appState: {} }
     ciphertext: v.bytes(),
@@ -258,7 +270,8 @@ export default defineSchema({
     expiresAt: v.optional(v.number()),
   })
     .index("by_room_id", ["roomId"])
-    .index("by_updated_at", ["updatedAt"]),
+    .index("by_updated_at", ["updatedAt"])
+    .index("by_expires_at", ["expiresAt"]),
 
   // =========================================================================
   // COLLABORATION SESSIONS (Real-time presence)
@@ -268,6 +281,9 @@ export default defineSchema({
     roomId: v.optional(v.string()), // Collaborative room (if using real-time collab)
 
     userId: v.string(), // Clerk user ID or anonymous session ID
+    sessionType: v.optional(v.union(v.literal("board"), v.literal("room"))),
+    sessionId: v.optional(v.string()), // Convex realtime client session
+    accessToken: v.optional(v.string()), // One-way room-key proof
     userName: v.string(),
     userPhotoUrl: v.optional(v.string()),
 
@@ -281,6 +297,9 @@ export default defineSchema({
 
     // Session info
     joinedAt: v.number(),
+    followingSessionId: v.optional(v.string()),
+    messageWindowStartedAt: v.optional(v.number()),
+    messageCount: v.optional(v.number()),
   })
     .index("by_board", ["boardId"])
     .index("by_room", ["roomId"])
@@ -288,7 +307,26 @@ export default defineSchema({
     .index("by_room_active", ["roomId", "isActive"])
     .index("by_user", ["userId"])
     .index("by_board_and_user", ["boardId", "userId"])
-    .index("by_room_and_user", ["roomId", "userId"]),
+    .index("by_room_and_user", ["roomId", "userId"])
+    .index("by_room_and_session", ["roomId", "sessionId"])
+    .index("by_last_heartbeat", ["lastHeartbeat"])
+    .index("by_type_and_last_heartbeat", ["sessionType", "lastHeartbeat"]),
+
+  // =========================================================================
+  // COLLABORATION MESSAGES (Short-lived encrypted Convex relay)
+  // =========================================================================
+  collaborationMessages: defineTable({
+    roomId: v.string(),
+    senderSessionId: v.string(),
+    channel: v.string(),
+    encryptedData: v.bytes(),
+    iv: v.bytes(),
+    isVolatile: v.boolean(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+  })
+    .index("by_room_and_created_at", ["roomId", "createdAt"])
+    .index("by_expires_at", ["expiresAt"]),
 
   // =========================================================================
   // AI USAGE TRACKING
@@ -330,7 +368,7 @@ export default defineSchema({
     .index("by_timestamp", ["timestamp"]),
 
   // =========================================================================
-  // PUBLIC SHARES (Anonymous shareable links - NO AUTH REQUIRED)
+  // PUBLIC SHARES (anonymous links protected by fragment-key access proofs)
   // =========================================================================
   publicShares: defineTable({
     // Encrypted payload (contains: encodingMetadataBuffer, iv, encryptedBuffer)
@@ -340,6 +378,10 @@ export default defineSchema({
 
     // Optional short ID for backward compatibility
     shortId: v.optional(v.string()),
+
+    // One-way proof derived from the fragment-only encryption key. Migrated
+    // legacy shares intentionally omit it for backward compatibility.
+    accessToken: v.optional(v.string()),
 
     // Metadata
     title: v.string(),
@@ -351,5 +393,6 @@ export default defineSchema({
     lastViewedAt: v.optional(v.number()),
   })
     .index("by_short_id", ["shortId"])
-    .index("by_created_at", ["createdAt"]),
+    .index("by_created_at", ["createdAt"])
+    .index("by_expires_at", ["expiresAt"]),
 });

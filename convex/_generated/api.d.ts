@@ -11,10 +11,15 @@
 import type * as ai from "../ai.js";
 import type * as aiUsage from "../aiUsage.js";
 import type * as boards from "../boards.js";
+import type * as cleanup from "../cleanup.js";
 import type * as collaboration from "../collaboration.js";
+import type * as crons from "../crons.js";
 import type * as files from "../files.js";
+import type * as googleCloudMigration from "../googleCloudMigration.js";
 import type * as http from "../http.js";
 import type * as publicShares from "../publicShares.js";
+import type * as realtime from "../realtime.js";
+import type * as roomAccess from "../roomAccess.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -28,10 +33,15 @@ declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   aiUsage: typeof aiUsage;
   boards: typeof boards;
+  cleanup: typeof cleanup;
   collaboration: typeof collaboration;
+  crons: typeof crons;
   files: typeof files;
+  googleCloudMigration: typeof googleCloudMigration;
   http: typeof http;
   publicShares: typeof publicShares;
+  realtime: typeof realtime;
+  roomAccess: typeof roomAccess;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;
