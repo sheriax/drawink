@@ -11,13 +11,13 @@ import type { OrderedDrawinkElement } from "@/lib/elements/types";
 import { FILE_UPLOAD_TIMEOUT, WS_EVENTS, WS_SUBTYPES } from "../app_constants";
 import { isSyncableElement } from "../data";
 
-import type { Socket } from "socket.io-client";
 import type { SocketUpdateData, SocketUpdateDataSource, SyncableDrawinkElement } from "../data";
+import type { ConvexRealtimeClient } from "../data/ConvexRealtimeClient";
 import type { TCollabClass } from "./Collab";
 
 class Portal {
   collab: TCollabClass;
-  socket: Socket | null = null;
+  socket: ConvexRealtimeClient | null = null;
   socketInitialized = false; // we don't want the socket to emit any updates until it is fully initialized
   roomId: string | null = null;
   roomKey: string | null = null;
@@ -27,7 +27,7 @@ class Portal {
     this.collab = collab;
   }
 
-  open(socket: Socket, id: string, key: string) {
+  open(socket: ConvexRealtimeClient, id: string, key: string) {
     this.socket = socket;
     this.roomId = id;
     this.roomKey = key;

@@ -22,7 +22,14 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "vite-env.d.ts", "global.d.ts", "vite.config.ts", "convex/**/*"],
+  "include": [
+    "src/**/*",
+    "scripts/migrate-google-cloud-to-convex.ts",
+    "vite-env.d.ts",
+    "global.d.ts",
+    "vite.config.ts",
+    "convex/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist",

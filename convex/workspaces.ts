@@ -18,6 +18,7 @@ const workspaceValidator = v.object({
   createdAt: v.number(),
   updatedAt: v.number(),
   memberCount: v.number(),
+  legacyFirestoreId: v.optional(v.string()),
 });
 
 // Shared validator for member with user details

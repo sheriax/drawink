@@ -1,116 +1,136 @@
 # Architecture
 
-This document describes the architecture on the `master` branch. The archived
-[complete revamp plan](./archive/complete-revamp-plan.md) describes a different,
-unimplemented monorepo proposal.
+Drawink is a local-first React application with a managed Convex backend. Scene
+content and uploaded share/collaboration files are encrypted in the browser
+before they leave the device. Collaboration and public-share secrets are random
+fragment keys; authenticated personal-board storage currently uses a
+deterministic user-ID-derived key and therefore has a weaker trust model.
 
 ## Runtime topology
 
 ```text
-Browser (React 19 + Vite)
-  ├─ Clerk                     authentication and JWTs
-  ├─ Convex                    users, workspaces, boards, encrypted board data,
-  │                            public shares, AI actions, and usage metadata
-  ├─ Socket.io collab server   transient room presence and encrypted broadcasts
-  └─ Firebase Storage          encrypted binary assets for rooms and share links
+Browser
+  ├─ React 19 + Vite editor
+  ├─ IndexedDB/localStorage       local-first boards and files
+  ├─ Clerk                       identity and session tokens
+  └─ Convex client
+       ├─ tables/functions       workspaces, boards, encrypted scenes
+       ├─ reactive queries       encrypted realtime relay and presence
+       ├─ Storage                encrypted room/share files
+       └─ cron jobs              relay and expired-content cleanup
 
-Deployments
-  ├─ Frontend                  Vercel
-  ├─ Convex functions/data     Convex Cloud
-  ├─ Collab server             Google Cloud Run
-  └─ Binary storage            Firebase Storage
+Hosting
+  ├─ Vercel                      static frontend and preview deployments
+  ├─ Convex                      backend runtime, data, realtime, and files
+  └─ Clerk                       authentication
 ```
 
-The collaboration server relays encrypted payloads and does not persist scenes.
-Convex holds structured records and encrypted scene payloads. Firebase Storage
-holds binary drawing assets.
+There is no application-owned WebSocket process. `ConvexRealtimeClient` keeps
+the editor's existing event-oriented collaboration interface while translating
+join, publish, presence, and subscription operations into Convex functions.
 
-## Main components
+## Ownership boundaries
 
-| Component | Location | Responsibility |
-|---|---|---|
-| Application shell | `src/` | Routing, authentication, dashboard, persistence adapters, sharing, and collaboration integration |
-| Editor core | `src/core/` | Canvas editor, rendering, actions, import/export, localization, and most existing tests |
-| Shared editor libraries | `src/lib/` | Math, element, common, utility, storage, and application types |
-| Convex backend | `convex/` | Schema, authorization, queries, mutations, HTTP actions, and AI actions |
-| Collaboration server | `server/` | Socket.io rooms, presence, encrypted broadcast relay, and per-socket rate limiting |
-| Deployment tooling | `scripts/deploy.ts`, `.github/workflows/` | Cloud Run deployment and GitHub Actions pipelines |
-| Firebase configuration | `firebase-project/` | Storage and legacy Firestore rules |
-| Examples | `examples/` | Integration examples; see each example's README for its current support status |
+| Concern | Owner | Primary code |
+| --- | --- | --- |
+| Canvas and editor state | Browser | `src/core`, `src/App.tsx` |
+| Local anonymous persistence | Browser IndexedDB/localStorage | `src/data/LocalStorageAdapter.ts` |
+| Authenticated board metadata/content | Convex | `convex/workspaces.ts`, `convex/boards.ts` |
+| Identity | Clerk | `src/auth`, `convex/auth.config.ts`, `convex/users.ts` |
+| Collaborative room snapshot | Convex | `convex/collaboration.ts` |
+| Realtime encrypted relay/presence | Convex | `convex/realtime.ts`, `src/data/ConvexRealtimeClient.ts` |
+| Public-share metadata/payload | Convex | `convex/publicShares.ts` |
+| Encrypted room/share files | Convex Storage | `convex/files.ts`, `src/data/convexFiles.ts` |
+| Retention | Convex cron jobs | `convex/crons.ts`, `convex/cleanup.ts` |
+| Frontend delivery | Vercel | `vercel.json`, `vite.config.ts` |
 
-This is a single application repository, not the Turborepo layout proposed in
-the archived plan. `config/` is a small standalone configuration package, but
-the root workspace does not currently define a multi-package build graph.
+## Trust and encryption model
 
-## Authentication flow
+- Collaboration and share keys stay in the URL fragment and are not sent to
+  the server.
+- Scene updates and binary assets are encrypted in the browser.
+- The browser derives a one-way SHA-256 access proof scoped to the room or
+  share. Convex receives the proof, not the encryption key.
+- Realtime sessions bind that proof to a random client session ID. Messages
+  contain ciphertext plus routing metadata and expire quickly.
+- Convex Storage download URLs are bearer URLs, but the stored bytes remain
+  encrypted and require the fragment key to decode.
+- Clerk identity is mandatory for personal workspace/board cloud sync. Link
+  collaboration and public shares intentionally support anonymous recipients.
 
-1. `ClerkProvider` is mounted in `src/index.tsx`.
-2. `ConvexProviderWithClerk` obtains a Clerk token for Convex.
-3. Convex validates the token using `convex/auth.config.ts`.
-4. Clerk webhook events are verified in `convex/http.ts` and synchronized into
-   the `users` table.
-5. Convex functions enforce access using the authenticated Clerk subject.
+Migration compatibility is deliberately narrower than the normal model:
+legacy links omit an access proof until a new client claims them. Their IDs and
+ciphertext remain high-entropy, but they should be treated as compatibility
+records rather than newly issued links.
 
-Authentication-specific UI must stay in the application shell. The reusable
-editor core should not call Clerk hooks directly; doing so currently breaks
-standalone editor rendering and the legacy editor test harness. This boundary is
-tracked in [Project status](./PROJECT_STATUS.md).
+## Data flows
 
-## Board persistence flow
+### Authenticated board sync
 
-Authenticated board persistence uses the hybrid storage adapter in `src/data/`:
+1. The browser saves immediately to local storage.
+2. Clerk supplies a Convex JWT for signed-in users.
+3. `HybridStorageAdapter` encrypts board content and writes metadata/content to
+   Convex.
+4. Reactive Convex data and conflict metadata keep devices synchronized.
+5. Browser-local image files remain local for ordinary personal boards; files
+   copied into public shares or collaboration rooms use Convex Storage.
 
-1. Local editor state remains usable while offline.
-2. The adapter obtains a Clerk/Convex token after sign-in.
-3. Board metadata and encrypted content are saved through `convex/boards.ts`.
-4. Binary assets used by collaboration and public shares are uploaded to
-   Firebase Storage.
-5. Socket.io handles low-latency transient broadcasts between room members.
+### Realtime collaboration
 
-The backend stores ciphertext and IVs for protected content. Encryption keys are
-kept in URL fragments or client state and must never be sent to logs, analytics,
-or server-side metadata.
+1. The room creator generates a random room ID and fragment-only encryption key.
+2. The client derives a scoped access proof and joins through
+   `ConvexRealtimeClient`.
+3. Cursor, presence, follow, and scene events are encrypted and inserted as
+   short-lived relay messages.
+4. Other room clients receive updates through a reactive query subscription and
+   decrypt locally.
+5. Periodic encrypted room snapshots provide reconnect/fallback state.
+6. Cron jobs remove relay messages, stale sessions, and expired room content.
 
-## Public share flow
+### Public share
 
-1. The browser serializes and encrypts a scene.
-2. `publicShares.createPublicShare` stores the encrypted payload in Convex.
-3. Related encrypted files are uploaded to Firebase Storage.
-4. The share ID and decryption key are placed in the URL fragment.
+1. The browser generates a fresh key and encrypts/compresses the scene.
+2. Convex stores the encrypted share payload and scoped access proof.
+3. Referenced images are encrypted separately and uploaded to Convex Storage.
+4. The share URL contains the Convex record ID and key in the fragment.
+5. The recipient derives the same proof, downloads ciphertext, and decrypts in
+   the browser.
 
-Public-share creation and reads are intentionally anonymous. They still require
-server-side abuse protection, storage cleanup, and hardened Firebase rules; the
-current gaps are listed in [Project status](./PROJECT_STATUS.md).
+## Retention and limits
 
-## AI flow
+| Data | Current policy |
+| --- | --- |
+| Volatile realtime messages | 30 seconds |
+| Other realtime messages | 2 minutes |
+| Inactive presence sessions | removed within roughly 2 minutes |
+| New collaboration room snapshots | 30 days since last save |
+| New public shares | 30 days |
+| Migrated legacy links | retained without automatic expiry |
 
-AI calls run in Convex Node actions (`convex/ai.ts`), keeping provider keys out
-of browser bundles. The frontend invokes text-to-diagram and diagram-to-code
-actions. Usage is recorded in `convex/aiUsage.ts`.
+Realtime messages are limited to 700 KiB and public-share payloads to 900 KiB
+to stay below Convex document and response limits. Encrypted images use Convex
+Storage rather than database documents.
 
-The usage limit query exists, but the actions do not currently enforce it before
-calling the provider. Treat this as an incomplete cost-control boundary.
+## Repository structure
 
-## Architectural boundaries
+```text
+convex/                   schema, functions, realtime relay, cleanup
+src/collab/               collaboration controller and portal
+src/data/                 persistence, Convex clients, encryption adapters
+src/core/                 editor package and UI primitives
+src/pages/                application routes
+docs/                     maintained architecture and operations docs
+.github/workflows/        CI and Convex deployment automation
+scripts/                  maintenance and one-time retirement tooling
+```
 
-- `src/core/` should remain framework- and product-auth-agnostic.
-- Only Convex functions may make authorization decisions for persisted data;
-  frontend feature gates are presentation only.
-- Secrets belong in deployment environment stores, never tracked `.env` files.
-- Firebase is for binary assets only. Firestore is legacy and should remain
-  undeployed unless its rules are hardened.
-- Socket.io transports ephemeral encrypted collaboration events; durable state
-  belongs in Convex/Firebase.
-- Deployment configuration should use immutable image identifiers and separate
-  staging/production settings instead of hard-coded mutable `latest` tags.
+## Architectural rules
 
-## Decision records to add
-
-The repository does not yet maintain architecture decision records. The first
-useful records would cover:
-
-1. Convex as the system of record and Firebase Storage as the binary store.
-2. Clerk identity mapping and the reusable-editor authentication boundary.
-3. Socket.io versus Convex responsibilities for collaboration.
-4. Anonymous encrypted public shares and their retention/abuse policy.
-5. Whether publishing `@drawink/drawink` remains a supported product surface.
+1. Convex is the only remote application datastore and file store.
+2. Do not add a second realtime server for editor events.
+3. Encryption keys must remain client-side and fragment-only.
+4. Every public Convex function needs validators, bounded input, and explicit
+   access behavior.
+5. Every stored object needs an owner/scope and a deletion path.
+6. Schema changes that affect existing data use additive, idempotent migrations
+   before fields are removed.

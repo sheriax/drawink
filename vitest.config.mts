@@ -5,7 +5,6 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   define: {
     "import.meta.env.VITE_CONVEX_URL": JSON.stringify("https://test.convex.cloud"),
-    "import.meta.env.VITE_APP_FIREBASE_CONFIG": JSON.stringify("{}"),
   },
   resolve: {
     alias: [

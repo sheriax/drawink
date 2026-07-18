@@ -17,8 +17,10 @@ import type { DrawinkElement, FileId, OrderedDrawinkElement } from "@/lib/elemen
 import { DELETED_ELEMENT_TIMEOUT, FILE_UPLOAD_MAX_BYTES, ROOM_ID_BYTES } from "../app_constants";
 
 import { encodeFilesForUpload } from "./FileManager";
-import { saveFilesToFirebase } from "./firebase";
+import { deriveConvexAccessToken } from "./convexAccess";
+import { saveFilesToConvex } from "./convexFiles";
 
+import type { Id } from "../../convex/_generated/dataModel";
 import type { WS_SUBTYPES } from "../app_constants";
 
 export type SyncableDrawinkElement = OrderedDrawinkElement & MakeBrand<"SyncableDrawinkElement">;
@@ -37,9 +39,6 @@ export const isSyncableElement = (
 
 export const getSyncableElements = (elements: readonly OrderedDrawinkElement[]) =>
   elements.filter((element) => isSyncableElement(element)) as SyncableDrawinkElement[];
-
-const BACKEND_V2_GET = import.meta.env.VITE_APP_BACKEND_V2_GET_URL;
-const BACKEND_V2_POST = import.meta.env.VITE_APP_BACKEND_V2_POST_URL;
 
 const generateRoomId = async () => {
   const buffer = new Uint8Array(ROOM_ID_BYTES);
@@ -142,7 +141,7 @@ export const getCollaborationLink = (data: {
  * Decodes shareLink data using the legacy buffer format.
  * @deprecated
  */
-const legacy_decodeFromBackend = async ({
+const decodeLegacyShare = async ({
   buffer,
   decryptionKey,
 }: {
@@ -156,7 +155,7 @@ const legacy_decodeFromBackend = async ({
     const iv = buffer.slice(0, IV_LENGTH_BYTES);
     const encrypted = buffer.slice(IV_LENGTH_BYTES, buffer.byteLength);
     decrypted = await decryptData(new Uint8Array(iv), encrypted, decryptionKey);
-  } catch (_error: any) {
+  } catch {
     // Fixed IV (old format, backward compatibility)
     const fixedIv = new Uint8Array(IV_LENGTH_BYTES);
     decrypted = await decryptData(fixedIv, buffer, decryptionKey);
@@ -173,7 +172,7 @@ const legacy_decodeFromBackend = async ({
 };
 
 /**
- * Import a public share from Convex (NO AUTH REQUIRED)
+ * Import a public share from Convex using a proof derived from its fragment key.
  */
 export const importFromConvex = async (
   shareId: string,
@@ -188,10 +187,11 @@ export const importFromConvex = async (
     const { ConvexHttpClient } = await import("convex/browser");
     const { api } = await import("../../convex/_generated/api");
     const convex = new ConvexHttpClient(convexUrl);
+    const accessToken = await deriveConvexAccessToken("publicShare", decryptionKey);
 
-    // Get the public share (NO AUTH REQUIRED)
     const share = await convex.query(api.publicShares.getPublicShare, {
-      shareId: shareId as any, // Convex ID type
+      shareId: shareId as Id<"publicShares">,
+      accessToken,
     });
 
     // Decompress and decrypt the payload
@@ -205,22 +205,32 @@ export const importFromConvex = async (
       elements: data.elements || null,
       appState: data.appState || null,
     };
-  } catch (error: any) {
+  } catch (error) {
     window.alert(t("alerts.importBackendFailed"));
     console.error("Failed to load share from Convex:", error);
     return {};
   }
 };
 
-const importFromBackend = async (id: string, decryptionKey: string): Promise<ImportedDataState> => {
+export const importLegacyShareFromConvex = async (
+  shortId: string,
+  decryptionKey: string,
+): Promise<ImportedDataState> => {
   try {
-    const response = await fetch(`${BACKEND_V2_GET}${id}`);
-
-    if (!response.ok) {
-      window.alert(t("alerts.importBackendFailed"));
-      return {};
+    const convexUrl = import.meta.env.VITE_CONVEX_URL;
+    if (!convexUrl) {
+      throw new Error("Convex URL not configured");
     }
-    const buffer = await response.arrayBuffer();
+
+    const { ConvexHttpClient } = await import("convex/browser");
+    const { api } = await import("../../convex/_generated/api");
+    const convex = new ConvexHttpClient(convexUrl);
+    const accessToken = await deriveConvexAccessToken("legacyShare", decryptionKey);
+    const share = await convex.query(api.publicShares.getPublicShareByShortId, {
+      shortId,
+      accessToken,
+    });
+    const buffer = share.payload;
 
     try {
       const { data: decodedBuffer } = await decompressData(new Uint8Array(buffer), {
@@ -232,11 +242,11 @@ const importFromBackend = async (id: string, decryptionKey: string): Promise<Imp
         elements: data.elements || null,
         appState: data.appState || null,
       };
-    } catch (error: any) {
+    } catch (error) {
       console.warn("error when decoding shareLink data using the new format:", error);
-      return legacy_decodeFromBackend({ buffer, decryptionKey });
+      return decodeLegacyShare({ buffer, decryptionKey });
     }
-  } catch (error: any) {
+  } catch (error) {
     window.alert(t("alerts.importBackendFailed"));
     console.error(error);
     return {};
@@ -256,7 +266,7 @@ export const loadScene = async (
     // the private key is used to decrypt the content from the server, take
     // extra care not to leak it
     data = restore(
-      await importFromBackend(id, privateKey),
+      await importLegacyShareFromConvex(id, privateKey),
       localDataState?.appState,
       localDataState?.elements,
       {
@@ -299,55 +309,22 @@ export const exportToBackend = async (
   );
 
   try {
-    // Check if Convex is enabled
     const convexUrl = import.meta.env.VITE_CONVEX_URL;
-
-    if (convexUrl) {
-      // NEW: Use Convex for shareable links
-      const { ConvexHttpClient } = await import("convex/browser");
-      const { api } = await import("../../convex/_generated/api");
-      const convex = new ConvexHttpClient(convexUrl);
-
-      // Store the entire encrypted payload as ArrayBuffer
-      // Format: [encodingMetadataBuffer, iv, encryptedBuffer]
-      // The client will use decompressData() to decode it, which handles splitting internally
-      const result = await convex.mutation(api.publicShares.createPublicShare, {
-        payload: new Uint8Array(payload).buffer as ArrayBuffer,
-        title: "Shared Drawing",
-      });
-
-      const shareId = result.shareId;
-
-      // Handle file uploads
-      const filesMap = new Map<FileId, BinaryFileData>();
-      for (const element of elements) {
-        if (isInitializedImageElement(element) && files[element.fileId]) {
-          filesMap.set(element.fileId, files[element.fileId]);
-        }
-      }
-
-      if (filesMap.size > 0) {
-        const filesToUpload = await encodeFilesForUpload({
-          files: filesMap,
-          encryptionKey,
-          maxBytes: FILE_UPLOAD_MAX_BYTES,
-        });
-
-        await saveFilesToFirebase({
-          prefix: `/files/publicShares/${shareId}`,
-          files: filesToUpload,
-        });
-      }
-
-      // Create shareable URL with encryption key in hash
-      // Always use origin (root) so workspace/board paths are never leaked to public viewers
-      const url = new URL(window.location.origin);
-      url.hash = `share=${shareId},${encryptionKey}`;
-
-      return { url: url.toString(), errorMessage: null };
+    if (!convexUrl) {
+      throw new Error("Convex URL not configured");
     }
 
-    // FALLBACK: Old backend (if Convex not configured)
+    const { ConvexHttpClient } = await import("convex/browser");
+    const { api } = await import("../../convex/_generated/api");
+    const convex = new ConvexHttpClient(convexUrl);
+    const accessToken = await deriveConvexAccessToken("publicShare", encryptionKey);
+    const result = await convex.mutation(api.publicShares.createPublicShare, {
+      payload: new Uint8Array(payload).buffer as ArrayBuffer,
+      title: "Shared Drawing",
+      accessToken,
+    });
+
+    const shareId = result.shareId;
     const filesMap = new Map<FileId, BinaryFileData>();
     for (const element of elements) {
       if (isInitializedImageElement(element) && files[element.fileId]) {
@@ -355,38 +332,23 @@ export const exportToBackend = async (
       }
     }
 
-    const filesToUpload = await encodeFilesForUpload({
-      files: filesMap,
-      encryptionKey,
-      maxBytes: FILE_UPLOAD_MAX_BYTES,
-    });
-
-    const response = await fetch(BACKEND_V2_POST, {
-      method: "POST",
-      body: new Uint8Array(payload).buffer,
-    });
-    const json = await response.json();
-    if (json.id) {
-      const url = new URL(window.location.href);
-      url.hash = `json=${json.id},${encryptionKey}`;
-      const urlString = url.toString();
-
-      await saveFilesToFirebase({
-        prefix: `/files/shareLinks/${json.id}`,
-        files: filesToUpload,
+    if (filesMap.size > 0) {
+      await saveFilesToConvex({
+        scope: "publicShare",
+        scopeId: shareId,
+        accessToken,
+        files: await encodeFilesForUpload({
+          files: filesMap,
+          encryptionKey,
+          maxBytes: FILE_UPLOAD_MAX_BYTES,
+        }),
       });
-
-      return { url: urlString, errorMessage: null };
-    }
-    if (json.error_class === "RequestTooLargeError") {
-      return {
-        url: null,
-        errorMessage: t("alerts.couldNotCreateShareableLinkTooBig"),
-      };
     }
 
-    return { url: null, errorMessage: t("alerts.couldNotCreateShareableLink") };
-  } catch (error: any) {
+    const url = new URL(window.location.origin);
+    url.hash = `share=${shareId},${encryptionKey}`;
+    return { url: url.toString(), errorMessage: null };
+  } catch (error) {
     console.error(error);
 
     return { url: null, errorMessage: t("alerts.couldNotCreateShareableLink") };

@@ -2,7 +2,7 @@
  * Convex Queries and Mutations for Boards
  *
  * This file contains all board-related database operations.
- * Files are stored in Firebase Storage, only metadata + URLs are in Convex.
+ * Board data and encrypted files are stored in Convex.
  */
 
 import { v } from "convex/values";
@@ -26,6 +26,8 @@ const boardValidator = v.object({
   lastOpenedAt: v.number(),
   archivedAt: v.optional(v.number()),
   version: v.number(),
+  legacyFirestoreId: v.optional(v.string()),
+  legacyWorkspaceId: v.optional(v.string()),
 });
 
 // Shared validator for board content shape
@@ -467,6 +469,9 @@ export const permanentDelete = mutation({
       .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
       .collect();
     for (const f of files) {
+      if (f.storageId) {
+        await ctx.storage.delete(f.storageId);
+      }
       await ctx.db.delete(f._id);
     }
 
@@ -481,8 +486,5 @@ export const permanentDelete = mutation({
 
     // Delete board
     await ctx.db.delete(args.boardId);
-
-    // Note: Firebase Storage files should be deleted separately
-    // via a backend function or cleanup job
   },
 });

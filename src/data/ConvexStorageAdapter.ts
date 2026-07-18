@@ -6,10 +6,10 @@
  *
  * Data is encrypted before storage using PBKDF2-derived AES-GCM keys.
  *
- * Convex + Firebase Storage Hybrid Architecture:
- * - Board metadata, workspace data: Convex (real-time reactive)
- * - Board content (encrypted): Convex
- * - Files (images, thumbnails): Firebase Storage (19x cheaper!)
+ * Convex cloud architecture:
+ * - Board metadata and workspace data: Convex reactive tables
+ * - Board content: end-to-end encrypted Convex documents
+ * - Share and collaboration files: encrypted Convex Storage objects
  */
 
 import type { BoardContent, StorageAdapter, Workspace } from "@/core/storage/types";
