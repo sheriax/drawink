@@ -10,8 +10,8 @@ security decisions, and incomplete product surfaces. “Implemented” does not 
 
 | Area | Status | Evidence or remaining work |
 | --- | --- | --- |
-| Convex-only backend code | Implemented, not yet live | Database, encrypted realtime relay, retention, and file APIs are in the migration branch |
-| Legacy data migration | Pending | Idempotent runner and byte verification exist; production execution is gated by the retirement runbook |
+| Convex-only backend code | Backend live; frontend cutover pending | Production schema/functions were deployed on 2026-07-18; the Vercel frontend still awaits the reviewed branch cutover |
+| Legacy data migration | Blocked on temporary read-only IAM | The runner and byte verification are ready, but the migration service account still needs Firestore and object-bucket viewer roles |
 | Legacy project shutdown | Pending | Billing/project deletion must wait for final migration and production cutover |
 | Current branch quality gates | Testbox passed; CI pending | Frozen install, zero-vulnerability audit, Biome, TypeScript, 586 passing tests (9 skipped), and production/PWA build passed in Testbox on 2026-07-18 |
 | Previous quality baseline | Passed | The merged quality branch had clean audit/lint/types/tests/builds |
@@ -111,8 +111,6 @@ After the source project is deleted and production data is verified:
 - map or archive the two migrated workspaces whose legacy owner IDs are not
   current Clerk-style IDs;
 - remove migration-only functions and provenance indexes when no longer needed;
-- inspect and remove transitional legacy file metadata fields after confirming
-  production contains no such documents; and
 - retain only a non-executable migration audit record.
 
 ### Expand authorization coverage

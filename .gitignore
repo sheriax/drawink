@@ -9,6 +9,7 @@
 .eslintcache
 .history
 .idea
+.migration-backups
 .vercel
 .vscode
 .yarn

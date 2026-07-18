@@ -14,9 +14,7 @@ const deleteScopedFiles = async (
     .withIndex("by_scope", (q) => q.eq("scope", scope).eq("scopeId", scopeId))
     .collect();
   for (const file of files) {
-    if (file.storageId) {
-      await ctx.storage.delete(file.storageId);
-    }
+    await ctx.storage.delete(file.storageId);
     await ctx.db.delete(file._id);
   }
   return files.length;

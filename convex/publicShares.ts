@@ -33,6 +33,12 @@ export const createPublicShare = mutation({
   handler: async (ctx, args) => {
     // Anonymous creation is intentional. New clients attach a fragment-key
     // proof that is required for subsequent reads and scoped file operations.
+    if (
+      args.accessToken !== undefined &&
+      (args.accessToken.length < 32 || args.accessToken.length > 128)
+    ) {
+      throw new Error("Invalid access token");
+    }
 
     // Leave headroom under Convex's per-document limit for metadata.
     const MAX_PAYLOAD_BYTES = 900 * 1024;

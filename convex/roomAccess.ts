@@ -9,6 +9,12 @@ const validateAccessToken = (accessToken: string | undefined) => {
   }
 };
 
+const validateScopeId = (scopeId: string) => {
+  if (scopeId.length === 0 || scopeId.length > 128) {
+    throw new Error("Invalid access scope");
+  }
+};
+
 /**
  * Verify a room access proof without receiving the room encryption key.
  * Rooms created before the Convex-only cutover do not have a proof; they are
@@ -19,6 +25,7 @@ export const assertRoomAccess = async (
   roomId: string,
   accessToken: string | undefined,
 ) => {
+  validateScopeId(roomId);
   validateAccessToken(accessToken);
 
   const room = await ctx.db
@@ -42,6 +49,7 @@ export const assertPublicShareAccess = async (
   shareId: Id<"publicShares">,
   accessToken: string | undefined,
 ) => {
+  validateScopeId(shareId);
   validateAccessToken(accessToken);
 
   const share = await ctx.db.get(shareId);
@@ -61,6 +69,7 @@ export const assertLegacyShareAccess = async (
   shortId: string,
   accessToken: string | undefined,
 ) => {
+  validateScopeId(shortId);
   validateAccessToken(accessToken);
 
   const share = await ctx.db

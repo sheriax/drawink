@@ -378,9 +378,7 @@ export const registerFile = internalMutation({
       return { status: "unchanged" as const, fileId: args.fileId };
     }
     if (existing) {
-      if (existing.storageId) {
-        await ctx.storage.delete(existing.storageId);
-      }
+      await ctx.storage.delete(existing.storageId);
       await ctx.db.patch(existing._id, {
         storageId: args.storageId,
         mimeType: metadata.contentType ?? "application/octet-stream",
@@ -585,7 +583,7 @@ export const verify = internalQuery({
           scopeId: requestedFile.scopeId,
           fileId: file.fileId,
           sizeBytes: file.sizeBytes,
-          url: file.storageId ? await ctx.storage.getUrl(file.storageId) : null,
+          url: await ctx.storage.getUrl(file.storageId),
         });
       }
     }

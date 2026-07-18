@@ -42,18 +42,41 @@ decrypting them.
 
 ## Gate 1: replacement readiness
 
-- [ ] The Convex-only branch passes `bun run verify` in Testbox and CI.
-- [ ] New Convex functions/schema are deployed additively to production.
+- [x] The Convex-only branch passes `bun run verify` in Testbox; GitHub CI
+      remains a PR gate.
+- [x] New Convex functions/schema were deployed to production on 2026-07-18
+      after a production dry-run and empty legacy-file-table check.
 - [ ] Old browser clients remain compatible with that additive backend deploy.
 - [ ] The Vercel preview passes board, share, file, and two-client collaboration
       smoke tests.
-- [ ] A production Convex export is retained before migration.
+- [x] A production Convex export, including file storage, was retained and its
+      ZIP checksum/integrity verified on 2026-07-18. The Git-ignored local file
+      is `.migration-backups/convex-production-pre-google-cloud-migration-2026-07-18.zip`;
+      SHA-256 is
+      `88e937012a0cef399de31025b7e2bbb388b237512ebdc3788a617457e5bdf253`.
 
 ## Gate 2: initial migration
 
 Run from the authenticated Blacksmith Testbox. The Testbox must have the
 Production `CONVEX_DEPLOY_KEY` and short-lived cloud authentication. Do not run
 the migration from a developer laptop.
+
+The dedicated migration identity needs only these temporary source-read roles:
+
+```bash
+gcloud projects add-iam-policy-binding drawink-2026 \
+  --member='serviceAccount:drawink-github-actions@drawink-2026.iam.gserviceaccount.com' \
+  --role='roles/datastore.viewer'
+
+gcloud storage buckets add-iam-policy-binding \
+  gs://drawink-2026.firebasestorage.app \
+  --member='serviceAccount:drawink-github-actions@drawink-2026.iam.gserviceaccount.com' \
+  --role='roles/storage.objectViewer'
+```
+
+Remove both bindings after the final verified pass if project deletion is not
+performed immediately. The 2026-07-18 initial attempt stopped with `403` before
+reading source data or writing any migration target.
 
 ```bash
 # Read-only inventory.
@@ -159,7 +182,9 @@ export or rerunning the migration while the source is still readable.
 
 | Check | Result |
 | --- | --- |
-| Initial migration and byte verification | Pending |
+| Pre-migration Convex export | Complete, retained locally, checksum-verified on 2026-07-18 |
+| Convex production schema/functions | Deployed and schema-validated on 2026-07-18 |
+| Initial migration and byte verification | Blocked on temporary source viewer roles; no migration writes made |
 | Convex-only production frontend live | Pending |
 | Final no-write-window migration | Pending |
 | Vercel variables removed | Pending |

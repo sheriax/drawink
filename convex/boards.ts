@@ -463,18 +463,6 @@ export const permanentDelete = mutation({
       await ctx.db.delete(c._id);
     }
 
-    // Delete files metadata
-    const files = await ctx.db
-      .query("files")
-      .withIndex("by_board", (q) => q.eq("boardId", args.boardId))
-      .collect();
-    for (const f of files) {
-      if (f.storageId) {
-        await ctx.storage.delete(f.storageId);
-      }
-      await ctx.db.delete(f._id);
-    }
-
     // Delete collaboration sessions
     const sessions = await ctx.db
       .query("collaborationSessions")

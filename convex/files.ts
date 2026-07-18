@@ -80,10 +80,6 @@ export const registerUpload = mutation({
     if (!metadata) {
       throw new Error("Uploaded file not found");
     }
-    if (metadata.size > MAX_ENCRYPTED_FILE_BYTES) {
-      await ctx.storage.delete(args.storageId);
-      throw new Error("Encrypted file is too large");
-    }
 
     const existing = await ctx.db
       .query("files")
@@ -98,9 +94,15 @@ export const registerUpload = mutation({
     if (storageOwner && storageOwner._id !== existing?._id) {
       throw new Error("Uploaded file is already registered to another scope");
     }
+    if (metadata.size > MAX_ENCRYPTED_FILE_BYTES) {
+      if (!storageOwner) {
+        await ctx.storage.delete(args.storageId);
+      }
+      throw new Error("Encrypted file is too large");
+    }
 
     if (existing) {
-      if (existing.storageId && existing.storageId !== args.storageId) {
+      if (existing.storageId !== args.storageId) {
         await ctx.storage.delete(existing.storageId);
       }
       await ctx.db.patch(existing._id, {
@@ -178,7 +180,7 @@ export const getDownloadUrls = query({
             q.eq("scope", args.scope).eq("scopeId", args.scopeId).eq("fileId", fileId),
           )
           .first();
-        if (!file?.storageId) {
+        if (!file) {
           return null;
         }
 
@@ -213,9 +215,7 @@ export const remove = mutation({
       return false;
     }
 
-    if (file.storageId) {
-      await ctx.storage.delete(file.storageId);
-    }
+    await ctx.storage.delete(file.storageId);
     await ctx.db.delete(file._id);
     return true;
   },

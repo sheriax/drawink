@@ -198,25 +198,9 @@ export default defineSchema({
   // =========================================================================
   files: defineTable({
     fileId: v.string(), // File ID used in elements
-    boardId: v.optional(v.id("boards")),
-
-    // New files are stored in Convex Storage and scoped to an encrypted room
-    // or share. Board-scoped files remain available for authenticated flows.
-    storageId: v.optional(v.id("_storage")),
-    scope: v.optional(
-      v.union(
-        v.literal("board"),
-        v.literal("room"),
-        v.literal("publicShare"),
-        v.literal("legacyShare"),
-      ),
-    ),
-    scopeId: v.optional(v.string()),
-
-    // Transitional fields keep any pre-cutover metadata schema-valid while the
-    // one-time migration verifies and removes the old records.
-    firebaseStorageUrl: v.optional(v.string()),
-    firebaseStoragePath: v.optional(v.string()),
+    storageId: v.id("_storage"),
+    scope: v.union(v.literal("room"), v.literal("publicShare"), v.literal("legacyShare")),
+    scopeId: v.string(),
 
     // File info
     mimeType: v.string(),
@@ -226,8 +210,6 @@ export default defineSchema({
     createdAt: v.number(),
     createdBy: v.optional(v.string()), // Clerk user ID for authenticated files
   })
-    .index("by_board", ["boardId"])
-    .index("by_file_id", ["fileId"])
     .index("by_storage_id", ["storageId"])
     .index("by_scope", ["scope", "scopeId"])
     .index("by_scope_and_file", ["scope", "scopeId", "fileId"]),
