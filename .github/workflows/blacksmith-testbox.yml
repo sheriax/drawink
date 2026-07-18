@@ -35,6 +35,11 @@ jobs:
           project_id: drawink-2026
       - name: Setup Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v2
+      - name: Stage Convex credential for the ephemeral session
+        shell: bash
+        run: |
+          umask 077
+          printf '%s' "$CONVEX_DEPLOY_KEY" > /tmp/drawink-convex-deploy-key
       - name: Install Dependencies
         run: bun install --frozen-lockfile
       - name: Run Testbox
